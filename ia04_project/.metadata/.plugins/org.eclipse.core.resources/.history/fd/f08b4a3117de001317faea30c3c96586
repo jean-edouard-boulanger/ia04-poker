@@ -1,0 +1,46 @@
+package application;
+
+import javafx.scene.Group;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
+import javafx.scene.shape.Rectangle;
+
+public class PersoIHM extends Group {
+	
+	public enum Sens { GAUCHE, DROIT, HAUT, BAS }
+	public PersoIHM(int x, int y, String pseudo, Sens position)
+	{
+		Circle circle = new Circle();
+		circle.setRadius(25);
+		circle.setFill(Color.YELLOW);
+		circle.setCenterX(x);
+		circle.setCenterY(y);
+		
+		Rectangle bras1 = new Rectangle();
+		bras1.setArcWidth(10);
+		bras1.setFill(Color.YELLOWGREEN);
+		bras1.setX(x+15);
+		bras1.setY(y+15);
+		bras1.setRotate(45);
+		bras1.setWidth(50);
+		bras1.setHeight(15);
+		
+		Rectangle bras2 = new Rectangle();
+		bras2.setArcWidth(10);
+		bras2.setFill(Color.YELLOWGREEN);
+		bras2.setX(x-15);
+		bras2.setY(y+15);
+		bras2.setRotate(-45);
+		bras2.setWidth(50);
+		bras2.setHeight(15);
+		
+		if(position.equals(Sens.HAUT))
+		{
+			
+		}
+		
+		this.getChildren().add(circle);
+		this.getChildren().add(bras1);
+		this.getChildren().add(bras2);
+	}
+}

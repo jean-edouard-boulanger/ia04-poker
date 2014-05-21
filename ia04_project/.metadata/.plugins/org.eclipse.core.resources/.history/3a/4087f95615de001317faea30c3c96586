@@ -1,0 +1,19 @@
+package application;
+
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
+
+public class PersoIHM {
+	
+	public enum Sens { GAUCHE, DROIT, HAUT, BAS }
+	public PersoIHM(int x, int y, String pseudo, Sens position)
+	{
+		Circle circle = new Circle();
+		circle.setRadius(50);
+		circle.setFill(Color.YELLOW);
+		if(position.equals(Sens.HAUT))
+		{
+			
+		}
+	}
+}

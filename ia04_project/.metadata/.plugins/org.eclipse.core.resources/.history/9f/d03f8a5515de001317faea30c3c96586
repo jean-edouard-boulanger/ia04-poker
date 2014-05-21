@@ -1,0 +1,17 @@
+package application;
+
+import javafx.scene.shape.Circle;
+
+public class PersoIHM {
+	
+	public enum Sens { GAUCHE, DROIT, HAUT, BAS }
+	public PersoIHM(int x, int y, String pseudo, Sens position)
+	{
+		Circle circle = new Circle();
+		
+		if(position.equals(Sens.HAUT))
+		{
+			
+		}
+	}
+}

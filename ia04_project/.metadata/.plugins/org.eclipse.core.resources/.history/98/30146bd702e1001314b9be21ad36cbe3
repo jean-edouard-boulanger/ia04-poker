@@ -1,0 +1,100 @@
+package server;
+	
+import java.awt.Dimension;
+import java.text.NumberFormat;
+
+import javax.swing.JButton;
+import javax.swing.JFormattedTextField;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+
+import application.PersoIHM.Sens;
+import javafx.application.Application;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.stage.Stage;
+import javafx.scene.Group;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
+
+
+public class ServerWindow extends JFrame {
+	
+	private Button btn;
+	
+	private Rectangle table;
+	
+	private Rectangle zone_carte;
+	
+	public ServerWindow() {
+		JPanel panel = new JPanel();
+		
+		this.setTitle("Server configuration");
+		this.setSize(300, 500);
+		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	    this.setLocationRelativeTo(null);
+	    this.setResizable(false);
+		
+		JLabel label_nb_max = new JLabel("Nombre maximum de joueurs (2-10) : ");
+		JFormattedTextField nb_max = new JFormattedTextField(NumberFormat.getIntegerInstance());
+		nb_max.setPreferredSize(new Dimension(250, 25));
+		
+		JLabel label_time_increase = new JLabel("Nombre de tours avant augmentation : ");
+		JFormattedTextField time_increase = new JFormattedTextField(NumberFormat.getIntegerInstance());
+		time_increase.setPreferredSize(new Dimension(250, 25));
+		
+		JRadioButton radio_distrib_1 = new JRadioButton("Distribution1 : ");
+		JRadioButton radio_distrib_2 = new JRadioButton("Distribution2 : ");
+		JRadioButton radio_distrib_3 = new JRadioButton("Distribution3 : ");
+		
+		JLabel label_players = new JLabel("Joueurs : ");
+		String subject[] = {"Aucun joueur pour l'instant"};
+		JList list_player = new JList<>(subject);
+		list_player.setPreferredSize(new Dimension(250, 150));
+		list_player.setEnabled(false);
+		
+		JButton button_launch = new JButton("Lancer le server");
+		button_launch.setPreferredSize(new Dimension(200, 40));
+		JButton button_begin = new JButton("Commencer la partie");
+		button_begin.setPreferredSize(new Dimension(200, 40));
+		button_begin.setEnabled(false);
+		
+		panel.add(label_nb_max);
+		panel.add(nb_max);
+		
+		panel.add(label_time_increase);
+		panel.add(time_increase);
+		
+		panel.add(radio_distrib_1);
+		panel.add(radio_distrib_2);
+		panel.add(radio_distrib_3);
+		
+		panel.add(label_players);
+		panel.add(list_player);
+		
+		panel.add(button_launch);
+		panel.add(button_begin);
+		
+		this.setContentPane(panel);
+		this.setVisible(true);
+	}
+	
+	public void initializeAction()
+	{
+		 btn.setOnAction(new EventHandler<ActionEvent>() {
+
+            public void handle(ActionEvent event) {
+                System.out.println("Hello World");
+            }
+        });
+	}
+}
