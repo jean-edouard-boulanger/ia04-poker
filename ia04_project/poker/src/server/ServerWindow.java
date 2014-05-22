@@ -72,7 +72,7 @@ public class ServerWindow extends JFrame {
 		
 		JLabel label_players = new JLabel("Joueurs : ");
 		String subject[] = {"Aucun joueur pour l'instant"};
-		JList list_player = new JList<>(subject);
+		JList list_player = new JList<String>(subject);
 		list_player.setPreferredSize(new Dimension(300, 150));
 		list_player.setEnabled(false);
 		

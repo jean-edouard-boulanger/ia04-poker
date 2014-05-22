@@ -1,24 +1,25 @@
 package application;
 
-import classes.Card;
-import classes.CardRank;
-import classes.CardSuit;
-import classes.Deck;
-import server.ServerWindow;
-import application.PersoIHM.Sens;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.stage.Stage;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import javafx.stage.Stage;
+
+import javax.swing.SwingUtilities;
+
+import server.ServerWindow;
+import application.PersoIHM.Sens;
+import classes.Card;
+import classes.CardRank;
+import classes.CardSuit;
+import classes.Deck;
 
 
 public class Main extends Application {
@@ -96,7 +97,13 @@ public class Main extends Application {
         primaryStage.setResizable(false);
         primaryStage.show();
         
-        ServerWindow server_window = new ServerWindow();
+        //Need to init the window via the SwingUtilities.invokeLater method on Mac to work
+        SwingUtilities.invokeLater(new Runnable() {
+        	@Override
+        	public void run() {
+                ServerWindow server_window = new ServerWindow();                
+        	}
+        });
         
         initializeAction();
 	}
