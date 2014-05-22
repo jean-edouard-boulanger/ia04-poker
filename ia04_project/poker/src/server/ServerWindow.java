@@ -5,6 +5,7 @@ import java.text.NumberFormat;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -46,9 +47,10 @@ public class ServerWindow extends JFrame {
 	    this.setLocationRelativeTo(null);
 	    this.setResizable(false);
 		
-		JLabel label_nb_max = new JLabel("Nombre maximum de joueurs (2-10) : ");
-		JFormattedTextField nb_max = new JFormattedTextField(NumberFormat.getIntegerInstance());
-		nb_max.setPreferredSize(new Dimension(300, 25));
+		JLabel label_nb_max = new JLabel("Nombre maximum de joueurs : ");
+		Integer[] nb_player = new Integer[]{2,3,4,5,6,7,8,9,10};
+		JComboBox<Integer> list_nb_player = new JComboBox<Integer>(nb_player);
+		list_nb_player.setPreferredSize(new Dimension(300,25));
 		
 		JLabel label_time_increase = new JLabel("Nombre de tours avant augmentation : ");
 		JFormattedTextField time_increase = new JFormattedTextField(NumberFormat.getIntegerInstance());
@@ -81,7 +83,7 @@ public class ServerWindow extends JFrame {
 		button_begin.setEnabled(false);
 		
 		panel.add(label_nb_max);
-		panel.add(nb_max);
+		panel.add(list_nb_player);
 		
 		panel.add(label_time_increase);
 		panel.add(time_increase);
