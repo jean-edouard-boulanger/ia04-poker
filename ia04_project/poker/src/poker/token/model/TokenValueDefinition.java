@@ -1,9 +1,9 @@
-package model.token;
+package poker.token.model;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import model.token.exception.InvalidTokenValueException;
+import poker.token.exception.InvalidTokenValueException;
 
 public class TokenValueDefinition {
 	

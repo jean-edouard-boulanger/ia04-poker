@@ -1,4 +1,4 @@
-package model.poker.card.exception;
+package poker.card.exception;
 
 public class CommunityCardsFullException extends Exception {
 	public CommunityCardsFullException(){

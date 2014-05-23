@@ -1,9 +1,9 @@
-package model.token;
+package poker.token.model;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import model.token.exception.InvalidTokenAmountException;
+import poker.token.exception.InvalidTokenAmountException;
 
 /**
  * Classe representant une collection de jetons de poker

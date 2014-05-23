@@ -1,6 +1,6 @@
-package model.poker.card;
+package poker.card.model;
 
-import model.poker.card.exception.UserDeckFullException;
+import poker.card.exception.UserDeckFullException;
 
 /**
  * Contains the cards of a player

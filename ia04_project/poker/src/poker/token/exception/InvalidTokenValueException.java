@@ -1,4 +1,4 @@
-package model.token.exception;
+package poker.token.exception;
 
 public class InvalidTokenValueException extends Exception {
 	public InvalidTokenValueException(){

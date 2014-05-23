@@ -1,4 +1,4 @@
-package model.token;
+package poker.token.model;
 
 public enum TokenType {
 	WHITE(1),

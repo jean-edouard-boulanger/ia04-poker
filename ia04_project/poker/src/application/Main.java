@@ -14,10 +14,10 @@ import javafx.stage.Stage;
 
 import javax.swing.SwingUtilities;
 
-import model.poker.card.Card;
-import model.poker.card.CardRank;
-import model.poker.card.CardSuit;
-import model.poker.card.GameDeck;
+import poker.card.model.Card;
+import poker.card.model.CardRank;
+import poker.card.model.CardSuit;
+import poker.card.model.GameDeck;
 import server.ServerWindow;
 import application.PersoIHM.Sens;
 

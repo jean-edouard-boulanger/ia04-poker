@@ -1,4 +1,4 @@
-package model.poker.card;
+package poker.card.model;
 
 public class Card {
 	private CardSuit suit;
