@@ -3,6 +3,8 @@ package model.token;
 import java.util.HashMap;
 import java.util.Map;
 
+import model.token.exception.InvalidTokenAmountException;
+
 /**
  * Classe representant une collection de jetons de poker
  *
@@ -32,27 +34,36 @@ public class TokenSet {
 		return (amount == null) ? 0 : amount;
 	}
 	
-	public void setAmountForTokenType(TokenType tokenType, int amount){
+	public void setAmountForTokenType(TokenType tokenType, int amount) throws InvalidTokenAmountException{
+		if(amount < 0){
+			throw new InvalidTokenAmountException();
+		}
 		this.tokensAmount.put(tokenType, amount);
 	}
 	
-	public void increaseAmountForTokenType(TokenType tokenType, int amount){
+	public void increaseAmountForTokenType(TokenType tokenType, int amount) throws InvalidTokenAmountException{
+		if(amount < 0){
+			throw new InvalidTokenAmountException();
+		}
 		int newAmount = this.tokensAmount.get(tokenType) + amount;
 		this.tokensAmount.put(tokenType, newAmount);
 	}
 	
-	public void decreaseAmountForTokenType(TokenType tokenType, int amount){
+	public void decreaseAmountForTokenType(TokenType tokenType, int amount) throws InvalidTokenAmountException{
+		if(amount < 0){
+			throw new InvalidTokenAmountException();
+		}
 		int newAmount = this.tokensAmount.get(tokenType) - amount;
-		this.tokensAmount.put(tokenType, newAmount);
+		this.setAmountForTokenType(tokenType, newAmount);
 	}
 	
-	public void AddTokenSet(TokenSet addedTokenSet){
+	public void AddTokenSet(TokenSet addedTokenSet) throws InvalidTokenAmountException{
 		for(TokenType tt : TokenType.values()){
 			this.increaseAmountForTokenType(tt, addedTokenSet.getAmountForTokenType(tt));
 		}
 	}	
 	
-	public void SubstractTokenSet(TokenSet substractedTokenSet){
+	public void SubstractTokenSet(TokenSet substractedTokenSet) throws InvalidTokenAmountException{
 		for(TokenType tt : TokenType.values()){
 			this.decreaseAmountForTokenType(tt, substractedTokenSet.getAmountForTokenType(tt));
 		}
@@ -60,7 +71,7 @@ public class TokenSet {
 	
 	public void reset(){
 		for(TokenType tt : TokenType.values()){
-			this.setAmountForTokenType(tt, 0);
+			this.tokensAmount.put(tt, 0);
 		}
 	}
 }

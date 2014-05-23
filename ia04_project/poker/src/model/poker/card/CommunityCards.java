@@ -2,7 +2,7 @@ package model.poker.card;
 
 import java.util.ArrayList;
 
-import model.poker.card.exceptions.CommunityCardsFullException;
+import model.poker.card.exception.CommunityCardsFullException;
 
 public class CommunityCards{
 	

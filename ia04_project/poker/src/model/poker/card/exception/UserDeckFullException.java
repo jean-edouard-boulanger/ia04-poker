@@ -1,4 +1,4 @@
-package model.poker.card.exceptions;
+package model.poker.card.exception;
 
 public class UserDeckFullException extends Exception {
 	public UserDeckFullException(){
