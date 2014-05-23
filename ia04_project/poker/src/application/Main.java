@@ -14,12 +14,12 @@ import javafx.stage.Stage;
 
 import javax.swing.SwingUtilities;
 
+import model.poker.card.Card;
+import model.poker.card.CardRank;
+import model.poker.card.CardSuit;
+import model.poker.card.GameDeck;
 import server.ServerWindow;
 import application.PersoIHM.Sens;
-import classes.Card;
-import classes.CardRank;
-import classes.CardSuit;
-import classes.Deck;
 
 
 public class Main extends Application {
@@ -35,7 +35,7 @@ public class Main extends Application {
 		
 		Card card = new Card(CardRank.ACE, CardSuit.CLUBS);
 
-		Deck deck = Deck.instance();
+		GameDeck deck = GameDeck.instance();
 		deck.printDeck();
 		
 		primaryStage.setTitle("Poker");

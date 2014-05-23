@@ -1,17 +1,17 @@
-package classes;
+package model.poker.card;
+
+import model.poker.card.exceptions.UserDeckFullException;
 
 /**
  * Contains the cards of a player
  *
  */
-public class CardSet {
+public class UserDeck {
 	
-	Card card1;
-	Card card2;
+	private Card card1;
+	private Card card2;
 	
-	public CardSet() {
-		
-	}
+	public UserDeck() {}
 	
 	public Card getCard1() {
 		return card1;
@@ -31,10 +31,10 @@ public class CardSet {
 		card2 = null;
 	}
 	
-	public void addCard(Card newCard) {
+	public void addCard(Card newCard) throws UserDeckFullException {
 		if(card1 != null && card2 != null)
 		{
-			System.out.println("Player has already two cards.");
+			throw new UserDeckFullException();
 		}
 		
 		if(card1 == null) {

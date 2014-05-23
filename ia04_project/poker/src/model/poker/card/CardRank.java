@@ -1,4 +1,4 @@
-package classes;
+package model.poker.card;
 
 public enum CardRank {
 	TWO(2),

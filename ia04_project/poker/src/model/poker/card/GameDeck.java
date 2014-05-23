@@ -1,4 +1,4 @@
-package classes;
+package model.poker.card;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -9,21 +9,21 @@ import java.util.Set;
  * Contains the cards of the game
  *
  */
-public class Deck {
+public class GameDeck {
 	
-	protected static Deck instance = null;
+	protected static GameDeck instance = null;
 	protected ArrayList<Card> cards;
 	
-	public static Deck instance() {		
+	public static GameDeck instance() {		
 		if (instance == null) {
-			instance = new Deck();
+			instance = new GameDeck();
 			instance.resetDeck();
 		}
 
 		return instance;
 	}
 
-	protected Deck() {
+	protected GameDeck() {
 
 	}
 	

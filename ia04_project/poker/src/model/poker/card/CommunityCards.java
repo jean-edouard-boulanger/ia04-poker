@@ -1,7 +1,8 @@
-package classes;
+package model.poker.card;
 
 import java.util.ArrayList;
-import classes.exceptions.CommunityCardsFullException;
+
+import model.poker.card.exceptions.CommunityCardsFullException;
 
 public class CommunityCards{
 	
