@@ -1,4 +1,4 @@
-package sma;
+package sma.agent;
 
 import jade.core.Agent;
 

@@ -13,14 +13,6 @@ public class TokenSet {
 
 	private Map<TokenType, Integer> tokensAmount;
 	
-	public Map<TokenType, Integer> getTokensAmount(){
-		return this.tokensAmount;
-	}
-	
-	public void setMap(Map<TokenType, Integer> tokensAmount){
-		this.tokensAmount = tokensAmount;
-	}
-	
 	public TokenSet(){
 		this.tokensAmount = new HashMap<TokenType, Integer>();
 	}
@@ -29,6 +21,14 @@ public class TokenSet {
 		this.tokensAmount = tokensAmount;
 	}
 	
+	public Map<TokenType, Integer> getTokensAmount(){
+		return this.tokensAmount;
+	}
+	
+	public void setMap(Map<TokenType, Integer> tokensAmount){
+		this.tokensAmount = tokensAmount;
+	}
+		
 	public int getAmountForTokenType(TokenType tokenType){
 		Integer amount = this.tokensAmount.get(tokenType);
 		return (amount == null) ? 0 : amount;
