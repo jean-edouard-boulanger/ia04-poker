@@ -1,7 +1,7 @@
 package poker.card.handler.combination.model;
 
 public enum Combination {
-	HIGHT_CARD(1), //Hauteur
+	HIGH_CARD(1), //Hauteur
 	ONE_PAIR(2), //Une paire
 	TWO_PAIR(3), //Deux paires
 	THREE_OF_A_KING(4), //Brelan, 3 cartes identiques

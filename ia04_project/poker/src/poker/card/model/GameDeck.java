@@ -14,7 +14,7 @@ public class GameDeck {
 	protected static GameDeck instance = null;
 	protected ArrayList<Card> cards;
 	
-	public static GameDeck instance() {		
+	public static GameDeck getInstance() {		
 		if (instance == null) {
 			instance = new GameDeck();
 			instance.resetDeck();

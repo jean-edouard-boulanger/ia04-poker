@@ -32,4 +32,22 @@ public class Hand {
 	public void setCards(ArrayList<Card> cards) {
 		this.cards = cards;
 	}
+	
+	public String toString() {
+		String hand =
+				"Hand: \n"
+				+ "Combination: " + getCombination() + "\n"
+				+ "Cards: [";
+		
+		for(Card c : cards) {
+			hand += c.toString();
+			
+			if(c != cards.get(cards.size() - 1))
+				hand += ", ";
+		}
+		
+		hand += "]\n---------";
+		
+		return hand;
+	}
 }
