@@ -23,9 +23,7 @@ public class GameDeck {
 		return instance;
 	}
 
-	protected GameDeck() {
-
-	}
+	protected GameDeck() {}
 	
 	public ArrayList<Card> getCards() {
 		return cards;

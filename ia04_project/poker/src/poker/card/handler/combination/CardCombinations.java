@@ -89,7 +89,6 @@ public class CardCombinations {
 			throw new EmptyCardListException();
 		}
 		
-//		Collections.sort(cards, new Card.CardComparator());
 		Map<CardRank, ArrayList<Card>> pairsMap = allPairs(cards);
 		
 		if(pairsMap == null || pairsMap.size() == 0)
