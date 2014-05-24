@@ -8,14 +8,14 @@ public class CommunityCards{
 	
 	private static final int NBCARDS = 5;
 	
-	private CommunityCards instance = null;
+	private static CommunityCards instance = null;
 	private ArrayList<Card> communityCards;
 		
 	private CommunityCards(){
 		this.communityCards = new ArrayList<Card>();
 	}
 	
-	public CommunityCards getInstance(){
+	public static CommunityCards getInstance(){
 		if(instance == null){
 			instance = new CommunityCards();
 		}
