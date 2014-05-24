@@ -43,7 +43,14 @@ public class CardCombinations {
 		return new Hand(Combination.HIGH_CARD, handCard);
 	}
 	
-	private static Map<CardRank, ArrayList<Card>> allPairs(ArrayList<Card> cards) throws EmptyCardListException {
+	/**
+	 * 
+	 * @param cards
+	 * @param minimumIdentic If 0, returns all list containing more than one card of the same rank. Else returns the lists containing the exact number of cards of the same rank.
+	 * @return
+	 * @throws EmptyCardListException
+	 */
+	private static Map<CardRank, ArrayList<Card>> allPairs(ArrayList<Card> cards, int minimumIdentic) throws EmptyCardListException {
 		if(cards == null || cards.size() == 0) {
 			throw new EmptyCardListException();
 		}
@@ -57,7 +64,7 @@ public class CardCombinations {
 		
 		int count = cards.size();
 		
-		for (int i = 0; i < count - 1; i++) {
+		for (int i = 0; i < count; i++) {
 			Card card = cards.get(i);
 			CardRank rank = card.getRank();
 			
@@ -70,12 +77,16 @@ public class CardCombinations {
 			pairsMap.get(rank).add(card);
 		}
 		
+		Map<CardRank, ArrayList<Card>> finalPairsMap = new HashMap<CardRank, ArrayList<Card>>();
+		
+		//Keeping only the long enough lists
 		for(Entry<CardRank, ArrayList<Card>> entry : pairsMap.entrySet()) {
-			if(entry.getValue().size() < 2)
-				pairsMap.remove(entry.getKey());
+			if(entry.getValue().size() >= 2 && !(minimumIdentic > 0 && entry.getValue().size() < minimumIdentic)) {
+				finalPairsMap.put(entry.getKey(), entry.getValue());				
+			}
 		}
 		
-		return pairsMap;
+		return finalPairsMap;
 	}
 	
 	/**
@@ -89,7 +100,7 @@ public class CardCombinations {
 			throw new EmptyCardListException();
 		}
 		
-		Map<CardRank, ArrayList<Card>> pairsMap = allPairs(cards);
+		Map<CardRank, ArrayList<Card>> pairsMap = allPairs(cards, 2);
 		
 		if(pairsMap == null || pairsMap.size() == 0)
 			return null;
@@ -112,13 +123,74 @@ public class CardCombinations {
 		
 		ArrayList<Card> pairCards = pairsMap.get(highestRank);
 		
-		if(pairCards.size() > 2) {
-			while(pairCards.size() > 2) {
-				pairCards.remove(0);
-			}
+		while(pairCards.size() > 2) {
+			pairCards.remove(0);
 		}
 		
 		return new Hand(Combination.ONE_PAIR, pairCards);
+	}
+	
+	/**
+	 * 
+	 * @param cards
+	 * @return Highest two pair in the list of cards
+	 * @throws EmptyCardListException
+	 */
+	public static Hand highestTwoPair(ArrayList<Card> cards) throws EmptyCardListException {
+		if(cards == null || cards.size() == 0) {
+			throw new EmptyCardListException();
+		}
+		
+		Map<CardRank, ArrayList<Card>> pairsMap = allPairs(cards, 2);
+		
+		if(pairsMap == null || pairsMap.size() == 1)
+			return null;
+		
+		CardRank highestRank1 = null;
+		CardRank highestRank2 = null;
+		
+		//Iterating on all the entries of the map to find the highest rank, with highestRank1 > highestRank2
+		for(Entry<CardRank, ArrayList<Card>> entry : pairsMap.entrySet()) {
+			ArrayList<Card> list = entry.getValue();
+				
+			if(highestRank1 == null) {
+				//No pair already found
+				highestRank1 = list.get(0).getRank();
+			}
+			else if(highestRank2 == null) {
+				//Only one pair found
+				if(highestRank1.getCardRank() < list.get(0).getRank().getCardRank()) {
+					highestRank2 = highestRank1;
+					highestRank1 = list.get(0).getRank();
+				}
+				else
+					highestRank2 = list.get(0).getRank();				
+			}
+			else if(highestRank1.getCardRank() < list.get(0).getRank().getCardRank()) {
+				//Better than both best pairs found
+				highestRank2 = highestRank1;
+				highestRank1 = list.get(0).getRank();
+			}
+			else if(highestRank2.getCardRank() < list.get(0).getRank().getCardRank()) {
+				//Pair better than only one of the 2 current best
+				highestRank2 = list.get(0).getRank();
+			}
+		}
+		
+		//Making the two pair list with the two highest rank lists
+		while(pairsMap.get(highestRank1).size() > 2) {
+			pairsMap.get(highestRank1).remove(0);
+		}
+		
+		while(pairsMap.get(highestRank2).size() > 2) {
+			pairsMap.get(highestRank2).remove(0);
+		}
+		
+		ArrayList<Card> pairCards = pairsMap.get(highestRank1);
+		
+		pairCards.addAll(pairsMap.get(highestRank2));
+		
+		return new Hand(Combination.TWO_PAIR, pairCards);
 	}
 	
 	public static Hand playerHandWithGame(UserDeck userDeck) throws EmptyCardListException {

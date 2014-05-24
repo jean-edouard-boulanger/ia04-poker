@@ -37,12 +37,26 @@ public class Main extends Application {
 	@Override
 	public void start(Stage primaryStage) {
 		
-		Card card = new Card(CardRank.ACE, CardSuit.CLUBS);
-
+		Card card1 = new Card(CardRank.TWO, CardSuit.CLUBS);
+		Card card2 = new Card(CardRank.EIGHT, CardSuit.DIAMONDS);
+		Card card3 = new Card(CardRank.TWO, CardSuit.HEARTS);
+		Card card4 = new Card(CardRank.EIGHT, CardSuit.SPADES);
+		Card card5 = new Card(CardRank.NINE, CardSuit.SPADES);
+		Card card6 = new Card(CardRank.NINE, CardSuit.HEARTS);
+		
 		GameDeck deck = GameDeck.getInstance();
 		
+		ArrayList<Card> cards = new ArrayList<Card>();
+		
+		cards.add(card1);
+		cards.add(card2);
+		cards.add(card3);
+		cards.add(card4);
+		cards.add(card5);
+		cards.add(card6);
+		
 		try {
-			System.out.println(CardCombinations.highestOnePair((ArrayList<Card>) deck.getCards().clone()));
+			System.out.println(CardCombinations.highestTwoPair(cards));
 			
 		} catch (EmptyCardListException e) {
 			e.printStackTrace();
