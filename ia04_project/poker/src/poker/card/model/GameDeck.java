@@ -42,7 +42,6 @@ public class GameDeck {
 				this.cards.add(card);
 			}
 		}
-		
 		Collections.shuffle(cards);
 	}
 	

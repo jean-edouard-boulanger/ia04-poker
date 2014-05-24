@@ -35,15 +35,17 @@ public class Card {
 		this.rank = rank;
 	}
 	
+	public boolean equals(Card other){
+		return this.rank == other.rank && this.suit == other.suit;
+	}
+	
 	public int compareTo(Card card) {
 		return this.rank.getCardRank() > card.getRank().getCardRank() ? 1 : this.rank.getCardRank() < card.getRank().getCardRank() ? -1 : 0;
 	}
 	
 	public static class CardComparator implements Comparator<Card> {
 		
-		public CardComparator() {
-
-		}
+		public CardComparator() {}
 		
 		@Override
 		public int compare(Card o1, Card o2) {			

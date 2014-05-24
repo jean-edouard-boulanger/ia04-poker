@@ -1,4 +1,4 @@
-package poker.card.handler.combination.exception;
+package poker.card.heuristics.combination.exception;
 
 public class EmptyCardListException extends Exception {
 	public EmptyCardListException(){

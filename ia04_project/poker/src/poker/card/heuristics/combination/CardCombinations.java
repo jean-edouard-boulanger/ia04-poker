@@ -1,14 +1,14 @@
-package poker.card.handler.combination;
+package poker.card.heuristics.combination;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import poker.card.handler.combination.exception.EmptyCardListException;
-import poker.card.handler.combination.exception.UnexpectedCombinationIdenticCards;
-import poker.card.handler.combination.model.Combination;
-import poker.card.handler.combination.model.Hand;
+import poker.card.heuristics.combination.exception.EmptyCardListException;
+import poker.card.heuristics.combination.exception.UnexpectedCombinationIdenticCards;
+import poker.card.heuristics.combination.model.Combination;
+import poker.card.heuristics.combination.model.Hand;
 import poker.card.model.Card;
 import poker.card.model.CardRank;
 import poker.card.model.CardSuit;

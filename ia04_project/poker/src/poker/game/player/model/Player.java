@@ -76,9 +76,4 @@ public abstract class Player {
 	public int getBankroll(TokenValueDefinition tokenValueDefinition){
 		return TokenSetValueEvaluator.evaluateTokenSetValue(tokenValueDefinition, this.tokens);
 	}
-	
-	public int getTotalAmountTokenType(TokenType tt, TokenValueDefinition tokenValueDefinition){
-		return this.tokens.getAmountForTokenType(tt);
-	}
-	
 }

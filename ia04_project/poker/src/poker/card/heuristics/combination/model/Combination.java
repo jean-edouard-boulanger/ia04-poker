@@ -1,4 +1,4 @@
-package poker.card.handler.combination.model;
+package poker.card.heuristics.combination.model;
 
 public enum Combination {
 	HIGH_CARD(1), //Hauteur
@@ -8,7 +8,7 @@ public enum Combination {
 	STRAIGHT(5), //Suite de 5 cartes
 	FLUSH(6), //Couleur
 	FULL_HOUSE(7), //Full (1 paire et 1 brelan)
-	FOUR_OF_A_KING(8), //Carré
+	FOUR_OF_A_KING(8), //Carr??
 	STRAIGHT_FLUSH(9); //Quinte flush: suite + couleur
 
 	private int combination;

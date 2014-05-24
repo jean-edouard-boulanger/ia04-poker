@@ -1,4 +1,4 @@
-package poker.card.handler.combination.model;
+package poker.card.heuristics.combination.model;
 
 import java.util.ArrayList;
 

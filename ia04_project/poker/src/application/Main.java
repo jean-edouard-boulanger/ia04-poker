@@ -16,9 +16,9 @@ import javafx.stage.Stage;
 
 import javax.swing.SwingUtilities;
 
-import poker.card.handler.combination.CardCombinations;
-import poker.card.handler.combination.exception.EmptyCardListException;
-import poker.card.handler.combination.exception.UnexpectedCombinationIdenticCards;
+import poker.card.heuristics.combination.CardCombinations;
+import poker.card.heuristics.combination.exception.EmptyCardListException;
+import poker.card.heuristics.combination.exception.UnexpectedCombinationIdenticCards;
 import poker.card.model.Card;
 import poker.card.model.CardRank;
 import poker.card.model.CardSuit;
