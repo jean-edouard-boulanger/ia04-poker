@@ -20,7 +20,6 @@ public class TokenSetFactory {
 		if(totalRepartition != 100){
 			throw new InvalidRepartitionException();
 		}
-		
 		return t;
 	}
 }
