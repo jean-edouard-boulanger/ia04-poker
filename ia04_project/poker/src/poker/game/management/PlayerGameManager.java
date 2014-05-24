@@ -12,4 +12,6 @@ public class PlayerGameManager {
 	private Game game;
 	private Player player;
 	
+	
+	
 }
