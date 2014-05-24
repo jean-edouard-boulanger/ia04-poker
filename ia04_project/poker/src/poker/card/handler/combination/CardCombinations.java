@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import poker.card.handler.combination.exception.EmptyCardListException;
+import poker.card.handler.combination.exception.UnexpectedCombinationIdenticCards;
 import poker.card.handler.combination.model.Combination;
 import poker.card.handler.combination.model.Hand;
 import poker.card.model.Card;
@@ -89,19 +90,7 @@ public class CardCombinations {
 		return finalPairsMap;
 	}
 	
-	/**
-	 * 
-	 * @param cards
-	 * @return Highest one pair hand of a card list
-	 * @throws EmptyCardListException
-	 */
-	public static Hand highestOnePair(ArrayList<Card> cards) throws EmptyCardListException {
-		if(cards == null || cards.size() == 0) {
-			throw new EmptyCardListException();
-		}
-		
-		Map<CardRank, ArrayList<Card>> pairsMap = allPairs(cards, 2);
-		
+	public static ArrayList<Card> listOfKingFromMap(Map<CardRank, ArrayList<Card>> pairsMap, int totalIdenticCards) {
 		if(pairsMap == null || pairsMap.size() == 0)
 			return null;
 		
@@ -123,13 +112,50 @@ public class CardCombinations {
 		
 		ArrayList<Card> pairCards = pairsMap.get(highestRank);
 		
-		while(pairCards.size() > 2) {
+		while(pairCards.size() > totalIdenticCards) {
 			pairCards.remove(0);
 		}
-		
-		return new Hand(Combination.ONE_PAIR, pairCards);
+
+		return pairCards;
 	}
 	
+	/**
+	 * 
+	 * @param cards
+	 * @param totalIdenticCards 2 to get highest one pair. 3 to get highest three of a king. 4 to get highest four of a king.
+	 * @return Highest one pair, three of a king or four of a king hand of a card list
+	 * @throws UnexpectedCombinationIdenticCards
+	 * @throws EmptyCardListException
+	 */
+	public static Hand highestOfKing(ArrayList<Card> cards, int totalIdenticCards) throws UnexpectedCombinationIdenticCards, EmptyCardListException {
+		if(totalIdenticCards < 2 || totalIdenticCards > 4)
+			throw new UnexpectedCombinationIdenticCards(totalIdenticCards);
+		
+		if(cards == null || cards.size() == 0) {
+			throw new EmptyCardListException();
+		}
+		
+		Map<CardRank, ArrayList<Card>> pairsMap = allPairs(cards, totalIdenticCards);
+		
+		ArrayList<Card> pairCards = listOfKingFromMap(pairsMap, totalIdenticCards);
+		
+		Combination combination = null;
+		
+		switch (totalIdenticCards) {
+		case 2:
+			combination = Combination.ONE_PAIR;
+			break;
+		case 3:
+			combination = Combination.THREE_OF_A_KING;
+			break;
+		case 4:
+			combination = Combination.FOUR_OF_A_KING;
+			break;
+		}
+		
+		return new Hand(combination, pairCards);
+	}
+		
 	/**
 	 * 
 	 * @param cards

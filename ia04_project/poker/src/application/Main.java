@@ -18,6 +18,7 @@ import javax.swing.SwingUtilities;
 
 import poker.card.handler.combination.CardCombinations;
 import poker.card.handler.combination.exception.EmptyCardListException;
+import poker.card.handler.combination.exception.UnexpectedCombinationIdenticCards;
 import poker.card.model.Card;
 import poker.card.model.CardRank;
 import poker.card.model.CardSuit;
@@ -43,6 +44,7 @@ public class Main extends Application {
 		Card card4 = new Card(CardRank.EIGHT, CardSuit.SPADES);
 		Card card5 = new Card(CardRank.NINE, CardSuit.SPADES);
 		Card card6 = new Card(CardRank.NINE, CardSuit.HEARTS);
+		Card card7 = new Card(CardRank.NINE, CardSuit.DIAMONDS);
 		
 		GameDeck deck = GameDeck.getInstance();
 		
@@ -54,11 +56,15 @@ public class Main extends Application {
 		cards.add(card4);
 		cards.add(card5);
 		cards.add(card6);
+		cards.add(card7);
 		
 		try {
-			System.out.println(CardCombinations.highestTwoPair(cards));
+			System.out.println(CardCombinations.highestOfKing(cards, 2));
 			
 		} catch (EmptyCardListException e) {
+			e.printStackTrace();
+		} catch (UnexpectedCombinationIdenticCards e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
