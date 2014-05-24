@@ -37,29 +37,21 @@ public class Main extends Application {
 	
 	@Override
 	public void start(Stage primaryStage) {
-		
-		Card card1 = new Card(CardRank.TWO, CardSuit.CLUBS);
-		Card card2 = new Card(CardRank.EIGHT, CardSuit.DIAMONDS);
-		Card card3 = new Card(CardRank.TWO, CardSuit.HEARTS);
-		Card card4 = new Card(CardRank.EIGHT, CardSuit.SPADES);
-		Card card5 = new Card(CardRank.NINE, CardSuit.SPADES);
-		Card card6 = new Card(CardRank.NINE, CardSuit.HEARTS);
-		Card card7 = new Card(CardRank.NINE, CardSuit.DIAMONDS);
-		
+				
 		GameDeck deck = GameDeck.getInstance();
 		
 		ArrayList<Card> cards = new ArrayList<Card>();
 		
-		cards.add(card1);
-		cards.add(card2);
-		cards.add(card3);
-		cards.add(card4);
-		cards.add(card5);
-		cards.add(card6);
-		cards.add(card7);
+		cards.add(new Card(CardRank.TWO, CardSuit.CLUBS));
+		cards.add(new Card(CardRank.EIGHT, CardSuit.DIAMONDS));
+		cards.add(new Card(CardRank.TWO, CardSuit.HEARTS));
+		cards.add(new Card(CardRank.EIGHT, CardSuit.SPADES));
+		cards.add(new Card(CardRank.NINE, CardSuit.SPADES));
+		cards.add(new Card(CardRank.NINE, CardSuit.HEARTS));
+		cards.add(new Card(CardRank.NINE, CardSuit.DIAMONDS));
 		
 		try {
-			System.out.println(CardCombinations.highestOfKing(cards, 2));
+			System.out.println(CardCombinations.highestFullHouse(cards));
 			
 		} catch (EmptyCardListException e) {
 			e.printStackTrace();

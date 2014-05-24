@@ -11,6 +11,7 @@ import poker.card.handler.combination.model.Combination;
 import poker.card.handler.combination.model.Hand;
 import poker.card.model.Card;
 import poker.card.model.CardRank;
+import poker.card.model.CardSuit;
 import poker.card.model.CommunityCards;
 import poker.card.model.UserDeck;
 
@@ -90,7 +91,13 @@ public class CardCombinations {
 		return finalPairsMap;
 	}
 	
-	public static ArrayList<Card> listOfKingFromMap(Map<CardRank, ArrayList<Card>> pairsMap, int totalIdenticCards) {
+	/**
+	 * 
+	 * @param pairsMap Map containing lists of cards.
+	 * @param totalIdenticCards Size of the list we need (2, 3 or 4 cards of the same rank)
+	 * @return List of totalIdenticCards cards with the highest (and same) rank.
+	 */
+	public static ArrayList<Card> listOfHighestRankFromMap(Map<CardRank, ArrayList<Card>> pairsMap, int totalIdenticCards) {
 		if(pairsMap == null || pairsMap.size() == 0)
 			return null;
 		
@@ -137,7 +144,10 @@ public class CardCombinations {
 		
 		Map<CardRank, ArrayList<Card>> pairsMap = allPairs(cards, totalIdenticCards);
 		
-		ArrayList<Card> pairCards = listOfKingFromMap(pairsMap, totalIdenticCards);
+		ArrayList<Card> pairCards = listOfHighestRankFromMap(pairsMap, totalIdenticCards);
+		
+		if(pairCards == null)
+			return null;
 		
 		Combination combination = null;
 		
@@ -217,6 +227,69 @@ public class CardCombinations {
 		pairCards.addAll(pairsMap.get(highestRank2));
 		
 		return new Hand(Combination.TWO_PAIR, pairCards);
+	}
+	
+	public static Hand highestFullHouse(ArrayList<Card> cards) throws UnexpectedCombinationIdenticCards, EmptyCardListException {
+		if(cards == null || cards.size() == 0) {
+			throw new EmptyCardListException();
+		}
+		
+		Hand combinationCards = highestOfKing(cards, 3);
+		
+		//No three of a king
+		if(combinationCards == null)
+			return null;
+		
+		//Copying cards not to remove cards from the tested list.
+		ArrayList<Card> cardsToTest = (ArrayList<Card>) cards.clone();
+		
+		//Removing the three of a king found not to find it as the best one pair.
+		cardsToTest.removeAll(combinationCards.getCards());
+		
+		Hand highestOnePair = highestOfKing(cardsToTest, 2);
+		
+		//No pair
+		if(highestOnePair == null)
+			return null;
+		
+		//Pair and three of a king: merge them to make the full house
+		combinationCards.getCards().addAll(highestOnePair.getCards());
+		
+		return new Hand(Combination.FULL_HOUSE, combinationCards.getCards());
+	}
+	
+	public static Hand highestFlush(ArrayList<Card> cards) throws EmptyCardListException {
+		if(cards == null || cards.size() == 0) {
+			throw new EmptyCardListException();
+		}
+
+		//Need 5 cards at least to get a flush
+		if(cards.size() < 5)
+			return null;
+		
+		Map<CardSuit, ArrayList<Card>> suitMap = new HashMap<CardSuit, ArrayList<Card>>();
+		
+		for(Card card : cards) {
+			CardSuit suit = card.getSuit();
+			
+			if(!suitMap.containsKey(suit)) {
+				//Card rank does not exist in the map yet: create a new list for it
+				ArrayList<Card> list = new ArrayList<Card>();
+				suitMap.put(suit, list);
+			}
+			
+			suitMap.get(suit).add(card);
+		}
+		
+		//Iterating over the map to see if a suit contains at least 5 cards
+		for(Entry<CardSuit, ArrayList<Card>> entry : suitMap.entrySet()) {
+			if(entry.getValue().size() >= 5) {
+				
+			}
+		}
+		
+		//No flush found
+		return null;
 	}
 	
 	public static Hand playerHandWithGame(UserDeck userDeck) throws EmptyCardListException {
