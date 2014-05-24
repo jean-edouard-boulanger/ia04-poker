@@ -14,6 +14,8 @@ import javafx.stage.Stage;
 
 import javax.swing.SwingUtilities;
 
+import poker.card.handler.combination.CardCombinations;
+import poker.card.handler.combination.exception.EmptyCardListException;
 import poker.card.model.Card;
 import poker.card.model.CardRank;
 import poker.card.model.CardSuit;
@@ -36,7 +38,12 @@ public class Main extends Application {
 		Card card = new Card(CardRank.ACE, CardSuit.CLUBS);
 
 		GameDeck deck = GameDeck.instance();
-		deck.printDeck();
+		
+		try {
+			System.out.println(CardCombinations.highestCard(deck.getCards()).getCards().get(0));
+		} catch (EmptyCardListException e) {
+			e.printStackTrace();
+		}
 		
 		primaryStage.setTitle("Poker");
         Group root = new Group();

@@ -32,4 +32,8 @@ public class Card {
 	private void setRank(CardRank rank) {
 		this.rank = rank;
 	}
+	
+	public int compareTo(Card card) {
+		return this.rank.getCardRank() > card.getRank().getCardRank() ? 1 : this.rank.getCardRank() < card.getRank().getCardRank() ? -1 : 0;
+	}
 }
