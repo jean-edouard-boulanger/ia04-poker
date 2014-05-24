@@ -13,7 +13,7 @@ public class TokenSetFactory {
 		TokenSet t = new TokenSet();
 		
 		for(TokenType tt : TokenType.values()){
-			t.setAmountForTokenType(tt, nbTokens * repartition.getRepartitionForToken(tt) / 100);
+			t.setAmountForTokenType(tt, (int)(nbTokens * (float)repartition.getRepartitionForToken(tt) / 100.0));
 			totalRepartition += repartition.getRepartitionForToken(tt);
 		}
 		
@@ -23,5 +23,4 @@ public class TokenSetFactory {
 		
 		return t;
 	}
-	
 }

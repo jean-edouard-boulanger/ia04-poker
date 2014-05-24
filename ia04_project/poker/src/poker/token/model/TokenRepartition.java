@@ -20,6 +20,8 @@ public class TokenRepartition {
 	}
 	
 	public TokenRepartition(int whiteRepartition, int redRepartition, int greenRepartition, int blueRepartition, int blackRepartition){
+		this.tokenRepartition = new HashMap<TokenType, Integer>();
+		
 		this.tokenRepartition.put(TokenType.WHITE, whiteRepartition);
 		this.tokenRepartition.put(TokenType.RED, redRepartition);
 		this.tokenRepartition.put(TokenType.GREEN, greenRepartition);
