@@ -1,5 +1,7 @@
 package application;
 
+import java.util.ArrayList;
+
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -37,10 +39,11 @@ public class Main extends Application {
 		
 		Card card = new Card(CardRank.ACE, CardSuit.CLUBS);
 
-		GameDeck deck = GameDeck.instance();
+		GameDeck deck = GameDeck.getInstance();
 		
 		try {
-			System.out.println(CardCombinations.highestCard(deck.getCards()).getCards().get(0));
+			System.out.println(CardCombinations.highestOnePair((ArrayList<Card>) deck.getCards().clone()));
+			
 		} catch (EmptyCardListException e) {
 			e.printStackTrace();
 		}

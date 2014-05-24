@@ -1,5 +1,7 @@
 package poker.card.model;
 
+import java.util.Comparator;
+
 public class Card {
 	private CardSuit suit;
 	private CardRank rank;
@@ -35,5 +37,17 @@ public class Card {
 	
 	public int compareTo(Card card) {
 		return this.rank.getCardRank() > card.getRank().getCardRank() ? 1 : this.rank.getCardRank() < card.getRank().getCardRank() ? -1 : 0;
+	}
+	
+	public static class CardComparator implements Comparator<Card> {
+		
+		public CardComparator() {
+
+		}
+		
+		@Override
+		public int compare(Card o1, Card o2) {			
+			return o1.compareTo(o2);
+		}
 	}
 }
