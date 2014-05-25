@@ -35,8 +35,15 @@ public class Card {
 		this.rank = rank;
 	}
 	
-	public boolean equals(Card other){
-		return this.rank == other.rank && this.suit == other.suit;
+	@Override
+	public boolean equals(Object other){
+		if(other == this) return true;
+		
+		if(other instanceof Card){
+			Card otherCard = (Card)other;
+			return otherCard.rank == this.rank && otherCard.suit == this.suit;
+		}
+		return false;
 	}
 	
 	public int compareTo(Card card) {

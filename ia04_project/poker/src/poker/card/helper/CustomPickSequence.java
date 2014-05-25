@@ -79,5 +79,11 @@ public class CustomPickSequence {
 		CustomPickSequence holdemRiverDealSequence = new CustomPickSequence();
 		
 		return holdemRiverDealSequence.alternateBurnPickNextCard();
-	}	
+	}
+	
+	public static CustomPickSequence getHoldemFlopDealSequence(){
+		CustomPickSequence holdemRiverDealSequence = new CustomPickSequence();
+		
+		return holdemRiverDealSequence.burnNextCard().pickNextCards(3);
+	}
 }
