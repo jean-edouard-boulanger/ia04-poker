@@ -50,8 +50,8 @@ public class Main extends Application {
 		
 		ArrayList<Card> cards = new ArrayList<Card>();
 		
-		cards.add(new Card(CardRank.TWO, CardSuit.CLUBS));
-		cards.add(new Card(CardRank.TWO, CardSuit.DIAMONDS));
+		cards.add(new Card(CardRank.TEN, CardSuit.CLUBS));
+		cards.add(new Card(CardRank.TEN, CardSuit.DIAMONDS));
 		/*cards.add(new Card(CardRank.TWO, CardSuit.HEARTS));
 		cards.add(new Card(CardRank.EIGHT, CardSuit.SPADES));
 		cards.add(new Card(CardRank.NINE, CardSuit.SPADES));
@@ -61,7 +61,7 @@ public class Main extends Application {
 		
 		ProbabilityEvaluator pe = new 
 				ProbabilityEvaluator.ProbabilityEvaluatorBuilder()
-				.setDealSequence(CustomPickSequence.getHoldemFlopThroughRiverDealSequence())
+				.setDealSequence(CustomPickSequence.getHoldemFlopDealSequence())
 				.addExpectedCombination(Combination.ONE_PAIR)
 				.addExpectedCombination(Combination.TWO_PAIR)
 				.addExpectedCombination(Combination.THREE_OF_A_KIND)
@@ -72,8 +72,12 @@ public class Main extends Application {
 		
 		CombinationProbabilityReport r = pe.evaluate();
 		
+		for(Card c : cards){
+			System.out.println(c);
+		}
+		
 		for(Combination c : pe.getExpectedCombinations()){
-			System.out.println(c + " : " + r.getProbabilityForCombination(c) * 100);
+			System.out.println(c + " : " + r.getProbabilityForCombination(c) * 100 + " %");
 		}
 		
 		

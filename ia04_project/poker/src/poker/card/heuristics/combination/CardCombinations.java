@@ -296,7 +296,7 @@ public class CardCombinations {
 		return null;
 	}
 	
-	public static boolean containsCombintationType(Combination combinationType, ArrayList<Card> cards){
+	public static boolean containsCombinationType(Combination combinationType, ArrayList<Card> cards){
 		try{
 			switch(combinationType){
 				case ONE_PAIR:
