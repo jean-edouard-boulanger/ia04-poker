@@ -2,6 +2,7 @@ package poker.card.helper;
 
 import java.util.ArrayList;
 
+
 public class CustomPickSequence {
 
 	private ArrayList<Boolean> customPickSequence;

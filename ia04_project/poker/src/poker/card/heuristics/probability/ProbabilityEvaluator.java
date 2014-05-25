@@ -10,6 +10,7 @@ import poker.card.heuristics.combination.CardCombinations;
 import poker.card.heuristics.combination.exception.EmptyCardListException;
 import poker.card.heuristics.combination.exception.UnexpectedCombinationIdenticCards;
 import poker.card.heuristics.combination.model.Combination;
+import poker.card.heuristics.combination.model.Hand;
 import poker.card.model.Card;
 import poker.card.model.CardDeck;
 
@@ -28,6 +29,23 @@ public class ProbabilityEvaluator {
 		this.knownCards = builder.knownCards;
 		this.nbTrials = builder.nbTrials;
 		this.dealSequence = builder.dealSequence;
+	}
+	
+	
+	public ArrayList<Combination> getExpectedCombinations(){
+		return this.expectedCombinations;
+	}
+	
+	public ArrayList<Card> getKnownCards(){
+		return this.knownCards;
+	}
+	
+	public int getNbTrials(){
+		return this.nbTrials;
+	}
+	
+	public CustomPickSequence getDealSequence(){
+		return this.dealSequence;
 	}
 	
 	/**
@@ -52,12 +70,11 @@ public class ProbabilityEvaluator {
 			pickedCards = CardPickerHelper.pickCardsFromDeck(d, this.dealSequence);
 			pickedCards.addAll(this.knownCards);
 			
-			try{
-				if(CardCombinations.highestOfKing(pickedCards, 3) != null){
-					outcomes.put(Combination.THREE_OF_A_KIND, outcomes.get(Combination.THREE_OF_A_KIND) + 1);
+			for(Combination c : this.expectedCombinations){
+				if(CardCombinations.containsCombintationType(c, pickedCards)){
+					outcomes.put(c, outcomes.get(c) + 1);
 				}
 			}
-			catch(Exception ex){}
 		}
 		
 		for(Combination c : this.expectedCombinations){

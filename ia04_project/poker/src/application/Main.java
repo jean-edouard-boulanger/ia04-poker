@@ -61,14 +61,20 @@ public class Main extends Application {
 		
 		ProbabilityEvaluator pe = new 
 				ProbabilityEvaluator.ProbabilityEvaluatorBuilder()
-				.setDealSequence(CustomPickSequence.getHoldemFlopDealSequence())
-				.setExpectedCombination(Combination.THREE_OF_A_KIND)
+				.setDealSequence(CustomPickSequence.getHoldemFlopThroughRiverDealSequence())
+				.addExpectedCombination(Combination.ONE_PAIR)
+				.addExpectedCombination(Combination.TWO_PAIR)
+				.addExpectedCombination(Combination.THREE_OF_A_KIND)
+				.addExpectedCombination(Combination.FOUR_OF_A_KIND)
 				.setNumberTrials(1000)
 				.setKnownCards(cards)
 				.buildProbabilityEvaluator();
 		
 		CombinationProbabilityReport r = pe.evaluate();
-		System.out.println(r.getProbabilityForCombination(Combination.THREE_OF_A_KIND) * 100);
+		
+		for(Combination c : pe.getExpectedCombinations()){
+			System.out.println(c + " : " + r.getProbabilityForCombination(c) * 100);
+		}
 		
 		
 		/*
