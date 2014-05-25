@@ -68,10 +68,11 @@ public class ProbabilityEvaluator {
 		for(int i = 0; i < this.nbTrials; i++){
 			d = deckGenerator.GenerateNext();
 			pickedCards = CardPickerHelper.pickCardsFromDeck(d, this.dealSequence);
+						
 			pickedCards.addAll(this.knownCards);
-			
+						
 			for(Combination c : this.expectedCombinations){
-				if(CardCombinations.containsCombintationType(c, pickedCards)){
+				if(CardCombinations.containsCombinationType(c, pickedCards)){
 					outcomes.put(c, outcomes.get(c) + 1);
 				}
 			}
