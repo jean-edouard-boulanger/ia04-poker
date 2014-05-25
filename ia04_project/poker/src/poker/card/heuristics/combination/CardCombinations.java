@@ -1,9 +1,12 @@
 package poker.card.heuristics.combination;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+
+import com.sun.javafx.collections.transformation.SortableList.SortMode;
 
 import poker.card.heuristics.combination.exception.EmptyCardListException;
 import poker.card.heuristics.combination.exception.UnexpectedCombinationIdenticCards;
@@ -48,7 +51,7 @@ public class CardCombinations {
 	/**
 	 * 
 	 * @param cards
-	 * @param minimumIdentic If 0, returns all list containing more than one card of the same rank. Else returns the lists containing the exact number of cards of the same rank.
+	 * @param minimumIdentic If 0, returns all list containing more than one card of the same rank. Else returns the lists containing at least minimumIdentic of cards of the same rank.
 	 * @return
 	 * @throws EmptyCardListException
 	 */
@@ -262,7 +265,7 @@ public class CardCombinations {
 		return new Hand(Combination.FULL_HOUSE, combinationCards.getCards());
 	}
 	
-	public static Hand highestFlush(ArrayList<Card> cards) throws EmptyCardListException {
+	public static Hand flush(ArrayList<Card> cards, boolean highestFlush) throws EmptyCardListException {
 		if(cards == null || cards.size() == 0) {
 			throw new EmptyCardListException();
 		}
@@ -291,16 +294,19 @@ public class CardCombinations {
 			ArrayList<Card> cardList = entry.getValue();
 			
 			if(cardList.size() >= 5) {
-				//Removing the lowest cards if more than 6
-				while(cardList.size() > 5) {
-					Card lowestRankCard = cardList.get(0);
-					
-					for (int i = 1; i < cardList.size(); i++) {
-						if(lowestRankCard.compareTo(cardList.get(i)) == 1)
-							lowestRankCard = cardList.get(i);
-					}
-					
-					cardList.remove(lowestRankCard);
+				
+				if(highestFlush) {
+					//Removing the lowest cards if more than 6, if only the highest flush is required
+					while(cardList.size() > 5) {
+						Card lowestRankCard = cardList.get(0);
+						
+						for (int i = 1; i < cardList.size(); i++) {
+							if(lowestRankCard.compareTo(cardList.get(i)) == 1)
+								lowestRankCard = cardList.get(i);
+						}
+						
+						cardList.remove(lowestRankCard);
+					}					
 				}
 				
 				return new Hand(Combination.FLUSH, cardList);
@@ -309,6 +315,109 @@ public class CardCombinations {
 		
 		//No flush found
 		return null;
+	}
+	
+	public static Hand highestStraight(ArrayList<Card> cards) throws EmptyCardListException {
+		if(cards == null || cards.size() == 0) {
+			throw new EmptyCardListException();
+		}
+
+		//Need 5 cards at least to get a straight
+		if(cards.size() < 5)
+			return null;
+		
+		ArrayList<Card> sortedCards = (ArrayList<Card>) cards.clone();
+
+		Collections.sort(sortedCards, new Card.CardComparator());
+		
+		//Removing aces as they can be first or last card
+		CardRank rank = sortedCards.get(0).getRank();
+				
+		int highestStraight = 1;
+		int firstIndex = 0;
+		int lastIndex = 0;
+		
+		for (int i = 1; i < sortedCards.size() ; i++) {
+			System.out.println(sortedCards.get(i));
+			
+			CardRank nextRank = sortedCards.get(i).getRank();
+			
+			if(rank.getNext() == nextRank) {
+				lastIndex++;
+				highestStraight++;
+				rank = nextRank;
+			}
+			else if(rank == nextRank) {
+				lastIndex++;
+			}
+			else {
+				if(highestStraight >= 4) {
+					//Could be a straight if 4 + ace, or at least 5. Can't compare more than 7 cards, so if straight breaks after 4, no straight is possible anymore.
+					break;
+				}
+				else {
+					highestStraight = 1;
+					firstIndex = i;
+					lastIndex = i;
+					rank = nextRank;
+				}
+			}
+		}
+		
+		if(highestStraight < 4) {
+			return null;
+		}
+		else if(highestStraight == 4) {
+			
+			if(sortedCards.get(sortedCards.size() -1).getRank() == CardRank.ACE && sortedCards.get(firstIndex).getRank() == CardRank.TWO) //Straight with 1, 2, 3, 4, 5
+				return new Hand(Combination.STRAIGHT, extractStraightFromList(sortedCards, firstIndex, lastIndex, true));
+			else
+				return null;
+		}
+		
+		return new Hand(Combination.STRAIGHT, extractStraightFromList(sortedCards, firstIndex, lastIndex, false));
+	}
+	
+	private static ArrayList<Card> extractStraightFromList(ArrayList<Card> initialStraight, int firstIndex, int lastIndex, boolean startsWithAce) {		
+		
+		ArrayList<Card> straight = new ArrayList<Card>();
+		
+		CardRank lastRankInserted = null;
+		
+		if(startsWithAce) {
+			straight.add(initialStraight.get(initialStraight.size() - 1));
+			lastRankInserted = CardRank.ACE;
+		}
+		
+		for (int i = firstIndex; i <= lastIndex; i++) {
+			System.out.println(initialStraight.get(i));
+			if(initialStraight.get(i).getRank() != lastRankInserted) {
+				lastRankInserted = initialStraight.get(i).getRank();
+				straight.add(initialStraight.get(i));
+			}
+		}
+		
+		while(straight.size() > 5)
+			straight.remove(0);
+		
+		return straight;
+	}
+	
+	public static Hand highestStraightFlush(ArrayList<Card> cards) throws EmptyCardListException {
+		if(cards == null || cards.size() == 0) {
+			throw new EmptyCardListException();
+		}
+
+		//Need 5 cards at least to get a straight
+		if(cards.size() < 5)
+			return null;
+
+		Hand handFlush = flush(cards, false);
+		
+		if(handFlush == null)
+			return null;
+		
+		return highestStraight(handFlush.getCards());
 	}
 	
 	public static boolean containsCombintationType(Combination combinationType, ArrayList<Card> cards){
@@ -325,7 +434,11 @@ public class CardCombinations {
 				case FULL_HOUSE:
 					return highestFullHouse(cards) != null;
 				case FLUSH:
-					return highestFlush(cards) != null;
+					return flush(cards, false) != null;
+				case STRAIGHT:
+					return highestStraight(cards) != null;
+				case STRAIGHT_FLUSH:
+					return highestStraightFlush(cards) != null;
 				default:
 					return false;
 			}

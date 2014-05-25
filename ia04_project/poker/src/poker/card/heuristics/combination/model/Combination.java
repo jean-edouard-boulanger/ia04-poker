@@ -8,7 +8,7 @@ public enum Combination {
 	STRAIGHT(5), //Suite de 5 cartes
 	FLUSH(6), //Couleur
 	FULL_HOUSE(7), //Full (1 paire et 1 brelan)
-	FOUR_OF_A_KIND(8), //Carr??
+	FOUR_OF_A_KIND(8), //Carre
 	STRAIGHT_FLUSH(9); //Quinte flush: suite + couleur
 
 	private int combination;
@@ -19,5 +19,5 @@ public enum Combination {
 
 	public int getCombination() {
 		return combination;
-	}
+	}	
 }

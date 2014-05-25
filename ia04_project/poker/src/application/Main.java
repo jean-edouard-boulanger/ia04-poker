@@ -52,11 +52,16 @@ public class Main extends Application {
 		
 		cards.add(new Card(CardRank.TWO, CardSuit.CLUBS));
 		cards.add(new Card(CardRank.TWO, CardSuit.DIAMONDS));
-		/*cards.add(new Card(CardRank.TWO, CardSuit.HEARTS));
+		cards.add(new Card(CardRank.TWO, CardSuit.HEARTS));
 		cards.add(new Card(CardRank.EIGHT, CardSuit.SPADES));
 		cards.add(new Card(CardRank.NINE, CardSuit.SPADES));
-		cards.add(new Card(CardRank.NINE, CardSuit.HEARTS));
-		cards.add(new Card(CardRank.NINE, CardSuit.DIAMONDS));*/
+		cards.add(new Card(CardRank.QUEEN, CardSuit.DIAMONDS));
+		cards.add(new Card(CardRank.NINE, CardSuit.DIAMONDS));
+		cards.add(new Card(CardRank.KING, CardSuit.DIAMONDS));
+		cards.add(new Card(CardRank.ACE, CardSuit.DIAMONDS));
+		cards.add(new Card(CardRank.JACK, CardSuit.DIAMONDS));
+		cards.add(new Card(CardRank.TEN, CardSuit.DIAMONDS));
+		cards.add(new Card(CardRank.THREE, CardSuit.DIAMONDS));
 		
 		
 		ProbabilityEvaluator pe = new 
@@ -77,17 +82,14 @@ public class Main extends Application {
 		}
 		
 		
-		/*
+		
 		try {
-			System.out.println(CardCombinations.highestFullHouse(cards));
+			System.out.println(CardCombinations.highestStraightFlush(cards));
 			
 		} catch (EmptyCardListException e) {
 			e.printStackTrace();
-		} catch (UnexpectedCombinationIdenticCards e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
-		*/
+		
 		
 		primaryStage.setTitle("Poker");
         Group root = new Group();

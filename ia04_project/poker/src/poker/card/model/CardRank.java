@@ -24,4 +24,8 @@ public enum CardRank {
 	public int getCardRank() {
 		return cardRank;
 	}
+	
+	public CardRank getNext() {
+		return values()[(ordinal()+1) % values().length];
+	}
 }
