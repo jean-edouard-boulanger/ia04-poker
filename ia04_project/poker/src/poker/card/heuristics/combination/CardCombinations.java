@@ -283,8 +283,23 @@ public class CardCombinations {
 		
 		//Iterating over the map to see if a suit contains at least 5 cards
 		for(Entry<CardSuit, ArrayList<Card>> entry : suitMap.entrySet()) {
-			if(entry.getValue().size() >= 5) {
+			
+			ArrayList<Card> cardList = entry.getValue();
+			
+			if(cardList.size() >= 5) {
+				//Removing the lowest cards if more than 6
+				while(cardList.size() > 5) {
+					Card lowestRankCard = cardList.get(0);
+					
+					for (int i = 1; i < cardList.size(); i++) {
+						if(lowestRankCard.compareTo(cardList.get(i)) == 1)
+							lowestRankCard = cardList.get(i);
+					}
+					
+					cardList.remove(lowestRankCard);
+				}
 				
+				return new Hand(Combination.FLUSH, cardList);
 			}
 		}
 		
