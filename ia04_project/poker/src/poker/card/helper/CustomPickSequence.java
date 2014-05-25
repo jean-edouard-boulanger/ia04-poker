@@ -2,6 +2,7 @@ package poker.card.helper;
 
 import java.util.ArrayList;
 
+
 public class CustomPickSequence {
 
 	private ArrayList<Boolean> customPickSequence;
@@ -79,5 +80,11 @@ public class CustomPickSequence {
 		CustomPickSequence holdemRiverDealSequence = new CustomPickSequence();
 		
 		return holdemRiverDealSequence.alternateBurnPickNextCard();
-	}	
+	}
+	
+	public static CustomPickSequence getHoldemFlopDealSequence(){
+		CustomPickSequence holdemRiverDealSequence = new CustomPickSequence();
+		
+		return holdemRiverDealSequence.burnNextCard().pickNextCards(3);
+	}
 }

@@ -88,6 +88,10 @@ public class CardCombinations {
 			}
 		}
 		
+		if(finalPairsMap.size() == 0){
+			finalPairsMap = null;
+		}
+		
 		return finalPairsMap;
 	}
 	
@@ -129,12 +133,12 @@ public class CardCombinations {
 	/**
 	 * 
 	 * @param cards
-	 * @param totalIdenticCards 2 to get highest one pair. 3 to get highest three of a king. 4 to get highest four of a king.
-	 * @return Highest one pair, three of a king or four of a king hand of a card list
+	 * @param totalIdenticCards 2 to get highest one pair. 3 to get highest three of a kind. 4 to get highest four of a kind.
+	 * @return Highest one pair, three of a kind or four of a kind hand of a card list
 	 * @throws UnexpectedCombinationIdenticCards
 	 * @throws EmptyCardListException
 	 */
-	public static Hand highestOfKing(ArrayList<Card> cards, int totalIdenticCards) throws UnexpectedCombinationIdenticCards, EmptyCardListException {
+	public static Hand highestOfkind(ArrayList<Card> cards, int totalIdenticCards) throws UnexpectedCombinationIdenticCards, EmptyCardListException {
 		if(totalIdenticCards < 2 || totalIdenticCards > 4)
 			throw new UnexpectedCombinationIdenticCards(totalIdenticCards);
 		
@@ -213,7 +217,7 @@ public class CardCombinations {
 			}
 		}
 		
-		//Making the two pair list with the two highest rank lists
+		//Makind the two pair list with the two highest rank lists
 		while(pairsMap.get(highestRank1).size() > 2) {
 			pairsMap.get(highestRank1).remove(0);
 		}
@@ -234,25 +238,25 @@ public class CardCombinations {
 			throw new EmptyCardListException();
 		}
 		
-		Hand combinationCards = highestOfKing(cards, 3);
+		Hand combinationCards = highestOfkind(cards, 3);
 		
-		//No three of a king
+		//No three of a kind
 		if(combinationCards == null)
 			return null;
 		
 		//Copying cards not to remove cards from the tested list.
 		ArrayList<Card> cardsToTest = (ArrayList<Card>) cards.clone();
 		
-		//Removing the three of a king found not to find it as the best one pair.
+		//Removing the three of a kind found not to find it as the best one pair.
 		cardsToTest.removeAll(combinationCards.getCards());
 		
-		Hand highestOnePair = highestOfKing(cardsToTest, 2);
+		Hand highestOnePair = highestOfkind(cardsToTest, 2);
 		
 		//No pair
 		if(highestOnePair == null)
 			return null;
 		
-		//Pair and three of a king: merge them to make the full house
+		//Pair and three of a kind: merge them to make the full house
 		combinationCards.getCards().addAll(highestOnePair.getCards());
 		
 		return new Hand(Combination.FULL_HOUSE, combinationCards.getCards());
@@ -305,6 +309,31 @@ public class CardCombinations {
 		
 		//No flush found
 		return null;
+	}
+	
+	public static boolean containsCombintationType(Combination combinationType, ArrayList<Card> cards){
+		try{
+			switch(combinationType){
+				case ONE_PAIR:
+					return allPairs(cards, 2) != null;
+				case TWO_PAIR:
+					return highestTwoPair(cards) != null;
+				case THREE_OF_A_KIND:
+					return allPairs(cards, 3) != null;
+				case FOUR_OF_A_KIND:
+					return allPairs(cards, 4) != null;
+				case FULL_HOUSE:
+					return highestFullHouse(cards) != null;
+				case FLUSH:
+					return highestFlush(cards) != null;
+				default:
+					return false;
+			}
+		}
+		catch(Exception ex){
+			ex.printStackTrace();
+			return false;
+		}
 	}
 	
 	public static Hand playerHandWithGame(UserDeck userDeck) throws EmptyCardListException {
