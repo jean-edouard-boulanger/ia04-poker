@@ -156,10 +156,10 @@ public class CardCombinations {
 			combination = Combination.ONE_PAIR;
 			break;
 		case 3:
-			combination = Combination.THREE_OF_A_KING;
+			combination = Combination.THREE_OF_A_KIND;
 			break;
 		case 4:
-			combination = Combination.FOUR_OF_A_KING;
+			combination = Combination.FOUR_OF_A_KIND;
 			break;
 		}
 		

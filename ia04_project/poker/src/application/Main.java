@@ -16,10 +16,17 @@ import javafx.stage.Stage;
 
 import javax.swing.SwingUtilities;
 
+import poker.card.helper.CardPickerHelper;
+import poker.card.helper.CustomPickSequence;
 import poker.card.heuristics.combination.CardCombinations;
 import poker.card.heuristics.combination.exception.EmptyCardListException;
 import poker.card.heuristics.combination.exception.UnexpectedCombinationIdenticCards;
+import poker.card.heuristics.combination.model.Combination;
+import poker.card.heuristics.probability.ProbabilityEvaluator;
+import poker.card.heuristics.probability.ProbabilityEvaluator.CombinationProbabilityReport;
+import poker.card.heuristics.probability.RandomCardDeckGenerator;
 import poker.card.model.Card;
+import poker.card.model.CardDeck;
 import poker.card.model.CardRank;
 import poker.card.model.CardSuit;
 import poker.card.model.GameDeck;
@@ -37,19 +44,34 @@ public class Main extends Application {
 	
 	@Override
 	public void start(Stage primaryStage) {
-				
+		
+		
 		GameDeck deck = GameDeck.getInstance();
 		
 		ArrayList<Card> cards = new ArrayList<Card>();
 		
 		cards.add(new Card(CardRank.TWO, CardSuit.CLUBS));
-		cards.add(new Card(CardRank.EIGHT, CardSuit.DIAMONDS));
-		cards.add(new Card(CardRank.TWO, CardSuit.HEARTS));
+		cards.add(new Card(CardRank.THREE, CardSuit.DIAMONDS));
+		/*cards.add(new Card(CardRank.TWO, CardSuit.HEARTS));
 		cards.add(new Card(CardRank.EIGHT, CardSuit.SPADES));
 		cards.add(new Card(CardRank.NINE, CardSuit.SPADES));
 		cards.add(new Card(CardRank.NINE, CardSuit.HEARTS));
-		cards.add(new Card(CardRank.NINE, CardSuit.DIAMONDS));
+		cards.add(new Card(CardRank.NINE, CardSuit.DIAMONDS));*/
 		
+		
+		ProbabilityEvaluator pe = new 
+				ProbabilityEvaluator.ProbabilityEvaluatorBuilder()
+				.setDealSequence(CustomPickSequence.getHoldemFlopThroughRiverDealSequence())
+				.setExpectedCombination(Combination.THREE_OF_A_KIND)
+				.setNumberTrials(100000)
+				.setKnownCards(cards)
+				.buildProbabilityEvaluator();
+		
+		CombinationProbabilityReport r = pe.evaluate();
+		System.out.println(r.getProbabilityForCombination(Combination.THREE_OF_A_KIND));
+		
+		
+		/*
 		try {
 			System.out.println(CardCombinations.highestFullHouse(cards));
 			
@@ -59,6 +81,7 @@ public class Main extends Application {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		*/
 		
 		primaryStage.setTitle("Poker");
         Group root = new Group();

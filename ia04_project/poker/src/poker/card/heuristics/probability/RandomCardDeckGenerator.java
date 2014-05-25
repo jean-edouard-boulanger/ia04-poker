@@ -8,6 +8,7 @@ import poker.card.model.Card;
 import poker.card.model.CardDeck;
 import poker.card.model.CardRank;
 import poker.card.model.CardSuit;
+import poker.card.model.UserDeck;
 
 public class RandomCardDeckGenerator {
 
@@ -19,14 +20,28 @@ public class RandomCardDeckGenerator {
 	}
 	
 	public RandomCardDeckGenerator(ArrayList<Card> excludedCards){
-		this.excludedCards = excludedCards;
+		if(excludedCards == null){
+			this.excludedCards = new ArrayList<Card>();
+		}
+		else{
+			this.excludedCards = excludedCards;
+		}
+	}
+	
+	public RandomCardDeckGenerator(UserDeck d){
+		this.excludedCards = d.getCards();
 	}
 		
 	public CardDeck GenerateNext(){
 		if(this.cards == null){
 			this.initializeCards();
 		}
-		return new CardDeck(this.cards);
+		Collections.shuffle(cards);
+		
+		Stack<Card> tmpCards = new Stack<Card>();
+		tmpCards.addAll(this.cards);
+		
+		return new CardDeck(tmpCards);
 	}
 	
 	public void setExcludedCards(ArrayList<Card> excludedCards){
@@ -52,6 +67,5 @@ public class RandomCardDeckGenerator {
 				}
 			}
 		}
-		Collections.shuffle(cards);
 	}
 }

@@ -1,5 +1,7 @@
 package poker.card.model;
 
+import java.util.ArrayList;
+
 import poker.card.exception.UserDeckFullException;
 
 /**
@@ -26,6 +28,18 @@ public class UserDeck {
 		this.card2 = card2;
 	}
 
+	public ArrayList<Card> getCards(){
+		ArrayList<Card> cards = new ArrayList<Card>();
+		if(this.card1 != null){
+			cards.add(card1);
+		}
+		
+		if(this.card2 != null){
+			cards.add(card2);
+		}
+		return cards;
+	}
+	
 	public void removeCards() {
 		card1 = null;
 		card2 = null;
