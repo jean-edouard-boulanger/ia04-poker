@@ -16,6 +16,7 @@ import javafx.stage.Stage;
 
 import javax.swing.SwingUtilities;
 
+import poker.card.exception.CommunityCardsFullException;
 import poker.card.helper.CardPickerHelper;
 import poker.card.helper.CustomPickSequence;
 import poker.card.heuristics.combination.CardCombinations;
@@ -29,7 +30,9 @@ import poker.card.model.Card;
 import poker.card.model.CardDeck;
 import poker.card.model.CardRank;
 import poker.card.model.CardSuit;
+import poker.card.model.CommunityCards;
 import poker.card.model.GameDeck;
+import poker.card.model.UserDeck;
 import server.ServerWindow;
 import application.PersoIHM.Sens;
 
@@ -45,8 +48,27 @@ public class Main extends Application {
 	@Override
 	public void start(Stage primaryStage) {
 		
+		UserDeck userDeck = new UserDeck();
 		
-		GameDeck deck = GameDeck.getInstance();
+		userDeck.setCard1(new Card(CardRank.FIVE, CardSuit.CLUBS));
+		userDeck.setCard2(new Card(CardRank.SIX, CardSuit.CLUBS));
+		
+		CommunityCards communityCards = CommunityCards.getInstance();
+		try {
+			communityCards.pushCard(new Card(CardRank.EIGHT, CardSuit.SPADES));
+			communityCards.pushCard(new Card(CardRank.NINE, CardSuit.SPADES));
+			communityCards.pushCard(new Card(CardRank.SEVEN, CardSuit.SPADES));
+		} catch (CommunityCardsFullException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
+		try {
+			System.out.println(CardCombinations.playerBestHandWithGame(userDeck));
+		} catch (EmptyCardListException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		
 		ArrayList<Card> cards = new ArrayList<Card>();
 		
@@ -79,10 +101,6 @@ public class Main extends Application {
 				.buildProbabilityEvaluator();
 		
 		CombinationProbabilityReport r = pe.evaluate();
-		
-		for(Card c : cards){
-			System.out.println(c);
-		}
 		
 		for(Combination c : pe.getExpectedCombinations()){
 			System.out.println(c + " : " + r.getProbabilityForCombination(c) * 100 + " %");

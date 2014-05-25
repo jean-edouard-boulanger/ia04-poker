@@ -338,7 +338,6 @@ public class CardCombinations {
 		int lastIndex = 0;
 		
 		for (int i = 1; i < sortedCards.size() ; i++) {
-			System.out.println(sortedCards.get(i));
 			
 			CardRank nextRank = sortedCards.get(i).getRank();
 			
@@ -390,7 +389,6 @@ public class CardCombinations {
 		}
 		
 		for (int i = firstIndex; i <= lastIndex; i++) {
-			System.out.println(initialStraight.get(i));
 			if(initialStraight.get(i).getRank() != lastRankInserted) {
 				lastRankInserted = initialStraight.get(i).getRank();
 				straight.add(initialStraight.get(i));
@@ -449,11 +447,70 @@ public class CardCombinations {
 		}
 	}
 	
-	public static Hand playerHandWithGame(UserDeck userDeck) throws EmptyCardListException {
+	public static Hand playerBestHandWithGame(UserDeck userDeck) throws EmptyCardListException {
 		ArrayList<Card> communityCards = CommunityCards.getInstance().getCommunityCards();
 		
-		highestCard(communityCards);
+		if(userDeck == null) {
+			throw new EmptyCardListException();
+		}
 		
-		return new Hand();
+		ArrayList<Card> cards = new ArrayList<Card>(userDeck.getCards());
+		
+		cards.addAll(communityCards);
+		
+		if(cards.size() == 0)
+			return null;
+		
+		Hand flushHand = flush(cards, false);
+		
+		if(flushHand != null) {
+			//User has a flush, maybe it is a straight flush?			
+			Hand handStraightFlush = highestStraight(flushHand.getCards());
+			
+			if(handStraightFlush != null)
+				return handStraightFlush;
+		}
+		
+		Hand bestHand;
+		
+		try { 
+			if((bestHand = highestOfkind(cards, 4)) != null) {
+				return bestHand;
+			}
+			
+			if((bestHand = highestFullHouse(cards)) != null)
+				return bestHand;
+			
+		} catch (UnexpectedCombinationIdenticCards e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		if(flushHand != null)
+			return flushHand;
+		
+		if((bestHand = highestStraight(cards)) != null)
+			return bestHand;
+		
+		try {
+			if((bestHand = highestOfkind(cards, 3)) != null)
+				return bestHand;
+		} catch (UnexpectedCombinationIdenticCards e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		if((bestHand = highestTwoPair(cards)) != null)
+			return bestHand;
+
+		try {
+			if((bestHand = highestOfkind(cards, 2)) != null)
+				return bestHand;
+		} catch (UnexpectedCombinationIdenticCards e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return highestCard(cards);
 	}
 }
