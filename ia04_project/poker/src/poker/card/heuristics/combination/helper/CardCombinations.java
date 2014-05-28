@@ -62,7 +62,7 @@ public class CardCombinations {
 		
 		ArrayList<Card> handCards = new ArrayList<Card>();
 		
-		handCards.add(HandHelper.highestCardInList(handCards));
+		handCards.add(HandHelper.highestCardInList(cards));
 		
 		return new Hand(Combination.HIGH_CARD, handCards, completeHandWithHighestCards(handCards, cards));
 	}

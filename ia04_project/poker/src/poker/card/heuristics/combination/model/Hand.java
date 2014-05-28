@@ -48,28 +48,14 @@ public class Hand {
 		String hand =
 				"---------------\nHand: \n"
 				+ "Combination: " + getCombination() + "\n"
-				+ "Cards: [";
-		
-		for(Card c : combinationCards) {
-			hand += c.toString();
-			
-			if(c != combinationCards.get(combinationCards.size() - 1))
-				hand += ", ";
-		}
-		
-		hand += "]\n";
-		
-		if(additionalCards.size() > 0) {
-			hand += "Additional cards (highest cards): [";
-			
-			for(Card c : additionalCards) {
-				hand += c.toString();
+				+ "Cards: "
+				+ combinationCards.toString()
+				+ "\n";
 				
-				if(c != additionalCards.get(additionalCards.size() - 1))
-					hand += ", ";
-			}
-			
-			hand += "]\n";
+		if(additionalCards.size() > 0) {
+			hand += "Additional cards (highest cards): "
+				 + additionalCards.toString()
+			     + "\n";
 		}
 		
 		hand += "---------------";

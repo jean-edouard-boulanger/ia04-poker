@@ -22,7 +22,9 @@ import poker.card.helper.CustomPickSequence;
 import poker.card.heuristics.combination.exception.EmptyCardListException;
 import poker.card.heuristics.combination.exception.UnexpectedCombinationIdenticCards;
 import poker.card.heuristics.combination.helper.CardCombinations;
+import poker.card.heuristics.combination.helper.HandComparator;
 import poker.card.heuristics.combination.model.Combination;
+import poker.card.heuristics.combination.model.Hand;
 import poker.card.heuristics.probability.ProbabilityEvaluator;
 import poker.card.heuristics.probability.ProbabilityEvaluator.CombinationProbabilityReport;
 import poker.card.heuristics.probability.RandomCardDeckGenerator;
@@ -50,16 +52,22 @@ public class Main extends Application {
 		
 		UserDeck userDeck = new UserDeck();
 		
-		userDeck.setCard1(new Card(CardRank.FIVE, CardSuit.CLUBS));
-		userDeck.setCard2(new Card(CardRank.SIX, CardSuit.CLUBS));
+		userDeck.setCard1(new Card(CardRank.FOUR, CardSuit.CLUBS));
+		userDeck.setCard2(new Card(CardRank.QUEEN, CardSuit.CLUBS));
+		
+		UserDeck userDeck2 = new UserDeck();
+
+		userDeck2.setCard1(new Card(CardRank.KING, CardSuit.CLUBS));
+		userDeck2.setCard2(new Card(CardRank.TWO, CardSuit.SPADES));
+
 		
 		CommunityCards communityCards = CommunityCards.getInstance();
 		try {
 		//	communityCards.pushCard(new Card(CardRank.EIGHT, CardSuit.SPADES));
-			communityCards.pushCard(new Card(CardRank.FOUR, CardSuit.SPADES));
+		//	communityCards.pushCard(new Card(CardRank.FOUR, CardSuit.SPADES));
 			communityCards.pushCard(new Card(CardRank.SIX, CardSuit.DIAMONDS));
 			communityCards.pushCard(new Card(CardRank.JACK, CardSuit.DIAMONDS));
-			communityCards.pushCard(new Card(CardRank.FIVE, CardSuit.DIAMONDS));
+		//	communityCards.pushCard(new Card(CardRank.FIVE, CardSuit.DIAMONDS));
 			communityCards.pushCard(new Card(CardRank.ACE, CardSuit.DIAMONDS));
 		} catch (CommunityCardsFullException e1) {
 			// TODO Auto-generated catch block
@@ -67,7 +75,16 @@ public class Main extends Application {
 		}
 		
 		try {
-			System.out.println(CardCombinations.playerBestHandWithGame(userDeck));
+			Hand h1 = CardCombinations.playerBestHandWithGame(userDeck);
+			Hand h2 = CardCombinations.playerBestHandWithGame(userDeck2);
+			
+			ArrayList<Hand> hands = new ArrayList<Hand>();
+			
+			hands.add(h1);
+			hands.add(h2);
+			System.out.println(hands);
+			System.out.println(HandComparator.bestHand(hands));
+				
 		} catch (EmptyCardListException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
