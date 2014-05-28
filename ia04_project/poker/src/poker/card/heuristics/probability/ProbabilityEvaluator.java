@@ -6,9 +6,9 @@ import java.util.Map;
 
 import poker.card.helper.CardPickerHelper;
 import poker.card.helper.CustomPickSequence;
-import poker.card.heuristics.combination.CardCombinations;
 import poker.card.heuristics.combination.exception.EmptyCardListException;
 import poker.card.heuristics.combination.exception.UnexpectedCombinationIdenticCards;
+import poker.card.heuristics.combination.helper.CardCombinations;
 import poker.card.heuristics.combination.model.Combination;
 import poker.card.heuristics.combination.model.Hand;
 import poker.card.model.Card;
@@ -93,7 +93,7 @@ public class ProbabilityEvaluator {
 		private ArrayList<Combination> expectedCombinations;
 		private ArrayList<Card> knownCards;
 		private int nbTrials = 1000;
-		private CustomPickSequence dealSequence;
+		private CustomPickSequence dealSequence = null;
 		
 		public ProbabilityEvaluatorBuilder(){
 			this.expectedCombinations = new ArrayList<Combination>();

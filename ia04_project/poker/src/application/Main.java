@@ -19,9 +19,9 @@ import javax.swing.SwingUtilities;
 import poker.card.exception.CommunityCardsFullException;
 import poker.card.helper.CardPickerHelper;
 import poker.card.helper.CustomPickSequence;
-import poker.card.heuristics.combination.CardCombinations;
 import poker.card.heuristics.combination.exception.EmptyCardListException;
 import poker.card.heuristics.combination.exception.UnexpectedCombinationIdenticCards;
+import poker.card.heuristics.combination.helper.CardCombinations;
 import poker.card.heuristics.combination.model.Combination;
 import poker.card.heuristics.probability.ProbabilityEvaluator;
 import poker.card.heuristics.probability.ProbabilityEvaluator.CombinationProbabilityReport;
@@ -72,10 +72,10 @@ public class Main extends Application {
 		
 		ArrayList<Card> cards = new ArrayList<Card>();
 		
-		cards.add(new Card(CardRank.TWO, CardSuit.CLUBS));
 		cards.add(new Card(CardRank.TWO, CardSuit.DIAMONDS));
-		cards.add(new Card(CardRank.TWO, CardSuit.HEARTS));
-		cards.add(new Card(CardRank.TEN, CardSuit.CLUBS));
+		cards.add(new Card(CardRank.THREE, CardSuit.DIAMONDS));
+		cards.add(new Card(CardRank.FOUR, CardSuit.SPADES));
+		/*cards.add(new Card(CardRank.FIVE, CardSuit.CLUBS));
 		cards.add(new Card(CardRank.TEN, CardSuit.DIAMONDS));
 		cards.add(new Card(CardRank.TWO, CardSuit.HEARTS));
 		cards.add(new Card(CardRank.EIGHT, CardSuit.SPADES));
@@ -86,17 +86,15 @@ public class Main extends Application {
 		cards.add(new Card(CardRank.ACE, CardSuit.DIAMONDS));
 		cards.add(new Card(CardRank.JACK, CardSuit.DIAMONDS));
 		cards.add(new Card(CardRank.TEN, CardSuit.DIAMONDS));
-		cards.add(new Card(CardRank.THREE, CardSuit.DIAMONDS));
+		cards.add(new Card(CardRank.THREE, CardSuit.DIAMONDS));*/
 		
 		
 		ProbabilityEvaluator pe = new 
 				ProbabilityEvaluator.ProbabilityEvaluatorBuilder()
-				.setDealSequence(CustomPickSequence.getHoldemFlopDealSequence())
-				.addExpectedCombination(Combination.ONE_PAIR)
-				.addExpectedCombination(Combination.TWO_PAIR)
-				.addExpectedCombination(Combination.THREE_OF_A_KIND)
-				.addExpectedCombination(Combination.FOUR_OF_A_KIND)
-				.setNumberTrials(1000)
+				.setDealSequence(CustomPickSequence.getFixedNumberCardsPickedDealSequence(2))
+				//.addExpectedCombination(Combination.STRAIGHT)
+				.addAllPossibleCombinationsToExpectedCombinations()
+				.setNumberTrials(10000)
 				.setKnownCards(cards)
 				.buildProbabilityEvaluator();
 		
@@ -105,16 +103,6 @@ public class Main extends Application {
 		for(Combination c : pe.getExpectedCombinations()){
 			System.out.println(c + " : " + r.getProbabilityForCombination(c) * 100 + " %");
 		}
-		
-		
-		
-		try {
-			System.out.println(CardCombinations.highestStraightFlush(cards));
-			
-		} catch (EmptyCardListException e) {
-			e.printStackTrace();
-		}
-		
 		
 		primaryStage.setTitle("Poker");
         Group root = new Group();

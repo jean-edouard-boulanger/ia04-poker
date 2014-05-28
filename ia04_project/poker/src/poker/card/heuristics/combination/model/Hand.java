@@ -1,7 +1,9 @@
 package poker.card.heuristics.combination.model;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 
+import poker.card.heuristics.combination.helper.HandHelper;
 import poker.card.model.Card;
 
 public class Hand {

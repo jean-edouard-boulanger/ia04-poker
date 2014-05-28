@@ -1,4 +1,4 @@
-package poker.card.heuristics.combination;
+package poker.card.heuristics.combination.helper;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -482,7 +482,6 @@ public class CardCombinations {
 				return bestHand;
 			
 		} catch (UnexpectedCombinationIdenticCards e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
@@ -496,7 +495,6 @@ public class CardCombinations {
 			if((bestHand = highestOfkind(cards, 3)) != null)
 				return bestHand;
 		} catch (UnexpectedCombinationIdenticCards e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
@@ -507,7 +505,6 @@ public class CardCombinations {
 			if((bestHand = highestOfkind(cards, 2)) != null)
 				return bestHand;
 		} catch (UnexpectedCombinationIdenticCards e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 

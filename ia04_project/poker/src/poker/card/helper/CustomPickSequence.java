@@ -62,6 +62,11 @@ public class CustomPickSequence {
 		return this.customPickSequence.size();
 	}
 	
+	public static CustomPickSequence getFixedNumberCardsPickedDealSequence(int nbCardsPicked){
+		CustomPickSequence fixedNumberCardsPickedDealSequence = new CustomPickSequence();
+		return fixedNumberCardsPickedDealSequence.pickNextCards(nbCardsPicked);
+	}
+	
 	public static CustomPickSequence getHoldemFlopThroughRiverDealSequence(){
 		CustomPickSequence holdemFlopToRiverDealSequence = new CustomPickSequence();
 		holdemFlopToRiverDealSequence.burnNextCard().pickNextCards(3).alternateBurnPickNextCards(2);
