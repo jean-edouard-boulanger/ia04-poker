@@ -5,14 +5,23 @@ import java.util.Comparator;
 
 import poker.card.heuristics.combination.helper.HandHelper;
 import poker.card.model.Card;
+import poker.card.model.CardRank;
 
 public class Hand {
 	Combination combination;
-	ArrayList<Card> cards;
+	ArrayList<Card> combinationCards;
+	ArrayList<Card> additionalCards;
 	
 	public Hand(Combination combination, ArrayList<Card> cards) {
 		this.combination = combination;
-		this.cards = cards;
+		this.combinationCards = cards;
+		this.combinationCards = new ArrayList<Card>();
+	}
+	
+	public Hand(Combination combination, ArrayList<Card> cards, ArrayList<Card> additionalCards) {
+		this.combination = combination;
+		this.combinationCards = cards;
+		this.additionalCards = additionalCards;
 	}
 	
 	public Hand() {
@@ -27,29 +36,60 @@ public class Hand {
 		this.combination = combination;
 	}
 
-	public ArrayList<Card> getCards() {
-		return cards;
+	public ArrayList<Card> getCombinationCards() {
+		return combinationCards;
 	}
 
-	public void setCards(ArrayList<Card> cards) {
-		this.cards = cards;
+	public void setCombinationCards(ArrayList<Card> cards) {
+		this.combinationCards = cards;
 	}
 	
 	public String toString() {
 		String hand =
-				"Hand: \n"
+				"---------------\nHand: \n"
 				+ "Combination: " + getCombination() + "\n"
 				+ "Cards: [";
 		
-		for(Card c : cards) {
+		for(Card c : combinationCards) {
 			hand += c.toString();
 			
-			if(c != cards.get(cards.size() - 1))
+			if(c != combinationCards.get(combinationCards.size() - 1))
 				hand += ", ";
 		}
 		
-		hand += "]\n---------";
+		hand += "]\n";
+		
+		if(additionalCards.size() > 0) {
+			hand += "Additional cards (highest cards): [";
+			
+			for(Card c : additionalCards) {
+				hand += c.toString();
+				
+				if(c != additionalCards.get(additionalCards.size() - 1))
+					hand += ", ";
+			}
+			
+			hand += "]\n";
+		}
+		
+		hand += "---------------";
 		
 		return hand;
+	}
+
+	public ArrayList<Card> getAdditionalCards() {
+		return additionalCards;
+	}
+
+	public void setAdditionalCards(ArrayList<Card> additionalCards) {
+		this.additionalCards = additionalCards;
+	}
+	
+	public ArrayList<Card> getAllCards() {
+		ArrayList<Card> allCards = (ArrayList<Card>) combinationCards.clone();
+		
+		allCards.addAll(additionalCards);
+		
+		return allCards;
 	}
 }

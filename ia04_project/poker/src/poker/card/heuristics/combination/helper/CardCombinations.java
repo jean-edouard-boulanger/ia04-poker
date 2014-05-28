@@ -22,30 +22,6 @@ public class CardCombinations {
 	
 	/**
 	 * 
-	 * @param cards
-	 * @return Highest card (card of highest rank) found in the list
-	 * @throws EmptyCardListException 
-	 */
-	protected static Card highestCardInList(ArrayList<Card> cards) throws EmptyCardListException {
-		if(cards == null || cards.size() == 0) {
-			throw new EmptyCardListException();
-		}
-
-		Card card1 = cards.get(0);
-		
-		for (int i = 1; i < cards.size(); i++) {
-			Card card2 = cards.get(i);
-			
-			if(card1.compareTo(card2) == -1) {
-				card1 = card2;
-			}
-		}
-		
-		return card1;
-	}
-	
-	/**
-	 * 
 	 * @param handCards
 	 * @param cards
 	 * @return Complete the hand of the user so that he has a full 5 cards hand if possible.
@@ -57,19 +33,20 @@ public class CardCombinations {
 		 
 		int missingCards = 5 - handCards.size();
 		
+		ArrayList<Card> additionalCards = new ArrayList<Card>();
 		ArrayList<Card> copyCards = (ArrayList<Card>) cards.clone();
 		
 		copyCards.removeAll(handCards);
 		
 		while(missingCards > 0 && copyCards.size() > 0) {
-			Card newHighestCard = highestCardInList(copyCards);
-			handCards.add(newHighestCard);
+			Card newHighestCard = HandHelper.highestCardInList(copyCards);
+			additionalCards.add(newHighestCard);
 			copyCards.remove(newHighestCard);
 			
 			missingCards--;
 		}
 		
-		return handCards;
+		return additionalCards;
 	}
 	
 	/**
@@ -83,23 +60,11 @@ public class CardCombinations {
 			throw new EmptyCardListException();
 		}
 		
-	/**	Card card1 = cards.get(0);
-		
-		for (int i = 1; i < cards.size(); i++) {
-			Card card2 = cards.get(i);
-			
-			if(card1.compareTo(card2) == -1) {
-				card1 = card2;
-			}
-		}
-		
 		ArrayList<Card> handCards = new ArrayList<Card>();
 		
-		handCard.add(card1); **/
+		handCards.add(HandHelper.highestCardInList(handCards));
 		
-		ArrayList<Card> handCards = completeHandWithHighestCards(new ArrayList<Card>(), cards);
-		
-		return new Hand(Combination.HIGH_CARD, handCards);
+		return new Hand(Combination.HIGH_CARD, handCards, completeHandWithHighestCards(handCards, cards));
 	}
 	
 	/**
@@ -224,9 +189,7 @@ public class CardCombinations {
 			break;
 		}
 		
-		pairCards = completeHandWithHighestCards(pairCards, cards);
-		
-		return new Hand(combination, pairCards);
+		return new Hand(combination, pairCards, completeHandWithHighestCards(pairCards, cards));
 	}
 		
 	/**
@@ -289,9 +252,7 @@ public class CardCombinations {
 		
 		pairCards.addAll(pairsMap.get(highestRank2));
 		
-		pairCards = completeHandWithHighestCards(pairCards, cards);
-		
-		return new Hand(Combination.TWO_PAIR, pairCards);
+		return new Hand(Combination.TWO_PAIR, pairCards, completeHandWithHighestCards(pairCards, cards));
 	}
 	
 	public static Hand highestFullHouse(ArrayList<Card> cards) throws UnexpectedCombinationIdenticCards, EmptyCardListException {
@@ -312,7 +273,7 @@ public class CardCombinations {
 		ArrayList<Card> cardsToTest = (ArrayList<Card>) cards.clone();
 		
 		//Removing the three of a kind found not to find it as the best one pair.
-		cardsToTest.removeAll(combinationCards.getCards());
+		cardsToTest.removeAll(combinationCards.getCombinationCards());
 		
 		Hand highestOnePair = highestOfkind(cardsToTest, 2);
 		
@@ -321,9 +282,9 @@ public class CardCombinations {
 			return null;
 		
 		//Pair and three of a kind: merge them to make the full house
-		combinationCards.getCards().addAll(highestOnePair.getCards());
+		combinationCards.getCombinationCards().addAll(highestOnePair.getCombinationCards());
 		
-		return new Hand(Combination.FULL_HOUSE, combinationCards.getCards());
+		return new Hand(Combination.FULL_HOUSE, combinationCards.getCombinationCards());
 	}
 	
 	public static Hand flush(ArrayList<Card> cards, boolean highestFlush) throws EmptyCardListException {
@@ -476,7 +437,7 @@ public class CardCombinations {
 		if(handFlush == null)
 			return null;
 		
-		return highestStraight(handFlush.getCards());
+		return highestStraight(handFlush.getCombinationCards());
 	}
 	
 	public static boolean containsCombinationType(Combination combinationType, ArrayList<Card> cards){
@@ -526,7 +487,7 @@ public class CardCombinations {
 		
 		if(flushHand != null) {
 			//User has a flush, maybe it is a straight flush?			
-			Hand handStraightFlush = highestStraight(flushHand.getCards());
+			Hand handStraightFlush = highestStraight(flushHand.getCombinationCards());
 			
 			if(handStraightFlush != null)
 				return handStraightFlush;
