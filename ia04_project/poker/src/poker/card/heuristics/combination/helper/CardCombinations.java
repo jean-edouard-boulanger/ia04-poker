@@ -23,14 +23,14 @@ public class CardCombinations {
 	/**
 	 * 
 	 * @param cards
-	 * @return Highest card of a card list
-	 * @throws EmptyCardListException
+	 * @return Highest card (card of highest rank) found in the list
+	 * @throws EmptyCardListException 
 	 */
-	public static Hand highestCard(ArrayList<Card> cards) throws EmptyCardListException {
+	protected static Card highestCardInList(ArrayList<Card> cards) throws EmptyCardListException {
 		if(cards == null || cards.size() == 0) {
 			throw new EmptyCardListException();
 		}
-		
+
 		Card card1 = cards.get(0);
 		
 		for (int i = 1; i < cards.size(); i++) {
@@ -41,11 +41,65 @@ public class CardCombinations {
 			}
 		}
 		
-		ArrayList<Card> handCard = new ArrayList<Card>();
+		return card1;
+	}
+	
+	/**
+	 * 
+	 * @param handCards
+	 * @param cards
+	 * @return Complete the hand of the user so that he has a full 5 cards hand if possible.
+	 * @throws EmptyCardListException
+	 */
+	protected static ArrayList<Card> completeHandWithHighestCards(ArrayList<Card> handCards, ArrayList<Card> cards) throws EmptyCardListException {
+		if(handCards.size() == 5 || cards.size() == 0)
+			return handCards;
+		 
+		int missingCards = 5 - handCards.size();
 		
-		handCard.add(card1);
+		ArrayList<Card> copyCards = (ArrayList<Card>) cards.clone();
 		
-		return new Hand(Combination.HIGH_CARD, handCard);
+		copyCards.removeAll(handCards);
+		
+		while(missingCards > 0 && copyCards.size() > 0) {
+			Card newHighestCard = highestCardInList(copyCards);
+			handCards.add(newHighestCard);
+			copyCards.remove(newHighestCard);
+			
+			missingCards--;
+		}
+		
+		return handCards;
+	}
+	
+	/**
+	 * 
+	 * @param cards
+	 * @return Highest card of a card list
+	 * @throws EmptyCardListException
+	 */
+	public static Hand highestCard(ArrayList<Card> cards) throws EmptyCardListException {
+		if(cards == null || cards.size() == 0) {
+			throw new EmptyCardListException();
+		}
+		
+	/**	Card card1 = cards.get(0);
+		
+		for (int i = 1; i < cards.size(); i++) {
+			Card card2 = cards.get(i);
+			
+			if(card1.compareTo(card2) == -1) {
+				card1 = card2;
+			}
+		}
+		
+		ArrayList<Card> handCards = new ArrayList<Card>();
+		
+		handCard.add(card1); **/
+		
+		ArrayList<Card> handCards = completeHandWithHighestCards(new ArrayList<Card>(), cards);
+		
+		return new Hand(Combination.HIGH_CARD, handCards);
 	}
 	
 	/**
@@ -170,6 +224,8 @@ public class CardCombinations {
 			break;
 		}
 		
+		pairCards = completeHandWithHighestCards(pairCards, cards);
+		
 		return new Hand(combination, pairCards);
 	}
 		
@@ -233,6 +289,8 @@ public class CardCombinations {
 		
 		pairCards.addAll(pairsMap.get(highestRank2));
 		
+		pairCards = completeHandWithHighestCards(pairCards, cards);
+		
 		return new Hand(Combination.TWO_PAIR, pairCards);
 	}
 	
@@ -240,6 +298,9 @@ public class CardCombinations {
 		if(cards == null || cards.size() == 0) {
 			throw new EmptyCardListException();
 		}
+		
+		if(cards.size() < 5)
+			return null;
 		
 		Hand combinationCards = highestOfkind(cards, 3);
 		

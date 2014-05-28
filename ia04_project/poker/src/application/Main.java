@@ -55,9 +55,9 @@ public class Main extends Application {
 		
 		CommunityCards communityCards = CommunityCards.getInstance();
 		try {
-			communityCards.pushCard(new Card(CardRank.EIGHT, CardSuit.SPADES));
-			communityCards.pushCard(new Card(CardRank.NINE, CardSuit.SPADES));
-			communityCards.pushCard(new Card(CardRank.SEVEN, CardSuit.SPADES));
+		//	communityCards.pushCard(new Card(CardRank.EIGHT, CardSuit.SPADES));
+			communityCards.pushCard(new Card(CardRank.SIX, CardSuit.SPADES));
+			communityCards.pushCard(new Card(CardRank.SIX, CardSuit.DIAMONDS));
 		} catch (CommunityCardsFullException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
