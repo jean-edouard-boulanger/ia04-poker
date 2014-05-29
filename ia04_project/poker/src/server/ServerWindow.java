@@ -1,6 +1,11 @@
 package server;
 	
+import jade.gui.GuiEvent;
+
 import java.awt.Dimension;
+import java.awt.event.ActionListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.text.NumberFormat;
 
 import javax.swing.ButtonGroup;
@@ -13,6 +18,7 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 
+import sma.agent.EnvAgent;
 import application.PersoIHM.Sens;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
@@ -30,7 +36,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
 
-public class ServerWindow extends JFrame {
+public class ServerWindow extends JFrame implements PropertyChangeListener {
 	
 	private Button btn;
 	
@@ -38,7 +44,18 @@ public class ServerWindow extends JFrame {
 	
 	private Rectangle zone_carte;
 	
-	public ServerWindow() {
+	private JComboBox<Integer> list_nb_player;
+	private JFormattedTextField nb_tour_increase;
+	private JRadioButton radio_distrib_1;
+	private JRadioButton radio_distrib_2;
+	private JRadioButton radio_distrib_3;
+	private JList list_player;
+	private JButton button_launch;
+	private JButton button_begin;
+	
+	private EnvAgent env_agent;
+	
+	public ServerWindow(EnvAgent env_agent) {
 		JPanel panel = new JPanel();
 		
 		this.setTitle("Server configuration");
@@ -46,15 +63,18 @@ public class ServerWindow extends JFrame {
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	    this.setLocationRelativeTo(null);
 	    this.setResizable(false);
+	    
+	    this.env_agent = env_agent;
 		
 		JLabel label_nb_max = new JLabel("Nombre maximum de joueurs : ");
 		Integer[] nb_player = new Integer[]{2,3,4,5,6,7,8,9,10};
-		JComboBox<Integer> list_nb_player = new JComboBox<Integer>(nb_player);
+		list_nb_player = new JComboBox<Integer>(nb_player);
 		list_nb_player.setPreferredSize(new Dimension(300,25));
 		
 		JLabel label_time_increase = new JLabel("Nombre de tours avant augmentation : ");
-		JFormattedTextField time_increase = new JFormattedTextField(NumberFormat.getIntegerInstance());
-		time_increase.setPreferredSize(new Dimension(300, 25));
+		nb_tour_increase = new JFormattedTextField(NumberFormat.getIntegerInstance());
+		nb_tour_increase.setPreferredSize(new Dimension(300, 25));
+		nb_tour_increase.setText("1");
 		
 		ButtonGroup radio_group = new ButtonGroup();
 		
@@ -72,13 +92,13 @@ public class ServerWindow extends JFrame {
 		
 		JLabel label_players = new JLabel("Joueurs : ");
 		String subject[] = {"Aucun joueur pour l'instant"};
-		JList list_player = new JList<String>(subject);
+		list_player = new JList<String>(subject);
 		list_player.setPreferredSize(new Dimension(300, 150));
 		list_player.setEnabled(false);
 		
-		JButton button_launch = new JButton("Lancer le server");
+		button_launch = new JButton("Lancer le server");
 		button_launch.setPreferredSize(new Dimension(250, 40));
-		JButton button_begin = new JButton("Commencer la partie");
+		button_begin = new JButton("Commencer la partie");
 		button_begin.setPreferredSize(new Dimension(250, 40));
 		button_begin.setEnabled(false);
 		
@@ -86,7 +106,7 @@ public class ServerWindow extends JFrame {
 		panel.add(list_nb_player);
 		
 		panel.add(label_time_increase);
-		panel.add(time_increase);
+		panel.add(nb_tour_increase);
 		
 		panel.add(radio_distrib_1);
 		panel.add(radio_distrib_2);
@@ -100,15 +120,47 @@ public class ServerWindow extends JFrame {
 		
 		this.setContentPane(panel);
 		this.setVisible(true);
+		
+		initializeAction();
 	}
 	
 	public void initializeAction()
 	{
-		 btn.setOnAction(new EventHandler<ActionEvent>() {
+		 button_launch.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(java.awt.event.ActionEvent arg0) {
+				
+				launchServer();
+			}
+		});
+	}
+	
+	private void launchServer() {
+		GuiEvent ev = new GuiEvent(this,EnvAgent.LAUNCH_SERVER);
+		
+		Integer nb_player = (Integer)list_nb_player.getSelectedItem();
+		ev.addParameter(nb_player);
+		
+		ev.addParameter(Integer.parseInt(nb_tour_increase.getText()));
+		
+		int selected_distrib = 0;
+		if(radio_distrib_1.isSelected())
+			selected_distrib = 1;
+		else if(radio_distrib_2.isSelected())
+			selected_distrib = 2;
+		else if(radio_distrib_3.isSelected())
+			selected_distrib = 3;
+		
+		ev.addParameter(selected_distrib);
+		
+		env_agent.postGuiEvent(ev);
+	}
 
-            public void handle(ActionEvent event) {
-                System.out.println("Hello World");
-            }
-        });
+	@Override
+	public void propertyChange(PropertyChangeEvent arg0) {
+		
+		
+		
 	}
 }
