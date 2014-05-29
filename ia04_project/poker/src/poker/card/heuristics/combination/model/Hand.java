@@ -12,15 +12,15 @@ public class Hand {
 	ArrayList<Card> combinationCards;
 	ArrayList<Card> additionalCards;
 	
-	public Hand(Combination combination, ArrayList<Card> cards) {
+	public Hand(Combination combination, ArrayList<Card> combinationCards) {
 		this.combination = combination;
-		this.additionalCards = cards;
-		this.combinationCards = new ArrayList<Card>();
+		this.combinationCards = combinationCards;
+		this.additionalCards = new ArrayList<Card>();
 	}
 	
-	public Hand(Combination combination, ArrayList<Card> cards, ArrayList<Card> additionalCards) {
+	public Hand(Combination combination, ArrayList<Card> combinationCards, ArrayList<Card> additionalCards) {
 		this.combination = combination;
-		this.combinationCards = cards;
+		this.combinationCards = combinationCards;
 		this.additionalCards = additionalCards;
 	}
 	
