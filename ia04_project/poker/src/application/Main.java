@@ -65,11 +65,11 @@ public class Main extends Application {
 		try {
 		//	communityCards.pushCard(new Card(CardRank.EIGHT, CardSuit.SPADES));
 		//	communityCards.pushCard(new Card(CardRank.FOUR, CardSuit.SPADES));
-			communityCards.pushCard(new Card(CardRank.SIX, CardSuit.DIAMONDS));
-			communityCards.pushCard(new Card(CardRank.ACE, CardSuit.SPADES));
+			communityCards.pushCard(new Card(CardRank.TEN, CardSuit.DIAMONDS));
+			communityCards.pushCard(new Card(CardRank.QUEEN, CardSuit.SPADES));
 		//	communityCards.pushCard(new Card(CardRank.FIVE, CardSuit.DIAMONDS));
-			communityCards.pushCard(new Card(CardRank.ACE, CardSuit.HEARTS));
-			communityCards.pushCard(new Card(CardRank.ACE, CardSuit.DIAMONDS));
+			communityCards.pushCard(new Card(CardRank.JACK, CardSuit.HEARTS));
+			communityCards.pushCard(new Card(CardRank.KING, CardSuit.DIAMONDS));
 			communityCards.pushCard(new Card(CardRank.ACE, CardSuit.CLUBS));
 		} catch (CommunityCardsFullException e1) {
 			// TODO Auto-generated catch block

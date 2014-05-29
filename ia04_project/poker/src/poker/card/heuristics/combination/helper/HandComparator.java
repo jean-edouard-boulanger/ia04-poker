@@ -72,14 +72,8 @@ public class HandComparator {
 		
 		return hands;
 	}
-	
-	/**
-	 * Algorithm works for 1, 2, 3, 4 identical 4 cards: take the first card of the combination cards list to compare them
-	 * @param hands
-	 * @return
-	 * @throws EmptyCardListException 
-	 */
-	private static ArrayList<Hand> bestIdenticalCardsHands(ArrayList<Hand> hands) throws EmptyCardListException {		
+		
+	private static ArrayList<Hand> removeLowestRankHands(ArrayList<Hand> hands) throws EmptyCardListException {
 		CardRank highestRank = HandHelper.getCombinationRank(hands.get(0));
 		
 		for(Hand h : hands) {
@@ -95,6 +89,18 @@ public class HandComparator {
 		        iter.remove();
 		    }
 		}
+		
+		return hands;
+	}
+	
+	/**
+	 * Algorithm works for 1, 2, 3, 4 identical 4 cards: take the first card of the combination cards list to compare them
+	 * @param hands
+	 * @return
+	 * @throws EmptyCardListException 
+	 */
+	private static ArrayList<Hand> bestIdenticalCardsHands(ArrayList<Hand> hands) throws EmptyCardListException {		
+		hands = removeLowestRankHands(hands);
 
 		//Only hands with the same rank (highest rank in the list) are in the list
 		if(hands.size() == 1)
@@ -103,6 +109,19 @@ public class HandComparator {
 		return handsWithHighestList(hands);
 	}
 	
+	/**
+	 * Determine the best hand (or hands if equality) for hands having 5 cards combinations and 0 additional cards.
+	 * @param hands
+	 * @return
+	 * @throws EmptyCardListException 
+	 */
+	private static ArrayList<Hand> bestFiveCardsCombinationHand(ArrayList<Hand> hands) throws EmptyCardListException {
+		hands = removeLowestRankHands(hands);
+
+		//If more than one hand with the highest rank, equality so return all of them
+		return hands;
+	}
+
 	private static ArrayList<Hand> compareHands(ArrayList<Hand> hands) {
 		switch(hands.get(0).getCombination()) {
 		case HIGH_CARD:
@@ -115,15 +134,24 @@ public class HandComparator {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+			
 		case TWO_PAIR:
+			//Enlever tous les jeux de rang non maximum. Si l'en reste plus d'un, enlever les cartes de haut rang de chaque jeu et retirer tous les jeux ayant  leur 2eme paire de rang inferieur. S'il en reste, comparer la carte additionnelle.
 			return null;
+			
 		case STRAIGHT:
-			return null;
-		case FLUSH:
-			return null;
+		case STRAIGHT_FLUSH:
+			try {
+				return bestFiveCardsCombinationHand(hands);
+			} catch (EmptyCardListException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
 		case FULL_HOUSE:
 			return null;
-		case STRAIGHT_FLUSH:
+			
+		case FLUSH:
 			return null;
 			
 		default:
