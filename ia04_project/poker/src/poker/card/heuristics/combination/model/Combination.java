@@ -20,9 +20,4 @@ public enum Combination {
 	public int getCombination() {
 		return combination;
 	}
-	
-/**	public int compareTo(Combination combination) {
-		return this.combination > combination.getCombination() ? 1 : this.combination == combination.getCombination() ? 0 : -1;
-	}
-	**/
 }

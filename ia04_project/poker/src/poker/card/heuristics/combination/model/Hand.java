@@ -8,8 +8,22 @@ import poker.card.model.Card;
 import poker.card.model.CardRank;
 
 public class Hand {
+	
+	//Example with these cards : 2, 2, 4, 6, 7
+	
+	/**
+	 * Combination type of the hand. Ex: One pair
+	 */
 	Combination combination;
+	
+	/**
+	 * Cards that compose the combination. Ex: 2 and 2 for a one pair.
+	 */
 	ArrayList<Card> combinationCards;
+	
+	/**
+	 * Cards of highest rank that complete the hand (max 5 cards for a hand). Ex: 4 6 7
+	 */
 	ArrayList<Card> additionalCards;
 	
 	public Hand(Combination combination, ArrayList<Card> combinationCards) {

@@ -15,7 +15,13 @@ import poker.card.model.CardRank;
 
 public class HandComparator {
 	
-	protected static ArrayList<Hand> handsWithHighestList(ArrayList<Hand> hands) {
+	/**
+	 * Compare hands that have the same Combination, and these combination are of the same rank.
+	 * Exemple: 2 One pair hands of (2, 2) => The 3 other highest cards of each hand will be used to determine the best hand.
+	 * @param hands
+	 * @return Highest hands (more than one if equality)
+	 */
+	private static ArrayList<Hand> handsWithHighestList(ArrayList<Hand> hands) {
 		if(hands.size() == 0)
 			return hands;
 		
@@ -73,11 +79,11 @@ public class HandComparator {
 	 * @return
 	 * @throws EmptyCardListException 
 	 */
-	protected static ArrayList<Hand> bestIdenticalCardsHands(ArrayList<Hand> hands) throws EmptyCardListException {		
+	private static ArrayList<Hand> bestIdenticalCardsHands(ArrayList<Hand> hands) throws EmptyCardListException {		
 		CardRank highestRank = HandHelper.getCombinationRank(hands.get(0));
 		
 		for(Hand h : hands) {
-			if(highestRank.compareTo(HandHelper.getCombinationRank(h)) == -1) {
+			if(highestRank.compareTo(HandHelper.getCombinationRank(h)) < 0) {
 				highestRank = HandHelper.getCombinationRank(h);
 			}
 		}
@@ -85,7 +91,7 @@ public class HandComparator {
 		ListIterator<Hand> iter = hands.listIterator();
 		
 		while(iter.hasNext()){
-		    if(HandHelper.getCombinationRank(iter.next()).compareTo(highestRank) == -1) {
+		    if(HandHelper.getCombinationRank(iter.next()).compareTo(highestRank) < 0) {
 		        iter.remove();
 		    }
 		}
@@ -97,28 +103,25 @@ public class HandComparator {
 		return handsWithHighestList(hands);
 	}
 	
-	protected static ArrayList<Hand> compareHands(ArrayList<Hand> hands) {
+	private static ArrayList<Hand> compareHands(ArrayList<Hand> hands) {
 		switch(hands.get(0).getCombination()) {
 		case HIGH_CARD:
+		case ONE_PAIR:
+		case THREE_OF_A_KIND:
+		case FOUR_OF_A_KIND:
 			try {
 				return bestIdenticalCardsHands(hands);
 			} catch (EmptyCardListException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-		case ONE_PAIR:
-			return null;
 		case TWO_PAIR:
-			return null;
-		case THREE_OF_A_KIND:
 			return null;
 		case STRAIGHT:
 			return null;
 		case FLUSH:
 			return null;
 		case FULL_HOUSE:
-			return null;
-		case FOUR_OF_A_KIND:
 			return null;
 		case STRAIGHT_FLUSH:
 			return null;
@@ -128,6 +131,11 @@ public class HandComparator {
 		}
 	}
 	
+	/**
+	 * Determine the best (or the list of best if equality) hands. Clone the hands not to change the given data.
+	 * @param hands
+	 * @return
+	 */
 	public static ArrayList<Hand> bestHand(ArrayList<Hand> hands) {
 		if(hands == null || hands.size() == 0)
 			return null;
@@ -137,23 +145,20 @@ public class HandComparator {
 		
 		Hand highestHand = hands.get(0);
 		
+		//Cloning the given data not to change it
 		ArrayList<Hand> handsToCompare = (ArrayList<Hand>) hands.clone();
 		
 		//Removing the non highest hands (hands with combination lower than the highest combination found in the hands)
 		ListIterator<Hand> iter = handsToCompare.listIterator();
 		
 		for (int i = 0; i < handsToCompare.size(); i++) {
-		    if(highestHand.getCombination().compareTo(handsToCompare.get(i).getCombination()) == -1) {
+		    if(highestHand.getCombination().compareTo(handsToCompare.get(i).getCombination()) < 0) {
 		        highestHand = handsToCompare.get(i);
 		    }
 		}
 		
-		if(Combination.HIGH_CARD.compareTo(Combination.ONE_PAIR) != -1) {
-			System.out.println("DSDF");
-		}
-		
 		while(iter.hasNext()){
-		    if(iter.next().getCombination().compareTo(highestHand.getCombination()) == -1) {
+		    if(iter.next().getCombination().compareTo(highestHand.getCombination()) < 0) {
 		        iter.remove();
 		    }
 		}

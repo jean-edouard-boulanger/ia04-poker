@@ -52,13 +52,13 @@ public class Main extends Application {
 		
 		UserDeck userDeck = new UserDeck();
 		
-		userDeck.setCard1(new Card(CardRank.FOUR, CardSuit.CLUBS));
-		userDeck.setCard2(new Card(CardRank.QUEEN, CardSuit.CLUBS));
+		userDeck.setCard1(new Card(CardRank.JACK, CardSuit.CLUBS));
+		userDeck.setCard2(new Card(CardRank.SIX, CardSuit.CLUBS));
 		
 		UserDeck userDeck2 = new UserDeck();
 
-		userDeck2.setCard1(new Card(CardRank.KING, CardSuit.CLUBS));
-		userDeck2.setCard2(new Card(CardRank.TWO, CardSuit.SPADES));
+		userDeck2.setCard1(new Card(CardRank.SEVEN, CardSuit.CLUBS));
+		userDeck2.setCard2(new Card(CardRank.SEVEN, CardSuit.SPADES));
 
 		
 		CommunityCards communityCards = CommunityCards.getInstance();
@@ -66,9 +66,11 @@ public class Main extends Application {
 		//	communityCards.pushCard(new Card(CardRank.EIGHT, CardSuit.SPADES));
 		//	communityCards.pushCard(new Card(CardRank.FOUR, CardSuit.SPADES));
 			communityCards.pushCard(new Card(CardRank.SIX, CardSuit.DIAMONDS));
-			communityCards.pushCard(new Card(CardRank.JACK, CardSuit.DIAMONDS));
+			communityCards.pushCard(new Card(CardRank.ACE, CardSuit.SPADES));
 		//	communityCards.pushCard(new Card(CardRank.FIVE, CardSuit.DIAMONDS));
+			communityCards.pushCard(new Card(CardRank.ACE, CardSuit.HEARTS));
 			communityCards.pushCard(new Card(CardRank.ACE, CardSuit.DIAMONDS));
+			communityCards.pushCard(new Card(CardRank.ACE, CardSuit.CLUBS));
 		} catch (CommunityCardsFullException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
