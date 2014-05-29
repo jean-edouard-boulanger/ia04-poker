@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import com.sun.javafx.collections.transformation.SortableList.SortMode;
 
 import poker.card.heuristics.combination.exception.EmptyCardListException;
 import poker.card.heuristics.combination.exception.UnexpectedCombinationIdenticCards;

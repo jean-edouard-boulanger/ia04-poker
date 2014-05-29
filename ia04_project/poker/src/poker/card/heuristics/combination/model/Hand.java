@@ -14,7 +14,7 @@ public class Hand {
 	
 	public Hand(Combination combination, ArrayList<Card> cards) {
 		this.combination = combination;
-		this.combinationCards = cards;
+		this.additionalCards = cards;
 		this.combinationCards = new ArrayList<Card>();
 	}
 	
