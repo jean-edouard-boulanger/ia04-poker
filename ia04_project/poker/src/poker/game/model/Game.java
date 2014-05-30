@@ -16,6 +16,8 @@ public class Game {
 	private BlindValueDefinition blindValueDefinition = null;
 	private Player currentPlayer;
 	
+	private boolean server_started = false;
+	
 	public Game(){}
 	
 	public void setGamePlayers(ArrayList<Player> gamePlayers){
@@ -73,5 +75,13 @@ public class Game {
 
 	public void setCurrentPlayer(Player currentPlayer) {
 		this.currentPlayer = currentPlayer;
+	}
+
+	public boolean isServer_started() {
+		return server_started;
+	}
+
+	public void setServer_started(boolean server_started) {
+		this.server_started = server_started;
 	}
 }

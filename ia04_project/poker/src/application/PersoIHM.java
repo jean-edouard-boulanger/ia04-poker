@@ -37,8 +37,6 @@ public class PersoIHM extends Group {
 			name.setLayoutY(y+25);
 		}
 		
-		/*this.getChildren().add(bras1);
-		this.getChildren().add(bras2);*/
 		this.getChildren().add(circle);
 		this.getChildren().add(name);
 	}
