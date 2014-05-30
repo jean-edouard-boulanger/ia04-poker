@@ -148,7 +148,7 @@ public class HandComparator {
 				e.printStackTrace();
 			}
 			
-		case FULL_HOUSE:
+		case FULL_HOUSE: //Garder celles de plus haut rang. Retirer la plus haut rang de tous les jeux s'il en reste.
 			return null;
 			
 		case FLUSH:
