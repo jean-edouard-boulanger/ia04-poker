@@ -5,6 +5,7 @@ import gui.server.ServerWindow;
 import java.beans.PropertyChangeSupport;
 
 import poker.game.model.Game;
+import sma.agent.helper.AgentHelper;
 import jade.core.Agent;
 import jade.core.behaviours.Behaviour;
 import jade.core.behaviours.OneShotBehaviour;
@@ -26,34 +27,12 @@ public class SimAgent extends GuiAgent {
 	public static final int LAUNCH_GAME = 1;
 	
 	
-	public void RegisterService(String name, String type){
-		
-		//TODO: allows the creation of severals service by successive call of this function
-		// 		we have to check in there is already a DFAgentDescription in the DFService
-		
-		DFAgentDescription dfd = new DFAgentDescription();
-		dfd.setName(getAID());
-		
-		ServiceDescription sd = new ServiceDescription();
-
-		sd.setName(name);
-		sd.setType(type);
-		
-		dfd.addServices(sd);
-				
-		try {
-			DFService.register(this, dfd);
-		}
-		catch (FIPAException fe) {
-			fe.printStackTrace();
-		}
-	}
 	
 	public void setup()
 	{
 		super.setup();
 		
-		RegisterService("PokerEnvironment","Environment");
+		AgentHelper.RegisterService(this, "PokerEnvironment","Environment");
 		
 		ServerWindow server_window = new ServerWindow(this);
 		changes.addPropertyChangeListener(server_window);
