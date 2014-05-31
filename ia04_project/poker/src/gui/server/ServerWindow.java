@@ -62,15 +62,15 @@ public class ServerWindow extends JFrame implements PropertyChangeListener {
 		
 		ButtonGroup radio_group = new ButtonGroup();
 		
-		JRadioButton radio_distrib_1 = new JRadioButton("Distribution 1 ");
+		radio_distrib_1 = new JRadioButton("Distribution 1 ");
 		radio_distrib_1.setToolTipText("Explication");
 		radio_group.add(radio_distrib_1);
 		
-		JRadioButton radio_distrib_2 = new JRadioButton("Distribution 2 ");
+		radio_distrib_2 = new JRadioButton("Distribution 2 ");
 		radio_distrib_2.setToolTipText("Explication");
 		radio_group.add(radio_distrib_2);
 		
-		JRadioButton radio_distrib_3 = new JRadioButton("Distribution 3 ");
+		radio_distrib_3 = new JRadioButton("Distribution 3 ");
 		radio_distrib_3.setToolTipText("Explication");
 		radio_group.add(radio_distrib_3);
 		
