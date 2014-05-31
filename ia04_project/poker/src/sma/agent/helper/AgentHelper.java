@@ -1,10 +1,14 @@
 package sma.agent.helper;
 
+import sma.message.Message;
+import sma.message.MessageVisitor;
 import jade.core.Agent;
 import jade.domain.DFService;
 import jade.domain.FIPAException;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
+import jade.lang.acl.ACLMessage;
+import jade.lang.acl.MessageTemplate;
 
 /**
  * Class providing various utility methods for Jade agents.
@@ -25,20 +29,37 @@ public class AgentHelper {
 		
 		DFAgentDescription dfd = new DFAgentDescription();
 		dfd.setName(agent.getAID());
-		
 		ServiceDescription sd = new ServiceDescription();
-
 		sd.setName(name);
 		sd.setType(type);
-		
 		dfd.addServices(sd);
-				
 		try {
 			DFService.register(agent, dfd);
 		}
 		catch (FIPAException fe) {
 			fe.printStackTrace();
 		}
+	}
+	
+	/**
+	 * Check if a message matching the template is available in the given agent FIFO.
+	 * The message object is the handled by the given visitor object.
+	 * If the message was not processed by the visitor (accept() returned false) then 
+	 * the message is put back in the agent FIFO.
+	 * @param agent		Agent whose FIFO will be inspected.
+	 * @param template	Template used for message filtering.
+	 * @param visitor	Visitor used to handle the message
+	 * @return true if a message was processed, false otherwise.
+	 */
+	public static boolean ReceiveMessage(Agent agent, MessageTemplate template, MessageVisitor visitor){
+		//TODO: handle the case where there is not msg received + json parsing errors.
+		ACLMessage ACLmsg = agent.receive(template);
+		Message msg = Message.fromJson(ACLmsg.getContent());
+		if(!msg.accept(visitor)){
+			agent.putBack(ACLmsg);
+			return false;
+		}
+		return true;
 	}
 		
 
