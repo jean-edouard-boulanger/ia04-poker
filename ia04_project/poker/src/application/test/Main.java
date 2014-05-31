@@ -1,4 +1,8 @@
-package application;
+package application.test;
+
+import gui.player.PersoIHM;
+import gui.player.PersoIHM.Sens;
+import gui.server.ServerWindow;
 
 import java.util.ArrayList;
 
@@ -35,8 +39,6 @@ import poker.card.model.CardSuit;
 import poker.card.model.CommunityCards;
 import poker.card.model.GameDeck;
 import poker.card.model.UserDeck;
-import server.ServerWindow;
-import application.PersoIHM.Sens;
 
 
 public class Main extends Application {
@@ -189,7 +191,7 @@ public class Main extends Application {
         SwingUtilities.invokeLater(new Runnable() {
         	@Override
         	public void run() {
-                ServerWindow server_window = new ServerWindow();                
+                ServerWindow server_window = new ServerWindow(null);                
         	}
         });
         

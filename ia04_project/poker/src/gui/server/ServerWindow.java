@@ -1,5 +1,6 @@
-package server;
+package gui.server;
 	
+import gui.player.PersoIHM.Sens;
 import jade.gui.GuiEvent;
 
 import java.awt.Dimension;
@@ -19,7 +20,6 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 
 import sma.agent.EnvAgent;
-import application.PersoIHM.Sens;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;

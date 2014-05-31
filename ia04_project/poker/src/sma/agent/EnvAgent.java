@@ -1,9 +1,10 @@
 package sma.agent;
 
+import gui.server.ServerWindow;
+
 import java.beans.PropertyChangeSupport;
 
 import poker.game.model.Game;
-import server.ServerWindow;
 import jade.core.Agent;
 import jade.core.behaviours.Behaviour;
 import jade.core.behaviours.CyclicBehaviour;
@@ -26,25 +27,34 @@ public class EnvAgent extends GuiAgent {
 	
 	PropertyChangeSupport changes = new PropertyChangeSupport(this);
 	
-	public void setup()
-	{
-		super.setup();
+	public void RegisterService(String name, String type){
+		
+		//TODO: allows the creation of severals service by successive call of this function
+		// 		we have to check in there is already a DFAgentDescription in the DFService
 		
 		DFAgentDescription dfd = new DFAgentDescription();
 		dfd.setName(getAID());
 		
 		ServiceDescription sd = new ServiceDescription();
-		sd.setType("Environnement");
-		sd.setName("Poker");
+
+		sd.setName(name);
+		sd.setType(type);
 		
 		dfd.addServices(sd);
-		
+				
 		try {
 			DFService.register(this, dfd);
 		}
 		catch (FIPAException fe) {
 			fe.printStackTrace();
 		}
+	}
+	
+	public void setup()
+	{
+		super.setup();
+		
+		RegisterService("PokerEnvironment","Environment");
 		
 		ServerWindow server_window = new ServerWindow(this);
 		changes.addPropertyChangeListener(server_window);
