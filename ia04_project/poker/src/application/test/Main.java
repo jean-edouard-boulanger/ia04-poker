@@ -4,6 +4,7 @@ import gui.player.PersoIHM;
 import gui.player.PersoIHM.Sens;
 import gui.server.ServerWindow;
 
+import java.net.URL;
 import java.util.ArrayList;
 
 import javafx.application.Application;
@@ -40,7 +41,11 @@ import poker.card.model.CommunityCards;
 import poker.card.model.GameDeck;
 import poker.card.model.UserDeck;
 
-
+/**
+ * 
+ * Class used for testing purpose only.
+ *
+ */
 public class Main extends Application {
 		
 	private Button btn;
@@ -131,7 +136,8 @@ public class Main extends Application {
 		primaryStage.setTitle("Poker");
         Group root = new Group();
         Scene scene = new Scene(root, 900, 600);
-        scene.getStylesheets().addAll(this.getClass().getResource("application.css").toExternalForm());
+        URL applicationCss = this.getClass().getResource("/gui/player/application.css");
+        scene.getStylesheets().addAll(applicationCss.toExternalForm());
 
         btn = new Button();
         btn.setLayoutX(25);
