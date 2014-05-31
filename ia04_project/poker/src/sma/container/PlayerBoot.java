@@ -32,13 +32,13 @@ public class PlayerBoot {
 			ProfileImpl profile = new ProfileImpl(PROPERTY_FILE);
 			ContainerController container = rt.createAgentContainer(profile);
 			
-			AgentController player = container.createNewAgent("Player" + (new Random()).nextInt(), "sma.agent.CroupierAgent", null);
+			AgentController player = container.createNewAgent("Player" + (new Random()).nextInt(), "sma.agent.HumanPlayerAgent", null);
 			
 			player.start();
 		} 
 		catch (Exception ex) 
 		{
-			System.out.println("Error while starting server container: "  + ex.getLocalizedMessage());
+			System.out.println("Error while starting server container: "  + ex.getMessage());
 		}	
 	}
 }

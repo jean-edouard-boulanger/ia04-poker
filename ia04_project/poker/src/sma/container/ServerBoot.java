@@ -2,8 +2,8 @@ package sma.container;
 
 import jade.core.ProfileImpl;
 import jade.core.Runtime;
+import jade.wrapper.AgentContainer;
 import jade.wrapper.AgentController;
-import jade.wrapper.ContainerController;
 
 
 /**
@@ -28,12 +28,12 @@ public class ServerBoot {
 		try {
 			Runtime rt = Runtime.instance();
 			ProfileImpl p = new ProfileImpl(PROPERTY_FILE);
-			ContainerController container = rt.createAgentContainer(p);
+			AgentContainer container = rt.createMainContainer(p);
 			
 			AgentController simulation = container.createNewAgent("Simulation", "sma.agent.SimAgent", null);
 			AgentController environment = container.createNewAgent("Environment", "sma.agent.EnvAgent", null);
 			AgentController croupier = container.createNewAgent("Croupier", "sma.agent.CroupierAgent", null);
-			AgentController blindManagement = container.createNewAgent("blindManagement", "sma.agent.CroupierAgent", null);
+			AgentController blindManagement = container.createNewAgent("blindManagement", "sma.agent.BlindManagementAgent", null);
 			
 			simulation.start();
 			environment.start();
@@ -42,7 +42,7 @@ public class ServerBoot {
 		} 
 		catch (Exception ex) 
 		{
-			System.out.println("Error while starting server container: "  + ex.getLocalizedMessage());
+			System.out.println("Error while starting server container: "  + ex.getMessage());
 		}	
 	}
 }
