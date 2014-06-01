@@ -22,6 +22,12 @@ import sma.agent.SimAgent;
 
 public class ServerWindow extends JFrame implements PropertyChangeListener {
 	
+	public enum ServerGuiEvent  {
+		LAUNCH_SERVER,
+		LAUNCH_GAME,
+	}
+	
+	
 	private Button btn;
 	
 	private Rectangle table;
@@ -121,7 +127,7 @@ public class ServerWindow extends JFrame implements PropertyChangeListener {
 	}
 	
 	private void launchServer() {
-		GuiEvent ev = new GuiEvent(this,SimAgent.LAUNCH_SERVER);
+		GuiEvent ev = new GuiEvent(this, ServerGuiEvent.LAUNCH_SERVER.ordinal());
 		
 		Integer nb_player = (Integer)list_nb_player.getSelectedItem();
 		ev.addParameter(nb_player);

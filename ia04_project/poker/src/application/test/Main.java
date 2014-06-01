@@ -154,7 +154,6 @@ public class Main extends Application {
 				}
 			}, null);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
