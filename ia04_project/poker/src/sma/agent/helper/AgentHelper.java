@@ -1,5 +1,10 @@
 package sma.agent.helper;
 
+import java.io.IOException;
+
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+
 import sma.message.Message;
 import sma.message.MessageVisitor;
 import jade.core.Agent;
@@ -52,9 +57,19 @@ public class AgentHelper {
 	 * @return true if a message was processed, false otherwise.
 	 */
 	public static boolean ReceiveMessage(Agent agent, MessageTemplate template, MessageVisitor visitor){
-		//TODO: handle the case where there is not msg received + json parsing errors.
 		ACLMessage ACLmsg = agent.receive(template);
-		Message msg = Message.fromJson(ACLmsg.getContent());
+		
+		if(ACLmsg == null)
+			return false;
+		
+		Message msg;
+		try {
+			msg = Message.fromJson(ACLmsg.getContent());
+		} catch (IOException e) {
+			//TODO: handle json parsing errors.
+			e.printStackTrace();
+			return false;
+		}
 		if(!msg.accept(visitor)){
 			agent.putBack(ACLmsg);
 			return false;
