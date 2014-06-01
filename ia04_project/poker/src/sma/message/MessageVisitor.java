@@ -1,10 +1,12 @@
 package sma.message;
 
+import jade.lang.acl.ACLMessage;
+
 /**
  * Pattern visitor implementation, this base class should have an
  * handler method for each type of Jade message.
  * 
- * eg. public boolean OnStateChanged(OnStateChangedMessage msg){return false}
+ * eg. public boolean OnStateChanged(OnStateChangedMessage msg, ACLMessage aclMsg){return false}
  * 
  * Theses handler are called by accept methods of Message classes.
  * The handler function should return false if the message is not accepted.
@@ -15,6 +17,6 @@ package sma.message;
  * defaulted interface methods which are only supported in java 8.
  */
 public class MessageVisitor {
-	public boolean onPlayerSubscriptionRequest(PlayerSubscriptionRequest request){return false;}
-	public boolean onFailureMessage(FailureMessage msg) {return false;}
+	public boolean onPlayerSubscriptionRequest(PlayerSubscriptionRequest request, ACLMessage aclMsg){return false;}
+	public boolean onFailureMessage(FailureMessage msg, ACLMessage aclMsg) {return false;}
 }

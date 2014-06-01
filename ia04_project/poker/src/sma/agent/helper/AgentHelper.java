@@ -25,7 +25,7 @@ public class AgentHelper {
 	 * Register a service to the default DFservice
 	 * @param name	name of the service to register
 	 * @param type	type of the service to register
-	 * For now, behavior is undefined if this function is called two times.
+	 * For now, behavior is undefined if this function is called twice.
 	 */
 	public static void RegisterService(Agent agent, String name, String type){
 		
@@ -70,7 +70,7 @@ public class AgentHelper {
 			e.printStackTrace();
 			return false;
 		}
-		if(!msg.accept(visitor)){
+		if(!msg.accept(visitor, ACLmsg)){
 			agent.putBack(ACLmsg);
 			return false;
 		}

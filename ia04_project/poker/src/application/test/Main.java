@@ -3,6 +3,7 @@ package application.test;
 import gui.player.PersoIHM;
 import gui.player.PersoIHM.Sens;
 import gui.server.ServerWindow;
+import jade.lang.acl.ACLMessage;
 
 import java.io.IOException;
 import java.net.URL;
@@ -147,11 +148,11 @@ public class Main extends Application {
 			Message msg2 = Message.fromJson(json);
 			msg2.accept(new MessageVisitor(){
 				@Override
-				public boolean onFailureMessage(FailureMessage msg){
+				public boolean onFailureMessage(FailureMessage msg, ACLMessage aclMsg){
 					System.out.println(msg.getMessage());
 					return true;					
 				}
-			});
+			}, null);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

@@ -1,5 +1,7 @@
 package sma.message;
 
+import jade.lang.acl.ACLMessage;
+
 public class FailureMessage extends Message {
 	
 	private String message;
@@ -20,8 +22,9 @@ public class FailureMessage extends Message {
 		this.message = message;
 	}
 	
-	public boolean accept(MessageVisitor visitor){
-		return visitor.onFailureMessage(this);
+	@Override
+	public boolean accept(MessageVisitor visitor, ACLMessage aclMsg) {
+		return visitor.onFailureMessage(this, aclMsg);
 	}
 	
 }
