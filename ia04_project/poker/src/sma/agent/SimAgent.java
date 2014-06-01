@@ -12,9 +12,13 @@ import java.beans.PropertyChangeSupport;
 import java.io.IOException;
 
 import poker.game.model.Game;
+import poker.game.player.model.AIPlayer;
+import poker.game.player.model.HumanPlayer;
+import poker.game.player.model.Player;
 import sma.agent.helper.AgentHelper;
 import sma.message.FailureMessage;
 import sma.message.MessageVisitor;
+import sma.message.OKMessage;
 import sma.message.PlayerSubscriptionRequest;
 
 /**
@@ -24,15 +28,12 @@ import sma.message.PlayerSubscriptionRequest;
  */
 public class SimAgent extends GuiAgent {
 	
-	private Game game;
 	private PropertyChangeSupport changes = new PropertyChangeSupport(this);
+	private Game game;
+	private int maxPlayers = 2; //TODO: synchronize this parameter with the server GUI.
 	private boolean serverStarted = false;
 	private boolean gameStarted = false;
-	
-	public enum ServerGuiEvent {LAUNCH_SERVER, LAUNCH_GAME};
-	
 
-	
 	
 	public void setup()
 	{
@@ -57,6 +58,7 @@ public class SimAgent extends GuiAgent {
 			boolean msgReceived = AgentHelper.receiveMessage(this.myAgent, ACLMessage.SUBSCRIBE, new MessageVisitor(){
 				@Override
 				public boolean onPlayerSubscriptionRequest(PlayerSubscriptionRequest request, ACLMessage aclMsg){
+					// subscription are not allowed at this point, we send a failure message.
 					AgentHelper.sendReply(myAgent, aclMsg, ACLMessage.FAILURE, new FailureMessage("Server not ready."));
 					return true;
 				}
@@ -80,15 +82,25 @@ public class SimAgent extends GuiAgent {
 		
 		@Override
 		public void action() {
-			
-			boolean msgReceived = AgentHelper.receiveMessage(this.myAgent, MessageTemplate.MatchPerformative(ACLMessage.SUBSCRIBE), new MessageVisitor(){
+				
+			boolean msgReceived = AgentHelper.receiveMessage(this.myAgent, ACLMessage.SUBSCRIBE, new MessageVisitor(){
 				@Override
 				public boolean onPlayerSubscriptionRequest(PlayerSubscriptionRequest request, ACLMessage aclMsg){
-					// TODO: register the player if there is enough room.
-					ACLMessage reply = aclMsg.createReply();
-					/*FailureMessage response = new FailureMessage("Server not ready.");
-					reply.setPerformative(ACLMessage.FAILURE);*/
-					myAgent.send(reply);
+					if(game.getGamePlayers().size() < maxPlayers){
+						// we register a new player
+						Player player = null;
+						if(request.isHuman())
+							player = new HumanPlayer();
+						else
+							player = new AIPlayer();
+						player.setPlayerName(request.getPlayerName());
+						player.setId(aclMsg.getSender().getLocalName());
+						game.getGamePlayers().add(player);
+						AgentHelper.sendReply(myAgent, aclMsg, ACLMessage.INFORM, new OKMessage());
+					}
+					else{ // No more player are allowed, we send a failure msg:
+						AgentHelper.sendReply(myAgent, aclMsg, ACLMessage.FAILURE, new FailureMessage("Server not ready."));
+					}
 					return true;
 				}
 			});
@@ -108,7 +120,7 @@ public class SimAgent extends GuiAgent {
 
 	@Override
 	protected void onGuiEvent(GuiEvent arg0) {
-		switch (ServerGuiEvent.values()[arg0.getType()]) {
+		switch (ServerWindow.ServerGuiEvent.values()[arg0.getType()]) {
 		case LAUNCH_SERVER:
 			this.serverStarted = true;
 			// when the server is started we start waiting players :
