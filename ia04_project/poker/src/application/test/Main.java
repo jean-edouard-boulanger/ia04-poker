@@ -4,6 +4,7 @@ import gui.player.PersoIHM;
 import gui.player.PersoIHM.Sens;
 import gui.server.ServerWindow;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 
@@ -20,6 +21,9 @@ import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 
 import javax.swing.SwingUtilities;
+
+import com.fasterxml.jackson.core.JsonGenerationException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 
 import poker.card.exception.CommunityCardsFullException;
 import poker.card.helper.CardPickerHelper;
@@ -40,6 +44,9 @@ import poker.card.model.CardSuit;
 import poker.card.model.CommunityCards;
 import poker.card.model.GameDeck;
 import poker.card.model.UserDeck;
+import sma.message.FailureMessage;
+import sma.message.Message;
+import sma.message.MessageVisitor;
 
 /**
  * 
@@ -132,6 +139,26 @@ public class Main extends Application {
 		for(Combination c : pe.getExpectedCombinations()){
 			System.out.println(c + " : " + r.getProbabilityForCombination(c) * 100 + " %");
 		}
+		
+		// Serialization tests:
+		try {
+			FailureMessage msg = new FailureMessage("test failure message");
+			String json = msg.toJson();
+			Message msg2 = Message.fromJson(json);
+			msg2.accept(new MessageVisitor(){
+				@Override
+				public boolean onFailureMessage(FailureMessage msg){
+					System.out.println(msg.getMessage());
+					return true;					
+				}
+			});
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
+		//--------------------------------------
 		
 		primaryStage.setTitle("Poker");
         Group root = new Group();
