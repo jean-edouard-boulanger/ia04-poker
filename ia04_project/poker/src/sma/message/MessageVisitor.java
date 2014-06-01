@@ -19,4 +19,5 @@ import jade.lang.acl.ACLMessage;
 public class MessageVisitor {
 	public boolean onPlayerSubscriptionRequest(PlayerSubscriptionRequest request, ACLMessage aclMsg){return false;}
 	public boolean onFailureMessage(FailureMessage msg, ACLMessage aclMsg) {return false;}
+	public boolean onOKMessage(OKMessage okMessage, ACLMessage aclMsg) {return false;}
 }
