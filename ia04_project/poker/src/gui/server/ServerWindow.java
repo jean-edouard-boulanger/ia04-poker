@@ -1,13 +1,13 @@
-package server;
+package gui.server;
 	
 import jade.gui.GuiEvent;
-
 import java.awt.Dimension;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.text.NumberFormat;
-
+import javafx.scene.control.Button;
+import javafx.scene.shape.Rectangle;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -17,26 +17,16 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
-
-import sma.agent.EnvAgent;
-import application.PersoIHM.Sens;
-import javafx.application.Application;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
-import javafx.stage.Stage;
-import javafx.scene.Group;
-import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Tooltip;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
+import sma.agent.SimAgent;
 
 
 public class ServerWindow extends JFrame implements PropertyChangeListener {
+	
+	public enum ServerGuiEvent  {
+		LAUNCH_SERVER,
+		LAUNCH_GAME,
+	}
+	
 	
 	private Button btn;
 	
@@ -53,9 +43,9 @@ public class ServerWindow extends JFrame implements PropertyChangeListener {
 	private JButton button_launch;
 	private JButton button_begin;
 	
-	private EnvAgent env_agent;
+	private SimAgent sim_agent;
 	
-	public ServerWindow(EnvAgent env_agent) {
+	public ServerWindow(SimAgent simAgent) {
 		JPanel panel = new JPanel();
 		
 		this.setTitle("Server configuration");
@@ -64,7 +54,7 @@ public class ServerWindow extends JFrame implements PropertyChangeListener {
 	    this.setLocationRelativeTo(null);
 	    this.setResizable(false);
 	    
-	    this.env_agent = env_agent;
+	    this.sim_agent = simAgent;
 		
 		JLabel label_nb_max = new JLabel("Nombre maximum de joueurs : ");
 		Integer[] nb_player = new Integer[]{2,3,4,5,6,7,8,9,10};
@@ -78,15 +68,15 @@ public class ServerWindow extends JFrame implements PropertyChangeListener {
 		
 		ButtonGroup radio_group = new ButtonGroup();
 		
-		JRadioButton radio_distrib_1 = new JRadioButton("Distribution 1 ");
+		radio_distrib_1 = new JRadioButton("Distribution 1 ");
 		radio_distrib_1.setToolTipText("Explication");
 		radio_group.add(radio_distrib_1);
 		
-		JRadioButton radio_distrib_2 = new JRadioButton("Distribution 2 ");
+		radio_distrib_2 = new JRadioButton("Distribution 2 ");
 		radio_distrib_2.setToolTipText("Explication");
 		radio_group.add(radio_distrib_2);
 		
-		JRadioButton radio_distrib_3 = new JRadioButton("Distribution 3 ");
+		radio_distrib_3 = new JRadioButton("Distribution 3 ");
 		radio_distrib_3.setToolTipText("Explication");
 		radio_group.add(radio_distrib_3);
 		
@@ -137,7 +127,7 @@ public class ServerWindow extends JFrame implements PropertyChangeListener {
 	}
 	
 	private void launchServer() {
-		GuiEvent ev = new GuiEvent(this,EnvAgent.LAUNCH_SERVER);
+		GuiEvent ev = new GuiEvent(this, ServerGuiEvent.LAUNCH_SERVER.ordinal());
 		
 		Integer nb_player = (Integer)list_nb_player.getSelectedItem();
 		ev.addParameter(nb_player);
@@ -154,7 +144,7 @@ public class ServerWindow extends JFrame implements PropertyChangeListener {
 		
 		ev.addParameter(selected_distrib);
 		
-		env_agent.postGuiEvent(ev);
+		sim_agent.postGuiEvent(ev);
 	}
 
 	@Override

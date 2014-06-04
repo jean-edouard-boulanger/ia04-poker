@@ -1,7 +1,5 @@
 main=false
 gui=false
 platform-id=tdia04
-container-name=second
-host=localhost
 local-port=2101
 port=2100

@@ -1,5 +1,12 @@
-package application;
+package application.test;
 
+import gui.player.PersoIHM;
+import gui.player.PersoIHM.Sens;
+import gui.server.ServerWindow;
+import jade.lang.acl.ACLMessage;
+
+import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 
 import javafx.application.Application;
@@ -15,6 +22,9 @@ import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 
 import javax.swing.SwingUtilities;
+
+import com.fasterxml.jackson.core.JsonGenerationException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 
 import poker.card.exception.CommunityCardsFullException;
 import poker.card.helper.CardPickerHelper;
@@ -35,10 +45,15 @@ import poker.card.model.CardSuit;
 import poker.card.model.CommunityCards;
 import poker.card.model.GameDeck;
 import poker.card.model.UserDeck;
-import server.ServerWindow;
-import application.PersoIHM.Sens;
+import sma.message.FailureMessage;
+import sma.message.Message;
+import sma.message.MessageVisitor;
 
-
+/**
+ * 
+ * Class used for testing purpose only.
+ *
+ */
 public class Main extends Application {
 		
 	private Button btn;
@@ -126,10 +141,30 @@ public class Main extends Application {
 			System.out.println(c + " : " + r.getProbabilityForCombination(c) * 100 + " %");
 		}
 		
+		// Serialization tests:
+		try {
+			FailureMessage msg = new FailureMessage("test failure message");
+			String json = msg.toJson();
+			Message msg2 = Message.fromJson(json);
+			msg2.accept(new MessageVisitor(){
+				@Override
+				public boolean onFailureMessage(FailureMessage msg, ACLMessage aclMsg){
+					System.out.println(msg.getMessage());
+					return true;					
+				}
+			}, null);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		
+		//--------------------------------------
+		
 		primaryStage.setTitle("Poker");
         Group root = new Group();
         Scene scene = new Scene(root, 900, 600);
-        scene.getStylesheets().addAll(this.getClass().getResource("application.css").toExternalForm());
+        URL applicationCss = this.getClass().getResource("/gui/player/application.css");
+        scene.getStylesheets().addAll(applicationCss.toExternalForm());
 
         btn = new Button();
         btn.setLayoutX(25);
@@ -189,7 +224,7 @@ public class Main extends Application {
         SwingUtilities.invokeLater(new Runnable() {
         	@Override
         	public void run() {
-                ServerWindow server_window = new ServerWindow();                
+                ServerWindow server_window = new ServerWindow(null);                
         	}
         });
         

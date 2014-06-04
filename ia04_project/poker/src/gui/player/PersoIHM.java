@@ -1,4 +1,4 @@
-package application;
+package gui.player;
 
 import javafx.scene.Group;
 import javafx.scene.control.Label;
