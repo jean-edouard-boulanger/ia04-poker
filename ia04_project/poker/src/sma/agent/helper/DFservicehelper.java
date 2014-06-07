@@ -1,5 +1,6 @@
 package sma.agent.helper;
 
+import jade.core.AID;
 import jade.core.Agent;
 import jade.domain.DFService;
 import jade.domain.FIPAException;
@@ -29,7 +30,37 @@ public class DFservicehelper {
 			DFService.register(agent, dfd);
 		}
 		catch (FIPAException fe) {
+			//TODO: handle errors properly.
 			fe.printStackTrace();
+		}
+	}
+	
+	
+	/**
+	 * Search for an agent having the requested service.
+	 * @param agent	The agent whose searching for a service.
+	 * @param name	Name of the service.
+	 * @param type	Type of the service.
+	 * @return 	The first agent AID matching requirements or null if the 
+	 * 			DF is not accessible or if no agent were found.
+	 */
+	private AID searchService(Agent agent, String name, String type) {
+		try {			
+			DFAgentDescription template = new DFAgentDescription();
+			ServiceDescription sd = new ServiceDescription();
+			sd.setType(type);
+			sd.setName(name);
+			template.addServices(sd);
+			DFAgentDescription[] result = DFService.search(agent, template);
+			if (result.length > 0){
+				return result[0].getName();
+			}
+			else
+				return null;
+		} 
+		catch(FIPAException fe) { 
+			System.out.println("[" + agent.getLocalName() + "] Error while searching service in the DF (service type : " + type + ", service name : " + name + ").");
+			return null;
 		}
 	}
 
