@@ -1,5 +1,7 @@
 package poker.game.model;
 
+import jade.core.AID;
+
 import java.util.ArrayList;
 
 import poker.card.model.GameDeck;
@@ -60,7 +62,7 @@ public class Game {
 		this.pot = pot;
 	}
 
-	public Player getPlayerById(String id){
+	public Player getPlayerById(AID id){
 		for(Player p : this.gamePlayers){
 			if(p.getId() == id){
 				return p;

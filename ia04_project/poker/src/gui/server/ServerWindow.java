@@ -1,13 +1,16 @@
 package gui.server;
 	
 import jade.gui.GuiEvent;
+
 import java.awt.Dimension;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.text.NumberFormat;
+
 import javafx.scene.control.Button;
 import javafx.scene.shape.Rectangle;
+
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -17,7 +20,8 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
-import sma.agent.SimAgent;
+
+import sma.agent.simAgent.SimAgent;
 
 
 public class ServerWindow extends JFrame implements PropertyChangeListener {

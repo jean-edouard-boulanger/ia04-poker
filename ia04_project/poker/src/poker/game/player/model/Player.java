@@ -1,14 +1,15 @@
 package poker.game.player.model;
 
+import jade.core.AID;
 import poker.card.model.UserDeck;
 import poker.token.helpers.TokenSetValueEvaluator;
 import poker.token.model.TokenSet;
 import poker.token.model.TokenType;
 import poker.token.model.TokenValueDefinition;
 
-public abstract class Player {
+public class Player {
 	
-	protected String id;
+	protected AID id;
 	protected String playerName;
 	protected int tablePositionIndex;
 	protected PlayerStatus status;
@@ -17,11 +18,16 @@ public abstract class Player {
 	protected UserDeck deck;
 	protected TokenSet tokens;
 	
-	public String getId() {
+	public Player(AID id, String playerName) {
+		this.id = id;
+		this.playerName = playerName;
+	}
+
+	public AID getId() {
 		return id;
 	}
 
-	public void setId(String id) {
+	public void setId(AID id) {
 		this.id = id;
 	}
 	
