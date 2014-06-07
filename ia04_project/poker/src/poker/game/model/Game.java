@@ -4,6 +4,8 @@ import jade.core.AID;
 
 import java.util.ArrayList;
 
+import com.sun.javafx.webkit.ThemeClientImpl;
+
 import poker.card.model.GameDeck;
 import poker.game.player.model.Player;
 import poker.token.model.TokenSet;
@@ -71,5 +73,25 @@ public class Game {
 	
 	public Player getCurrentPlayer(){
 		return this.gamePlayers.get(this.currentPlayerIndex);
-	}	
+	}
+
+	public void setCurrentPlayer(Player currentPlayer) {
+		this.currentPlayerIndex = gamePlayers.indexOf(currentPlayer);
+	}
+
+
+	/**
+	 * Get a player by it's name
+	 * @param playerName	Player name.
+	 * @return Player with the given name or null if no player were found.
+	 */
+	public Player getPlayerByName(String playerName) {
+		for(Player p : this.gamePlayers){
+			if(p.getPlayerName() == playerName){
+				return p;
+			}
+		}
+		return null;
+	}
+	
 }
