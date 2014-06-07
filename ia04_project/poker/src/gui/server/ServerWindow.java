@@ -61,7 +61,7 @@ public class ServerWindow extends JFrame implements PropertyChangeListener {
 		list_nb_player = new JComboBox<Integer>(nb_player);
 		list_nb_player.setPreferredSize(new Dimension(300,25));
 		
-		JLabel label_time_increase = new JLabel("Nombre de tours avant augmentation : ");
+		JLabel label_time_increase = new JLabel("Nombre de minutes avant augmentation : ");
 		nb_tour_increase = new JFormattedTextField(NumberFormat.getIntegerInstance());
 		nb_tour_increase.setPreferredSize(new Dimension(300, 25));
 		nb_tour_increase.setText("1");
