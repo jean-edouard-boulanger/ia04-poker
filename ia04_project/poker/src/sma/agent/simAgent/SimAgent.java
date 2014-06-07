@@ -42,17 +42,25 @@ public class SimAgent extends GuiAgent {
 	protected void onGuiEvent(GuiEvent arg0) {
 		switch (ServerWindow.ServerGuiEvent.values()[arg0.getType()]) {
 		case LAUNCH_SERVER:
-			System.out.println("[" + this.getLocalName() + "] Server started, now waiting players ...");
-			this.serverStarted = true;
-			//TODO: set game parameters (nb max players, chip distribution, blind augmentation interval, etc.)
+			StartServer();
 			break;
 		case LAUNCH_GAME:
-			System.out.println("[" + this.getLocalName() + "] Game started.");
-			this.gameStarted = true;
+			StartGame();
 			break;
 		default:
 			break;
 		}
+	}
+	
+	private void StartServer(){
+		System.out.println("[" + this.getLocalName() + "] Server started, now waiting players ...");
+		this.serverStarted = true;
+		//TODO: set game parameters (nb max players, chip distribution, blind augmentation interval, etc.)
+	}
+	
+	private void StartGame(){
+		System.out.println("[" + this.getLocalName() + "] Game started.");
+		this.gameStarted = true;
 	}
 	
 	public Game getGame() {

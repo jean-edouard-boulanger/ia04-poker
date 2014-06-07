@@ -41,6 +41,9 @@ public class PlayerSubscriptionBhv extends CyclicBehaviour
 				else if (simAgent.getGame().getGamePlayers().size() >= simAgent.getMaxPlayers()){
 					AgentHelper.sendReply(myAgent, aclMsg, ACLMessage.FAILURE, new FailureMessage("Game full."));
 				}
+				else if (simAgent.getGame().getPlayerByName(request.getPlayerName()) != null){
+					AgentHelper.sendReply(myAgent, aclMsg, ACLMessage.FAILURE, new FailureMessage("Pseudo already taken."));
+				}
 				else {
 					// we add the player to the game:
 					Player player = new Player(aclMsg.getSender(), request.getPlayerName());
