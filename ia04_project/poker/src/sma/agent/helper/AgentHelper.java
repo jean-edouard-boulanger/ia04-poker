@@ -23,6 +23,7 @@ public class AgentHelper {
 	 * The message object is the handled by the given visitor object.
 	 * If the message was not processed by the visitor (accept() returned false) then 
 	 * the message is put back in the agent FIFO.
+	 * If the visitor is null the matching message is discarded.
 	 * @param agent		Agent whose FIFO will be inspected.
 	 * @param template	Template used for message filtering.
 	 * @param visitor	Visitor used to handle the message
@@ -42,7 +43,7 @@ public class AgentHelper {
 			e.printStackTrace();
 			return false;
 		}
-		if(!msg.accept(visitor, ACLmsg)){
+		if(visitor != null && !msg.accept(visitor, ACLmsg)){
 			agent.putBack(ACLmsg);
 			return false;
 		}
