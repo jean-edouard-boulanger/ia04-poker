@@ -9,13 +9,9 @@ public class PlayerReceivedCardNotification extends Message {
 	private Card receivedCard;
 	
 	public PlayerReceivedCardNotification(){}
-	public PlayerReceivedCardNotification(int playerTablePositionIndex, int receivedCard){
-		
-	}
-	
-	@Override
-	public boolean accept(MessageVisitor visitor, ACLMessage aclMsg) {
-		return visitor.onPlayerReceivedCardNotification(this, aclMsg);
+	public PlayerReceivedCardNotification(int playerTablePositionIndex, Card receivedCard){
+		this.playerTablePositionIndex = playerTablePositionIndex;
+		this.receivedCard = receivedCard;
 	}
 
 	public int getPlayerTablePositionIndex(){
@@ -26,5 +22,16 @@ public class PlayerReceivedCardNotification extends Message {
 		this.playerTablePositionIndex = index;
 	}
 	
+	public Card getReceivedCard() {
+		return receivedCard;
+	}
 	
+	public void setReceivedCard(Card receivedCard) {
+		this.receivedCard = receivedCard;
+	}
+	
+	@Override
+	public boolean accept(MessageVisitor visitor, ACLMessage aclMsg) {
+		return visitor.onPlayerReceivedCardNotification(this, aclMsg);
+	}
 }

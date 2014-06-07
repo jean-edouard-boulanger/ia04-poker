@@ -17,6 +17,7 @@ import jade.lang.acl.ACLMessage;
  * defaulted interface methods which are only supported in java 8.
  */
 public class MessageVisitor {
+	
 	public boolean onPlayerSubscriptionRequest(PlayerSubscriptionRequest request, ACLMessage aclMsg){return false;}
 	public boolean onFailureMessage(FailureMessage msg, ACLMessage aclMsg) {return false;}
 	public boolean onOKMessage(OKMessage okMessage, ACLMessage aclMsg) {return false;}
@@ -26,4 +27,11 @@ public class MessageVisitor {
 	public boolean onCardAddedToCommunityCardsNotification(CardAddedToCommunityCardsNotification notification, ACLMessage aclMsg){return false;}
 	public boolean onCommunityCardsEmptiedNotification(CommunityCardsEmptiedNotification notification, ACLMessage aclMsg){return false;}
 	public boolean onPlayerFoldedNotification(PlayerFoldedNotification notification, ACLMessage aclMsg){return false;}
+	public boolean onPlayerSitOnTableNotification(PlayerSitOnTableNotification notification, ACLMessage aclMsg){return false;}
+	public boolean onPlayerReceiveTokenSetNotification(PlayerReceiveTokenSetNotification notification, ACLMessage aclMsg){return false;}
+	public boolean onPlayerBetNotification(PlayerBetNotification notification, ACLMessage aclMsg){return false;}
+	public boolean onPlayerCheckNotification(PlayerCheckNotification notification, ACLMessage aclMsg){return false;}
+	public boolean onBlindValueDefinitionChangedNotification(BlindValueDefinitionChangedNotification notification, ACLMessage aclMsg){return false;}
+	public boolean onCurrentPlayerChangedNotification(CurrentPlayerChangedNotification notification, ACLMessage aclMsg){return false;}
+	
 }
