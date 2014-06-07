@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.StringWriter;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
@@ -36,6 +37,7 @@ public abstract class Message {
 	 */
 	public static Message fromJson(String JSONSerializedMessage) throws IOException{
 		ObjectMapper mapper = new ObjectMapper();
+		mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false); // Fix AID deserialization
 		return (Message)mapper.readValue(JSONSerializedMessage, Message.class);
 	}
 	
