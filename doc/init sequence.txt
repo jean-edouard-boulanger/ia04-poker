@@ -1,0 +1,170 @@
+https://www.websequencediagrams.com/
+
+
+
+participant User
+participant Simulation
+participant Players
+participant Environment
+participant Croupier
+Participant Blind/chip management
+
+note left of Simulation
+Config du 
+server.
+end note
+
+Players->Simulation: subscribe(id,pseudo)
+Players->Simulation: subscribe(id,pseudo)
+Players->Simulation: subscribe(id,pseudo)
+
+User->Simulation:Start Game
+
+Simulation->Environment: ResetTable(playerList, chip distribution)
+
+note over Environment
+Réinitialisation
+de la table et inscription
+des joueurs.
+end note
+Environment-> Players:EnvUpdated('newGame', chips)
+Environment-> Players:EnvUpdated('newGame', chips)
+Environment-> Players:EnvUpdated('newGame', chips)
+
+Simulation->Blind/chip management: ResetBlinds(playerList)
+
+note over Blind/chip management
+Détermination des blinds 
+pour chaque joueurs.
+end note
+
+Blind/chip management->Environment: setBlind(value, player)
+Environment-> Players:EnvUpdated(BlindSet)
+Environment-> Players:EnvUpdated(BlindSet)
+Environment-> Players:EnvUpdated(BlindSet)
+
+Blind/chip management->Environment: setBlind(value, player)
+Environment-> Players:EnvUpdated(BlindSet)
+Environment-> Players:EnvUpdated(BlindSet)
+Environment-> Players:EnvUpdated(BlindSet)
+
+Blind/chip management-->Simulation:Reset blind OK
+
+Simulation->Croupier:Deal(PlayerList)
+
+note over Croupier
+Distribution des cartes (2x3)
+L'ensemble des joueurs sont
+notifiés à chaque fois.
+end note
+
+Croupier->Environment:CardDealt(card,player)
+Environment-> Players:EnvUpdated(card)
+Environment-> Players:EnvUpdated(HiddenCard)
+Environment-> Players:EnvUpdated(HiddenCard)
+
+Croupier->Environment:CardDealt(card,player)
+Environment-> Players:EnvUpdated(HiddenCard)
+Environment-> Players:EnvUpdated(card)
+Environment-> Players:EnvUpdated(HiddenCard)
+
+Croupier->Environment:CardDealt(card,player)
+Environment-> Players:EnvUpdated(HiddenCard)
+Environment-> Players:EnvUpdated(HiddenCard)
+Environment-> Players:EnvUpdated(card)
+
+Croupier->Environment:CardDealt(card,player)
+Environment-> Players:EnvUpdated(card)
+Environment-> Players:EnvUpdated(HiddenCard)
+Environment-> Players:EnvUpdated(HiddenCard)
+
+Croupier->Environment:CardDealt(card,player)
+Environment-> Players:EnvUpdated(HiddenCard)
+Environment-> Players:EnvUpdated(card)
+Environment-> Players:EnvUpdated(HiddenCard)
+
+Croupier->Environment:CardDealt(card,player)
+Environment-> Players:EnvUpdated(HiddenCard)
+Environment-> Players:EnvUpdated(HiddenCard)
+Environment-> Players:EnvUpdated(card)
+
+Croupier-->Simulation:Deal OK
+
+Note over Simulation: 1er tour
+
+Simulation->Players:Play
+Players->Environment:Bet(value)
+Players-->Simulation: Play OK
+Environment-> Players:EnvUpdated('bet')
+Environment-> Players:EnvUpdated('bet')
+Environment-> Players:EnvUpdated('bet')
+
+
+Simulation->Players:Play
+Players->Environment:Bet(value)
+Players-->Simulation: Play OK
+Environment-> Players:EnvUpdated('bet')
+Environment-> Players:EnvUpdated('bet')
+Environment-> Players:EnvUpdated('bet')
+
+Simulation->Players:Play
+Players->Environment:Bet(value)
+Players-->Simulation: Play OK
+Environment-> Players:EnvUpdated('bet')
+Environment-> Players:EnvUpdated('bet')
+Environment-> Players:EnvUpdated('bet')
+
+Note over Simulation: 2ème tour
+
+Simulation->Players:Play
+Players->Environment:Call()
+Players-->Simulation: Play OK
+Environment-> Players:EnvUpdated('call')
+Environment-> Players:EnvUpdated('call')
+Environment-> Players:EnvUpdated('call')
+
+
+Simulation->Players:Play
+Players->Environment:Check()
+Players-->Simulation: Play OK
+Environment-> Players:EnvUpdated('check')
+Environment-> Players:EnvUpdated('check')
+Environment-> Players:EnvUpdated('check')
+
+Simulation->Players:Play
+Players->Environment:Check()
+Players-->Simulation: Play OK
+Environment-> Players:EnvUpdated('check')
+Environment-> Players:EnvUpdated('check')
+Environment-> Players:EnvUpdated('check')
+
+Note over Simulation: Aucune mise, on affiche 3 cartes
+
+Simulation->Croupier:nextStep()
+
+Croupier->Environment:ShowCard(card,player)
+Environment-> Players:EnvUpdated(card)
+Environment-> Players:EnvUpdated(card)
+Environment-> Players:EnvUpdated(card)
+
+Croupier->Environment:ShowCard(card,player)
+Environment-> Players:EnvUpdated(card)
+Environment-> Players:EnvUpdated(card)
+Environment-> Players:EnvUpdated(card)
+
+Croupier->Environment:ShowCard(card,player)
+Environment-> Players:EnvUpdated(card)
+Environment-> Players:EnvUpdated(card)
+Environment-> Players:EnvUpdated(card)
+
+Note over Croupier: Etc.
+
+Croupier-->Simulation: nextStep OK
+
+Simulation->Players:Play
+Players->Environment:Check()
+Players-->Simulation: Play OK
+Environment-> Players:EnvUpdated('check')
+Environment-> Players:EnvUpdated('check')
+Environment-> Players:EnvUpdated('check')
+
