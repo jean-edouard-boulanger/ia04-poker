@@ -9,7 +9,7 @@ import poker.token.model.TokenValueDefinition;
 
 public class Player {
 	
-	protected AID id;
+	protected AID aid;
 	protected String playerName;
 	protected int tablePositionIndex;
 	protected PlayerStatus status;
@@ -18,17 +18,17 @@ public class Player {
 	protected UserDeck deck;
 	protected TokenSet tokens;
 	
-	public Player(AID id, String playerName) {
-		this.id = id;
+	public Player(AID aid, String playerName) {
+		this.aid = aid;
 		this.playerName = playerName;
 	}
 
-	public AID getId() {
-		return id;
+	public AID getAID() {
+		return aid;
 	}
 
-	public void setId(AID id) {
-		this.id = id;
+	public void setAID(AID aid) {
+		this.aid = aid;
 	}
 	
 	public String getPlayerName() {
@@ -63,7 +63,7 @@ public class Player {
 		this.tokens = tokens;
 	}
 	
-	public PlayerStatus getStatus() {
+	public PlayerStatus getStatus(){
 		return status;
 	}
 

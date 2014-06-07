@@ -29,8 +29,6 @@ public class HumanPlayerAgent extends GuiAgent {
 	
 	@Override
 	protected void onGuiEvent(GuiEvent arg0) {
-		// TODO Auto-generated method stub
-		
+		// TODO Auto-generated method stub	
 	}
-	
 }
