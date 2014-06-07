@@ -67,9 +67,8 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 	
 	private HumanPlayerAgent human_player_agent;
 	
-	public PlayerWindow(HumanPlayerAgent human_player_agent)
+	public void setHumanPlayerAgent(HumanPlayerAgent agent)
 	{
-		super();
 		this.human_player_agent = human_player_agent;
 	}
 	
@@ -142,7 +141,7 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
         SwingUtilities.invokeLater(new Runnable() {
         	@Override
         	public void run() {
-                ServerWindow server_window = new ServerWindow(null);                
+               // ServerWindow server_window = new ServerWindow(null);                
         	}
         });
         

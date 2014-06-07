@@ -20,4 +20,10 @@ public class MessageVisitor {
 	public boolean onPlayerSubscriptionRequest(PlayerSubscriptionRequest request, ACLMessage aclMsg){return false;}
 	public boolean onFailureMessage(FailureMessage msg, ACLMessage aclMsg) {return false;}
 	public boolean onOKMessage(OKMessage okMessage, ACLMessage aclMsg) {return false;}
+	
+	public boolean onPlayerReceivedUnknownCardNotification(PlayerReceivedUnknownCardNotification notification, ACLMessage aclMsg) {return false;}
+	public boolean onPlayerReceivedCardNotification(PlayerReceivedCardNotification notification, ACLMessage aclMsg){return false;}
+	public boolean onCardAddedToCommunityCardsNotification(CardAddedToCommunityCardsNotification notification, ACLMessage aclMsg){return false;}
+	public boolean onCommunityCardsEmptiedNotification(CommunityCardsEmptiedNotification notification, ACLMessage aclMsg){return false;}
+	public boolean onPlayerFoldedNotification(PlayerFoldedNotification notification, ACLMessage aclMsg){return false;}
 }
