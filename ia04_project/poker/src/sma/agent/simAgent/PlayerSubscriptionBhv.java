@@ -3,6 +3,7 @@ package sma.agent.simAgent;
 import jade.core.behaviours.CyclicBehaviour;
 import jade.lang.acl.ACLMessage;
 import poker.game.player.model.Player;
+import sma.agent.SimAgent;
 import sma.agent.helper.AgentHelper;
 import sma.message.FailureMessage;
 import sma.message.MessageVisitor;
@@ -40,6 +41,9 @@ public class PlayerSubscriptionBhv extends CyclicBehaviour
 				}
 				else if (simAgent.getGame().getGamePlayers().size() >= simAgent.getMaxPlayers()){
 					AgentHelper.sendReply(myAgent, aclMsg, ACLMessage.FAILURE, new FailureMessage("Game full."));
+				}
+				else if (simAgent.getGame().getPlayerByName(request.getPlayerName()) != null){
+					AgentHelper.sendReply(myAgent, aclMsg, ACLMessage.FAILURE, new FailureMessage("Pseudo already taken."));
 				}
 				else {
 					// we add the player to the game:
