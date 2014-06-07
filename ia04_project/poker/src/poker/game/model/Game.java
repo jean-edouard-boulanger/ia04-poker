@@ -16,9 +16,7 @@ public class Game {
 	private TokenSet pot;
 	private TokenValueDefinition tokenValueDefinition = null;
 	private BlindValueDefinition blindValueDefinition = null;
-	private Player currentPlayer;
-	
-	private boolean server_started = false;
+	private int currentPlayerIndex = 0;
 	
 	public Game(){}
 	
@@ -62,28 +60,16 @@ public class Game {
 		this.pot = pot;
 	}
 
-	public Player getPlayerById(AID id){
+	public Player getPlayerByAID(AID aid){
 		for(Player p : this.gamePlayers){
-			if(p.getId() == id){
+			if(p.getAID().equals(aid)){
 				return p;
 			}
 		}
 		return null;
 	}
 	
-	public Player getCurrentPlayer() {
-		return currentPlayer;
-	}
-
-	public void setCurrentPlayer(Player currentPlayer) {
-		this.currentPlayer = currentPlayer;
-	}
-
-	public boolean isServer_started() {
-		return server_started;
-	}
-
-	public void setServer_started(boolean server_started) {
-		this.server_started = server_started;
-	}
+	public Player getCurrentPlayer(){
+		return this.gamePlayers.get(this.currentPlayerIndex);
+	}	
 }
