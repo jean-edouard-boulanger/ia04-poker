@@ -21,7 +21,7 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 
-import sma.agent.simAgent.SimAgent;
+import sma.agent.SimAgent;
 
 
 public class ServerWindow extends JFrame implements PropertyChangeListener {
