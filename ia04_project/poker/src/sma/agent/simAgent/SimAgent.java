@@ -32,10 +32,7 @@ public class SimAgent extends GuiAgent {
 		ServerWindow server_window = new ServerWindow(this);
 		changes.addPropertyChangeListener(server_window);
 		
-		SequentialBehaviour initBhv = new SequentialBehaviour(this);
-		initBhv.addSubBehaviour(new WaitServerToStartBhv(this));
-		initBhv.addSubBehaviour(new WaitPlayersBhv(this));
-		addBehaviour(initBhv);
+		addBehaviour(new PlayerSubscriptionBhv(this));
 	}
 	
 	/**
@@ -45,9 +42,12 @@ public class SimAgent extends GuiAgent {
 	protected void onGuiEvent(GuiEvent arg0) {
 		switch (ServerWindow.ServerGuiEvent.values()[arg0.getType()]) {
 		case LAUNCH_SERVER:
+			System.out.println("[" + this.getLocalName() + "] Server started, now waiting players ...");
 			this.serverStarted = true;
+			//TODO: set game parameters (nb max players, chip distribution, blind augmentation interval, etc.)
 			break;
 		case LAUNCH_GAME:
+			System.out.println("[" + this.getLocalName() + "] Game started.");
 			this.gameStarted = true;
 			break;
 		default:
