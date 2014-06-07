@@ -27,7 +27,7 @@ public class DebitOperation extends BankRollOperation {
 		try{
 			tokenSet.SubstractTokenSet(this.debittedTokenSet);
 		}
-		catch(NotEnoughTokenException ex){
+		catch(Exception e){
 			throw new OperationFailureException();
 		}
 	}
