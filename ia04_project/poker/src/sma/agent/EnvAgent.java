@@ -1,5 +1,7 @@
 package sma.agent;
 
+import gui.server.ServerWindow;
+
 import java.util.ArrayList;
 
 import jade.core.AID;
@@ -8,6 +10,8 @@ import poker.card.model.CommunityCards;
 import poker.game.model.BlindValueDefinition;
 import poker.game.player.model.Player;
 import poker.token.model.TokenValueDefinition;
+import sma.agent.helper.DFservicehelper;
+import sma.agent.simAgent.PlayerSubscriptionBhv;
 
 public class EnvAgent extends Agent {
 	
@@ -16,6 +20,14 @@ public class EnvAgent extends Agent {
 	private BlindValueDefinition blindValueDefinition;
 	private TokenValueDefinition tokenValueDefinition;
 	private int currentPlayerIndex;
+	
+	@Override
+	public void setup()
+	{
+		super.setup();
+		DFservicehelper.registerService(this, "PokerEnvironment","Environment");
+	}
+	
 	
 	private Player getCurrentPlayer(){
 		return this.players.get(currentPlayerIndex);
