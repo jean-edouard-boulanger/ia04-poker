@@ -7,7 +7,6 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 
-import sma.agent.SimAgent.waitServerToStartBhv;
 import sma.agent.helper.AgentHelper;
 import jade.core.Agent;
 import jade.gui.GuiAgent;
