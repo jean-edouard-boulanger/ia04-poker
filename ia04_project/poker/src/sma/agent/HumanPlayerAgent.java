@@ -7,7 +7,6 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 
-import sma.agent.SimAgent.waitServerToStartBhv;
 import sma.agent.helper.AgentHelper;
 import jade.core.Agent;
 import jade.gui.GuiAgent;
@@ -22,7 +21,8 @@ public class HumanPlayerAgent extends GuiAgent {
 		super.setup();
 		AgentHelper.registerService(this, "PokerSimulation","Simulation");
 		
-		PlayerWindow player_window = new PlayerWindow(this);
+		PlayerWindow player_window = new PlayerWindow();
+		player_window.setHumanPlayerAgent(this);
 		changes.addPropertyChangeListener(player_window);
 
 	}
