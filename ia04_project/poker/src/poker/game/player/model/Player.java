@@ -7,7 +7,7 @@ import poker.token.model.TokenSet;
 import poker.token.model.TokenType;
 import poker.token.model.TokenValueDefinition;
 
-public abstract class Player {
+public class Player {
 	
 	protected AID id;
 	protected String playerName;
@@ -18,6 +18,11 @@ public abstract class Player {
 	protected UserDeck deck;
 	protected TokenSet tokens;
 	
+	public Player(AID id, String playerName) {
+		this.id = id;
+		this.playerName = playerName;
+	}
+
 	public AID getId() {
 		return id;
 	}

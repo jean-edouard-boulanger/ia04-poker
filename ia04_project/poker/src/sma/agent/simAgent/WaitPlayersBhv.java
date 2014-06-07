@@ -2,8 +2,6 @@ package sma.agent.simAgent;
 
 import jade.core.behaviours.Behaviour;
 import jade.lang.acl.ACLMessage;
-import poker.game.player.model.AIPlayer;
-import poker.game.player.model.HumanPlayer;
 import poker.game.player.model.Player;
 import sma.agent.helper.AgentHelper;
 import sma.message.FailureMessage;
@@ -42,16 +40,11 @@ public class WaitPlayersBhv extends Behaviour
 			public boolean onPlayerSubscriptionRequest(PlayerSubscriptionRequest request, ACLMessage aclMsg){
 				if(simAgent.getGame().getGamePlayers().size() < simAgent.getMaxPlayers()){
 					
-					// TODO: maybe we don't need to differentiate AI players from Human player in this agent
-					Player player = null;
-					if(request.isHuman())
-						player = new HumanPlayer();
-					else
-						player = new AIPlayer();
-					
-					player.setPlayerName(request.getPlayerName());
-					player.setId(aclMsg.getSender());
+					// we add the player to the game:
+					Player player = new Player(aclMsg.getSender(), request.getPlayerName());
 					simAgent.getGame().getGamePlayers().add(player);
+					
+					// TODO: subscribe the player to the environment.
 					
 					AgentHelper.sendReply(simAgent, aclMsg, ACLMessage.INFORM, new OKMessage());
 				}
