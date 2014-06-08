@@ -9,7 +9,13 @@ import jade.gui.GuiEvent;
 
 import java.beans.PropertyChangeSupport;
 
+import poker.game.model.BlindValueDefinition;
 import poker.game.model.Game;
+import poker.token.exception.InvalidRepartitionException;
+import poker.token.exception.InvalidTokenValueException;
+import poker.token.model.TokenRepartition;
+import poker.token.model.TokenType;
+import poker.token.model.TokenValueDefinition;
 import sma.agent.helper.DFServiceHelper;
 import sma.agent.simulationAgent.CheckWinnerBhv;
 import sma.agent.simulationAgent.GameEndedBhv;
@@ -31,6 +37,7 @@ public class SimulationAgent extends GuiAgent {
 	private int maxPlayers = 2; //TODO: synchronize this parameter with the server GUI.
 	private boolean serverStarted = false;
 	private boolean gameStarted = false;
+	private TokenRepartition defaultTokenRepartiton;
 	
 	
 	public enum GameEvent{NEW_HAND, NEW_ROUND, ROUND_ENDED, GAME_FINISHED, PLAY}
@@ -45,15 +52,44 @@ public class SimulationAgent extends GuiAgent {
 		changes.addPropertyChangeListener(server_window);
 		
 		addBehaviour(new PlayerSubscriptionBhv(this));
+		
+		this.game = new Game();
+		
+		// we create a default token distribution:
+		try {
+			TokenValueDefinition tvd = new TokenValueDefinition();
+			tvd.setValueForTokenType(TokenType.GREEN, 10);
+			tvd.setValueForTokenType(TokenType.BLACK, 1);
+			tvd.setValueForTokenType(TokenType.BLUE, 5);
+			tvd.setValueForTokenType(TokenType.WHITE, 25);
+			tvd.setValueForTokenType(TokenType.RED, 50);
+			game.setTokenValueDefinition(tvd);
+		} catch (InvalidTokenValueException e) {
+			e.printStackTrace();
+		}
+		try {
+			this.defaultTokenRepartiton = new TokenRepartition();
+			defaultTokenRepartiton.setRepartitionForToken(TokenType.GREEN, 10);
+			defaultTokenRepartiton.setRepartitionForToken(TokenType.BLACK, 10);
+			defaultTokenRepartiton.setRepartitionForToken(TokenType.BLUE, 10);
+			defaultTokenRepartiton.setRepartitionForToken(TokenType.WHITE, 5);
+			defaultTokenRepartiton.setRepartitionForToken(TokenType.RED, 5);
+		} catch (InvalidRepartitionException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	/**
 	 * Handle events from the GUI
 	 */
 	@Override
-	protected void onGuiEvent(GuiEvent arg0) {
-		switch (ServerWindow.ServerGuiEvent.values()[arg0.getType()]) {
+	protected void onGuiEvent(GuiEvent evt) {
+		switch (ServerWindow.ServerGuiEvent.values()[evt.getType()]) {
 		case LAUNCH_SERVER:
+			//TODO: handle properly parameters.
+			maxPlayers = (Integer)evt.getParameter(0);
+			int blindIncreaseInterval = (Integer)evt.getParameter(1);
+			int distribNb = (Integer)evt.getParameter(2);
 			StartServer();
 			break;
 		case LAUNCH_GAME:
@@ -80,7 +116,7 @@ public class SimulationAgent extends GuiAgent {
 			@Override
 			protected void handleStateEntered(Behaviour state){
 				super.handleStateEntered(state);
-				System.out.println("[" + this.myAgent.getLocalName() + "] Round: " + this.getExecutionState());
+				System.out.println("[" + this.myAgent.getLocalName() + "] Current state: " + this.getName(state));
 			}
 		};
 		
