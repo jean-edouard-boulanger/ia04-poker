@@ -6,14 +6,14 @@ import sma.message.MessageVisitor;
 import jade.core.AID;
 import jade.lang.acl.ACLMessage;
 
-public class PlayerReceiveTokenSetNotification extends Message {
+public class PlayerReceivedTokenSetNotification extends Message {
 	
 	private AID playerAID;
 	private TokenSet receivedTokenSet;
 	
-	public PlayerReceiveTokenSetNotification(){}
+	public PlayerReceivedTokenSetNotification(){}
 	
-	public PlayerReceiveTokenSetNotification(int playerTablePositionIndex, AID playerAID){
+	public PlayerReceivedTokenSetNotification(int playerTablePositionIndex, AID playerAID){
 		this.playerAID = playerAID;
 		this.receivedTokenSet = receivedTokenSet;
 	}
@@ -36,6 +36,6 @@ public class PlayerReceiveTokenSetNotification extends Message {
 	
 	@Override
 	public boolean accept(MessageVisitor visitor, ACLMessage aclMsg) {
-		return visitor.onPlayerReceiveTokenSetNotification(this, aclMsg);
+		return visitor.onPlayerReceivedTokenSetNotification(this, aclMsg);
 	}
 }

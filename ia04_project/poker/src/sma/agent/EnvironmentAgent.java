@@ -21,11 +21,13 @@ import sma.message.MessageVisitor;
 import sma.message.environment.notification.CardAddedToCommunityCardsNotification;
 import sma.message.environment.notification.CommunityCardsEmptiedNotification;
 import sma.message.environment.notification.PlayerReceivedCardNotification;
+import sma.message.environment.notification.PlayerReceivedTokenSetNotification;
 import sma.message.environment.notification.PlayerReceivedUnknownCardNotification;
 import sma.message.environment.request.AddCommunityCardRequest;
 import sma.message.environment.request.CurrentPlayerChangeRequest;
 import sma.message.environment.request.DealCardToPlayerRequest;
 import sma.message.environment.request.EmptyCommunityCardsRequest;
+import sma.message.environment.request.GiveTokenSetToPlayerRequest;
 import sma.message.NotificationSubscriber;
 import sma.message.OKMessage;
 import sma.message.environment.notification.PlayerSitOnTableNotification;
@@ -164,6 +166,19 @@ public class EnvironmentAgent extends Agent {
 			game.getCommunityCards().popCards();
 			
 			AgentHelper.sendSimpleMessage(EnvironmentAgent.this, game.getPlayersAIDs(), ACLMessage.INFORM, new CommunityCardsEmptiedNotification());
+			
+			AgentHelper.sendReply(EnvironmentAgent.this, aclMsg, ACLMessage.INFORM, new OKMessage());
+			
+			return true;
+		}
+		
+		@Override
+		public boolean onGiveTokenSetToPlayerRequest(GiveTokenSetToPlayerRequest request, ACLMessage aclMsg){
+			
+			game.getPlayerByAID(request.getPlayerAID()).setTokens(request.getTokenSet());
+			
+			//TODO: Maybe change this: send playerAID and player index with the message?
+			AgentHelper.sendSimpleMessage(EnvironmentAgent.this, request.getPlayerAID(), ACLMessage.INFORM, new PlayerReceivedTokenSetNotification());
 			
 			AgentHelper.sendReply(EnvironmentAgent.this, aclMsg, ACLMessage.INFORM, new OKMessage());
 			
