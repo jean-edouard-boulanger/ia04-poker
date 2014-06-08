@@ -23,6 +23,7 @@ import sma.message.FailureMessage;
 import sma.message.Message;
 import sma.message.MessageVisitor;
 import sma.message.PlayerSubscriptionRequest;
+import sma.message.environment.notification.PlayerSitOnTableNotification;
 import sma.message.environment.request.AddPlayerTableRequest;
 
 public class EnvironmentAgent extends Agent {
@@ -116,14 +117,14 @@ public class EnvironmentAgent extends Agent {
 			}
 			catch(PlayerAlreadyRegisteredException ex){
 				AgentHelper.sendReply(EnvironmentAgent.this, aclMsg, ACLMessage.FAILURE, new FailureMessage(ex.getMessage()));
-				ex.printStackTrace();
+				return true;
 			}
 			
-			
+			for(Player p : game.getGamePlayers()){
+				AgentHelper.sendSimpleMessage(EnvironmentAgent.this, p.getAID(), ACLMessage.INFORM, new PlayerSitOnTableNotification(request.getNewPlayer(), p.getAID()));
+			}
 			
 			return true;
 		}
-
 	}
-	
 }
