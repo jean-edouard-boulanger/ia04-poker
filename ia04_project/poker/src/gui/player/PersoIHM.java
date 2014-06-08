@@ -18,6 +18,7 @@ public class PersoIHM extends Group {
 		circle.setCenterY(y);
 		
 		Label name = new Label(pseudo);
+		name.getStyleClass().add("pseudo");
 		
 		if(position.equals(Sens.HAUT))
 		{

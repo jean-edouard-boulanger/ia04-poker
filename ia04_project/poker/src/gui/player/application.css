@@ -1,3 +1,8 @@
-.root {
-    -fx-background-image: url("images/as_carreau.png") repeat;
+
+#root {
+-fx-background-image:url('../../images/background.png');
+}
+
+.pseudo {
+	-fx-text-fill: white;
 }
