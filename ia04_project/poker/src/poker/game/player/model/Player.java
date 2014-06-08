@@ -3,6 +3,7 @@ package poker.game.player.model;
 import javax.print.attribute.standard.MediaSize.Other;
 
 import jade.core.AID;
+import jade.tools.testagent.TestAgent;
 import poker.card.model.UserDeck;
 import poker.token.helpers.TokenSetValueEvaluator;
 import poker.token.model.TokenSet;
@@ -12,7 +13,6 @@ import poker.token.model.TokenValueDefinition;
 public class Player {
 	
 	protected AID aid;
-	protected String uuid;
 	protected String playerName;
 	protected int tablePositionIndex;
 	protected PlayerStatus status;
@@ -94,7 +94,6 @@ public class Player {
 		if(o == this) return true;
 		if(!(o instanceof Player)) return false;
 		
-		return true;
+		return ((Player)o).getAID().equals(this.getAID());
 	}
-	
 }

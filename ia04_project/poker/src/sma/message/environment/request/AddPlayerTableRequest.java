@@ -17,7 +17,7 @@ public class AddPlayerTableRequest extends Message {
 	
 	@Override
 	public boolean accept(MessageVisitor visitor, ACLMessage aclMsg) {
-		return false;
+		return visitor.onAddPlayerTableRequest(this, aclMsg);
 	}
 
 	public Player getNewPlayer() {

@@ -5,6 +5,7 @@ import jade.core.AID;
 import java.util.ArrayList;
 
 import poker.card.model.GameDeck;
+import poker.game.exception.NotRegisteredPlayerException;
 import poker.game.player.model.Player;
 import poker.token.model.TokenSet;
 import poker.token.model.TokenValueDefinition;
@@ -16,7 +17,7 @@ public class Game {
 	private TokenSet pot;
 	private TokenValueDefinition tokenValueDefinition = null;
 	private BlindValueDefinition blindValueDefinition = null;
-	private int currentPlayerIndex = 0;
+	private Player currentPlayer = null;
 	
 	public Game(){}
 	
@@ -60,24 +61,26 @@ public class Game {
 		this.pot = pot;
 	}
 
-	public Player getPlayerByAID(AID aid){
-		for(Player p : this.gamePlayers){
-			if(p.getAID().equals(aid)){
-				return p;
+	public void setCurrentPlayer(Player p) throws NotRegisteredPlayerException{
+		if(!this.gamePlayers.contains(p)){
+			throw new NotRegisteredPlayerException(p);
+		}
+		this.currentPlayer = p;
+	}
+	
+	public Player getCurrentPlayer(){
+		return this.currentPlayer;
+	}
+	
+	public Player getPlayerByAID(AID playerAID){
+		for(Player player : this.gamePlayers){
+			if(player.getAID().equals(playerAID)){
+				return player;
 			}
 		}
 		return null;
 	}
-	
-	public Player getCurrentPlayer(){
-		return this.gamePlayers.get(this.currentPlayerIndex);
-	}
-
-	public void setCurrentPlayer(Player currentPlayer) {
-		this.currentPlayerIndex = gamePlayers.indexOf(currentPlayer);
-	}
-
-
+		
 	/**
 	 * Get a player by it's name
 	 * @param playerName	Player name.
@@ -85,7 +88,7 @@ public class Game {
 	 */
 	public Player getPlayerByName(String playerName) {
 		for(Player p : this.gamePlayers){
-			if(p.getPlayerName() == playerName){
+			if(p.getPlayerName().equals(playerName)){
 				return p;
 			}
 		}
