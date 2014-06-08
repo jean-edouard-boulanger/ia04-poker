@@ -22,7 +22,9 @@ public class Game {
 	private Player currentPlayer = null;
 	private CommunityCards communityCards;
 	
-	public Game(){}
+	public Game(){
+		this.gamePlayers = new ArrayList<Player>();
+	}
 	
 	public void setGamePlayers(ArrayList<Player> gamePlayers){
 		this.gamePlayers = gamePlayers;

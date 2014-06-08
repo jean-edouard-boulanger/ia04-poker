@@ -50,14 +50,10 @@ public class PlayerSubscriptionBhv extends CyclicBehaviour
 					AgentHelper.sendReply(myAgent, aclMsg, ACLMessage.FAILURE, new FailureMessage("Pseudo already taken."));
 				}
 				else {
-					// we add the player to the game:
-					Player player = new Player(aclMsg.getSender(), request.getPlayerName());
-					simAgent.getGame().getGamePlayers().add(player);
-					
 					// we subscribe the player to the environment (async).
+					Player player = new Player(aclMsg.getSender(), request.getPlayerName());
 					AID environment = DFServiceHelper.searchService(simAgent, "PokerEnvironment", "Environment");
 					simAgent.addBehaviour(new TransactionBhv(simAgent, new AddPlayerTableRequest(player), environment));
-					
 					AgentHelper.sendReply(simAgent, aclMsg, ACLMessage.INFORM, new OKMessage());
 				}
 				return true;

@@ -12,8 +12,11 @@ import java.beans.PropertyChangeSupport;
 import poker.game.model.BlindValueDefinition;
 import poker.game.model.Game;
 import poker.token.exception.InvalidRepartitionException;
+import poker.token.exception.InvalidTokenAmountException;
 import poker.token.exception.InvalidTokenValueException;
+import poker.token.factories.TokenSetFactory;
 import poker.token.model.TokenRepartition;
+import poker.token.model.TokenSet;
 import poker.token.model.TokenType;
 import poker.token.model.TokenValueDefinition;
 import sma.agent.helper.DFServiceHelper;
@@ -37,7 +40,7 @@ public class SimulationAgent extends GuiAgent {
 	private int maxPlayers = 2; //TODO: synchronize this parameter with the server GUI.
 	private boolean serverStarted = false;
 	private boolean gameStarted = false;
-	private TokenRepartition defaultTokenRepartiton;
+	private TokenSet defaultTokenSet;
 	
 	
 	public enum GameEvent{NEW_HAND, NEW_ROUND, ROUND_ENDED, GAME_FINISHED, PLAY}
@@ -68,13 +71,17 @@ public class SimulationAgent extends GuiAgent {
 			e.printStackTrace();
 		}
 		try {
-			this.defaultTokenRepartiton = new TokenRepartition();
-			defaultTokenRepartiton.setRepartitionForToken(TokenType.GREEN, 10);
-			defaultTokenRepartiton.setRepartitionForToken(TokenType.BLACK, 10);
-			defaultTokenRepartiton.setRepartitionForToken(TokenType.BLUE, 10);
-			defaultTokenRepartiton.setRepartitionForToken(TokenType.WHITE, 5);
-			defaultTokenRepartiton.setRepartitionForToken(TokenType.RED, 5);
-		} catch (InvalidRepartitionException e) {
+			TokenRepartition defaultTokenRepartiton = new TokenRepartition();
+			defaultTokenRepartiton.setRepartitionForToken(TokenType.GREEN, 30);
+			defaultTokenRepartiton.setRepartitionForToken(TokenType.BLACK, 30);
+			defaultTokenRepartiton.setRepartitionForToken(TokenType.BLUE, 20);
+			defaultTokenRepartiton.setRepartitionForToken(TokenType.WHITE, 10);
+			defaultTokenRepartiton.setRepartitionForToken(TokenType.RED, 10);
+			
+			int nbTokens = 40;
+			this.defaultTokenSet = TokenSetFactory.createTokenSet(defaultTokenRepartiton, nbTokens);
+			
+		} catch (InvalidTokenAmountException | InvalidRepartitionException e) {
 			e.printStackTrace();
 		}
 	}
@@ -170,6 +177,10 @@ public class SimulationAgent extends GuiAgent {
 
 	public void setGameStarted(boolean gameStarted) {
 		this.gameStarted = gameStarted;
+	}
+
+	public TokenSet getDefaultTokenSet() {
+		return defaultTokenSet;
 	}
 	
 }
