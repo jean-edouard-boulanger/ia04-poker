@@ -33,6 +33,7 @@ import sma.agent.simulationAgent.PlayerSubscriptionBhv;
 import sma.message.FailureMessage;
 import sma.message.Message;
 import sma.message.MessageVisitor;
+import sma.message.NotificationSubscriber;
 import sma.message.OKMessage;
 import sma.message.PlayerSubscriptionRequest;
 import sma.message.environment.notification.PlayerSitOnTableNotification;
@@ -43,10 +44,12 @@ public class EnvironmentAgent extends Agent {
 	private Game game;
 	
 	private EnvironmentMessageVisitor msgVisitor;
+	private NotificationSubscriber notificationSubscriber;
 	
 	public EnvironmentAgent(){
 		this.game = new Game();
 		this.msgVisitor = new EnvironmentMessageVisitor();
+		this.notificationSubscriber = new NotificationSubscriber();
 	}
 	
 	@Override
@@ -146,8 +149,5 @@ public class EnvironmentAgent extends Agent {
 			
 			return true;
 		}
-		
-		
-		
 	}
 }
