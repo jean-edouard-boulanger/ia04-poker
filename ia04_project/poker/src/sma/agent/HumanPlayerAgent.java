@@ -20,7 +20,7 @@ public class HumanPlayerAgent extends GuiAgent {
 	public void setup()
 	{
 		super.setup();
-		DFservicehelper.registerService(this, "PokerSimulation","Simulation");
+		DFservicehelper.registerService(this, "PokerSimulation","HumanPlayer");
 		
 		PlayerWindow player_window = new PlayerWindow();
 		player_window.setHumanPlayerAgent(this);
