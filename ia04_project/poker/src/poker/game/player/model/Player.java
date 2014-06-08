@@ -93,7 +93,7 @@ public class Player {
 		if(o == null) return false;
 		if(o == this) return true;
 		if(!(o instanceof Player)) return false;
-		return false;
+		return true;
 	}
 	
 }
