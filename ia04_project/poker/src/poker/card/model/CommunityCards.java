@@ -8,18 +8,10 @@ public class CommunityCards{
 	
 	private static final int NBCARDS = 5;
 	
-	private static CommunityCards instance = null;
 	private ArrayList<Card> communityCards;
 		
-	private CommunityCards(){
+	public CommunityCards(){
 		this.communityCards = new ArrayList<Card>();
-	}
-	
-	public static CommunityCards getInstance(){
-		if(instance == null){
-			instance = new CommunityCards();
-		}
-		return instance;
 	}
 	
 	public void pushCard(Card card) throws CommunityCardsFullException{

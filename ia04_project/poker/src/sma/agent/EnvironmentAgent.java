@@ -1,16 +1,19 @@
 package sma.agent;
 
-import gui.server.ServerWindow;
-
-import java.io.IOException;
-import java.util.ArrayList;
-
 import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.Behaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
+
+import java.io.IOException;
+import java.util.ArrayList;
+
+import poker.card.exception.CommunityCardsFullException;
+import poker.card.exception.UserDeckFullException;
+import poker.card.model.Card;
 import poker.card.model.CommunityCards;
+import poker.game.exception.NotRegisteredPlayerException;
 import poker.game.exception.PlayerAlreadyRegisteredException;
 import poker.game.model.BlindValueDefinition;
 import poker.game.model.Game;
@@ -18,11 +21,22 @@ import poker.game.player.model.Player;
 import poker.token.model.TokenValueDefinition;
 import sma.agent.helper.AgentHelper;
 import sma.agent.helper.DFServiceHelper;
+import sma.message.FailureMessage;
+import sma.message.Message;
+import sma.message.MessageVisitor;
+import sma.message.environment.notification.CardAddedToCommunityCardsNotification;
+import sma.message.environment.notification.PlayerReceivedCardNotification;
+import sma.message.environment.request.AddCommunityCardRequest;
+import sma.message.environment.request.CurrentPlayerChangeRequest;
+import sma.message.environment.request.DealCardToPlayerRequest;
 import sma.agent.simulationAgent.PlayerSubscriptionBhv;
 import sma.message.FailureMessage;
 import sma.message.Message;
 import sma.message.MessageVisitor;
+import sma.message.NotificationSubscriber;
+import sma.message.OKMessage;
 import sma.message.PlayerSubscriptionRequest;
+import sma.message.environment.notification.PlayerSitOnTableNotification;
 import sma.message.environment.request.AddPlayerTableRequest;
 
 public class EnvironmentAgent extends Agent {
@@ -30,10 +44,12 @@ public class EnvironmentAgent extends Agent {
 	private Game game;
 	
 	private EnvironmentMessageVisitor msgVisitor;
+	private NotificationSubscriber notificationSubscriber;
 	
 	public EnvironmentAgent(){
 		this.game = new Game();
 		this.msgVisitor = new EnvironmentMessageVisitor();
+		this.notificationSubscriber = new NotificationSubscriber();
 	}
 	
 	@Override
@@ -54,11 +70,7 @@ public class EnvironmentAgent extends Agent {
 		
 		@Override
 		public void action() {
-			ACLMessage receivedMessage = this.myAgent.receive();
-			if(receivedMessage != null){
-				addBehaviour(new EnvironmentHandleRequestBehaviour(receivedMessage));
-			}
-			else{
+			if(!AgentHelper.receiveMessage(this.myAgent, receiveRequestMessageTemplate, msgVisitor)){
 				block();
 			}
 		}
@@ -69,46 +81,8 @@ public class EnvironmentAgent extends Agent {
 		}
 	}
 	
-	public class EnvironmentHandleRequestBehaviour extends Behaviour{
-		
-		private int step = 0;
-		private ACLMessage receivedRequestMessage;
-		private Message handledRequestMessage;
-		
-		public EnvironmentHandleRequestBehaviour(ACLMessage receivedRequestMessage){
-			super();
-			this.receivedRequestMessage = receivedRequestMessage;
-		}
-		
-		@Override
-		public void action() {
-			if(this.step == 0){
-				try{
-					this.handledRequestMessage = Message.fromJson(this.receivedRequestMessage.getContent());
-					this.step++;
-				}
-				catch(IOException ex){
-					this.step = 2;
-				}
-			}
-			else if(this.step == 1){
-				
-			}
-			else
-			{
-				this.step = 2;
-			}
-		}
-
-		@Override
-		public boolean done() {
-			return step == 2;
-		}
-	}
-	
 	private class EnvironmentMessageVisitor extends MessageVisitor{
-
-		@Override
+	
 		public boolean onAddPlayerTableRequest(AddPlayerTableRequest request, ACLMessage aclMsg) {
 			
 			try{
@@ -116,14 +90,73 @@ public class EnvironmentAgent extends Agent {
 			}
 			catch(PlayerAlreadyRegisteredException ex){
 				AgentHelper.sendReply(EnvironmentAgent.this, aclMsg, ACLMessage.FAILURE, new FailureMessage(ex.getMessage()));
-				ex.printStackTrace();
+				return true;
 			}
 			
-			
+			AgentHelper.sendSimpleMessage(EnvironmentAgent.this, game.getPlayersAIDs(), ACLMessage.INFORM, new PlayerSitOnTableNotification(request.getNewPlayer()));
+			AgentHelper.sendReply(EnvironmentAgent.this, aclMsg, ACLMessage.INFORM, new OKMessage());
 			
 			return true;
 		}
-
+		
+		public boolean onAddCommunityCardRequest(AddCommunityCardRequest request, ACLMessage aclMsg) {
+			Card newCommunityCard = request.getNewCard();
+			
+			try {
+				game.getCommunityCards().pushCard(newCommunityCard);
+			} catch (CommunityCardsFullException e) {
+				//CommunityCards is full
+				e.printStackTrace();
+				AgentHelper.sendReply(EnvironmentAgent.this, aclMsg, ACLMessage.FAILURE, new FailureMessage(e.getMessage()));
+				return true;
+			}
+			
+			CardAddedToCommunityCardsNotification notification = new CardAddedToCommunityCardsNotification(newCommunityCard);
+			
+			//Card successfully added
+			AgentHelper.sendSimpleMessage(EnvironmentAgent.this, notificationSubscriber.getListSubscribers("cardsNotification"), ACLMessage.INFORM, notification);
+			AgentHelper.sendSimpleMessage(EnvironmentAgent.this, game.getPlayersAIDs(), ACLMessage.INFORM, notification);
+			
+			AgentHelper.sendReply(EnvironmentAgent.this, aclMsg, ACLMessage.INFORM, new OKMessage());
+			
+			return true;
+		}
+		
+		@Override
+		public boolean onDealCardToPlayerRequest(DealCardToPlayerRequest request, ACLMessage aclMsg){
+			
+			try{
+				game.getPlayerByAID(request.getPlayerAID()).getDeck().addCard(request.getDealtCard());
+			}
+			catch(UserDeckFullException ex){
+				AgentHelper.sendReply(EnvironmentAgent.this, aclMsg, ACLMessage.FAILURE, new FailureMessage(ex.getMessage()));
+				return true;
+			}
+			
+			PlayerReceivedCardNotification notification = new PlayerReceivedCardNotification(request.getPlayerAID(), request.getDealtCard());
+			
+			AgentHelper.sendSimpleMessage(EnvironmentAgent.this, notificationSubscriber.getListSubscribers("cardsNotifications"), ACLMessage.INFORM, notification);
+			AgentHelper.sendSimpleMessage(EnvironmentAgent.this, request.getPlayerAID(), ACLMessage.INFORM, notification);
+			
+			AgentHelper.sendReply(EnvironmentAgent.this, aclMsg, ACLMessage.INFORM, new OKMessage());
+			
+			return true;
+		}
+		
+		@Override
+		public boolean onCurrentPlayerChangeRequest(CurrentPlayerChangeRequest request, ACLMessage aclMsg){
+			
+			try{
+				game.setCurrentPlayer(game.getPlayerByAID(request.getPlayerAID()));
+			}
+			catch(NotRegisteredPlayerException ex){
+				AgentHelper.sendReply(EnvironmentAgent.this, aclMsg, ACLMessage.INFORM, new FailureMessage(ex.getMessage()));
+				return true;
+			}
+			
+			AgentHelper.sendSimpleMessage(EnvironmentAgent.this, game.getPlayersAIDs(), ACLMessage.INFORM, new CurrentPlayerChangeRequest(request.getPlayerAID()));
+			
+			return true;
+		}
 	}
-	
 }

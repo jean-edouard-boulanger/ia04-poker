@@ -9,13 +9,11 @@ import jade.lang.acl.ACLMessage;
 public class PlayerSitOnTableNotification extends Message {
 	
 	private Player newPlayer;
-	private AID playerAID;
 	
 	public PlayerSitOnTableNotification(){}
 	
-	public PlayerSitOnTableNotification(Player newPlayer, AID playerAID){
+	public PlayerSitOnTableNotification(Player newPlayer){
 		this.newPlayer = newPlayer;
-		this.playerAID = playerAID;
 	}
 	
 	@Override
@@ -29,13 +27,5 @@ public class PlayerSitOnTableNotification extends Message {
 
 	public void setNewPlayer(Player newPlayer) {
 		this.newPlayer = newPlayer;
-	}
-
-	public AID getPlayerAID() {
-		return playerAID;
-	}
-
-	public void setPlayerAID(AID playerAID) {
-		this.playerAID = playerAID;
 	}
 }

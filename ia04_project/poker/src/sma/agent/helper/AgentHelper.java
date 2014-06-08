@@ -1,6 +1,7 @@
 package sma.agent.helper;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -88,9 +89,18 @@ public class AgentHelper {
 	}
 	
 	public static void sendSimpleMessage(Agent sender, AID receiver, int performative, Message content){
+		ArrayList<AID> receivers = new ArrayList<AID>();
+		receivers.add(receiver);
+		
+		sendSimpleMessage(sender, receivers, performative, content);
+	}
+	
+	public static void sendSimpleMessage(Agent sender, ArrayList<AID> receivers, int performative, Message content){
 		try{
 			ACLMessage msg = new ACLMessage(performative);
-			msg.addReceiver(receiver);
+			for(AID receiver : receivers) {
+				msg.addReceiver(receiver);
+			}
 			msg.setContent(content.toJson());
 			msg.setSender(sender.getAID());
 			
@@ -98,5 +108,5 @@ public class AgentHelper {
 		} catch(IOException ex){
 			System.out.println("[" + sender.getName() + "] Error while serializing reply, the message was not sent (" + ex.getMessage() + ").");
 		}
-	}
+	}	
 }

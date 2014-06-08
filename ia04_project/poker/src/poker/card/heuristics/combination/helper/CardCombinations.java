@@ -468,17 +468,15 @@ public class CardCombinations {
 		}
 	}
 	
-	public static Hand playerBestHandWithGame(UserDeck userDeck) throws EmptyCardListException {
-		ArrayList<Card> communityCards = CommunityCards.getInstance().getCommunityCards();
+	public static Hand bestHandFromCards(ArrayList<Card> handCards) throws EmptyCardListException {
 		
-		if(userDeck == null) {
+		if(handCards == null) {
 			throw new EmptyCardListException();
 		}
 		
-		ArrayList<Card> cards = new ArrayList<Card>(userDeck.getCards());
-		
-		cards.addAll(communityCards);
-		
+		//Copy of the handCards not to overwrite them
+		ArrayList<Card> cards = new ArrayList<Card>(handCards);
+				
 		if(cards.size() == 0)
 			return null;
 		
