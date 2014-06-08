@@ -8,7 +8,7 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 
 import sma.agent.helper.AgentHelper;
-import sma.agent.helper.DFservicehelper;
+import sma.agent.helper.DFServiceHelper;
 import jade.core.Agent;
 import jade.gui.GuiAgent;
 import jade.gui.GuiEvent;
@@ -21,7 +21,7 @@ public class HumanPlayerAgent extends GuiAgent {
 	{
 		super.setup();
 
-		DFservicehelper.registerService(this, "PokerSimulation","HumanPlayer");
+		DFServiceHelper.registerService(this, "PokerSimulation","HumanPlayer");
 		
 		PlayerWindow player_window = new PlayerWindow();
 		player_window.setHumanPlayerAgent(this);

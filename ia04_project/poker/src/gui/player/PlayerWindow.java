@@ -2,6 +2,7 @@ package gui.player;
 
 import gui.player.PersoIHM;
 import gui.player.PersoIHM.Sens;
+import gui.player.TokenPlayerIHM.ColorToken;
 import gui.server.ServerWindow;
 import jade.lang.acl.ACLMessage;
 
@@ -12,18 +13,24 @@ import java.net.URL;
 import java.util.ArrayList;
 
 import javafx.application.Application;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 import javax.swing.JLabel;
 import javax.swing.SwingUtilities;
@@ -88,33 +95,40 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 		//--------------------------------------
 		
 		primaryStage.setTitle("Poker");
-        Group root = new Group();
+        Pane root = new Pane();
+        root.setId("root");
+        
         Scene scene = new Scene(root, 700, 600);
         URL applicationCss = this.getClass().getResource("/gui/player/application.css");
-        scene.getStylesheets().addAll(applicationCss.toExternalForm());
+        //scene.getStylesheets().add(applicationCss.toExternalForm());
+        scene.setFill(Color.TRANSPARENT);
         
         button_follow = new Button();
-        button_follow.setLayoutX(100);
+        button_follow.setLayoutX(125);
         button_follow.setLayoutY(490);
-        button_follow.setText("Suivre");
+        button_follow.setText("Suivre à 2");
+        button_follow.setPrefWidth(100);
         
         button_check = new Button();
-        button_check.setLayoutX(100);
+        button_check.setLayoutX(125);
         button_check.setLayoutY(550);
         button_check.setText("Checker");
+        button_check.setPrefWidth(100);
         
         button_fold = new Button();
         button_fold.setLayoutX(15);
         button_fold.setLayoutY(490);
         button_fold.setText("Se coucher");
+        button_fold.setPrefWidth(100);
         
         button_relaunch = new Button();
         button_relaunch.setLayoutX(15);
         button_relaunch.setLayoutY(550);
-        button_relaunch.setText("Relancer");
+        button_relaunch.setText("Relancer à 5");
+        button_relaunch.setPrefWidth(100);
         
         button_add_bet = new Button();
-        button_add_bet.setLayoutX(650);
+        button_add_bet.setLayoutX(660);
         button_add_bet.setLayoutY(550);
         button_add_bet.setText("+");
         
@@ -127,20 +141,23 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
         
         slider_bet = new Slider();
         slider_bet.setMin(0);
-        slider_bet.setMax(100);
-        slider_bet.setValue(0);
+        slider_bet.setMax(50);
+        slider_bet.setValue(5);
         slider_bet.setShowTickLabels(true);
         slider_bet.setShowTickMarks(true);
-        slider_bet.setMajorTickUnit(50);
-        slider_bet.setMinorTickCount(5);
-        slider_bet.setBlockIncrement(10);
-        slider_bet.setLayoutX(500);
+        slider_bet.setMajorTickUnit(5);
+        slider_bet.setMinorTickCount(0);
+        slider_bet.setSnapToTicks(true);
+        slider_bet.setBlockIncrement(25);
+        slider_bet.setLayoutX(485);
         slider_bet.setLayoutY(550);
+        slider_bet.setPrefWidth(175);
         
         textfield_bet = new TextField();
-        textfield_bet.setText("0");
-        textfield_bet.setLayoutX(500);
-        textfield_bet.setLayoutY(500);
+        textfield_bet.setText("5");
+        textfield_bet.setLayoutX(485);
+        textfield_bet.setLayoutY(525);
+        textfield_bet.setPrefWidth(175);
         
         zone_carte.setX(0);
         zone_carte.setY(455);
@@ -148,8 +165,20 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
         zone_carte.setHeight(170);
         zone_carte.setFill(Color.BEIGE);
         
+        /**************************************
+         *  Player's tokens
+         */
+        TokenPlayerIHM token_white = new TokenPlayerIHM(485, 480, 25, ColorToken.WHITE);
+        TokenPlayerIHM token_black = new TokenPlayerIHM(515, 480, 25, ColorToken.BLACK);
+        TokenPlayerIHM token_blue = new TokenPlayerIHM(545, 480, 25, ColorToken.BLUE);
+        TokenPlayerIHM token_green = new TokenPlayerIHM(575, 480, 25, ColorToken.GREEN);
+        TokenPlayerIHM token_red = new TokenPlayerIHM(605, 480, 25, ColorToken.RED);
+        
+        /**************************************
+         *  Player's cards
+         */
         ImageView im = new ImageView(new Image("images/as_carreau.png"));
-        im.setX(250);
+        im.setX(295);
         im.setY(500);
         im.setFitWidth(50);
         im.setFitHeight(72);
@@ -159,10 +188,13 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
         im2.setFitWidth(50);
         im2.setFitHeight(72);
         
+        /**************************************
+         *  Table
+         */
         ImageView table = new ImageView(new Image("images/table_resize.png"));
         table.setX(75);
         table.setY(75);
-         
+        
         root.getChildren().add(table);
         root.getChildren().add(zone_carte);
         root.getChildren().add(new PersoIHM(105, 90, "pseudo", Sens.HAUT));
@@ -182,21 +214,20 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
         root.getChildren().add(button_follow);
         root.getChildren().add(button_relaunch);
         root.getChildren().add(slider_bet);
+        root.getChildren().add(textfield_bet);
+        root.getChildren().add(token_white);
+        root.getChildren().add(token_black);
+        root.getChildren().add(token_blue);
+        root.getChildren().add(token_green);
+        root.getChildren().add(token_red);
         root.getChildren().add(im);
         root.getChildren().add(im2);
 
         primaryStage.setScene(scene);
         primaryStage.setResizable(false);
+        primaryStage.getScene().getStylesheets().setAll(PlayerWindow.class.getResource("/gui/player/application.css").toString());
         primaryStage.show();
-        
-        //Need to init the window via the SwingUtilities.invokeLater method on Mac to work
-        SwingUtilities.invokeLater(new Runnable() {
-        	@Override
-        	public void run() {
-               // ServerWindow server_window = new ServerWindow(null);                
-        	}
-        });
-        
+
         initializeAction();
 	}
 	
@@ -206,13 +237,31 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 	
 	public void initializeAction()
 	{
+		/**************************************
+         *  Slide interaction to see the player's bet
+         */
 		 button_add_bet.setOnAction(new EventHandler<ActionEvent>() {
 
             public void handle(ActionEvent event) {
                 slider_bet.setValue(slider_bet.getValue() + 1);
-                textfield_bet.setText(Double.toString(slider_bet.getValue() + 1));
+                textfield_bet.setText(String.valueOf(Double.valueOf(slider_bet.getValue()).intValue() + 1));
             }
         });
+		 
+		 button_sub_bet.setOnAction(new EventHandler<ActionEvent>() {
+
+	            public void handle(ActionEvent event) {
+	                slider_bet.setValue(slider_bet.getValue() - 1);
+	                textfield_bet.setText(String.valueOf(Double.valueOf(slider_bet.getValue()).intValue() - 1));
+	            }
+	     });
+		 
+		 slider_bet.valueProperty().addListener(new ChangeListener<Number>() {
+			    @Override
+			    public void changed(ObservableValue<? extends Number> ov, Number oldValue, Number newValue) {
+			        PlayerWindow.this.textfield_bet.setText(String.valueOf(newValue.intValue()));
+			    }
+			});
 	}
 
 	@Override
