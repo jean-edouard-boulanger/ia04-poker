@@ -6,36 +6,28 @@ import jade.core.behaviours.Behaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 
-import java.io.IOException;
 import java.util.ArrayList;
 
 import poker.card.exception.CommunityCardsFullException;
 import poker.card.exception.UserDeckFullException;
 import poker.card.model.Card;
-import poker.card.model.CommunityCards;
 import poker.game.exception.NotRegisteredPlayerException;
 import poker.game.exception.PlayerAlreadyRegisteredException;
-import poker.game.model.BlindValueDefinition;
 import poker.game.model.Game;
-import poker.game.player.model.Player;
-import poker.token.model.TokenValueDefinition;
 import sma.agent.helper.AgentHelper;
 import sma.agent.helper.DFServiceHelper;
 import sma.message.FailureMessage;
-import sma.message.Message;
 import sma.message.MessageVisitor;
 import sma.message.environment.notification.CardAddedToCommunityCardsNotification;
+import sma.message.environment.notification.CommunityCardsEmptiedNotification;
 import sma.message.environment.notification.PlayerReceivedCardNotification;
+import sma.message.environment.notification.PlayerReceivedUnknownCardNotification;
 import sma.message.environment.request.AddCommunityCardRequest;
 import sma.message.environment.request.CurrentPlayerChangeRequest;
 import sma.message.environment.request.DealCardToPlayerRequest;
-import sma.agent.simulationAgent.PlayerSubscriptionBhv;
-import sma.message.FailureMessage;
-import sma.message.Message;
-import sma.message.MessageVisitor;
+import sma.message.environment.request.EmptyCommunityCardsRequest;
 import sma.message.NotificationSubscriber;
 import sma.message.OKMessage;
-import sma.message.PlayerSubscriptionRequest;
 import sma.message.environment.notification.PlayerSitOnTableNotification;
 import sma.message.environment.request.AddPlayerTableRequest;
 
@@ -135,8 +127,15 @@ public class EnvironmentAgent extends Agent {
 			
 			PlayerReceivedCardNotification notification = new PlayerReceivedCardNotification(request.getPlayerAID(), request.getDealtCard());
 			
+			//Informing player who received the card
 			AgentHelper.sendSimpleMessage(EnvironmentAgent.this, notificationSubscriber.getListSubscribers("cardsNotifications"), ACLMessage.INFORM, notification);
 			AgentHelper.sendSimpleMessage(EnvironmentAgent.this, request.getPlayerAID(), ACLMessage.INFORM, notification);
+			
+			//Informing other players that he received a card (unknown for them)
+			ArrayList<AID> playersToNofitfy = game.getPlayersAIDs();
+			playersToNofitfy.remove(request.getPlayerAID());
+			
+			AgentHelper.sendSimpleMessage(EnvironmentAgent.this, playersToNofitfy, ACLMessage.INFORM, new PlayerReceivedUnknownCardNotification(request.getPlayerAID()));
 			
 			AgentHelper.sendReply(EnvironmentAgent.this, aclMsg, ACLMessage.INFORM, new OKMessage());
 			
@@ -155,6 +154,18 @@ public class EnvironmentAgent extends Agent {
 			}
 			
 			AgentHelper.sendSimpleMessage(EnvironmentAgent.this, game.getPlayersAIDs(), ACLMessage.INFORM, new CurrentPlayerChangeRequest(request.getPlayerAID()));
+			
+			return true;
+		}
+		
+		@Override
+		public boolean onEmptyCommunityCardsRequest(EmptyCommunityCardsRequest request, ACLMessage aclMsg){
+			
+			game.getCommunityCards().popCards();
+			
+			AgentHelper.sendSimpleMessage(EnvironmentAgent.this, game.getPlayersAIDs(), ACLMessage.INFORM, new CommunityCardsEmptiedNotification());
+			
+			AgentHelper.sendReply(EnvironmentAgent.this, aclMsg, ACLMessage.INFORM, new OKMessage());
 			
 			return true;
 		}

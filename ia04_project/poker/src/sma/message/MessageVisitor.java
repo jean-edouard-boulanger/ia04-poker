@@ -41,6 +41,7 @@ public class MessageVisitor {
 	public boolean onAddCommunityCardRequest(AddCommunityCardRequest request, ACLMessage aclMsg) {return false;}
 	public boolean onDealCardToPlayerRequest(DealCardToPlayerRequest request, ACLMessage aclMsg){return false;}
 	public boolean onCurrentPlayerChangeRequest(CurrentPlayerChangeRequest request, ACLMessage aclMsg){return false;}
-	
+	public boolean onEmptyCommunityCardsRequest(EmptyCommunityCardsRequest request, ACLMessage aclMsg) {return false;}
+
 	
 }
