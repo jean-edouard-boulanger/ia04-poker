@@ -6,6 +6,7 @@ import java.util.Map;
 
 import poker.card.helper.CardPickerHelper;
 import poker.card.helper.CustomPickSequence;
+import poker.card.helper.RandomCardDeckGenerator;
 import poker.card.heuristics.combination.exception.EmptyCardListException;
 import poker.card.heuristics.combination.exception.UnexpectedCombinationIdenticCards;
 import poker.card.heuristics.combination.helper.CardCombinations;

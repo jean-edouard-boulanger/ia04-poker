@@ -1,6 +1,8 @@
-package sma.message;
+package sma.message.environment.notification;
 
 import poker.card.model.Card;
+import sma.message.Message;
+import sma.message.MessageVisitor;
 import jade.lang.acl.ACLMessage;
 
 public class PlayerReceivedCardNotification extends Message {

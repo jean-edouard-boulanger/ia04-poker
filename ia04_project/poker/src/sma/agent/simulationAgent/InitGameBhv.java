@@ -1,13 +1,13 @@
-package sma.agent.simAgent;
+package sma.agent.simulationAgent;
 
-import sma.agent.SimAgent;
+import sma.agent.SimulationAgent;
 import jade.core.behaviours.Behaviour;
 
 public class InitGameBhv extends Behaviour {
 	
-	private SimAgent simAgent;
+	private SimulationAgent simAgent;
 
-	public InitGameBhv(SimAgent simAgent) {
+	public InitGameBhv(SimulationAgent simAgent) {
 		// TODO Auto-generated constructor stub
 	}
 

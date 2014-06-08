@@ -1,5 +1,17 @@
 package sma.message;
 
+import sma.message.environment.notification.BlindValueDefinitionChangedNotification;
+import sma.message.environment.notification.CardAddedToCommunityCardsNotification;
+import sma.message.environment.notification.CommunityCardsEmptiedNotification;
+import sma.message.environment.notification.CurrentPlayerChangedNotification;
+import sma.message.environment.notification.PlayerBetNotification;
+import sma.message.environment.notification.PlayerCheckNotification;
+import sma.message.environment.notification.PlayerFoldedNotification;
+import sma.message.environment.notification.PlayerReceiveTokenSetNotification;
+import sma.message.environment.notification.PlayerReceivedCardNotification;
+import sma.message.environment.notification.PlayerReceivedUnknownCardNotification;
+import sma.message.environment.notification.PlayerSitOnTableNotification;
+import sma.message.environment.request.AddPlayerTableRequest;
 import jade.lang.acl.ACLMessage;
 
 /**
@@ -22,6 +34,7 @@ public class MessageVisitor {
 	public boolean onFailureMessage(FailureMessage msg, ACLMessage aclMsg) {return false;}
 	public boolean onOKMessage(OKMessage okMessage, ACLMessage aclMsg) {return false;}
 	
+
 	public boolean onPlayerReceivedUnknownCardNotification(PlayerReceivedUnknownCardNotification notification, ACLMessage aclMsg) {return false;}
 	public boolean onPlayerReceivedCardNotification(PlayerReceivedCardNotification notification, ACLMessage aclMsg){return false;}
 	public boolean onCardAddedToCommunityCardsNotification(CardAddedToCommunityCardsNotification notification, ACLMessage aclMsg){return false;}
@@ -33,5 +46,7 @@ public class MessageVisitor {
 	public boolean onPlayerCheckNotification(PlayerCheckNotification notification, ACLMessage aclMsg){return false;}
 	public boolean onBlindValueDefinitionChangedNotification(BlindValueDefinitionChangedNotification notification, ACLMessage aclMsg){return false;}
 	public boolean onCurrentPlayerChangedNotification(CurrentPlayerChangedNotification notification, ACLMessage aclMsg){return false;}
+	
+	public boolean onAddPlayerTableRequest(AddPlayerTableRequest request, ACLMessage aclMsg){return false;}
 	
 }

@@ -1,14 +1,16 @@
-package sma.message;
+package sma.message.environment.notification;
 
+import sma.message.Message;
+import sma.message.MessageVisitor;
 import jade.lang.acl.ACLMessage;
 
-public class PlayerFoldedNotification extends Message {
+public class CurrentPlayerChangedNotification extends Message {
 
 	private int playerTablePositionIndex;
 	
-	public PlayerFoldedNotification(){}
+	public CurrentPlayerChangedNotification(){}
 	
-	public PlayerFoldedNotification(int playerTablePositionIndex){
+	public CurrentPlayerChangedNotification(int playerTablePositionIndex){
 		this.playerTablePositionIndex = playerTablePositionIndex;
 	}
 
@@ -22,7 +24,7 @@ public class PlayerFoldedNotification extends Message {
 	
 	@Override
 	public boolean accept(MessageVisitor visitor, ACLMessage aclMsg) {
-		return visitor.onPlayerFoldedNotification(this, aclMsg);
+		return visitor.onCurrentPlayerChangedNotification(this, aclMsg);
 	}
 	
 }

@@ -1,6 +1,8 @@
-package sma.message;
+package sma.message.environment.notification;
 
 import poker.token.model.TokenSet;
+import sma.message.Message;
+import sma.message.MessageVisitor;
 import jade.lang.acl.ACLMessage;
 
 public class PlayerBetNotification extends Message {

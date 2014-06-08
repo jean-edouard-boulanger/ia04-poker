@@ -1,9 +1,9 @@
-package sma.agent.simAgent;
+package sma.agent.simulationAgent;
 
 import jade.core.behaviours.CyclicBehaviour;
 import jade.lang.acl.ACLMessage;
 import poker.game.player.model.Player;
-import sma.agent.SimAgent;
+import sma.agent.SimulationAgent;
 import sma.agent.helper.AgentHelper;
 import sma.message.FailureMessage;
 import sma.message.MessageVisitor;
@@ -16,9 +16,9 @@ import sma.message.PlayerSubscriptionRequest;
  */
 public class PlayerSubscriptionBhv extends CyclicBehaviour
 {
-	private SimAgent simAgent;
+	private SimulationAgent simAgent;
 	
-	public PlayerSubscriptionBhv(SimAgent agent){
+	public PlayerSubscriptionBhv(SimulationAgent agent){
 		super(agent);
 		this.simAgent = agent;
 	}

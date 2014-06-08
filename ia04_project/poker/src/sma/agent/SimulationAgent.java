@@ -10,21 +10,21 @@ import jade.gui.GuiEvent;
 import java.beans.PropertyChangeSupport;
 
 import poker.game.model.Game;
-import sma.agent.helper.DFservicehelper;
-import sma.agent.simAgent.CheckWinnerBhv;
-import sma.agent.simAgent.GameEndedBhv;
-import sma.agent.simAgent.InitGameBhv;
-import sma.agent.simAgent.InitHandBhv;
-import sma.agent.simAgent.InitRoundBhv;
-import sma.agent.simAgent.PlayBhv;
-import sma.agent.simAgent.PlayerSubscriptionBhv;
+import sma.agent.helper.DFServiceHelper;
+import sma.agent.simulationAgent.CheckWinnerBhv;
+import sma.agent.simulationAgent.GameEndedBhv;
+import sma.agent.simulationAgent.InitGameBhv;
+import sma.agent.simulationAgent.InitHandBhv;
+import sma.agent.simulationAgent.InitRoundBhv;
+import sma.agent.simulationAgent.PlayBhv;
+import sma.agent.simulationAgent.PlayerSubscriptionBhv;
 
 /**
  * Simulation agent.
  * This agent handle the main steps of the poker simulation as well as game configuration.
  *
  */
-public class SimAgent extends GuiAgent {
+public class SimulationAgent extends GuiAgent {
 	
 	private PropertyChangeSupport changes = new PropertyChangeSupport(this);
 	private Game game;
@@ -39,7 +39,7 @@ public class SimAgent extends GuiAgent {
 	public void setup()
 	{
 		super.setup();
-		DFservicehelper.registerService(this, "PokerSimulation","Simulation");
+		DFServiceHelper.registerService(this, "PokerSimulation","Simulation");
 		
 		ServerWindow server_window = new ServerWindow(this);
 		changes.addPropertyChangeListener(server_window);

@@ -1,4 +1,4 @@
-package poker.card.heuristics.probability;
+package poker.card.helper;
 
 import java.util.ArrayList;
 import java.util.Collections;

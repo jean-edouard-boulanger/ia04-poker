@@ -43,6 +43,7 @@ public class AgentHelper {
 			e.printStackTrace();
 			return false;
 		}
+		// Horseshit !
 		if(visitor != null && !msg.accept(visitor, ACLmsg)){
 			agent.putBack(ACLmsg);
 			return false;
