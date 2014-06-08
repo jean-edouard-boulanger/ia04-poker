@@ -1,4 +1,4 @@
-package sma.agent.simAgent;
+package sma.agent.simulationAgent;
 
 import jade.core.behaviours.CyclicBehaviour;
 import jade.lang.acl.ACLMessage;

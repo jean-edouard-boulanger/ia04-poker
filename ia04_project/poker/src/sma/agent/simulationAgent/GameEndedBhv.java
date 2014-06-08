@@ -1,14 +1,19 @@
-package sma.agent.simAgent;
+package sma.agent.simulationAgent;
 
 import sma.agent.SimulationAgent;
 import jade.core.behaviours.Behaviour;
 
-public class InitGameBhv extends Behaviour {
+/**
+ * FSM Final State.
+ * Start when there is a final winner.
+ */
+public class GameEndedBhv extends Behaviour {
 	
 	private SimulationAgent simAgent;
 
-	public InitGameBhv(SimulationAgent simAgent) {
-		// TODO Auto-generated constructor stub
+	public GameEndedBhv(SimulationAgent simAgent) {
+		super(simAgent);
+		this.simAgent = simAgent;
 	}
 
 	@Override

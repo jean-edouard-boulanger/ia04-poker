@@ -1,4 +1,4 @@
-package sma.agent.simAgent;
+package sma.agent.simulationAgent;
 
 import sma.agent.SimulationAgent;
 import jade.core.behaviours.Behaviour;
