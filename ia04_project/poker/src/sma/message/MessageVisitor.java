@@ -48,5 +48,6 @@ public class MessageVisitor {
 	public boolean onCurrentPlayerChangedNotification(CurrentPlayerChangedNotification notification, ACLMessage aclMsg){return false;}
 	
 	public boolean onAddPlayerTableRequest(AddPlayerTableRequest request, ACLMessage aclMsg){return false;}
+	public boolean onAddCommunityCardRequest(AddCommunityCardRequest request, ACLMessage aclMsg) {return false;}
 	
 }
