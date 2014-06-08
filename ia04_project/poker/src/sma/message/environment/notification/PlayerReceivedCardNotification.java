@@ -3,25 +3,26 @@ package sma.message.environment.notification;
 import poker.card.model.Card;
 import sma.message.Message;
 import sma.message.MessageVisitor;
+import jade.core.AID;
 import jade.lang.acl.ACLMessage;
 
 public class PlayerReceivedCardNotification extends Message {
 
-	private int playerTablePositionIndex;
+	private AID playerAID;
 	private Card receivedCard;
 	
 	public PlayerReceivedCardNotification(){}
-	public PlayerReceivedCardNotification(int playerTablePositionIndex, Card receivedCard){
-		this.playerTablePositionIndex = playerTablePositionIndex;
+	public PlayerReceivedCardNotification(AID playerAID, Card receivedCard){
+		this.playerAID = playerAID;
 		this.receivedCard = receivedCard;
 	}
 
-	public int getPlayerTablePositionIndex(){
-		return this.playerTablePositionIndex;
+	public AID getPlayerAID() {
+		return playerAID;
 	}
-	
-	public void setPlayerTablePositionIndex(int index){
-		this.playerTablePositionIndex = index;
+
+	public void setPlayerAID(AID playerAID) {
+		this.playerAID = playerAID;
 	}
 	
 	public Card getReceivedCard() {

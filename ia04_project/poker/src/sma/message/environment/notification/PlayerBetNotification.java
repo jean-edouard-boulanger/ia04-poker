@@ -3,17 +3,19 @@ package sma.message.environment.notification;
 import poker.token.model.TokenSet;
 import sma.message.Message;
 import sma.message.MessageVisitor;
+import jade.core.AID;
 import jade.lang.acl.ACLMessage;
 
 public class PlayerBetNotification extends Message {
 
 	TokenSet betTokenSet;
-	private int playerTablePositionIndex;
+	private AID playerAID;
+
 	
 	public PlayerBetNotification(){}
 	
-	public PlayerBetNotification(int playerTablePositionIndex, TokenSet betTokenSet){
-		this.playerTablePositionIndex = playerTablePositionIndex;
+	public PlayerBetNotification(AID playerAID, TokenSet betTokenSet){
+		this.playerAID = playerAID;
 		this.betTokenSet = betTokenSet;
 	}
 
@@ -25,12 +27,12 @@ public class PlayerBetNotification extends Message {
 		this.betTokenSet = betTokenSet;
 	}
 
-	public int getPlayerTablePositionIndex() {
-		return playerTablePositionIndex;
+	public AID getPlayerAID() {
+		return playerAID;
 	}
 
-	public void setPlayerTablePositionIndex(int playerTablePositionIndex) {
-		this.playerTablePositionIndex = playerTablePositionIndex;
+	public void setPlayerAID(AID playerAID) {
+		this.playerAID = playerAID;
 	}
 	
 	@Override

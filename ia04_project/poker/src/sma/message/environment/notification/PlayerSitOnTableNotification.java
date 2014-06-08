@@ -3,18 +3,19 @@ package sma.message.environment.notification;
 import poker.game.player.model.Player;
 import sma.message.Message;
 import sma.message.MessageVisitor;
+import jade.core.AID;
 import jade.lang.acl.ACLMessage;
 
 public class PlayerSitOnTableNotification extends Message {
 	
 	private Player newPlayer;
-	private int playerTablePositionIndex;
+	private AID playerAID;
 	
 	public PlayerSitOnTableNotification(){}
 	
-	public PlayerSitOnTableNotification(Player newPlayer, int playerTablepositionIndex){
+	public PlayerSitOnTableNotification(Player newPlayer, AID playerAID){
 		this.newPlayer = newPlayer;
-		this.playerTablePositionIndex = playerTablepositionIndex;
+		this.playerAID = playerAID;
 	}
 	
 	@Override
@@ -30,12 +31,11 @@ public class PlayerSitOnTableNotification extends Message {
 		this.newPlayer = newPlayer;
 	}
 
-	public int getPlayerTablePositionIndex() {
-		return playerTablePositionIndex;
+	public AID getPlayerAID() {
+		return playerAID;
 	}
 
-	public void setPlayerTablePositionIndex(int playerTablePositionIndex) {
-		this.playerTablePositionIndex = playerTablePositionIndex;
+	public void setPlayerAID(AID playerAID) {
+		this.playerAID = playerAID;
 	}
-	
 }

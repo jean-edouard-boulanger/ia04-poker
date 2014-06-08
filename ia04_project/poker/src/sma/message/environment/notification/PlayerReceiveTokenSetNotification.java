@@ -3,26 +3,27 @@ package sma.message.environment.notification;
 import poker.token.model.TokenSet;
 import sma.message.Message;
 import sma.message.MessageVisitor;
+import jade.core.AID;
 import jade.lang.acl.ACLMessage;
 
 public class PlayerReceiveTokenSetNotification extends Message {
 	
-	private int playerTablePositionIndex;
+	private AID playerAID;
 	private TokenSet receivedTokenSet;
 	
 	public PlayerReceiveTokenSetNotification(){}
 	
-	public PlayerReceiveTokenSetNotification(int playerTablePositionIndex, TokenSet receivedTokenSet){
-		this.playerTablePositionIndex = playerTablePositionIndex;
+	public PlayerReceiveTokenSetNotification(int playerTablePositionIndex, AID playerAID){
+		this.playerAID = playerAID;
 		this.receivedTokenSet = receivedTokenSet;
 	}
 	
-	public int getPlayerTablePositionIndex() {
-		return playerTablePositionIndex;
+	public AID getPlayerAID() {
+		return playerAID;
 	}
 
-	public void setPlayerTablePositionIndex(int playerTablePositionIndex) {
-		this.playerTablePositionIndex = playerTablePositionIndex;
+	public void setPlayerAID(AID playerAID) {
+		this.playerAID = playerAID;
 	}
 
 	public TokenSet getReceivedTokenSet() {
