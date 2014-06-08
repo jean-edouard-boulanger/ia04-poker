@@ -1,13 +1,13 @@
 package sma.agent.simAgent;
 
-import sma.agent.SimAgent;
+import sma.agent.SimulationAgent;
 import jade.core.behaviours.Behaviour;
 
 public class InitRoundBhv extends Behaviour {
 	
-	private SimAgent simAgent;
+	private SimulationAgent simAgent;
 
-	public InitRoundBhv(SimAgent simAgent) {
+	public InitRoundBhv(SimulationAgent simAgent) {
 		super(simAgent);
 		this.simAgent = simAgent;
 	}
@@ -30,7 +30,7 @@ public class InitRoundBhv extends Behaviour {
 	 */
 	@Override
 	public int onEnd(){
-		return SimAgent.GameEvent.PLAY.ordinal();
+		return SimulationAgent.GameEvent.PLAY.ordinal();
 		
 	}
 

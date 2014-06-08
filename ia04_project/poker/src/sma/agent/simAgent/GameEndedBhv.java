@@ -1,6 +1,6 @@
 package sma.agent.simAgent;
 
-import sma.agent.SimAgent;
+import sma.agent.SimulationAgent;
 import jade.core.behaviours.Behaviour;
 
 /**
@@ -9,9 +9,9 @@ import jade.core.behaviours.Behaviour;
  */
 public class GameEndedBhv extends Behaviour {
 	
-	private SimAgent simAgent;
+	private SimulationAgent simAgent;
 
-	public GameEndedBhv(SimAgent simAgent) {
+	public GameEndedBhv(SimulationAgent simAgent) {
 		super(simAgent);
 		this.simAgent = simAgent;
 	}

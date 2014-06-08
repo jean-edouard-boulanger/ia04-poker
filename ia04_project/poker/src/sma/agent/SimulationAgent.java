@@ -24,7 +24,7 @@ import sma.agent.simAgent.PlayerSubscriptionBhv;
  * This agent handle the main steps of the poker simulation as well as game configuration.
  *
  */
-public class SimAgent extends GuiAgent {
+public class SimulationAgent extends GuiAgent {
 	
 	private PropertyChangeSupport changes = new PropertyChangeSupport(this);
 	private Game game;

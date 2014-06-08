@@ -13,7 +13,7 @@ import poker.token.model.TokenValueDefinition;
 import sma.agent.helper.DFServiceHelper;
 import sma.agent.simAgent.PlayerSubscriptionBhv;
 
-public class EnvAgent extends Agent {
+public class EnvironmentAgent extends Agent {
 	
 	private ArrayList<Player> players;
 	private CommunityCards communityCards;

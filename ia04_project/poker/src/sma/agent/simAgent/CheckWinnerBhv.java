@@ -1,15 +1,15 @@
 package sma.agent.simAgent;
 
-import sma.agent.SimAgent;
+import sma.agent.SimulationAgent;
 import jade.core.behaviours.Behaviour;
 
 public class CheckWinnerBhv extends Behaviour {
 	
-	private SimAgent simAgent;
+	private SimulationAgent simAgent;
 	private boolean gameEnded;
 	private boolean handEnded;
 
-	public CheckWinnerBhv(SimAgent simAgent) {
+	public CheckWinnerBhv(SimulationAgent simAgent) {
 		super(simAgent);
 		this.simAgent = simAgent;
 	}
@@ -33,11 +33,11 @@ public class CheckWinnerBhv extends Behaviour {
 	@Override
 	public int onEnd(){
 		if(this.gameEnded) // there is a final winner
-			return SimAgent.GameEvent.GAME_FINISHED.ordinal();
+			return SimulationAgent.GameEvent.GAME_FINISHED.ordinal();
 		if(this.handEnded)// there is a hand winner
-			return SimAgent.GameEvent.NEW_HAND.ordinal();
+			return SimulationAgent.GameEvent.NEW_HAND.ordinal();
 		else 
-			return SimAgent.GameEvent.NEW_ROUND.ordinal();
+			return SimulationAgent.GameEvent.NEW_ROUND.ordinal();
 	}
 
 }
