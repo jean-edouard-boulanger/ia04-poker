@@ -1,5 +1,6 @@
 package sma.message;
 
+import jade.lang.acl.ACLMessage;
 import sma.message.environment.notification.BlindValueDefinitionChangedNotification;
 import sma.message.environment.notification.CardAddedToCommunityCardsNotification;
 import sma.message.environment.notification.CommunityCardsEmptiedNotification;
@@ -11,8 +12,8 @@ import sma.message.environment.notification.PlayerReceiveTokenSetNotification;
 import sma.message.environment.notification.PlayerReceivedCardNotification;
 import sma.message.environment.notification.PlayerReceivedUnknownCardNotification;
 import sma.message.environment.notification.PlayerSitOnTableNotification;
+import sma.message.environment.request.AddCommunityCardRequest;
 import sma.message.environment.request.AddPlayerTableRequest;
-import jade.lang.acl.ACLMessage;
 
 /**
  * Pattern visitor implementation, this base class should have an
