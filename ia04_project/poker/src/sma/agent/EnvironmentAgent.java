@@ -1,15 +1,16 @@
 package sma.agent;
 
-import gui.server.ServerWindow;
-
-import java.io.IOException;
-import java.util.ArrayList;
-
 import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.Behaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
+
+import java.io.IOException;
+import java.util.ArrayList;
+
+import poker.card.exception.CommunityCardsFullException;
+import poker.card.model.Card;
 import poker.card.model.CommunityCards;
 import poker.game.exception.PlayerAlreadyRegisteredException;
 import poker.game.model.BlindValueDefinition;
@@ -18,6 +19,11 @@ import poker.game.player.model.Player;
 import poker.token.model.TokenValueDefinition;
 import sma.agent.helper.AgentHelper;
 import sma.agent.helper.DFServiceHelper;
+import sma.message.FailureMessage;
+import sma.message.Message;
+import sma.message.MessageVisitor;
+import sma.message.environment.notification.CardAddedToCommunityCardsNotification;
+import sma.message.environment.request.AddCommunityCardRequest;
 import sma.agent.simulationAgent.PlayerSubscriptionBhv;
 import sma.message.FailureMessage;
 import sma.message.Message;
@@ -108,8 +114,26 @@ public class EnvironmentAgent extends Agent {
 	}
 	
 	private class EnvironmentMessageVisitor extends MessageVisitor{
+		public boolean onAddCommunityCardRequest(AddCommunityCardRequest request, ACLMessage aclMsg) {
+			Card newCommunityCard = request.getNewCard();
+			
+			try {
+				game.getCommunityCards().pushCard(newCommunityCard);
+			} catch (CommunityCardsFullException e) {
+				//CommunityCards is full
+				e.printStackTrace();
+				
+				AgentHelper.sendReply(EnvironmentAgent.this, aclMsg, ACLMessage.FAILURE, new FailureMessage("Already 5 community cards."));
+				
+				return true;
+			}
+			
+			//Card successfully added
+			AgentHelper.sendSimpleMessage(EnvironmentAgent.this, game.getPlayersAIDs(), ACLMessage.INFORM, new CardAddedToCommunityCardsNotification(newCommunityCard));
+			
+			return true;
+		}
 
-		@Override
 		public boolean onAddPlayerTableRequest(AddPlayerTableRequest request, ACLMessage aclMsg) {
 			
 			try{

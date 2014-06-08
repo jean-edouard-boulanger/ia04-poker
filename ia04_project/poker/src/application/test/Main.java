@@ -76,7 +76,7 @@ public class Main extends Application {
 		userDeck2.setCard2(new Card(CardRank.SEVEN, CardSuit.SPADES));
 
 		
-		CommunityCards communityCards = CommunityCards.getInstance();
+		CommunityCards communityCards = new CommunityCards();
 		try {
 		//	communityCards.pushCard(new Card(CardRank.EIGHT, CardSuit.SPADES));
 		//	communityCards.pushCard(new Card(CardRank.FOUR, CardSuit.SPADES));
@@ -92,8 +92,8 @@ public class Main extends Application {
 		}
 		
 		try {
-			Hand h1 = CardCombinations.playerBestHandWithGame(userDeck);
-			Hand h2 = CardCombinations.playerBestHandWithGame(userDeck2);
+			Hand h1 = CardCombinations.bestHandFromCards(userDeck.getCards());
+			Hand h2 = CardCombinations.bestHandFromCards(userDeck2.getCards());
 			
 			ArrayList<Hand> hands = new ArrayList<Hand>();
 			

@@ -4,6 +4,7 @@ import jade.core.AID;
 
 import java.util.ArrayList;
 
+import poker.card.model.CommunityCards;
 import poker.card.model.GameDeck;
 import poker.game.exception.NotRegisteredPlayerException;
 import poker.game.exception.PlayerAlreadyRegisteredException;
@@ -19,6 +20,7 @@ public class Game {
 	private TokenValueDefinition tokenValueDefinition = null;
 	private BlindValueDefinition blindValueDefinition = null;
 	private Player currentPlayer = null;
+	private CommunityCards communityCards;
 	
 	public Game(){}
 	
@@ -101,6 +103,27 @@ public class Game {
 			}
 		}
 		return null;
+	}
+
+	public CommunityCards getCommunityCards() {
+		return communityCards;
+	}
+
+	public void setCommunityCards(CommunityCards communityCards) {
+		this.communityCards = communityCards;
+	}
+	
+	public ArrayList<AID> getPlayersAIDs() {
+		if(gamePlayers.size() == 0)
+			return null;
+		
+		ArrayList<AID> playersAIDs = new ArrayList<AID>();
+		
+		for(Player p : gamePlayers) {
+			playersAIDs.add(p.getAID());
+		}
+		
+		return playersAIDs;
 	}
 	
 }
