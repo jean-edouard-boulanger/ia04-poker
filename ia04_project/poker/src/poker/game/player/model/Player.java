@@ -92,7 +92,9 @@ public class Player {
 	public boolean equals(Object o){
 		if(o == null) return false;
 		if(o == this) return true;
-		if(!(o instanceof Player)) return 
+		if(!(o instanceof Player)) return false;
+		
+		return true;
 	}
 	
 }
