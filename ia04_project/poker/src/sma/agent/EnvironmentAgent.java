@@ -82,25 +82,7 @@ public class EnvironmentAgent extends Agent {
 	}
 	
 	private class EnvironmentMessageVisitor extends MessageVisitor{
-		
-		public boolean onAddCommunityCardRequest(AddCommunityCardRequest request, ACLMessage aclMsg) {
-			Card newCommunityCard = request.getNewCard();
-			
-			try {
-				game.getCommunityCards().pushCard(newCommunityCard);
-			} catch (CommunityCardsFullException e) {
-				//CommunityCards is full
-				e.printStackTrace();
-				AgentHelper.sendReply(EnvironmentAgent.this, aclMsg, ACLMessage.FAILURE, new FailureMessage(e.getMessage()));
-				return true;
-			}
-			
-			//Card successfully added
-			AgentHelper.sendSimpleMessage(EnvironmentAgent.this, game.getPlayersAIDs(), ACLMessage.INFORM, new CardAddedToCommunityCardsNotification(newCommunityCard));
-			
-			return true;
-		}
-
+	
 		public boolean onAddPlayerTableRequest(AddPlayerTableRequest request, ACLMessage aclMsg) {
 			
 			try{
@@ -117,6 +99,29 @@ public class EnvironmentAgent extends Agent {
 			return true;
 		}
 		
+		public boolean onAddCommunityCardRequest(AddCommunityCardRequest request, ACLMessage aclMsg) {
+			Card newCommunityCard = request.getNewCard();
+			
+			try {
+				game.getCommunityCards().pushCard(newCommunityCard);
+			} catch (CommunityCardsFullException e) {
+				//CommunityCards is full
+				e.printStackTrace();
+				AgentHelper.sendReply(EnvironmentAgent.this, aclMsg, ACLMessage.FAILURE, new FailureMessage(e.getMessage()));
+				return true;
+			}
+			
+			CardAddedToCommunityCardsNotification notification = new CardAddedToCommunityCardsNotification(newCommunityCard);
+			
+			//Card successfully added
+			AgentHelper.sendSimpleMessage(EnvironmentAgent.this, notificationSubscriber.getListSubscribers("cardsNotification"), ACLMessage.INFORM, notification);
+			AgentHelper.sendSimpleMessage(EnvironmentAgent.this, game.getPlayersAIDs(), ACLMessage.INFORM, notification);
+			
+			AgentHelper.sendReply(EnvironmentAgent.this, aclMsg, ACLMessage.INFORM, new OKMessage());
+			
+			return true;
+		}
+		
 		@Override
 		public boolean onDealCardToPlayerRequest(DealCardToPlayerRequest request, ACLMessage aclMsg){
 			
@@ -128,9 +133,13 @@ public class EnvironmentAgent extends Agent {
 				return true;
 			}
 			
-			AgentHelper.sendSimpleMessage(EnvironmentAgent.this, request.getPlayerAID(), ACLMessage.INFORM, new PlayerReceivedCardNotification(request.getPlayerAID(), request.getDealtCard()));
+			PlayerReceivedCardNotification notification = new PlayerReceivedCardNotification(request.getPlayerAID(), request.getDealtCard());
+			
+			AgentHelper.sendSimpleMessage(EnvironmentAgent.this, notificationSubscriber.getListSubscribers("cardsNotifications"), ACLMessage.INFORM, notification);
+			AgentHelper.sendSimpleMessage(EnvironmentAgent.this, request.getPlayerAID(), ACLMessage.INFORM, notification);
+			
 			AgentHelper.sendReply(EnvironmentAgent.this, aclMsg, ACLMessage.INFORM, new OKMessage());
-
+			
 			return true;
 		}
 		
