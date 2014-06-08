@@ -3,7 +3,6 @@ package poker.game.player.model;
 import javax.print.attribute.standard.MediaSize.Other;
 
 import jade.core.AID;
-import jade.tools.testagent.TestAgent;
 import poker.card.model.UserDeck;
 import poker.token.helpers.TokenSetValueEvaluator;
 import poker.token.model.TokenSet;

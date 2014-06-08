@@ -1,13 +1,13 @@
-package sma.agent.simAgent;
+package sma.agent.simulationAgent;
 
 import sma.agent.SimulationAgent;
 import jade.core.behaviours.Behaviour;
 
-public class InitRoundBhv extends Behaviour {
+public class InitHandBhv extends Behaviour {
 	
 	private SimulationAgent simAgent;
 
-	public InitRoundBhv(SimulationAgent simAgent) {
+	public InitHandBhv(SimulationAgent simAgent) {
 		super(simAgent);
 		this.simAgent = simAgent;
 	}
@@ -26,11 +26,11 @@ public class InitRoundBhv extends Behaviour {
 	
 	/**
 	 * Transition: 
-	 * Return the PLAY transition code.
+	 * Return the NEW_STEP transition code.
 	 */
 	@Override
 	public int onEnd(){
-		return SimulationAgent.GameEvent.PLAY.ordinal();
+		return SimulationAgent.GameEvent.NEW_ROUND.ordinal();
 		
 	}
 

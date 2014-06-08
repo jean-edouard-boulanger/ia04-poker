@@ -15,7 +15,7 @@ import poker.game.model.BlindValueDefinition;
 import poker.game.player.model.Player;
 import poker.token.model.TokenValueDefinition;
 import sma.agent.helper.DFServiceHelper;
-import sma.agent.simAgent.PlayerSubscriptionBhv;
+import sma.agent.simulationAgent.PlayerSubscriptionBhv;
 import sma.message.Message;
 import sma.message.MessageVisitor;
 

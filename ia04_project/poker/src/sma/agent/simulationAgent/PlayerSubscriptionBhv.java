@@ -1,14 +1,18 @@
-package sma.agent.simAgent;
+package sma.agent.simulationAgent;
 
+import jade.core.AID;
 import jade.core.behaviours.CyclicBehaviour;
 import jade.lang.acl.ACLMessage;
 import poker.game.player.model.Player;
 import sma.agent.SimulationAgent;
 import sma.agent.helper.AgentHelper;
+import sma.agent.helper.DFServiceHelper;
+import sma.agent.helper.TransactionBhv;
 import sma.message.FailureMessage;
 import sma.message.MessageVisitor;
 import sma.message.OKMessage;
 import sma.message.PlayerSubscriptionRequest;
+import sma.message.environment.request.AddPlayerTableRequest;
 
 /**
  * This behavior wait player subscriptions.
@@ -50,7 +54,9 @@ public class PlayerSubscriptionBhv extends CyclicBehaviour
 					Player player = new Player(aclMsg.getSender(), request.getPlayerName());
 					simAgent.getGame().getGamePlayers().add(player);
 					
-					// TODO: subscribe the player to the environment.
+					// we subscribe the player to the environment (async).
+					AID environment = DFServiceHelper.searchService(simAgent, "PokerEnvironment", "Environment");
+					simAgent.addBehaviour(new TransactionBhv(simAgent, new AddPlayerTableRequest(player), environment));
 					
 					AgentHelper.sendReply(simAgent, aclMsg, ACLMessage.INFORM, new OKMessage());
 				}

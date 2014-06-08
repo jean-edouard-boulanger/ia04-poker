@@ -11,13 +11,13 @@ import java.beans.PropertyChangeSupport;
 
 import poker.game.model.Game;
 import sma.agent.helper.DFServiceHelper;
-import sma.agent.simAgent.CheckWinnerBhv;
-import sma.agent.simAgent.GameEndedBhv;
-import sma.agent.simAgent.InitGameBhv;
-import sma.agent.simAgent.InitHandBhv;
-import sma.agent.simAgent.InitRoundBhv;
-import sma.agent.simAgent.PlayBhv;
-import sma.agent.simAgent.PlayerSubscriptionBhv;
+import sma.agent.simulationAgent.CheckWinnerBhv;
+import sma.agent.simulationAgent.GameEndedBhv;
+import sma.agent.simulationAgent.InitGameBhv;
+import sma.agent.simulationAgent.InitHandBhv;
+import sma.agent.simulationAgent.InitRoundBhv;
+import sma.agent.simulationAgent.PlayBhv;
+import sma.agent.simulationAgent.PlayerSubscriptionBhv;
 
 /**
  * Simulation agent.
