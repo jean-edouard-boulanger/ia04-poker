@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import sma.message.FailureMessage;
 import sma.message.Message;
 import sma.message.MessageVisitor;
+import jade.core.AID;
 import jade.core.Agent;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
@@ -83,6 +84,19 @@ public class AgentHelper {
 			agent.send(reply);
 		} catch (IOException e) {
 			System.out.println("[" + agent.getName() + "] Error while serializing reply, the message was not sent (" + e.getMessage() + ").");
+		}
+	}
+	
+	public static void sendSimpleMessage(Agent sender, AID receiver, int performative, Message content){
+		try{
+			ACLMessage msg = new ACLMessage(performative);
+			msg.addReceiver(receiver);
+			msg.setContent(content.toJson());
+			msg.setSender(sender.getAID());
+			
+			sender.send(msg);
+		} catch(IOException ex){
+			System.out.println("[" + sender.getName() + "] Error while serializing reply, the message was not sent (" + ex.getMessage() + ").");
 		}
 	}
 }

@@ -11,29 +11,28 @@ import jade.core.behaviours.Behaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import poker.card.model.CommunityCards;
+import poker.game.exception.PlayerAlreadyRegisteredException;
 import poker.game.model.BlindValueDefinition;
+import poker.game.model.Game;
 import poker.game.player.model.Player;
 import poker.token.model.TokenValueDefinition;
+import sma.agent.helper.AgentHelper;
 import sma.agent.helper.DFServiceHelper;
 import sma.agent.simulationAgent.PlayerSubscriptionBhv;
+import sma.message.FailureMessage;
 import sma.message.Message;
 import sma.message.MessageVisitor;
+import sma.message.PlayerSubscriptionRequest;
+import sma.message.environment.request.AddPlayerTableRequest;
 
 public class EnvironmentAgent extends Agent {
 	
-	private ArrayList<Player> players;
-	private CommunityCards communityCards;
-	private BlindValueDefinition blindValueDefinition;
-	private TokenValueDefinition tokenValueDefinition;
-	private int currentPlayerIndex;
+	private Game game;
 	
 	private EnvironmentMessageVisitor msgVisitor;
 	
 	public EnvironmentAgent(){
-		this.players = new ArrayList<Player>();
-		//this.communityCards = new CommunityCards();
-		this.blindValueDefinition = new BlindValueDefinition();
-		this.tokenValueDefinition = new TokenValueDefinition();
+		this.game = new Game();
 		this.msgVisitor = new EnvironmentMessageVisitor();
 	}
 	
@@ -42,24 +41,6 @@ public class EnvironmentAgent extends Agent {
 	{
 		super.setup();
 		DFServiceHelper.registerService(this, "PokerEnvironment","Environment");
-	}
-		
-	private Player getCurrentPlayer(){
-		return this.players.get(currentPlayerIndex);
-	}
-	
-	private Player getPlayerByAID(AID aid){
-		for(Player p : this.players){
-			if(p.getAID().equals(aid)){
-				return p;
-			}
-		}
-		return null;
-	}
-	
-	private Player setCurrentPlayerIndex(int currentPlayerIndex){
-		this.currentPlayerIndex = currentPlayerIndex;
-		return this.getCurrentPlayer();
 	}
 	
 	private class EnvironmentReceiveRequestBehaviour extends Behaviour{
@@ -126,7 +107,23 @@ public class EnvironmentAgent extends Agent {
 	}
 	
 	private class EnvironmentMessageVisitor extends MessageVisitor{
-		
+
+		@Override
+		public boolean onAddPlayerTableRequest(AddPlayerTableRequest request, ACLMessage aclMsg) {
+			
+			try{
+				game.addPlayer(request.getNewPlayer());
+			}
+			catch(PlayerAlreadyRegisteredException ex){
+				AgentHelper.sendReply(EnvironmentAgent.this, aclMsg, ACLMessage.FAILURE, new FailureMessage(ex.getMessage()));
+				ex.printStackTrace();
+			}
+			
+			
+			
+			return true;
+		}
+
 	}
 	
 }
