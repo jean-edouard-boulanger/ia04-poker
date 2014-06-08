@@ -1,19 +1,8 @@
 package sma.message;
 
 import jade.lang.acl.ACLMessage;
-import sma.message.environment.notification.BlindValueDefinitionChangedNotification;
-import sma.message.environment.notification.CardAddedToCommunityCardsNotification;
-import sma.message.environment.notification.CommunityCardsEmptiedNotification;
-import sma.message.environment.notification.CurrentPlayerChangedNotification;
-import sma.message.environment.notification.PlayerBetNotification;
-import sma.message.environment.notification.PlayerCheckNotification;
-import sma.message.environment.notification.PlayerFoldedNotification;
-import sma.message.environment.notification.PlayerReceiveTokenSetNotification;
-import sma.message.environment.notification.PlayerReceivedCardNotification;
-import sma.message.environment.notification.PlayerReceivedUnknownCardNotification;
-import sma.message.environment.notification.PlayerSitOnTableNotification;
-import sma.message.environment.request.AddCommunityCardRequest;
-import sma.message.environment.request.AddPlayerTableRequest;
+import sma.message.environment.notification.*;
+import sma.message.environment.request.*;
 
 /**
  * Pattern visitor implementation, this base class should have an
@@ -50,5 +39,8 @@ public class MessageVisitor {
 	
 	public boolean onAddPlayerTableRequest(AddPlayerTableRequest request, ACLMessage aclMsg){return false;}
 	public boolean onAddCommunityCardRequest(AddCommunityCardRequest request, ACLMessage aclMsg) {return false;}
+	public boolean onDealCardToPlayerRequest(DealCardToPlayerRequest request, ACLMessage aclMsg){return false;}
+	public boolean onCurrentPlayerChangeRequest(CurrentPlayerChangeRequest request, ACLMessage aclMsg){return false;}
+	
 	
 }
