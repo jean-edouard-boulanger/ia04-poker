@@ -14,7 +14,7 @@ import jade.lang.acl.MessageTemplate;
  * Represents a REQUEST-INFORM transaction (with an associated conversation-id) 
  *
  */
-public class RequestTransation {
+public class RequestTransaction {
 
 	private final String conversation_id;
 	private ACLMessage request;
@@ -26,7 +26,7 @@ public class RequestTransation {
 	 * @param data	The data to be associated to the request.
 	 * @param receiver	The AID of the receiver of the request.
 	 */
-	public RequestTransation(Behaviour bhv, Message data, AID receiver){
+	public RequestTransaction(Behaviour bhv, Message data, AID receiver){
 		this.agent = bhv.getAgent();
 		this.bhv = bhv;
 		this.request = new ACLMessage(ACLMessage.REQUEST);
@@ -58,6 +58,7 @@ public class RequestTransation {
 	
 	/**
 	 * Check if a response a available and then process the reply using the given visitor.
+	 * If the visitor is null, the matching message is discarded and the function return true.
 	 * @param visitor	Visitor used to process the incoming reply.
 	 * @return true if a reply was processed, false otherwise.
 	 */

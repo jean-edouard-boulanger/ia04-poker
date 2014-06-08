@@ -1,5 +1,7 @@
 package poker.game.player.model;
 
+import javax.print.attribute.standard.MediaSize.Other;
+
 import jade.core.AID;
 import poker.card.model.UserDeck;
 import poker.token.helpers.TokenSetValueEvaluator;
@@ -17,6 +19,8 @@ public class Player {
 	
 	protected UserDeck deck;
 	protected TokenSet tokens;
+	
+	public Player(){}
 	
 	public Player(AID aid, String playerName) {
 		this.aid = aid;
@@ -81,5 +85,14 @@ public class Player {
 	
 	public int getBankroll(TokenValueDefinition tokenValueDefinition){
 		return TokenSetValueEvaluator.evaluateTokenSetValue(tokenValueDefinition, this.tokens);
+	}
+	
+	@Override
+	public boolean equals(Object o){
+		if(o == null) return false;
+		if(o == this) return true;
+		if(!(o instanceof Player)) return false;
+		
+		return ((Player)o).getAID().equals(this.getAID());
 	}
 }

@@ -1,13 +1,18 @@
-package sma.agent.simAgent;
+package sma.agent.simulationAgent;
 
+import jade.core.AID;
 import jade.core.behaviours.CyclicBehaviour;
 import jade.lang.acl.ACLMessage;
 import poker.game.player.model.Player;
+import sma.agent.SimulationAgent;
 import sma.agent.helper.AgentHelper;
+import sma.agent.helper.DFServiceHelper;
+import sma.agent.helper.TransactionBhv;
 import sma.message.FailureMessage;
 import sma.message.MessageVisitor;
 import sma.message.OKMessage;
 import sma.message.PlayerSubscriptionRequest;
+import sma.message.environment.request.AddPlayerTableRequest;
 
 /**
  * This behavior wait player subscriptions.
@@ -15,9 +20,9 @@ import sma.message.PlayerSubscriptionRequest;
  */
 public class PlayerSubscriptionBhv extends CyclicBehaviour
 {
-	private SimAgent simAgent;
+	private SimulationAgent simAgent;
 	
-	public PlayerSubscriptionBhv(SimAgent agent){
+	public PlayerSubscriptionBhv(SimulationAgent agent){
 		super(agent);
 		this.simAgent = agent;
 	}
@@ -41,12 +46,17 @@ public class PlayerSubscriptionBhv extends CyclicBehaviour
 				else if (simAgent.getGame().getGamePlayers().size() >= simAgent.getMaxPlayers()){
 					AgentHelper.sendReply(myAgent, aclMsg, ACLMessage.FAILURE, new FailureMessage("Game full."));
 				}
+				else if (simAgent.getGame().getPlayerByName(request.getPlayerName()) != null){
+					AgentHelper.sendReply(myAgent, aclMsg, ACLMessage.FAILURE, new FailureMessage("Pseudo already taken."));
+				}
 				else {
 					// we add the player to the game:
 					Player player = new Player(aclMsg.getSender(), request.getPlayerName());
 					simAgent.getGame().getGamePlayers().add(player);
 					
-					// TODO: subscribe the player to the environment.
+					// we subscribe the player to the environment (async).
+					AID environment = DFServiceHelper.searchService(simAgent, "PokerEnvironment", "Environment");
+					simAgent.addBehaviour(new TransactionBhv(simAgent, new AddPlayerTableRequest(player), environment));
 					
 					AgentHelper.sendReply(simAgent, aclMsg, ACLMessage.INFORM, new OKMessage());
 				}

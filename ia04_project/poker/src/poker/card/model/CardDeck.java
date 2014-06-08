@@ -31,5 +31,5 @@ public class CardDeck {
 	public boolean isEmpty(){
 		return this.cardDeck.isEmpty();
 	}
-	
+		
 }

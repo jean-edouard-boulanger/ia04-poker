@@ -42,7 +42,6 @@ import poker.card.heuristics.combination.model.Combination;
 import poker.card.heuristics.combination.model.Hand;
 import poker.card.heuristics.probability.ProbabilityEvaluator;
 import poker.card.heuristics.probability.ProbabilityEvaluator.CombinationProbabilityReport;
-import poker.card.heuristics.probability.RandomCardDeckGenerator;
 import poker.card.model.Card;
 import poker.card.model.CardDeck;
 import poker.card.model.CardRank;

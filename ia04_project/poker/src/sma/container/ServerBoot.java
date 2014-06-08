@@ -30,9 +30,9 @@ public class ServerBoot {
 			ProfileImpl p = new ProfileImpl(PROPERTY_FILE);
 			AgentContainer container = rt.createMainContainer(p);
 			
-			AgentController simulation = container.createNewAgent("Simulation", "sma.agent.simAgent.SimAgent", null);
-			AgentController environment = container.createNewAgent("Environment", "sma.agent.EnvAgent", null);
-			AgentController croupier = container.createNewAgent("Croupier", "sma.agent.CroupierAgent", null);
+			AgentController simulation = container.createNewAgent("Simulation", "sma.agent.SimulationAgent", null);
+			AgentController environment = container.createNewAgent("Environment", "sma.agent.EnvironmentAgent", null);
+			AgentController croupier = container.createNewAgent("Croupier", "sma.agent.DealerAgent", null);
 			AgentController blindManagement = container.createNewAgent("blindManagement", "sma.agent.BlindManagementAgent", null);
 			
 			simulation.start();

@@ -21,7 +21,7 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 
-import sma.agent.simAgent.SimAgent;
+import sma.agent.SimulationAgent;
 
 
 public class ServerWindow extends JFrame implements PropertyChangeListener {
@@ -47,9 +47,9 @@ public class ServerWindow extends JFrame implements PropertyChangeListener {
 	private JButton button_launch;
 	private JButton button_begin;
 	
-	private SimAgent sim_agent;
+	private SimulationAgent sim_agent;
 	
-	public ServerWindow(SimAgent simAgent) {
+	public ServerWindow(SimulationAgent simAgent) {
 		JPanel panel = new JPanel();
 		
 		this.setTitle("Server configuration");

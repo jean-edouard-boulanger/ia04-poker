@@ -7,7 +7,7 @@ import jade.domain.FIPAException;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
 
-public class DFservicehelper {
+public class DFServiceHelper {
 
 	/**
 	 * Register a service to the default DFservice
@@ -44,7 +44,7 @@ public class DFservicehelper {
 	 * @return 	The first agent AID matching requirements or null if the 
 	 * 			DF is not accessible or if no agent were found.
 	 */
-	private AID searchService(Agent agent, String name, String type) {
+	public static AID searchService(Agent agent, String name, String type) {
 		try {			
 			DFAgentDescription template = new DFAgentDescription();
 			ServiceDescription sd = new ServiceDescription();
