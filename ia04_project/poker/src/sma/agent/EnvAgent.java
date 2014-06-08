@@ -10,7 +10,7 @@ import poker.card.model.CommunityCards;
 import poker.game.model.BlindValueDefinition;
 import poker.game.player.model.Player;
 import poker.token.model.TokenValueDefinition;
-import sma.agent.helper.DFservicehelper;
+import sma.agent.helper.DFServiceHelper;
 import sma.agent.simAgent.PlayerSubscriptionBhv;
 
 public class EnvAgent extends Agent {
@@ -25,10 +25,9 @@ public class EnvAgent extends Agent {
 	public void setup()
 	{
 		super.setup();
-		DFservicehelper.registerService(this, "PokerEnvironment","Environment");
+		DFServiceHelper.registerService(this, "PokerEnvironment","Environment");
 	}
-	
-	
+		
 	private Player getCurrentPlayer(){
 		return this.players.get(currentPlayerIndex);
 	}

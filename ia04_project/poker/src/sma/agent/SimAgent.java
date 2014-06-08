@@ -10,7 +10,7 @@ import jade.gui.GuiEvent;
 import java.beans.PropertyChangeSupport;
 
 import poker.game.model.Game;
-import sma.agent.helper.DFservicehelper;
+import sma.agent.helper.DFServiceHelper;
 import sma.agent.simAgent.CheckWinnerBhv;
 import sma.agent.simAgent.GameEndedBhv;
 import sma.agent.simAgent.InitGameBhv;
@@ -39,7 +39,7 @@ public class SimAgent extends GuiAgent {
 	public void setup()
 	{
 		super.setup();
-		DFservicehelper.registerService(this, "PokerSimulation","Simulation");
+		DFServiceHelper.registerService(this, "PokerSimulation","Simulation");
 		
 		ServerWindow server_window = new ServerWindow(this);
 		changes.addPropertyChangeListener(server_window);

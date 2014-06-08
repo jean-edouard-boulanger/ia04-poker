@@ -7,7 +7,7 @@ import jade.domain.FIPAException;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
 
-public class DFservicehelper {
+public class DFServiceHelper {
 
 	/**
 	 * Register a service to the default DFservice
