@@ -27,10 +27,27 @@ public class RequestTransaction {
 	 * @param receiver	The AID of the receiver of the request.
 	 */
 	public RequestTransaction(Behaviour bhv, Message data, AID receiver){
+		this(bhv,data,receiver, ACLMessage.REQUEST);
+	}
+	
+	/**
+	 * Create a new transaction with a custom performative.
+	 * @param agent	The agent whose sending the request.
+	 * @param data	The data to be associated to the request.
+	 * @param receiver	The AID of the receiver of the request.
+	 * @param performative The performative of the request.
+	 */
+	public RequestTransaction(Behaviour bhv, Message data, AID receiver, int performative){
 		this.agent = bhv.getAgent();
 		this.bhv = bhv;
-		this.request = new ACLMessage(ACLMessage.REQUEST);
+		this.request = new ACLMessage(performative);
 		this.request.addReceiver(receiver);
+		try {
+			this.request.setContent(data.toJson());
+		} catch (IOException e) {
+			this.request.setContent("");
+			e.printStackTrace();
+		}
 		this.conversation_id = generateConversationID();
 		this.request.setConversationId(this.conversation_id);
 	}

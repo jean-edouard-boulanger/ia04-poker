@@ -9,9 +9,19 @@ import jade.gui.GuiEvent;
 
 import java.beans.PropertyChangeSupport;
 
+import poker.game.model.BlindValueDefinition;
 import poker.game.model.Game;
+import poker.token.exception.InvalidRepartitionException;
+import poker.token.exception.InvalidTokenAmountException;
+import poker.token.exception.InvalidTokenValueException;
+import poker.token.factories.TokenSetFactory;
+import poker.token.model.TokenRepartition;
+import poker.token.model.TokenSet;
+import poker.token.model.TokenType;
+import poker.token.model.TokenValueDefinition;
 import sma.agent.helper.DFServiceHelper;
 import sma.agent.simulationAgent.CheckWinnerBhv;
+import sma.agent.simulationAgent.EnvironmentWatcherBhv;
 import sma.agent.simulationAgent.GameEndedBhv;
 import sma.agent.simulationAgent.InitGameBhv;
 import sma.agent.simulationAgent.InitHandBhv;
@@ -31,6 +41,7 @@ public class SimulationAgent extends GuiAgent {
 	private int maxPlayers = 2; //TODO: synchronize this parameter with the server GUI.
 	private boolean serverStarted = false;
 	private boolean gameStarted = false;
+	private TokenSet defaultTokenSet;
 	
 	
 	public enum GameEvent{NEW_HAND, NEW_ROUND, ROUND_ENDED, GAME_FINISHED, PLAY}
@@ -44,16 +55,50 @@ public class SimulationAgent extends GuiAgent {
 		ServerWindow server_window = new ServerWindow(this);
 		changes.addPropertyChangeListener(server_window);
 		
+		this.game = new Game();
+		
+		// we create a default token distribution:
+		try {
+			TokenValueDefinition tvd = new TokenValueDefinition();
+			tvd.setValueForTokenType(TokenType.GREEN, 10);
+			tvd.setValueForTokenType(TokenType.BLACK, 1);
+			tvd.setValueForTokenType(TokenType.BLUE, 5);
+			tvd.setValueForTokenType(TokenType.WHITE, 25);
+			tvd.setValueForTokenType(TokenType.RED, 50);
+			game.setTokenValueDefinition(tvd);
+		} catch (InvalidTokenValueException e) {
+			e.printStackTrace();
+		}
+		try {
+			TokenRepartition defaultTokenRepartiton = new TokenRepartition();
+			defaultTokenRepartiton.setRepartitionForToken(TokenType.GREEN, 30);
+			defaultTokenRepartiton.setRepartitionForToken(TokenType.BLACK, 30);
+			defaultTokenRepartiton.setRepartitionForToken(TokenType.BLUE, 20);
+			defaultTokenRepartiton.setRepartitionForToken(TokenType.WHITE, 10);
+			defaultTokenRepartiton.setRepartitionForToken(TokenType.RED, 10);
+			
+			int nbTokens = 40;
+			this.defaultTokenSet = TokenSetFactory.createTokenSet(defaultTokenRepartiton, nbTokens);
+			
+		} catch (InvalidTokenAmountException | InvalidRepartitionException e) {
+			e.printStackTrace();
+		}
+		
 		addBehaviour(new PlayerSubscriptionBhv(this));
+		addBehaviour(new EnvironmentWatcherBhv(this));
 	}
 	
 	/**
 	 * Handle events from the GUI
 	 */
 	@Override
-	protected void onGuiEvent(GuiEvent arg0) {
-		switch (ServerWindow.ServerGuiEvent.values()[arg0.getType()]) {
+	protected void onGuiEvent(GuiEvent evt) {
+		switch (ServerWindow.ServerGuiEvent.values()[evt.getType()]) {
 		case LAUNCH_SERVER:
+			//TODO: handle properly parameters.
+			maxPlayers = (Integer)evt.getParameter(0);
+			int blindIncreaseInterval = (Integer)evt.getParameter(1);
+			int distribNb = (Integer)evt.getParameter(2);
 			StartServer();
 			break;
 		case LAUNCH_GAME:
@@ -80,7 +125,7 @@ public class SimulationAgent extends GuiAgent {
 			@Override
 			protected void handleStateEntered(Behaviour state){
 				super.handleStateEntered(state);
-				System.out.println("[" + this.myAgent.getLocalName() + "] Round: " + this.getExecutionState());
+				System.out.println("[" + this.myAgent.getLocalName() + "] Current state: " + this.getName(state));
 			}
 		};
 		
@@ -134,6 +179,10 @@ public class SimulationAgent extends GuiAgent {
 
 	public void setGameStarted(boolean gameStarted) {
 		this.gameStarted = gameStarted;
+	}
+
+	public TokenSet getDefaultTokenSet() {
+		return defaultTokenSet;
 	}
 	
 }

@@ -3,6 +3,7 @@ package sma.agent;
 import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.Behaviour;
+import jade.core.behaviours.CyclicBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 
@@ -51,14 +52,15 @@ public class EnvironmentAgent extends Agent {
 	{
 		super.setup();
 		DFServiceHelper.registerService(this, "PokerEnvironment","Environment");
+		this.addBehaviour(new EnvironmentReceiveRequestBehaviour(this));
 	}
 	
-	private class EnvironmentReceiveRequestBehaviour extends Behaviour{
+	private class EnvironmentReceiveRequestBehaviour extends CyclicBehaviour{
 		
 		MessageTemplate receiveRequestMessageTemplate;
 		
-		public EnvironmentReceiveRequestBehaviour(){
-			super();
+		public EnvironmentReceiveRequestBehaviour(Agent agent){
+			super(agent);
 			this.receiveRequestMessageTemplate = MessageTemplate.MatchPerformative(ACLMessage.REQUEST);
 		}
 		
@@ -67,11 +69,6 @@ public class EnvironmentAgent extends Agent {
 			if(!AgentHelper.receiveMessage(this.myAgent, receiveRequestMessageTemplate, msgVisitor)){
 				block();
 			}
-		}
-
-		@Override
-		public boolean done() {
-			return false;
 		}
 	}
 	
