@@ -23,6 +23,7 @@ public class TokenPlayerIHM extends Group {
 		Label label_mise = new Label(String.valueOf(mise));
 		label_mise.setLayoutX(x);
 		label_mise.setLayoutY(y);
+		label_mise.getStyleClass().add("label-token");
 		
 		String image = "";
 		switch(color_token)
@@ -47,8 +48,8 @@ public class TokenPlayerIHM extends Group {
 		}
 		
 		ImageView jeton = new ImageView(new Image(image));
-        jeton.setX(x-10);
-        jeton.setY(y-10);
+        jeton.setX(x);
+        jeton.setY(y-25);
         jeton.setFitWidth(20);
         jeton.setFitHeight(20);
 	    

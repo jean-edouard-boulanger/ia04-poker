@@ -22,6 +22,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -75,7 +76,10 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 	private Button button_add_bet;
 	private Button button_sub_bet;
 	
-	private JLabel label_bet;
+	private Label label_hand;
+	private Label label_min_blind;
+	
+	private TextArea textarea_log;
 	
 	private Slider slider_bet;
 	private TextField textfield_bet;
@@ -103,26 +107,46 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
         //scene.getStylesheets().add(applicationCss.toExternalForm());
         scene.setFill(Color.TRANSPARENT);
         
+        label_hand = new Label("Main n°1");
+        label_hand.setLayoutX(15);
+        label_hand.setLayoutY(15);
+        label_hand.getStyleClass().add("hand");
+        
+        label_min_blind = new Label("Min blind : 1");
+        label_min_blind.setLayoutX(15);
+        label_min_blind.setLayoutY(425);
+        label_min_blind.getStyleClass().add("min-blind");
+        
+        textarea_log = new TextArea();
+        textarea_log.setLayoutX(5);
+        textarea_log.setLayoutY(470);
+        textarea_log.setPrefHeight(125);
+        textarea_log.setPrefWidth(200);
+        textarea_log.setWrapText(true);
+        textarea_log.setText("Log for the game");
+        textarea_log.setEditable(false);
+        textarea_log.getStyleClass().add("log");
+
         button_follow = new Button();
-        button_follow.setLayoutX(125);
+        button_follow.setLayoutX(335);
         button_follow.setLayoutY(490);
         button_follow.setText("Suivre à 2");
         button_follow.setPrefWidth(100);
         
         button_check = new Button();
-        button_check.setLayoutX(125);
+        button_check.setLayoutX(335);
         button_check.setLayoutY(550);
         button_check.setText("Checker");
         button_check.setPrefWidth(100);
         
         button_fold = new Button();
-        button_fold.setLayoutX(15);
+        button_fold.setLayoutX(225);
         button_fold.setLayoutY(490);
         button_fold.setText("Se coucher");
         button_fold.setPrefWidth(100);
         
         button_relaunch = new Button();
-        button_relaunch.setLayoutX(15);
+        button_relaunch.setLayoutX(225);
         button_relaunch.setLayoutY(550);
         button_relaunch.setText("Relancer à 5");
         button_relaunch.setPrefWidth(100);
@@ -158,35 +182,52 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
         textfield_bet.setLayoutX(485);
         textfield_bet.setLayoutY(525);
         textfield_bet.setPrefWidth(175);
+        textfield_bet.setEditable(false);
         
         zone_carte.setX(0);
         zone_carte.setY(455);
         zone_carte.setWidth(950);
         zone_carte.setHeight(170);
-        zone_carte.setFill(Color.BEIGE);
+        zone_carte.setFill(Color.DARKCYAN);
         
         /**************************************
          *  Player's tokens
          */
-        TokenPlayerIHM token_white = new TokenPlayerIHM(485, 480, 25, ColorToken.WHITE);
-        TokenPlayerIHM token_black = new TokenPlayerIHM(515, 480, 25, ColorToken.BLACK);
-        TokenPlayerIHM token_blue = new TokenPlayerIHM(545, 480, 25, ColorToken.BLUE);
-        TokenPlayerIHM token_green = new TokenPlayerIHM(575, 480, 25, ColorToken.GREEN);
-        TokenPlayerIHM token_red = new TokenPlayerIHM(605, 480, 25, ColorToken.RED);
+        TokenPlayerIHM token_white = new TokenPlayerIHM(485, 500, 25, ColorToken.WHITE);
+        TokenPlayerIHM token_black = new TokenPlayerIHM(515, 500, 25, ColorToken.BLACK);
+        TokenPlayerIHM token_blue = new TokenPlayerIHM(545, 500, 25, ColorToken.BLUE);
+        TokenPlayerIHM token_green = new TokenPlayerIHM(575, 500, 25, ColorToken.GREEN);
+        TokenPlayerIHM token_red = new TokenPlayerIHM(605, 500, 25, ColorToken.RED);
+        
+        /**************************************
+         *  Players's bets
+         */
+        TokenBetPlayerIHM bet_player_1 = new TokenBetPlayerIHM(170, 145, 400);
+        TokenBetPlayerIHM bet_player_2 = new TokenBetPlayerIHM(250, 115, 400);
+        TokenBetPlayerIHM bet_player_3 = new TokenBetPlayerIHM(440, 115, 400);
+        TokenBetPlayerIHM bet_player_4 = new TokenBetPlayerIHM(530, 145, 400);
+        TokenBetPlayerIHM bet_player_5 = new TokenBetPlayerIHM(550, 205, 400);
+        TokenBetPlayerIHM bet_player_6 = new TokenBetPlayerIHM(170, 260, 400);
+        TokenBetPlayerIHM bet_player_7 = new TokenBetPlayerIHM(250, 290, 400);
+        TokenBetPlayerIHM bet_player_8 = new TokenBetPlayerIHM(440, 290, 400);
+        TokenBetPlayerIHM bet_player_9 = new TokenBetPlayerIHM(530, 260, 400);
+        TokenBetPlayerIHM bet_player_10 = new TokenBetPlayerIHM(150, 205, 400);
         
         /**************************************
          *  Player's cards
          */
         ImageView im = new ImageView(new Image("images/as_carreau.png"));
         im.setX(295);
-        im.setY(500);
-        im.setFitWidth(50);
-        im.setFitHeight(72);
+        im.setY(415);
+        im.setFitWidth(40);
+        im.setFitHeight(62);
+        im.setRotate(-15);
         ImageView im2 = new ImageView(new Image("images/as_pique.png"));
         im2.setX(350);
-        im2.setY(500);
-        im2.setFitWidth(50);
-        im2.setFitHeight(72);
+        im2.setY(415);
+        im2.setFitWidth(40);
+        im2.setFitHeight(62);
+        im2.setRotate(15);
         
         /**************************************
          *  Table
@@ -195,6 +236,8 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
         table.setX(75);
         table.setY(75);
         
+        root.getChildren().add(label_hand);
+        root.getChildren().add(label_min_blind);
         root.getChildren().add(table);
         root.getChildren().add(zone_carte);
         root.getChildren().add(new PersoIHM(105, 90, "pseudo", Sens.HAUT));
@@ -207,6 +250,17 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
         root.getChildren().add(new PersoIHM(250, 370, "pseudo", Sens.BAS));
         root.getChildren().add(new PersoIHM(440, 370, "pseudo", Sens.BAS));
         root.getChildren().add(new PersoIHM(600, 330, "pseudo", Sens.BAS));
+        root.getChildren().add(bet_player_1);
+        root.getChildren().add(bet_player_2);
+        root.getChildren().add(bet_player_3);
+        root.getChildren().add(bet_player_4);
+        root.getChildren().add(bet_player_5);
+        root.getChildren().add(bet_player_6);
+        root.getChildren().add(bet_player_7);
+        root.getChildren().add(bet_player_8);
+        root.getChildren().add(bet_player_9);
+        root.getChildren().add(bet_player_10);
+        root.getChildren().add(textarea_log);
         root.getChildren().add(button_add_bet);
         root.getChildren().add(button_sub_bet);
         root.getChildren().add(button_check);

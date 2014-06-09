@@ -6,3 +6,31 @@
 .pseudo {
 	-fx-text-fill: white;
 }
+
+.hand {
+	-fx-font-size: 20px;
+	-fx-text-fill: white;
+	-fx-font-weight: bold;
+}
+
+.min-blind {
+	-fx-font-size: 15px;
+	-fx-text-fill: white;
+	-fx-font-weight: bold;
+}
+
+.log {
+	-fx-background-color: transparent;
+	-fx-text-fill: white;
+	-fx-border-color: aqua; 
+}
+
+.label-token {
+	-fx-text-fill: white;
+}
+
+.label-bet {
+	-fx-text-fill: white;
+	-fx-padding: 5px;
+	-fx-background-color: rgba(255, 255, 255, 0.2);
+}
