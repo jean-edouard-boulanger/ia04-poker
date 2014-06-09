@@ -21,6 +21,7 @@ import poker.token.model.TokenType;
 import poker.token.model.TokenValueDefinition;
 import sma.agent.helper.DFServiceHelper;
 import sma.agent.simulationAgent.CheckWinnerBhv;
+import sma.agent.simulationAgent.EnvironmentWatcherBhv;
 import sma.agent.simulationAgent.GameEndedBhv;
 import sma.agent.simulationAgent.InitGameBhv;
 import sma.agent.simulationAgent.InitHandBhv;
@@ -54,8 +55,6 @@ public class SimulationAgent extends GuiAgent {
 		ServerWindow server_window = new ServerWindow(this);
 		changes.addPropertyChangeListener(server_window);
 		
-		addBehaviour(new PlayerSubscriptionBhv(this));
-		
 		this.game = new Game();
 		
 		// we create a default token distribution:
@@ -84,6 +83,9 @@ public class SimulationAgent extends GuiAgent {
 		} catch (InvalidTokenAmountException | InvalidRepartitionException e) {
 			e.printStackTrace();
 		}
+		
+		addBehaviour(new PlayerSubscriptionBhv(this));
+		addBehaviour(new EnvironmentWatcherBhv(this));
 	}
 	
 	/**
