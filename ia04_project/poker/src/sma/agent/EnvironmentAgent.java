@@ -4,6 +4,7 @@ import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.Behaviour;
 import jade.core.behaviours.CyclicBehaviour;
+import jade.domain.introspection.ChangedBehaviourState;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 
@@ -19,12 +20,14 @@ import sma.agent.helper.AgentHelper;
 import sma.agent.helper.DFServiceHelper;
 import sma.message.FailureMessage;
 import sma.message.MessageVisitor;
+import sma.message.environment.notification.BlindValueDefinitionChangedNotification;
 import sma.message.environment.notification.CardAddedToCommunityCardsNotification;
 import sma.message.environment.notification.CommunityCardsEmptiedNotification;
 import sma.message.environment.notification.PlayerReceivedCardNotification;
 import sma.message.environment.notification.PlayerReceivedTokenSetNotification;
 import sma.message.environment.notification.PlayerReceivedUnknownCardNotification;
 import sma.message.environment.request.AddCommunityCardRequest;
+import sma.message.environment.request.ChangeBlindValueDefinitionRequest;
 import sma.message.environment.request.CurrentPlayerChangeRequest;
 import sma.message.environment.request.DealCardToPlayerRequest;
 import sma.message.environment.request.EmptyCommunityCardsRequest;
@@ -158,7 +161,7 @@ public class EnvironmentAgent extends Agent {
 		}
 		
 		@Override
-		public boolean onEmptyCommunityCardsRequest(EmptyCommunityCardsRequest request, ACLMessage aclMsg){
+		public boolean onEmptyCommunityCardsRequest(EmptyCommunityCardsRequest request, ACLMessage aclMsg) {
 			
 			game.getCommunityCards().popCards();
 			
@@ -170,12 +173,24 @@ public class EnvironmentAgent extends Agent {
 		}
 		
 		@Override
-		public boolean onGiveTokenSetToPlayerRequest(GiveTokenSetToPlayerRequest request, ACLMessage aclMsg){
+		public boolean onGiveTokenSetToPlayerRequest(GiveTokenSetToPlayerRequest request, ACLMessage aclMsg) {
 			
 			game.getPlayerByAID(request.getPlayerAID()).setTokens(request.getTokenSet());
 			
 			//TODO: Maybe change this: send playerAID and player index with the message?
 			AgentHelper.sendSimpleMessage(EnvironmentAgent.this, request.getPlayerAID(), ACLMessage.INFORM, new PlayerReceivedTokenSetNotification());
+			
+			AgentHelper.sendReply(EnvironmentAgent.this, aclMsg, ACLMessage.INFORM, new OKMessage());
+			
+			return true;
+		}
+		
+		@Override
+		public boolean onChangeBlindValueDefinitionRequest(ChangeBlindValueDefinitionRequest request, ACLMessage aclMsg) {
+			
+			game.setBlindValueDefinition(request.getNewBlindValueDefinition());
+			
+			AgentHelper.sendSimpleMessage(EnvironmentAgent.this, game.getPlayersAIDs(), ACLMessage.INFORM, new BlindValueDefinitionChangedNotification(request.getNewBlindValueDefinition()));
 			
 			AgentHelper.sendReply(EnvironmentAgent.this, aclMsg, ACLMessage.INFORM, new OKMessage());
 			

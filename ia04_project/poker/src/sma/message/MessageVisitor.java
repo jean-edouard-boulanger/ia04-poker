@@ -14,6 +14,7 @@ import sma.message.environment.notification.PlayerReceivedUnknownCardNotificatio
 import sma.message.environment.notification.PlayerSitOnTableNotification;
 import sma.message.environment.request.AddCommunityCardRequest;
 import sma.message.environment.request.AddPlayerTableRequest;
+import sma.message.environment.request.ChangeBlindValueDefinitionRequest;
 import sma.message.environment.request.CurrentPlayerChangeRequest;
 import sma.message.environment.request.DealCardToPlayerRequest;
 import sma.message.environment.request.EmptyCommunityCardsRequest;
@@ -58,6 +59,6 @@ public class MessageVisitor {
 	public boolean onCurrentPlayerChangeRequest(CurrentPlayerChangeRequest request, ACLMessage aclMsg){return false;}
 	public boolean onEmptyCommunityCardsRequest(EmptyCommunityCardsRequest request, ACLMessage aclMsg) {return false;}
 	public boolean onGiveTokenSetToPlayerRequest(GiveTokenSetToPlayerRequest request, ACLMessage aclMsg) {return false;}
-
+	public boolean onChangeBlindValueDefinitionRequest(ChangeBlindValueDefinitionRequest request, ACLMessage aclMsg) {return false;}
 	
 }
