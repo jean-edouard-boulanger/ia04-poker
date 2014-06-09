@@ -5,6 +5,7 @@ import sma.message.blind.notification.TimeBeforeIncreasingBlindChangedNotificati
 import sma.message.blind.notification.BlindValueDefinitionUpdatedNotification;
 import sma.message.blind.request.ChangeTimeBeforeIncreasingBlindRequest;
 import sma.message.blind.request.GetBlindValueDefinitionRequest;
+import sma.message.dealer.request.DealRequest;
 import sma.message.environment.notification.BlindValueDefinitionChangedNotification;
 import sma.message.environment.notification.CardAddedToCommunityCardsNotification;
 import sma.message.environment.notification.CommunityCardsEmptiedNotification;
@@ -65,6 +66,9 @@ public class MessageVisitor {
 	public boolean onEmptyCommunityCardsRequest(EmptyCommunityCardsRequest request, ACLMessage aclMsg) {return false;}
 	public boolean onGiveTokenSetToPlayerRequest(GiveTokenSetToPlayerRequest request, ACLMessage aclMsg) {return false;}
 	public boolean onBlindValueDefinitionChangeRequest(BlindValueDefinitionChangeRequest request, ACLMessage aclMsg) {return false;}
+	
+	//Dealer
+	public boolean onDealRequest(DealRequest request, ACLMessage aclMsg){return false;}
 	
 	//Blind Management functions
 	public boolean onChangeTimeBeforeIncreasingBlindRequest(ChangeTimeBeforeIncreasingBlindRequest request, ACLMessage aclMsg) {return false;}
