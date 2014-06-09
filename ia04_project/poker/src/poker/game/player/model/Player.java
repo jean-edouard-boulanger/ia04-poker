@@ -1,5 +1,7 @@
 package poker.game.player.model;
 
+import java.util.Comparator;
+
 import javax.print.attribute.standard.MediaSize.Other;
 
 import jade.core.AID;
@@ -13,7 +15,7 @@ public class Player {
 	
 	protected AID aid;
 	protected String playerName;
-	protected int tablePositionIndex;
+	protected Integer tablePositionIndex;
 	protected PlayerStatus status;
 	protected PlayerRole role;
 	
@@ -43,11 +45,11 @@ public class Player {
 		this.playerName = playerName;
 	}
 	
-	public int getTablePositionIndex() {
+	public Integer getTablePositionIndex() {
 		return tablePositionIndex;
 	}
 	
-	public void setTablePositionIndex(int tablePositionIndex) {
+	public void setTablePositionIndex(Integer tablePositionIndex) {
 		this.tablePositionIndex = tablePositionIndex;
 	}
 	
@@ -94,5 +96,20 @@ public class Player {
 		if(!(o instanceof Player)) return false;
 		
 		return ((Player)o).getAID().equals(this.getAID());
+	}
+	
+	public static class PlayerTablePositionComparator implements Comparator<Player>{
+		@Override
+		public int compare(Player p1, Player p2){
+			if(p1.getTablePositionIndex() < p2.getTablePositionIndex()){
+				return -1;
+			}
+			else if(p1.getTablePositionIndex() > p2.getTablePositionIndex()){
+				return 1;
+			}
+			else{
+				return 0;
+			}
+		}
 	}
 }
