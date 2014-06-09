@@ -1,6 +1,11 @@
 package sma.message;
 
 import jade.lang.acl.ACLMessage;
+import sma.message.blind.notification.TimeBeforeIncreasingBlindChangedNotification;
+import sma.message.blind.notification.BlindValueDefinitionUpdatedNotification;
+import sma.message.blind.request.ChangeTimeBeforeIncreasingBlindRequest;
+import sma.message.blind.request.GetBlindValueDefinitionRequest;
+import sma.message.dealer.request.DealRequest;
 import sma.message.environment.notification.BlindValueDefinitionChangedNotification;
 import sma.message.environment.notification.CardAddedToCommunityCardsNotification;
 import sma.message.environment.notification.CommunityCardsEmptiedNotification;
@@ -39,6 +44,7 @@ public class MessageVisitor {
 	public boolean onPlayerSubscriptionRequest(PlayerSubscriptionRequest request, ACLMessage aclMsg){return false;}
 	public boolean onFailureMessage(FailureMessage msg, ACLMessage aclMsg) {return false;}
 	public boolean onOKMessage(OKMessage okMessage, ACLMessage aclMsg) {return false;}
+	public boolean onSubscriptionOKMessage(SubscriptionOKMessage request, ACLMessage aclMsg){return false;}
 	
 
 	public boolean onPlayerReceivedUnknownCardNotification(PlayerReceivedUnknownCardNotification notification, ACLMessage aclMsg) {return false;}
@@ -61,4 +67,13 @@ public class MessageVisitor {
 	public boolean onGiveTokenSetToPlayerRequest(GiveTokenSetToPlayerRequest request, ACLMessage aclMsg) {return false;}
 	public boolean onBlindValueDefinitionChangeRequest(BlindValueDefinitionChangeRequest request, ACLMessage aclMsg) {return false;}
 	
+	//Dealer
+	public boolean onDealRequest(DealRequest request, ACLMessage aclMsg){return false;}
+	
+	//Blind Management functions
+	public boolean onChangeTimeBeforeIncreasingBlindRequest(ChangeTimeBeforeIncreasingBlindRequest request, ACLMessage aclMsg) {return false;}
+	public boolean onGetBlindValueDefinitionRequest(GetBlindValueDefinitionRequest request, ACLMessage aclMsg) {return false;}
+	
+	public boolean onTimeBeforeIncreasingBlindChangedNotification(TimeBeforeIncreasingBlindChangedNotification request, ACLMessage aclMsg) {return false;}
+	public boolean onBlindValueDefinitionUpdatedNotification(BlindValueDefinitionUpdatedNotification request, ACLMessage aclMsg) {return false;}
 }
