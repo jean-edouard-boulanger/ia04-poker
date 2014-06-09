@@ -120,12 +120,17 @@ public class ServerWindow extends JFrame implements PropertyChangeListener {
 	
 	public void initializeAction()
 	{
-		 button_launch.addActionListener(new ActionListener() {
-			
+		button_launch.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(java.awt.event.ActionEvent arg0) {
-				
 				launchServer();
+			}
+		});
+		
+		button_begin.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(java.awt.event.ActionEvent arg0) {
+				launchGame();
 			}
 		});
 	}
@@ -134,11 +139,7 @@ public class ServerWindow extends JFrame implements PropertyChangeListener {
 		GuiEvent ev = new GuiEvent(this, ServerGuiEvent.LAUNCH_SERVER.ordinal());
 		
 		Integer nb_player = (Integer)list_nb_player.getSelectedItem();
-		ev.addParameter(nb_player);
-		
-		ev.addParameter(Integer.parseInt(nb_tour_increase.getText()));
-		
-		int selected_distrib = 0;
+		Integer selected_distrib = 0;
 		if(radio_distrib_1.isSelected())
 			selected_distrib = 1;
 		else if(radio_distrib_2.isSelected())
@@ -146,9 +147,28 @@ public class ServerWindow extends JFrame implements PropertyChangeListener {
 		else if(radio_distrib_3.isSelected())
 			selected_distrib = 3;
 		
+
+		ev.addParameter(nb_player);
+		ev.addParameter(Integer.parseInt(nb_tour_increase.getText()));
 		ev.addParameter(selected_distrib);
 		
 		sim_agent.postGuiEvent(ev);
+		
+		nb_tour_increase.setEnabled(false);
+		list_nb_player.setEnabled(false);
+		radio_distrib_1.setEnabled(false);
+		radio_distrib_3.setEnabled(false);
+		radio_distrib_2.setEnabled(false);
+		button_launch.setEnabled(false);
+		button_launch.setText("Server started ...");
+		button_begin.setEnabled(true);
+	}
+	
+	private void launchGame() {
+		GuiEvent ev = new GuiEvent(this, ServerGuiEvent.LAUNCH_GAME.ordinal());
+		sim_agent.postGuiEvent(ev);
+		button_begin.setEnabled(false);
+		button_begin.setText("Game started ...");
 	}
 
 	@Override
