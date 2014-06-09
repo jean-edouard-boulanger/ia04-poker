@@ -32,4 +32,16 @@ public class TokenValueDefinition {
 	public void setTokenValues(Map<TokenType, Integer> tokenValues){
 		this.tokenValues = tokenValues;
 	}
+	
+	public Integer getMinimumTokenValue() {
+		int min = tokenValues.get(TokenType.BLACK);
+		
+		for(TokenType t : tokenValues.keySet()) {
+			if(min > tokenValues.get(t)) {
+				min = tokenValues.get(t);
+			}
+		}
+		
+		return min;
+	} 
 }
