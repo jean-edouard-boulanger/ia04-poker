@@ -23,8 +23,8 @@ public class PersoIHM extends Group {
 
 		name.getStyleClass().add("pseudo");
 		
-		ImageView carte1 = new ImageView(new Image("images/arriere_carte.png"));
-		ImageView carte2 = new ImageView(new Image("images/arriere_carte.png"));
+		ImageView carte1 = new ImageView(new Image("images/background_card.png"));
+		ImageView carte2 = new ImageView(new Image("images/background_card.png"));
 		
 		if(position.equals(Sens.HAUT))
 		{

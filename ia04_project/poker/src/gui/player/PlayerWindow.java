@@ -69,6 +69,20 @@ import sma.message.MessageVisitor;
  */
 public class PlayerWindow extends Application implements PropertyChangeListener {
 		
+	public enum PlayerGuiEvent {
+		PLAYER_RECEIVED_UNKNOWN_CARD,
+		PLAYER_RECEIVED_CARD,
+		ADD_COMMUNITY_CARD,
+		EMPTY_COMMUNITY_CARD,
+		PLAYER_FOLDED,
+		PLAYER_TABLE,
+		PLAYER_RECEIVED_TOKENSET,
+		PLAYER_BET,
+		PLAYER_CHECK,
+		BLIND_VALUE,
+		CURRENT_PLAYER_CHANGED
+	}
+	
 	private Button button_fold;
 	private Button button_follow;
 	private Button button_relaunch;
@@ -83,6 +97,8 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 	
 	private Slider slider_bet;
 	private TextField textfield_bet;
+	
+	private CommunautyCardIHM communauty_card;
 	
 	private Rectangle zone_carte;
 	
@@ -132,34 +148,40 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
         button_follow.setLayoutY(490);
         button_follow.setText("Suivre à 2");
         button_follow.setPrefWidth(100);
+        button_follow.getStyleClass().add("button_play");
         
         button_check = new Button();
         button_check.setLayoutX(335);
         button_check.setLayoutY(550);
         button_check.setText("Checker");
         button_check.setPrefWidth(100);
+        button_check.getStyleClass().add("button_play");
         
         button_fold = new Button();
         button_fold.setLayoutX(225);
         button_fold.setLayoutY(490);
         button_fold.setText("Se coucher");
         button_fold.setPrefWidth(100);
+        button_fold.getStyleClass().add("button_play");
         
         button_relaunch = new Button();
         button_relaunch.setLayoutX(225);
         button_relaunch.setLayoutY(550);
         button_relaunch.setText("Relancer à 5");
         button_relaunch.setPrefWidth(100);
+        button_relaunch.getStyleClass().add("button_play");
         
         button_add_bet = new Button();
         button_add_bet.setLayoutX(660);
         button_add_bet.setLayoutY(550);
         button_add_bet.setText("+");
+        button_add_bet.getStyleClass().add("button_slider");
         
         button_sub_bet = new Button();
         button_sub_bet.setLayoutX(450);
         button_sub_bet.setLayoutY(550);
         button_sub_bet.setText("-");
+        button_sub_bet.getStyleClass().add("button_slider");
         
         zone_carte = new Rectangle();
         
@@ -183,6 +205,8 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
         textfield_bet.setLayoutY(525);
         textfield_bet.setPrefWidth(175);
         textfield_bet.setEditable(false);
+        
+        communauty_card = new CommunautyCardIHM(250, 185);
         
         zone_carte.setX(0);
         zone_carte.setY(455);
@@ -216,13 +240,13 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
         /**************************************
          *  Player's cards
          */
-        ImageView im = new ImageView(new Image("images/as_carreau.png"));
+        ImageView im = new ImageView(new Image("images/ACE_DIAMONDS.png"));
         im.setX(295);
         im.setY(415);
         im.setFitWidth(40);
         im.setFitHeight(62);
         im.setRotate(-15);
-        ImageView im2 = new ImageView(new Image("images/as_pique.png"));
+        ImageView im2 = new ImageView(new Image("images/ACE_SPADES.png"));
         im2.setX(350);
         im2.setY(415);
         im2.setFitWidth(40);
@@ -239,6 +263,7 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
         root.getChildren().add(label_hand);
         root.getChildren().add(label_min_blind);
         root.getChildren().add(table);
+        root.getChildren().add(communauty_card);
         root.getChildren().add(zone_carte);
         root.getChildren().add(new PersoIHM(105, 90, "pseudo", Sens.HAUT));
         root.getChildren().add(new PersoIHM(250, 50, "pseudo", Sens.HAUT));
@@ -284,8 +309,8 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 
         initializeAction();
 	}
-	
-	public static void main(String[] args) {
+
+	public static void launchWindow(String[] args) {
 		launch(args);
 	}
 	
@@ -316,11 +341,45 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 			        PlayerWindow.this.textfield_bet.setText(String.valueOf(newValue.intValue()));
 			    }
 			});
+		 
+		 button_check.setOnAction(new EventHandler<ActionEvent>() {
+
+	            public void handle(ActionEvent event) {
+	                communauty_card.addCommunautyCard(new Card(CardRank.ACE, CardSuit.CLUBS));
+	            }
+	        });
+		 
+		 button_fold.setOnAction(new EventHandler<ActionEvent>() {
+
+	            public void handle(ActionEvent event) {
+	                communauty_card.emptyCommunautyCard();
+	            }
+	        });
 	}
 
+	/**************************************
+     *  Notification
+     */
 	@Override
 	public void propertyChange(PropertyChangeEvent evt) {
 		
+		/**
+         *  -----  ADD COMMUNITY CARD -----
+         */
+		if(evt.getPropertyName().equals(PlayerGuiEvent.ADD_COMMUNITY_CARD.toString()))
+		{
+			if(evt.getNewValue() instanceof Card)
+			{
+				System.out.println("Add community card");
+			}
+		}
 		
+		/**
+         *  -----  EMPTY COMMUNITY CARD -----
+         */
+		else if(evt.getPropertyName().equals(PlayerGuiEvent.EMPTY_COMMUNITY_CARD.toString()))
+		{
+				System.out.println("Empty community card");
+		}
 	}
 }

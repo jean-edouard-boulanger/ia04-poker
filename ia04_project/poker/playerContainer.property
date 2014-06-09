@@ -1,5 +1,5 @@
 main=false
-gui=false
+gui=true
 platform-id=tdia04
 local-port=2101
 port=2100
