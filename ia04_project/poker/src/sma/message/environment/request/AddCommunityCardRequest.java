@@ -7,7 +7,7 @@ import sma.message.MessageVisitor;
 
 public class AddCommunityCardRequest extends Message {
 	
-	Card newCard;
+	private Card newCard;
 	
 	public AddCommunityCardRequest(){}
 	
