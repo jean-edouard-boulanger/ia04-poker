@@ -1,14 +1,12 @@
 package poker.game.player.model;
 
+import jade.core.AID;
+
 import java.util.Comparator;
 
-import javax.print.attribute.standard.MediaSize.Other;
-
-import jade.core.AID;
 import poker.card.model.UserDeck;
 import poker.token.helpers.TokenSetValueEvaluator;
 import poker.token.model.TokenSet;
-import poker.token.model.TokenType;
 import poker.token.model.TokenValueDefinition;
 
 public class Player {
@@ -22,11 +20,22 @@ public class Player {
 	protected UserDeck deck;
 	protected TokenSet tokens;
 	
-	public Player(){}
+	public Player(){
+		this.aid = null;
+		this.playerName = "";
+		this.tokens = new TokenSet();
+		this.status = PlayerStatus.IN_GAME;
+		this.role = PlayerRole.USUAL;
+		this.deck = new UserDeck();
+	}
 	
 	public Player(AID aid, String playerName) {
 		this.aid = aid;
 		this.playerName = playerName;
+		this.tokens = new TokenSet();
+		this.status = PlayerStatus.IN_GAME;
+		this.role = PlayerRole.USUAL;
+		this.deck = new UserDeck();
 	}
 
 	public AID getAID() {

@@ -67,7 +67,7 @@ public class Game {
 	}
 
 	public void setCurrentPlayer(Player p) throws NotRegisteredPlayerException{
-		if(!this.gamePlayers.contains(p)){
+		if(p != null && !this.gamePlayers.contains(p)){
 			throw new NotRegisteredPlayerException(p);
 		}
 		this.currentPlayer = p;

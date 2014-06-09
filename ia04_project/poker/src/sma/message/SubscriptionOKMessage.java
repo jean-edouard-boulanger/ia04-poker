@@ -17,6 +17,14 @@ public class SubscriptionOKMessage extends OKMessage {
 		this.game = game;
 	}
 	
+	public Game getGame() {
+		return game;
+	}
+
+	public void setGame(Game game) {
+		this.game = game;
+	}
+	
 	@Override
 	public boolean accept(MessageVisitor visitor, ACLMessage aclMsg) {
 		return visitor.onOKMessage(this, aclMsg) || visitor.onSubscriptionOKMessage(this, aclMsg);

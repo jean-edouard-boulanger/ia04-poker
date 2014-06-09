@@ -2,9 +2,7 @@ package sma.agent;
 
 import jade.core.AID;
 import jade.core.Agent;
-import jade.core.behaviours.Behaviour;
 import jade.core.behaviours.CyclicBehaviour;
-import jade.domain.introspection.ChangedBehaviourState;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 
@@ -21,23 +19,23 @@ import sma.agent.helper.AgentHelper;
 import sma.agent.helper.DFServiceHelper;
 import sma.message.FailureMessage;
 import sma.message.MessageVisitor;
-import sma.message.SubscribableNotifications;
+import sma.message.NotificationSubscriber;
+import sma.message.OKMessage;
+import sma.message.SubscriptionOKMessage;
 import sma.message.environment.notification.BlindValueDefinitionChangedNotification;
 import sma.message.environment.notification.CardAddedToCommunityCardsNotification;
 import sma.message.environment.notification.CommunityCardsEmptiedNotification;
 import sma.message.environment.notification.PlayerReceivedCardNotification;
 import sma.message.environment.notification.PlayerReceivedTokenSetNotification;
 import sma.message.environment.notification.PlayerReceivedUnknownCardNotification;
+import sma.message.environment.notification.PlayerSitOnTableNotification;
 import sma.message.environment.request.AddCommunityCardRequest;
+import sma.message.environment.request.AddPlayerTableRequest;
 import sma.message.environment.request.BlindValueDefinitionChangeRequest;
 import sma.message.environment.request.CurrentPlayerChangeRequest;
 import sma.message.environment.request.DealCardToPlayerRequest;
 import sma.message.environment.request.EmptyCommunityCardsRequest;
 import sma.message.environment.request.GiveTokenSetToPlayerRequest;
-import sma.message.NotificationSubscriber;
-import sma.message.OKMessage;
-import sma.message.environment.notification.PlayerSitOnTableNotification;
-import sma.message.environment.request.AddPlayerTableRequest;
 
 public class EnvironmentAgent extends Agent {
 	
@@ -51,6 +49,7 @@ public class EnvironmentAgent extends Agent {
 		this.game = new Game();
 		this.msgVisitor = new EnvironmentMessageVisitor();
 		this.notificationSubscriber = new NotificationSubscriber();
+		this.subscribers = new ArrayList<>();
 	}
 	
 	@Override
@@ -81,9 +80,11 @@ public class EnvironmentAgent extends Agent {
 	
 	private class AddSubscriberBehaviour extends CyclicBehaviour {
 		MessageTemplate receiveSubscriptionRequestMessageTemplate;
+		private EnvironmentAgent environment;
 		
-		public AddSubscriberBehaviour(Agent agent){
+		public AddSubscriberBehaviour(EnvironmentAgent agent){
 			super(agent);
+			this.environment = agent;
 			this.receiveSubscriptionRequestMessageTemplate = MessageTemplate.MatchPerformative(ACLMessage.SUBSCRIBE);
 		}
 		
@@ -99,7 +100,7 @@ public class EnvironmentAgent extends Agent {
 				AID senderAID = msg.getSender();
 				if(!subscribers.contains(senderAID)) {
 					subscribers.add(senderAID);
-					AgentHelper.sendReply(myAgent, msg, ACLMessage.INFORM, new OKMessage());
+					AgentHelper.sendReply(myAgent, msg, ACLMessage.INFORM, new SubscriptionOKMessage(environment.game));
 				}
 				else {
 					AgentHelper.sendReply(myAgent, msg, ACLMessage.FAILURE, new FailureMessage("Already subscribed!"));
@@ -120,7 +121,7 @@ public class EnvironmentAgent extends Agent {
 				return true;
 			}
 			
-			AgentHelper.sendSimpleMessage(EnvironmentAgent.this, subscribers, ACLMessage.INFORM, new PlayerSitOnTableNotification(request.getNewPlayer()));
+			AgentHelper.sendSimpleMessage(EnvironmentAgent.this, subscribers, ACLMessage.PROPAGATE, new PlayerSitOnTableNotification(request.getNewPlayer()));
 			AgentHelper.sendReply(EnvironmentAgent.this, aclMsg, ACLMessage.INFORM, new OKMessage());
 			
 			return true;
@@ -141,7 +142,7 @@ public class EnvironmentAgent extends Agent {
 			CardAddedToCommunityCardsNotification notification = new CardAddedToCommunityCardsNotification(newCommunityCard);
 			
 			//Card successfully added
-			AgentHelper.sendSimpleMessage(EnvironmentAgent.this, subscribers, ACLMessage.INFORM, notification);
+			AgentHelper.sendSimpleMessage(EnvironmentAgent.this, subscribers, ACLMessage.PROPAGATE, notification);
 			
 			AgentHelper.sendReply(EnvironmentAgent.this, aclMsg, ACLMessage.INFORM, new OKMessage());
 			
@@ -162,13 +163,13 @@ public class EnvironmentAgent extends Agent {
 			PlayerReceivedCardNotification notification = new PlayerReceivedCardNotification(request.getPlayerAID(), request.getDealtCard());
 			
 			//Informing player who received the card
-			AgentHelper.sendSimpleMessage(EnvironmentAgent.this, request.getPlayerAID(), ACLMessage.INFORM, notification);
+			AgentHelper.sendSimpleMessage(EnvironmentAgent.this, request.getPlayerAID(), ACLMessage.PROPAGATE, notification);
 			
 			//Informing other players that he received a card (unknown for them)
 			ArrayList<AID> subscribersToNofitfy = (ArrayList<AID>) subscribers.clone();
 			subscribersToNofitfy.remove(request.getPlayerAID());
 			
-			AgentHelper.sendSimpleMessage(EnvironmentAgent.this, subscribersToNofitfy, ACLMessage.INFORM, new PlayerReceivedUnknownCardNotification(request.getPlayerAID()));
+			AgentHelper.sendSimpleMessage(EnvironmentAgent.this, subscribersToNofitfy, ACLMessage.PROPAGATE, new PlayerReceivedUnknownCardNotification(request.getPlayerAID()));
 			
 			AgentHelper.sendReply(EnvironmentAgent.this, aclMsg, ACLMessage.INFORM, new OKMessage());
 			
@@ -186,7 +187,7 @@ public class EnvironmentAgent extends Agent {
 				return true;
 			}
 			
-			AgentHelper.sendSimpleMessage(EnvironmentAgent.this, subscribers, ACLMessage.INFORM, new CurrentPlayerChangeRequest(request.getPlayerAID()));
+			AgentHelper.sendSimpleMessage(EnvironmentAgent.this, subscribers, ACLMessage.PROPAGATE, new CurrentPlayerChangeRequest(request.getPlayerAID()));
 			
 			return true;
 		}
@@ -196,7 +197,7 @@ public class EnvironmentAgent extends Agent {
 			
 			game.getCommunityCards().popCards();
 			
-			AgentHelper.sendSimpleMessage(EnvironmentAgent.this, subscribers, ACLMessage.INFORM, new CommunityCardsEmptiedNotification());
+			AgentHelper.sendSimpleMessage(EnvironmentAgent.this, subscribers, ACLMessage.PROPAGATE, new CommunityCardsEmptiedNotification());
 			
 			AgentHelper.sendReply(EnvironmentAgent.this, aclMsg, ACLMessage.INFORM, new OKMessage());
 			
@@ -213,7 +214,7 @@ public class EnvironmentAgent extends Agent {
 				return true;
 			}
 			
-			AgentHelper.sendSimpleMessage(EnvironmentAgent.this, subscribers, ACLMessage.INFORM, new PlayerReceivedTokenSetNotification(request.getPlayerAID(), request.getTokenSet()));
+			AgentHelper.sendSimpleMessage(EnvironmentAgent.this, subscribers, ACLMessage.PROPAGATE, new PlayerReceivedTokenSetNotification(request.getPlayerAID(), request.getTokenSet()));
 			
 			AgentHelper.sendReply(EnvironmentAgent.this, aclMsg, ACLMessage.INFORM, new OKMessage());
 			
@@ -225,7 +226,7 @@ public class EnvironmentAgent extends Agent {
 			
 			game.setBlindValueDefinition(request.getBlindValueDefinition());
 			
-			AgentHelper.sendSimpleMessage(EnvironmentAgent.this, subscribers, ACLMessage.INFORM, new BlindValueDefinitionChangedNotification(request.getBlindValueDefinition()));
+			AgentHelper.sendSimpleMessage(EnvironmentAgent.this, subscribers, ACLMessage.PROPAGATE, new BlindValueDefinitionChangedNotification(request.getBlindValueDefinition()));
 	
 			AgentHelper.sendReply(EnvironmentAgent.this, aclMsg, ACLMessage.INFORM, new OKMessage());
 			

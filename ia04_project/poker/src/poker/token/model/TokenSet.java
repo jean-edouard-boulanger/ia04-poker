@@ -45,8 +45,13 @@ public class TokenSet {
 		if(amount < 0){
 			throw new InvalidTokenAmountException();
 		}
-		int newAmount = this.tokensAmount.get(tokenType) + amount;
-		this.tokensAmount.put(tokenType, newAmount);
+		if(this.tokensAmount.containsKey(tokenType)){
+			int newAmount = this.tokensAmount.get(tokenType) + amount;
+			this.tokensAmount.put(tokenType, newAmount);
+		}
+		else
+			this.tokensAmount.put(tokenType, amount);
+		
 	}
 	
 	public void decreaseAmountForTokenType(TokenType tokenType, int amount) throws InvalidTokenAmountException{
