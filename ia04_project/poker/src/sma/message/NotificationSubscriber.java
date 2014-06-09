@@ -9,25 +9,25 @@ import sma.message.environment.request.AddPlayerTableRequest;
 
 public class NotificationSubscriber {
 
-	private HashMap<String, ArrayList<AID>> subscriptions;
+	private HashMap<SubscribableNotifications, ArrayList<AID>> subscriptions;
 	
 	public NotificationSubscriber(){}
 	
-	public NotificationSubscriber addSubscriptionList(String subscriptionListName){
+	public NotificationSubscriber addSubscriptionList(SubscribableNotifications subscriptionListName){
 		this.subscriptions.put(subscriptionListName, new ArrayList<AID>());
 		return this;
 	}
 	
-	public NotificationSubscriber dropSubscriptionList(String subscriptionListName){
+	public NotificationSubscriber dropSubscriptionList(SubscribableNotifications subscriptionListName){
 		this.subscriptions.remove(subscriptionListName);
 		return this;
 	}
 	
-	public boolean hasSubscriptionList(String subscriptionListName){
+	public boolean hasSubscriptionList(SubscribableNotifications subscriptionListName){
 		return this.subscriptions.containsKey(subscriptionListName);
 	}
 	
-	public NotificationSubscriber addSubscriberToList(String subscriptionListName, AID subscriberAID){
+	public NotificationSubscriber addSubscriberToList(SubscribableNotifications subscriptionListName, AID subscriberAID){
 		if(!this.hasSubscriptionList(subscriptionListName)){
 			ArrayList<AID> newSubscribersList = new ArrayList<AID>();
 			newSubscribersList.add(subscriberAID);
@@ -39,14 +39,14 @@ public class NotificationSubscriber {
 		return this;
 	}
 
-	public NotificationSubscriber dropSubscriberFromList(String subscriptionListName, AID subscriberAID){
+	public NotificationSubscriber dropSubscriberFromList(SubscribableNotifications subscriptionListName, AID subscriberAID){
 		if(this.hasSubscriptionList(subscriptionListName)){
 			this.subscriptions.get(subscriptionListName).remove(subscriberAID);
 		}
 		return this;
 	}
 	
-	public ArrayList<AID> getListSubscribers(String subscriptionListName){
+	public ArrayList<AID> getListSubscribers(SubscribableNotifications subscriptionListName){
 		if(!this.hasSubscriptionList(subscriptionListName)){
 			return new ArrayList<AID>();
 		}

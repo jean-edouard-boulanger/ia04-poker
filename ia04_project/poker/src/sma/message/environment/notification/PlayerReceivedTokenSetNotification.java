@@ -13,7 +13,7 @@ public class PlayerReceivedTokenSetNotification extends Message {
 	
 	public PlayerReceivedTokenSetNotification(){}
 	
-	public PlayerReceivedTokenSetNotification(int playerTablePositionIndex, AID playerAID){
+	public PlayerReceivedTokenSetNotification(AID playerAID, TokenSet receivedTokenSet){
 		this.playerAID = playerAID;
 		this.receivedTokenSet = receivedTokenSet;
 	}

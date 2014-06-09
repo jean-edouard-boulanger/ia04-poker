@@ -14,16 +14,20 @@ import poker.card.model.Card;
 import poker.game.exception.NotRegisteredPlayerException;
 import poker.game.exception.PlayerAlreadyRegisteredException;
 import poker.game.model.Game;
+import poker.token.exception.InvalidTokenAmountException;
 import sma.agent.helper.AgentHelper;
 import sma.agent.helper.DFServiceHelper;
 import sma.message.FailureMessage;
 import sma.message.MessageVisitor;
+import sma.message.SubscribableNotifications;
+import sma.message.environment.notification.BlindValueDefinitionChangedNotification;
 import sma.message.environment.notification.CardAddedToCommunityCardsNotification;
 import sma.message.environment.notification.CommunityCardsEmptiedNotification;
 import sma.message.environment.notification.PlayerReceivedCardNotification;
 import sma.message.environment.notification.PlayerReceivedTokenSetNotification;
 import sma.message.environment.notification.PlayerReceivedUnknownCardNotification;
 import sma.message.environment.request.AddCommunityCardRequest;
+import sma.message.environment.request.BlindValueDefinitionChangeRequest;
 import sma.message.environment.request.CurrentPlayerChangeRequest;
 import sma.message.environment.request.DealCardToPlayerRequest;
 import sma.message.environment.request.EmptyCommunityCardsRequest;
@@ -108,7 +112,7 @@ public class EnvironmentAgent extends Agent {
 			CardAddedToCommunityCardsNotification notification = new CardAddedToCommunityCardsNotification(newCommunityCard);
 			
 			//Card successfully added
-			AgentHelper.sendSimpleMessage(EnvironmentAgent.this, notificationSubscriber.getListSubscribers("cardsNotification"), ACLMessage.INFORM, notification);
+			AgentHelper.sendSimpleMessage(EnvironmentAgent.this, notificationSubscriber.getListSubscribers(SubscribableNotifications.cards), ACLMessage.INFORM, notification);
 			AgentHelper.sendSimpleMessage(EnvironmentAgent.this, game.getPlayersAIDs(), ACLMessage.INFORM, notification);
 			
 			AgentHelper.sendReply(EnvironmentAgent.this, aclMsg, ACLMessage.INFORM, new OKMessage());
@@ -130,7 +134,7 @@ public class EnvironmentAgent extends Agent {
 			PlayerReceivedCardNotification notification = new PlayerReceivedCardNotification(request.getPlayerAID(), request.getDealtCard());
 			
 			//Informing player who received the card
-			AgentHelper.sendSimpleMessage(EnvironmentAgent.this, notificationSubscriber.getListSubscribers("cardsNotifications"), ACLMessage.INFORM, notification);
+			AgentHelper.sendSimpleMessage(EnvironmentAgent.this, notificationSubscriber.getListSubscribers(SubscribableNotifications.cards), ACLMessage.INFORM, notification);
 			AgentHelper.sendSimpleMessage(EnvironmentAgent.this, request.getPlayerAID(), ACLMessage.INFORM, notification);
 			
 			//Informing other players that he received a card (unknown for them)
@@ -175,14 +179,32 @@ public class EnvironmentAgent extends Agent {
 		@Override
 		public boolean onGiveTokenSetToPlayerRequest(GiveTokenSetToPlayerRequest request, ACLMessage aclMsg){
 			
-			game.getPlayerByAID(request.getPlayerAID()).setTokens(request.getTokenSet());
+			try {
+				game.getPlayerByAID(request.getPlayerAID()).getTokens().AddTokenSet(request.getTokenSet());
+			} catch (InvalidTokenAmountException ex) {
+				AgentHelper.sendReply(EnvironmentAgent.this, aclMsg, ACLMessage.INFORM, new FailureMessage(ex.getMessage()));
+				return true;
+			}
 			
-			//TODO: Maybe change this: send playerAID and player index with the message?
-			AgentHelper.sendSimpleMessage(EnvironmentAgent.this, request.getPlayerAID(), ACLMessage.INFORM, new PlayerReceivedTokenSetNotification());
+			AgentHelper.sendSimpleMessage(EnvironmentAgent.this, game.getPlayersAIDs(), ACLMessage.INFORM, new PlayerReceivedTokenSetNotification(request.getPlayerAID(), request.getTokenSet()));
 			
 			AgentHelper.sendReply(EnvironmentAgent.this, aclMsg, ACLMessage.INFORM, new OKMessage());
 			
 			return true;
 		}
+		
+		@Override
+		public boolean onBlindValueDefinitionChangeRequest(BlindValueDefinitionChangeRequest request, ACLMessage aclMsg){
+			
+			game.setBlindValueDefinition(request.getBlindValueDefinition());
+			
+			AgentHelper.sendSimpleMessage(EnvironmentAgent.this, game.getPlayersAIDs(), ACLMessage.INFORM, new BlindValueDefinitionChangedNotification(request.getBlindValueDefinition()));
+			AgentHelper.sendReply(EnvironmentAgent.this, aclMsg, ACLMessage.INFORM, new OKMessage());
+			
+			return true;
+		}
+		
+		
+		
 	}
 }
