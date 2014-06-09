@@ -64,7 +64,7 @@ public class PlayersContainer {
 		return null;
 	}
 	
-	public ArrayList<Integer> getUsedPlaces(){
+	public ArrayList<Integer> getUsedTablePlaces(){
 		ArrayList<Integer> usedPlacesIndex = new ArrayList<Integer>();
 		for(Player player : this.players){
 			usedPlacesIndex.add(player.getTablePositionIndex());
@@ -72,7 +72,7 @@ public class PlayersContainer {
 		return usedPlacesIndex;
 	}
 	
-	public ArrayList<Integer> getFreePlaces(){
+	public ArrayList<Integer> getAvailableTablePlaces(){
 		ArrayList<Integer> freePlacesIndex = new ArrayList<Integer>(Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10));
 		for(Player p : this.players){
 			freePlacesIndex.remove(p.getTablePositionIndex());
@@ -81,7 +81,7 @@ public class PlayersContainer {
 	}
 	
 	private int getFirstAvailableTablePlace() throws NoPlaceAvailableException{
-		ArrayList<Integer> places = this.getFreePlaces();
+		ArrayList<Integer> places = this.getAvailableTablePlaces();
 		
 		if(places.isEmpty()){
 			throw new NoPlaceAvailableException();
@@ -91,7 +91,7 @@ public class PlayersContainer {
 	}
 	
 	private int getRandomAvailableTablePlace() throws NoPlaceAvailableException{
-		ArrayList<Integer> places = this.getFreePlaces();
+		ArrayList<Integer> places = this.getAvailableTablePlaces();
 		
 		if(places.isEmpty()){
 			throw new NoPlaceAvailableException();
@@ -244,26 +244,23 @@ public class PlayersContainer {
 	}
 	
 	public class PlayerCircularIterator implements Iterator<Player>{
-
-		private ArrayList<Player> tmpPlayers; 
 		
 		private final int initialIndex;
 		private int currentPlayerIndex;
 		private int loopNumber = 0;
 		
 		public PlayerCircularIterator(){
-			this.tmpPlayers = new ArrayList<Player>(players);
-			Collections.sort(this.tmpPlayers, new Player.PlayerTablePositionComparator());
+			Collections.sort(players, new Player.PlayerTablePositionComparator());
 
 			this.initialIndex = 0;
 			this.currentPlayerIndex = 0;
 		}
 		
 		public PlayerCircularIterator(Player first){
-			this.tmpPlayers = new ArrayList<Player>(players);
-			Collections.sort(this.tmpPlayers, new Player.PlayerTablePositionComparator());
+			players = new ArrayList<Player>(players);
+			Collections.sort(players, new Player.PlayerTablePositionComparator());
 
-			int tmpInitialIndex = tmpPlayers.indexOf(first);
+			int tmpInitialIndex = players.indexOf(first);
 			
 			if(tmpInitialIndex == -1){
 				this.initialIndex = 0;
@@ -289,7 +286,7 @@ public class PlayersContainer {
 				this.loopNumber++;
 			}
 			
-			return this.tmpPlayers.get(this.currentPlayerIndex);
+			return players.get(this.currentPlayerIndex);
 		}
 
 		public void rewind(){
@@ -306,11 +303,10 @@ public class PlayersContainer {
 		}
 		
 		private int getNextPlayerIndex(){
-			if(this.currentPlayerIndex == this.tmpPlayers.size() - 1){
+			if(this.currentPlayerIndex == players.size() - 1){
 				return 0;
 			}
 			return this.currentPlayerIndex + 1;
 		}
 	}
-	
 }
