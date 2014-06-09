@@ -2,11 +2,15 @@ package sma.agent.simulationAgent;
 
 import jade.core.AID;
 import jade.core.behaviours.ParallelBehaviour;
+import jade.lang.acl.ACLMessage;
 import poker.game.player.model.Player;
 import sma.agent.SimulationAgent;
 import sma.agent.helper.DFServiceHelper;
 import sma.agent.helper.TransactionBhv;
+import sma.message.FailureMessage;
 import sma.message.Message;
+import sma.message.MessageVisitor;
+import sma.message.OKMessage;
 import sma.message.environment.request.GiveTokenSetToPlayerRequest;
 
 /**
@@ -21,7 +25,20 @@ public class InitGameBhv extends ParallelBehaviour {
 		AID environment = DFServiceHelper.searchService(simAgent, "PokerEnvironment", "Environment");
 		for (Player p : simAgent.getGame().getGamePlayers()){
 			Message msg = new GiveTokenSetToPlayerRequest(simAgent.getDefaultTokenSet(), p.getAID());
-			this.addSubBehaviour(new TransactionBhv(simAgent, msg, environment));
+			TransactionBhv transaction = new TransactionBhv(simAgent, msg, environment);
+			transaction.setResponseVisitor(new MessageVisitor(){
+				@Override
+				public boolean onOKMessage(OKMessage okMessage, ACLMessage aclMsg) {
+					System.out.println("[" + myAgent.getLocalName() + "] initial token set given to player.");
+					return true;
+				}
+				@Override
+				public boolean onFailureMessage(FailureMessage msg,ACLMessage aclMsg) {
+					System.out.println("[" + myAgent.getLocalName() + "] erro while giving initial token set to player: " + msg.getMessage());
+					return true;
+				}
+			});
+			this.addSubBehaviour(transaction);
 		}
 	}
 }

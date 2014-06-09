@@ -82,7 +82,25 @@ public class RequestTransaction {
 	 */
 	public boolean checkReply(MessageVisitor visitor){
 		MessageTemplate mt = MessageTemplate.MatchConversationId(this.conversation_id);
-		return AgentHelper.receiveMessage(this.agent, mt, visitor);
+		
+		ACLMessage ACLmsg = agent.receive(mt);
+		
+		if(ACLmsg == null)
+			return false;
+		
+		Message msg;
+		try {
+			msg = Message.fromJson(ACLmsg.getContent());
+		} catch (IOException e) {
+			//TODO: handle json parsing errors.
+			e.printStackTrace();
+			return false;
+		}
+		
+		if(visitor != null)
+			msg.accept(visitor, ACLmsg); // transaction messages are discarded even if the visitor does not handle it.
+		
+		return true;
 	}
 
 	/**
