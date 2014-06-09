@@ -43,6 +43,7 @@ public class MessageVisitor {
 	public boolean onPlayerSubscriptionRequest(PlayerSubscriptionRequest request, ACLMessage aclMsg){return false;}
 	public boolean onFailureMessage(FailureMessage msg, ACLMessage aclMsg) {return false;}
 	public boolean onOKMessage(OKMessage okMessage, ACLMessage aclMsg) {return false;}
+	public boolean onSubscriptionOKMessage(SubscriptionOKMessage request, ACLMessage aclMsg){return false;}
 	
 
 	public boolean onPlayerReceivedUnknownCardNotification(PlayerReceivedUnknownCardNotification notification, ACLMessage aclMsg) {return false;}
