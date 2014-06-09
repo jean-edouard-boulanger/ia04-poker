@@ -17,7 +17,6 @@ import sma.message.environment.request.AddPlayerTableRequest;
 import sma.message.environment.request.CurrentPlayerChangeRequest;
 import sma.message.environment.request.DealCardToPlayerRequest;
 import sma.message.environment.request.EmptyCommunityCardsRequest;
-import sma.message.environment.request.GiveTokenSetToPlayer;
 import sma.message.environment.request.GiveTokenSetToPlayerRequest;
 
 /**

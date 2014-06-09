@@ -25,10 +25,10 @@ public class TransactionBhv extends Behaviour
 	private MessageVisitor visitor;
 	private boolean requestHandled;
 	
-	public TransactionBhv(Agent agent, Message requestMessage, AID requestReceiver){
+	public TransactionBhv(Agent agent, Message requestMessage, AID requestReceiver, int performative){
 		super(agent);
 		this.requestHandled = false;
-		this.transaction = new RequestTransaction(this, requestMessage, requestReceiver);
+		this.transaction = new RequestTransaction(this, requestMessage, requestReceiver, performative);
 		this.visitor = new MessageVisitor(){
 			@Override
 			public boolean onFailureMessage(FailureMessage msg, ACLMessage aclMsg) {
@@ -36,6 +36,10 @@ public class TransactionBhv extends Behaviour
 				return true;
 			}
 		};
+	}
+	
+	public TransactionBhv(Agent agent, Message requestMessage, AID requestReceiver){
+		this(agent,requestMessage, requestReceiver, ACLMessage.REQUEST);
 	}
 	
 	public void setResponseVisitor(MessageVisitor visitor){

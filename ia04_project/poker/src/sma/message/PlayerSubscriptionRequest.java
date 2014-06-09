@@ -9,23 +9,13 @@ import jade.lang.acl.ACLMessage;
 public class PlayerSubscriptionRequest extends Message {
 	
 	private String playerName;
-	private boolean isHuman;
 	
 	public PlayerSubscriptionRequest(){
 		this.playerName = "unknown";
 	}
 	
-	public PlayerSubscriptionRequest(String playerName, boolean isHuman){
+	public PlayerSubscriptionRequest(String playerName){
 		this.playerName = playerName;
-		this.isHuman = isHuman;
-	}
-	
-	public boolean isHuman() {
-		return isHuman;
-	}
-
-	public void setHuman(boolean isHuman) {
-		this.isHuman = isHuman;
 	}
 	
 	public String getPlayerName() {
