@@ -163,4 +163,154 @@ public class PlayersContainer {
 		
 		return players.get(playerIndex + 1);
 	}	
+	
+	public class PlayerIterator implements Iterator<Player>{
+
+		private ArrayList<Player> tmpPlayers; 
+		
+		private final int initialIndex;
+		private int currentPlayerIndex;
+		
+		public PlayerIterator(){
+			this.tmpPlayers = new ArrayList<Player>(players);
+			Collections.sort(this.tmpPlayers, new Player.PlayerTablePositionComparator());
+			
+			this.initialIndex = 0;
+			this.currentPlayerIndex = 0;
+		}
+		
+		public PlayerIterator(Player first){
+			this.tmpPlayers = new ArrayList<Player>(players);
+			Collections.sort(this.tmpPlayers, new Player.PlayerTablePositionComparator());
+
+			int tmpInitialIndex = tmpPlayers.indexOf(first);
+			
+			if(tmpInitialIndex == -1){
+				this.initialIndex = 0;
+			}
+			else {
+				this.initialIndex = tmpInitialIndex;
+			}
+			
+			this.currentPlayerIndex = this.initialIndex;
+			
+		}
+		
+		@Override
+		public boolean hasNext() {
+			if(this.getNextPlayerIndex() != this.initialIndex){
+				return true;
+			}
+			return false;
+		}
+
+		@Override
+		public Player next() {
+			this.currentPlayerIndex = this.getNextPlayerIndex();
+			return this.tmpPlayers.get(this.currentPlayerIndex);
+		}
+
+		public void rewind(){
+			this.currentPlayerIndex = this.initialIndex;
+		}
+		
+		@Override
+		public void remove() {
+			throw new UnsupportedOperationException();
+		}
+		
+		private int getNextPlayerIndex(){
+			if(this.currentPlayerIndex == this.tmpPlayers.size() - 1){
+				return 0;
+			}
+			return this.currentPlayerIndex + 1;
+		}
+	}
+	
+	public PlayerIterator getIterator(){
+		return new PlayerIterator();
+	}
+	
+	public PlayerIterator getIterator(Player firstPlayer){
+		return new PlayerIterator(firstPlayer);
+	}
+	
+	public PlayerCircularIterator getCircularIterator(){
+		return new PlayerCircularIterator();
+	}
+	
+	public PlayerCircularIterator getCircularIterator(Player firstPlayer){
+		return new PlayerCircularIterator(firstPlayer);
+	}
+	
+	public class PlayerCircularIterator implements Iterator<Player>{
+
+		private ArrayList<Player> tmpPlayers; 
+		
+		private final int initialIndex;
+		private int currentPlayerIndex;
+		private int loopNumber = 0;
+		
+		public PlayerCircularIterator(){
+			this.tmpPlayers = new ArrayList<Player>(players);
+			Collections.sort(this.tmpPlayers, new Player.PlayerTablePositionComparator());
+
+			this.initialIndex = 0;
+			this.currentPlayerIndex = 0;
+		}
+		
+		public PlayerCircularIterator(Player first){
+			this.tmpPlayers = new ArrayList<Player>(players);
+			Collections.sort(this.tmpPlayers, new Player.PlayerTablePositionComparator());
+
+			int tmpInitialIndex = tmpPlayers.indexOf(first);
+			
+			if(tmpInitialIndex == -1){
+				this.initialIndex = 0;
+			}
+			else {
+				this.initialIndex = tmpInitialIndex;
+			}
+			
+			this.currentPlayerIndex = this.initialIndex;
+			
+		}
+		
+		@Override
+		public boolean hasNext() {
+			return true;
+		}
+
+		@Override
+		public Player next() {
+			this.currentPlayerIndex = this.getNextPlayerIndex();
+			
+			if(this.currentPlayerIndex == this.initialIndex){
+				this.loopNumber++;
+			}
+			
+			return this.tmpPlayers.get(this.currentPlayerIndex);
+		}
+
+		public void rewind(){
+			this.currentPlayerIndex = this.initialIndex;
+		}
+		
+		@Override
+		public void remove() {
+			throw new UnsupportedOperationException();
+		}
+		
+		public int getLoopNumber(){
+			return this.loopNumber;
+		}
+		
+		private int getNextPlayerIndex(){
+			if(this.currentPlayerIndex == this.tmpPlayers.size() - 1){
+				return 0;
+			}
+			return this.currentPlayerIndex + 1;
+		}
+	}
+	
 }
