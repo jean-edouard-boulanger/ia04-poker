@@ -81,7 +81,8 @@ public class AgentHelper {
 		try {
 			ACLMessage reply = msg.createReply();
 			reply.setPerformative(performative);
-			reply.setContent(data.toJson());
+			if(data != null)
+				reply.setContent(data.toJson());
 			agent.send(reply);
 		} catch (IOException e) {
 			System.out.println("[" + agent.getName() + "] Error while serializing reply, the message was not sent (" + e.getMessage() + ").");
@@ -101,7 +102,8 @@ public class AgentHelper {
 			for(AID receiver : receivers) {
 				msg.addReceiver(receiver);
 			}
-			msg.setContent(content.toJson());
+			if(content != null)
+				msg.setContent(content.toJson());
 			msg.setSender(sender.getAID());
 			
 			sender.send(msg);

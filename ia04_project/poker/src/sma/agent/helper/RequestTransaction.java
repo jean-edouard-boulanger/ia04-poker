@@ -43,7 +43,8 @@ public class RequestTransaction {
 		this.request = new ACLMessage(performative);
 		this.request.addReceiver(receiver);
 		try {
-			this.request.setContent(data.toJson());
+			if(data != null)
+				this.request.setContent(data.toJson());
 		} catch (IOException e) {
 			this.request.setContent("");
 			e.printStackTrace();
