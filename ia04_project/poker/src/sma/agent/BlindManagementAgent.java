@@ -10,6 +10,7 @@ import sma.agent.helper.TransactionBhv;
 import sma.message.FailureMessage;
 import sma.message.MessageVisitor;
 import sma.message.NotificationSubscriber;
+import sma.message.OKMessage;
 import sma.message.blind.notification.BlindValueDefinitionUpdatedNotification;
 import sma.message.blind.notification.TimeBeforeIncreasingBlindChangedNotification;
 import sma.message.blind.request.ChangeTimeBeforeIncreasingBlindRequest;
@@ -58,10 +59,19 @@ public class BlindManagementAgent extends Agent {
 					//Giving blind value to the environment
 					AID environment = DFServiceHelper.searchService(myAgent, "PokerEnvironment", "Environment");
 
-					//TODO: Transaction with environment
+					//Transaction with environment
+					TransactionBhv transaction = new TransactionBhv(myAgent, new BlindValueDefinitionChangeRequest(blindValueDefinition), environment);
 					
-					//Notifying the simulation that the environment got the new blind
-					AgentHelper.sendReply(BlindManagementAgent.this, aclMsg, ACLMessage.INFORM, new BlindValueDefinitionUpdatedNotification(blindValueDefinition));
+					transaction.setResponseVisitor(new MessageVisitor(){
+						@Override
+						public boolean onOKMessage(OKMessage okMessage, ACLMessage aclMsg) {
+							//Notifying the simulation that the environment got the new b
+							AgentHelper.sendReply(BlindManagementAgent.this, aclMsg, ACLMessage.INFORM, new BlindValueDefinitionUpdatedNotification(blindValueDefinition));
+							
+							return true;
+						}
+					});
+					
 					return true;
 				}
 				
