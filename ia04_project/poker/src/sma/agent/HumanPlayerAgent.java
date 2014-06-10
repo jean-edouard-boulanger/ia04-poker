@@ -11,6 +11,7 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 
 import poker.card.exception.CommunityCardsFullException;
+import poker.game.exception.NotRegisteredPlayerException;
 import poker.game.model.Game;
 import sma.agent.helper.AgentHelper;
 import sma.agent.helper.DFServiceHelper;
@@ -18,7 +19,17 @@ import sma.agent.helper.TransactionBhv;
 import sma.message.FailureMessage;
 import sma.message.MessageVisitor;
 import sma.message.PlayerSubscriptionRequest;
+import sma.message.environment.notification.BlindValueDefinitionChangedNotification;
 import sma.message.environment.notification.CardAddedToCommunityCardsNotification;
+import sma.message.environment.notification.CommunityCardsEmptiedNotification;
+import sma.message.environment.notification.CurrentPlayerChangedNotification;
+import sma.message.environment.notification.PlayerBetNotification;
+import sma.message.environment.notification.PlayerCheckNotification;
+import sma.message.environment.notification.PlayerFoldedNotification;
+import sma.message.environment.notification.PlayerReceivedCardNotification;
+import sma.message.environment.notification.PlayerReceivedTokenSetNotification;
+import sma.message.environment.notification.PlayerReceivedUnknownCardNotification;
+import sma.message.environment.notification.PlayerSitOnTableNotification;
 import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.CyclicBehaviour;
@@ -108,6 +119,24 @@ public class HumanPlayerAgent extends GuiAgent {
 	private class HumanPlayerRequestMessageVisitor extends MessageVisitor {
 		
 		@Override
+		public boolean onPlayerReceivedUnknownCardNotification(PlayerReceivedUnknownCardNotification notification, ACLMessage aclMsg) {
+			
+			if(!notification.getPlayerAID().equals(HumanPlayerAgent.this.getAID()))
+				changes_game.firePropertyChange(PlayerGuiEvent.PLAYER_RECEIVED_UNKNOWN_CARD.toString(), null, 5);
+			
+			return true;
+		}
+		
+		@Override
+		public boolean onPlayerReceivedCardNotification(PlayerReceivedCardNotification notification, ACLMessage aclMsg){
+			
+			if(notification.getPlayerAID().equals(HumanPlayerAgent.this.getAID()))
+				changes_game.firePropertyChange(PlayerGuiEvent.PLAYER_RECEIVED_CARD.toString(), null, notification.getReceivedCard());
+			
+			return true;
+		}
+		
+		@Override
 		public boolean onCardAddedToCommunityCardsNotification(CardAddedToCommunityCardsNotification notification, ACLMessage aclMsg) {
 			
 			try {
@@ -120,6 +149,88 @@ public class HumanPlayerAgent extends GuiAgent {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+			
+			return true;
+		}
+		
+		@Override
+		public boolean onCommunityCardsEmptiedNotification(CommunityCardsEmptiedNotification notification, ACLMessage aclMsg) {
+			
+			game.getCommunityCards().popCards();
+			
+			changes_game.firePropertyChange(PlayerGuiEvent.EMPTY_COMMUNITY_CARD.toString(), null, null);
+			
+			return true;
+		}
+		
+		@Override
+		public boolean onPlayerFoldedNotification(PlayerFoldedNotification notification, ACLMessage aclMsg){
+			
+			// FIND THE PLAYER NUMBER AND SEND IT WITH CONTENT
+			changes_game.firePropertyChange(PlayerGuiEvent.PLAYER_FOLDED.toString(), null, 5);
+			
+			return true;
+		}
+		
+		@Override
+		public boolean onPlayerSitOnTableNotification(PlayerSitOnTableNotification notification, ACLMessage aclMsg){
+			
+			// FIND THE PLAYER NUMBER AND SEND IT WITH CONTENT
+			changes_game.firePropertyChange(PlayerGuiEvent.PLAYER_TABLE.toString(), null, 5);
+			
+			return true;
+		}
+		
+		@Override
+		public boolean onPlayerReceivedTokenSetNotification(PlayerReceivedTokenSetNotification notification, ACLMessage aclMsg){
+			
+			// FIND THE PLAYER NUMBER AND SEND IT WITH CONTENT
+			changes_game.firePropertyChange(PlayerGuiEvent.PLAYER_RECEIVED_TOKENSET.toString(), null, 5);
+			
+			return true;
+		}
+		
+		@Override
+		public boolean onPlayerBetNotification(PlayerBetNotification notification, ACLMessage aclMsg){
+			
+			// FIND THE PLAYER NUMBER AND SEND IT WITH CONTENT
+			changes_game.firePropertyChange(PlayerGuiEvent.PLAYER_BET.toString(), null, 5);
+			
+			return true;
+		}
+		
+		@Override
+		public boolean onPlayerCheckNotification(PlayerCheckNotification notification, ACLMessage aclMsg){
+			
+			// FIND THE PLAYER NUMBER AND SEND IT WITH CONTENT
+			changes_game.firePropertyChange(PlayerGuiEvent.PLAYER_CHECK.toString(), null, 5);
+			
+			return true;
+		}
+		
+		@Override
+		public boolean onBlindValueDefinitionChangedNotification(BlindValueDefinitionChangedNotification notification, ACLMessage aclMsg){
+			
+			game.setBlindValueDefinition(request.getBlindValueDefinition());
+			
+			changes_game.firePropertyChange(PlayerGuiEvent.BLIND_VALUE.toString(), null, notification.getNewBlindValueDefinition());
+			
+			return true;
+		}
+		
+		@Override
+		public boolean onCurrentPlayerChangedNotification(CurrentPlayerChangedNotification notification, ACLMessage aclMsg){
+			
+			/*try{
+				game.setCurrentPlayer(notification.getPlayerTablePositionIndex());
+			}
+			catch(NotRegisteredPlayerException ex){
+				AgentHelper.sendReply(EnvironmentAgent.this, aclMsg, ACLMessage.INFORM, new FailureMessage(ex.getMessage()));
+				return true;
+			}*/
+			
+			// FIND THE PLAYER NUMBER AND SEND IT WITH CONTENT
+			changes_game.firePropertyChange(PlayerGuiEvent.CURRENT_PLAYER_CHANGED.toString(), null, notification.getPlayerTablePositionIndex());
 			
 			return true;
 		}
