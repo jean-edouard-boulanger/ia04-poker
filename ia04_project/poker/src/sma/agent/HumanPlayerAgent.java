@@ -211,7 +211,7 @@ public class HumanPlayerAgent extends GuiAgent {
 		@Override
 		public boolean onBlindValueDefinitionChangedNotification(BlindValueDefinitionChangedNotification notification, ACLMessage aclMsg){
 			
-			game.setBlindValueDefinition(request.getBlindValueDefinition());
+			game.setBlindValueDefinition(notification.getNewBlindValueDefinition());
 			
 			changes_game.firePropertyChange(PlayerGuiEvent.BLIND_VALUE.toString(), null, notification.getNewBlindValueDefinition());
 			

@@ -364,12 +364,29 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 	public void propertyChange(PropertyChangeEvent evt) {
 		
 		/**
+         *  -----  RECEIVED UKNOWN CARD -----
+         */
+		if(evt.getPropertyName().equals(PlayerGuiEvent.PLAYER_RECEIVED_UNKNOWN_CARD.toString()))
+		{
+				System.out.println("Empty community card");
+		}
+		
+		/**
+         *  -----  RECEIVED CARD -----
+         */
+		else if(evt.getPropertyName().equals(PlayerGuiEvent.PLAYER_RECEIVED_CARD.toString()))
+		{
+				System.out.println("Empty community card");
+		}
+		
+		/**
          *  -----  ADD COMMUNITY CARD -----
          */
-		if(evt.getPropertyName().equals(PlayerGuiEvent.ADD_COMMUNITY_CARD.toString()))
+		else if(evt.getPropertyName().equals(PlayerGuiEvent.ADD_COMMUNITY_CARD.toString()))
 		{
 			if(evt.getNewValue() instanceof Card)
 			{
+				communauty_card.addCommunautyCard((Card)evt.getNewValue());
 				System.out.println("Add community card");
 			}
 		}
@@ -379,7 +396,8 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
          */
 		else if(evt.getPropertyName().equals(PlayerGuiEvent.EMPTY_COMMUNITY_CARD.toString()))
 		{
-				System.out.println("Empty community card");
+			communauty_card.emptyCommunautyCard();
+			System.out.println("Empty community card");
 		}
 	}
 }
