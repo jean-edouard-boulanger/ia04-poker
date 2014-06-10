@@ -88,7 +88,9 @@ public class DealerAgent extends Agent {
 
 		@Override
 		public void action() {
-			
+			if(!AgentHelper.receiveMessage(DealerAgent.this, ACLMessage.REQUEST, messageVisitor)){
+				block();
+			}
 		}
 
 		@Override
@@ -148,6 +150,8 @@ public class DealerAgent extends Agent {
 		
 		public boolean onDealRequest(DealRequest request, ACLMessage aclMsg){
 
+			AID EnvAID = DFServiceHelper.searchService(DealerAgent.this, "PokerEnvironment", "Environment");
+			
 			registerDealTransaction(aclMsg.getConversationId());
 
 			SequentialBehaviour globalTransactionBehaviour = new SequentialBehaviour();
@@ -166,8 +170,7 @@ public class DealerAgent extends Agent {
 				while(it.getLoopNumber() < 3){
 					DealCardToPlayerRequest dealRequest = new DealCardToPlayerRequest(it.next().getAID(), cardDeck.pickCard());
 					
-					//TODO: Check how to identify the env agent
-					TransactionBhv dealSingleCardBhv = new TransactionBhv(DealerAgent.this, dealRequest, new AID("environment", AID.ISLOCALNAME));
+					TransactionBhv dealSingleCardBhv = new TransactionBhv(DealerAgent.this, dealRequest, EnvAID);
 					dealSingleCardBhv.setResponseVisitor(new MessageVisitor(){
 						@Override
 						public boolean onFailureMessage(FailureMessage msg, ACLMessage aclMsg) {
@@ -190,8 +193,7 @@ public class DealerAgent extends Agent {
 				for(int i = 0; i < nbDealtCards; i++){
 					AddCommunityCardRequest addCardRequest = new AddCommunityCardRequest(cardDeck.pickCard());
 					
-					//TODO: Check how to identify the env agent
-					TransactionBhv dealSingleCardBhv = new TransactionBhv(DealerAgent.this, addCardRequest, new AID("environment", AID.ISLOCALNAME));
+					TransactionBhv dealSingleCardBhv = new TransactionBhv(DealerAgent.this, addCardRequest, EnvAID);
 					dealSingleCardBhv.setResponseVisitor(new MessageVisitor(){
 						@Override
 						public boolean onFailureMessage(FailureMessage msg, ACLMessage aclMsg) {
