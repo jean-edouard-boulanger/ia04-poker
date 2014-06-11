@@ -111,7 +111,8 @@ public class EnvironmentAgent extends Agent {
 	}
 	
 	private class EnvironmentMessageVisitor extends MessageVisitor{
-	
+		
+		@Override
 		public boolean onAddPlayerTableRequest(AddPlayerTableRequest request, ACLMessage aclMsg) {
 			
 			try{
@@ -124,6 +125,8 @@ public class EnvironmentAgent extends Agent {
 				AgentHelper.sendReply(EnvironmentAgent.this, aclMsg, ACLMessage.FAILURE, new FailureMessage(e.getMessage()));
 				return true;
 			}
+			// we sent a subscription notification to the player:
+			AgentHelper.sendSimpleMessage(EnvironmentAgent.this, request.getNewPlayer().getAID(), ACLMessage.PROPAGATE, new SubscriptionOKMessage(game));
 			
 			AgentHelper.sendSimpleMessage(EnvironmentAgent.this, subscribers, ACLMessage.PROPAGATE, new PlayerSitOnTableNotification(request.getNewPlayer()));
 			AgentHelper.sendReply(EnvironmentAgent.this, aclMsg, ACLMessage.INFORM, new OKMessage());
@@ -131,6 +134,7 @@ public class EnvironmentAgent extends Agent {
 			return true;
 		}
 		
+		@Override
 		public boolean onAddCommunityCardRequest(AddCommunityCardRequest request, ACLMessage aclMsg) {
 			Card newCommunityCard = request.getNewCard();
 			
@@ -231,9 +235,6 @@ public class EnvironmentAgent extends Agent {
 			
 			return true;
 		}
-		
-		
-		
 		
 	}
 }
