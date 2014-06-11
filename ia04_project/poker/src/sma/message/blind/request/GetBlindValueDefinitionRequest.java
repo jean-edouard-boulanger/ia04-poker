@@ -11,6 +11,6 @@ public class GetBlindValueDefinitionRequest extends Message {
 
 	@Override
 	public boolean accept(MessageVisitor visitor, ACLMessage aclMsg) {
-		return visitor.onGetBlindValueDefinitionRequest(this, aclMsg);
+		return visitor.onRefreshBlindValueDefinitionRequest(this, aclMsg);
 	}
 }

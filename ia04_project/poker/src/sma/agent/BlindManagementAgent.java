@@ -55,7 +55,7 @@ public class BlindManagementAgent extends Agent {
 			if(!AgentHelper.receiveMessage(this.myAgent, ACLMessage.REQUEST, new MessageVisitor(){
 				
 				@Override
-				public boolean onGetBlindValueDefinitionRequest(GetBlindValueDefinitionRequest request, ACLMessage aclMsg) {
+				public boolean onRefreshBlindValueDefinitionRequest(GetBlindValueDefinitionRequest request, ACLMessage aclMsg) {
 					//Giving blind value to the environment
 					AID environment = DFServiceHelper.searchService(myAgent, "PokerEnvironment", "Environment");
 
@@ -65,8 +65,8 @@ public class BlindManagementAgent extends Agent {
 					transaction.setResponseVisitor(new MessageVisitor(){
 						@Override
 						public boolean onOKMessage(OKMessage okMessage, ACLMessage aclMsg) {
-							//Notifying the simulation that the environment got the new b
-							AgentHelper.sendReply(BlindManagementAgent.this, aclMsg, ACLMessage.INFORM, new BlindValueDefinitionUpdatedNotification(blindValueDefinition));
+							//Notifying the simulation that the environment that the blind was set:
+							AgentHelper.sendReply(BlindManagementAgent.this, aclMsg, ACLMessage.INFORM, new OKMessage());
 							
 							return true;
 						}

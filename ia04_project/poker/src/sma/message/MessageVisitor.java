@@ -81,6 +81,6 @@ public class MessageVisitor {
 	
 	// Blind Management
 	public boolean onChangeTimeBeforeIncreasingBlindRequest(ChangeTimeBeforeIncreasingBlindRequest request, ACLMessage aclMsg) {return false;}
-	public boolean onGetBlindValueDefinitionRequest(GetBlindValueDefinitionRequest request, ACLMessage aclMsg) {return false;}
+	public boolean onRefreshBlindValueDefinitionRequest(GetBlindValueDefinitionRequest request, ACLMessage aclMsg) {return false;}
 	
 }
