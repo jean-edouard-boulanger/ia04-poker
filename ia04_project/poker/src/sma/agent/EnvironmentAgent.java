@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import poker.card.exception.CommunityCardsFullException;
 import poker.card.exception.UserDeckFullException;
 import poker.card.model.Card;
+import poker.game.exception.NoPlaceAvailableException;
 import poker.game.exception.NotRegisteredPlayerException;
 import poker.game.exception.PlayerAlreadyRegisteredException;
 import poker.game.model.Game;
@@ -114,10 +115,13 @@ public class EnvironmentAgent extends Agent {
 		public boolean onAddPlayerTableRequest(AddPlayerTableRequest request, ACLMessage aclMsg) {
 			
 			try{
-				game.addPlayer(request.getNewPlayer());
+				game.getPlayersContainer().addPlayer(request.getNewPlayer());
 			}
-			catch(PlayerAlreadyRegisteredException ex){
-				AgentHelper.sendReply(EnvironmentAgent.this, aclMsg, ACLMessage.FAILURE, new FailureMessage(ex.getMessage()));
+			catch(PlayerAlreadyRegisteredException e){
+				AgentHelper.sendReply(EnvironmentAgent.this, aclMsg, ACLMessage.FAILURE, new FailureMessage(e.getMessage()));
+				return true;
+			} catch (NoPlaceAvailableException e) {
+				AgentHelper.sendReply(EnvironmentAgent.this, aclMsg, ACLMessage.FAILURE, new FailureMessage(e.getMessage()));
 				return true;
 			}
 			
@@ -153,7 +157,7 @@ public class EnvironmentAgent extends Agent {
 		public boolean onDealCardToPlayerRequest(DealCardToPlayerRequest request, ACLMessage aclMsg){
 			
 			try{
-				game.getPlayerByAID(request.getPlayerAID()).getDeck().addCard(request.getDealtCard());
+				game.getPlayersContainer().getPlayerByAID(request.getPlayerAID()).getDeck().addCard(request.getDealtCard());
 			}
 			catch(UserDeckFullException ex){
 				AgentHelper.sendReply(EnvironmentAgent.this, aclMsg, ACLMessage.FAILURE, new FailureMessage(ex.getMessage()));
@@ -180,7 +184,7 @@ public class EnvironmentAgent extends Agent {
 		public boolean onCurrentPlayerChangeRequest(CurrentPlayerChangeRequest request, ACLMessage aclMsg){
 			
 			try{
-				game.setCurrentPlayer(game.getPlayerByAID(request.getPlayerAID()));
+				game.getPlayersContainer().setCurrentPlayer(game.getPlayersContainer().getPlayerByAID(request.getPlayerAID()));
 			}
 			catch(NotRegisteredPlayerException ex){
 				AgentHelper.sendReply(EnvironmentAgent.this, aclMsg, ACLMessage.INFORM, new FailureMessage(ex.getMessage()));
@@ -208,7 +212,7 @@ public class EnvironmentAgent extends Agent {
 		public boolean onGiveTokenSetToPlayerRequest(GiveTokenSetToPlayerRequest request, ACLMessage aclMsg) {
 			
 			try {
-				game.getPlayerByAID(request.getPlayerAID()).getTokens().AddTokenSet(request.getTokenSet());
+				game.getPlayersContainer().getPlayerByAID(request.getPlayerAID()).getTokens().AddTokenSet(request.getTokenSet());
 			} catch (InvalidTokenAmountException ex) {
 				AgentHelper.sendReply(EnvironmentAgent.this, aclMsg, ACLMessage.INFORM, new FailureMessage(ex.getMessage()));
 				return true;

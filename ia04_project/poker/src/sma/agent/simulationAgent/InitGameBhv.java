@@ -23,7 +23,7 @@ public class InitGameBhv extends ParallelBehaviour {
 		// the default distribution in simAgent).
 		super(simAgent, ParallelBehaviour.WHEN_ALL);
 		AID environment = DFServiceHelper.searchService(simAgent, "PokerEnvironment", "Environment");
-		for (Player p : simAgent.getGame().getGamePlayers()){
+		for (Player p : simAgent.getGame().getPlayersContainer().getPlayers()){
 			Message msg = new GiveTokenSetToPlayerRequest(simAgent.getDefaultTokenSet(), p.getAID());
 			TransactionBhv transaction = new TransactionBhv(simAgent, msg, environment);
 			transaction.setResponseVisitor(new MessageVisitor(){

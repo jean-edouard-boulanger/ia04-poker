@@ -53,7 +53,7 @@ public class HumanPlayerAgent extends GuiAgent {
 	
 	public void setup()
 	{
-		super.setup();
+		//super.setup();
 		
 		game = new Game();
 		

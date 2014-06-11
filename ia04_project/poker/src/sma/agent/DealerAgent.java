@@ -163,8 +163,6 @@ public class DealerAgent extends Agent {
 			HandStep handStep = request.getHandStep();
 			if(handStep == HandStep.PLAYER_CARDS_DEAL)
 			{
-
-				
 				//TODO: Start with the small blind
 				PlayerCircularIterator it = playersContainer.getCircularIterator();
 				while(it.getLoopNumber() < 3){

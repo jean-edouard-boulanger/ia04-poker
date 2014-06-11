@@ -4,6 +4,7 @@ import jade.core.AID;
 
 import java.util.ArrayList;
 
+import poker.card.model.CardDeck;
 import poker.card.model.CommunityCards;
 import poker.card.model.GameDeck;
 import poker.game.exception.NotRegisteredPlayerException;
@@ -14,31 +15,35 @@ import poker.token.model.TokenValueDefinition;
 
 public class Game {
 	
-	private ArrayList<Player> gamePlayers;
-	private GameDeck gameDeck;
+	private PlayersContainer playersContainer;
+	private CardDeck gameDeck;
 	private TokenSet pot;
-	private TokenValueDefinition tokenValueDefinition = null;
-	private BlindValueDefinition blindValueDefinition = null;
-	private Player currentPlayer = null;
+	private TokenValueDefinition tokenValueDefinition;
+	private BlindValueDefinition blindValueDefinition;
 	private CommunityCards communityCards;
 	
 	public Game(){
-		this.gamePlayers = new ArrayList<Player>();
+		this.playersContainer = new PlayersContainer();
+		this.gameDeck = new CardDeck();
+		this.pot = new TokenSet();
+		this.tokenValueDefinition = new TokenValueDefinition();
+		this.blindValueDefinition = new BlindValueDefinition();
+		this.communityCards = new CommunityCards();
 	}
 	
-	public void setGamePlayers(ArrayList<Player> gamePlayers){
-		this.gamePlayers = gamePlayers;
+	public void setPlayersContainer(PlayersContainer playersContainer){
+		this.playersContainer = playersContainer;
 	}
 	
-	public ArrayList<Player> getGamePlayers(){
-		return this.gamePlayers;
+	public PlayersContainer getPlayersContainer(){
+		return this.playersContainer;
 	}
 
-	public GameDeck getGameDeck() {
+	public CardDeck getGameDeck() {
 		return gameDeck;
 	}
 
-	public void setGameDeck(GameDeck gameDeck) {
+	public void setGameDeck(CardDeck gameDeck) {
 		this.gameDeck = gameDeck;
 	}
 
@@ -66,46 +71,7 @@ public class Game {
 		this.pot = pot;
 	}
 
-	public void setCurrentPlayer(Player p) throws NotRegisteredPlayerException{
-		if(p != null && !this.gamePlayers.contains(p)){
-			throw new NotRegisteredPlayerException(p);
-		}
-		this.currentPlayer = p;
-	}
-	
-	public Player getCurrentPlayer(){
-		return this.currentPlayer;
-	}
-	
-	public Player getPlayerByAID(AID playerAID){
-		for(Player player : this.gamePlayers){
-			if(player.getAID().equals(playerAID)){
-				return player;
-			}
-		}
-		return null;
-	}
-	
-	public void addPlayer(Player p) throws PlayerAlreadyRegisteredException{
-		if(this.getPlayerByAID(p.getAID()) != null){
-			throw new PlayerAlreadyRegisteredException(p);
-		}
-		this.gamePlayers.add(p);
-	}
-	
-	/**
-	 * Get a player by it's name
-	 * @param playerName	Player name.
-	 * @return Player with the given name or null if no player were found.
-	 */
-	public Player getPlayerByName(String playerName) {
-		for(Player p : this.gamePlayers){
-			if(p.getPlayerName().equals(playerName)){
-				return p;
-			}
-		}
-		return null;
-	}
+
 
 	public CommunityCards getCommunityCards() {
 		return communityCards;
@@ -114,18 +80,4 @@ public class Game {
 	public void setCommunityCards(CommunityCards communityCards) {
 		this.communityCards = communityCards;
 	}
-	
-	public ArrayList<AID> getPlayersAIDs() {
-		if(gamePlayers.size() == 0)
-			return null;
-		
-		ArrayList<AID> playersAIDs = new ArrayList<AID>();
-		
-		for(Player p : gamePlayers) {
-			playersAIDs.add(p.getAID());
-		}
-		
-		return playersAIDs;
-	}
-	
 }
