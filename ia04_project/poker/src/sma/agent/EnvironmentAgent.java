@@ -211,12 +211,7 @@ public class EnvironmentAgent extends Agent {
 		@Override
 		public boolean onGiveTokenSetToPlayerRequest(GiveTokenSetToPlayerRequest request, ACLMessage aclMsg) {
 			
-			try {
-				game.getPlayersContainer().getPlayerByAID(request.getPlayerAID()).getTokens().AddTokenSet(request.getTokenSet());
-			} catch (InvalidTokenAmountException ex) {
-				AgentHelper.sendReply(EnvironmentAgent.this, aclMsg, ACLMessage.INFORM, new FailureMessage(ex.getMessage()));
-				return true;
-			}
+			game.getPlayersContainer().getPlayerByAID(request.getPlayerAID()).getTokens().AddTokenSet(request.getTokenSet());
 			
 			AgentHelper.sendSimpleMessage(EnvironmentAgent.this, subscribers, ACLMessage.PROPAGATE, new PlayerReceivedTokenSetNotification(request.getPlayerAID(), request.getTokenSet()));
 			

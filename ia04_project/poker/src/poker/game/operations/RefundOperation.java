@@ -23,11 +23,7 @@ public class RefundOperation extends Operation {
 	}
 
 	@Override
-	public void applyOperationToTokenSet(TokenSet tokenSet) throws OperationFailureException {
-		try {
-			tokenSet.AddTokenSet(this.refundedTokenSet);
-		} catch (InvalidTokenAmountException e) {
-			throw new OperationFailureException();
-		}
+	public void applyOperationToTokenSet(TokenSet tokenSet) {
+		tokenSet.AddTokenSet(this.refundedTokenSet);
 	}
 }

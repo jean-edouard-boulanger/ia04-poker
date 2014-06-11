@@ -71,8 +71,6 @@ public class Game {
 		this.pot = pot;
 	}
 
-
-
 	public CommunityCards getCommunityCards() {
 		return communityCards;
 	}
