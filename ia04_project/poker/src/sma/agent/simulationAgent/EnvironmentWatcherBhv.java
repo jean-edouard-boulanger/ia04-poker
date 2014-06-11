@@ -6,6 +6,7 @@ import jade.core.AID;
 import jade.core.behaviours.CyclicBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
+import poker.game.exception.NoPlaceAvailableException;
 import poker.game.exception.PlayerAlreadyRegisteredException;
 import poker.game.player.model.Player;
 import sma.agent.SimulationAgent;
@@ -44,8 +45,8 @@ public class EnvironmentWatcherBhv extends CyclicBehaviour
 			public boolean onSubscriptionOKMessage(SubscriptionOKMessage msg, ACLMessage aclMsg) {
 				System.out.println("[" + simAgent.getLocalName() + "] subscription to environment succeded.");
 				simAgent.setGame(msg.getGame());
-				if(simAgent.getGame().getPlayersAIDs() != null)
-					System.out.println("[" + simAgent.getLocalName() + "] " + simAgent.getGame().getPlayersAIDs().size()  + " already added.");
+				if(simAgent.getGame().getPlayersContainer().getPlayersAIDs() != null)
+					System.out.println("[" + simAgent.getLocalName() + "] " + simAgent.getGame().getPlayersContainer().getPlayersAIDs().size()  + " already added.");
 				return true;
 			}
 			
@@ -69,10 +70,15 @@ public class EnvironmentWatcherBhv extends CyclicBehaviour
 			@Override
 			public boolean onPlayerSitOnTableNotification(PlayerSitOnTableNotification notification, ACLMessage aclMsg) {
 				try {
-					simAgent.getGame().addPlayer(notification.getNewPlayer());
+					simAgent.getGame().getPlayersContainer().addPlayer(notification.getNewPlayer());
 					System.out.println("[" + simAgent.getLocalName() + "] player " + notification.getNewPlayer().getPlayerName() + " added.");
 				} catch (PlayerAlreadyRegisteredException e) {
 					// TODO Auto-generated catch block
+					
+					e.printStackTrace();
+				} catch (NoPlaceAvailableException e) {
+					// TODO Auto-generated catch block
+					
 					e.printStackTrace();
 				}
 				return true;

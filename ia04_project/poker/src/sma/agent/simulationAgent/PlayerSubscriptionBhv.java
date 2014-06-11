@@ -43,10 +43,10 @@ public class PlayerSubscriptionBhv extends CyclicBehaviour
 				else if (simAgent.isGameStarted()){
 					AgentHelper.sendReply(myAgent, aclMsg, ACLMessage.FAILURE, new FailureMessage("Game already started."));
 				}
-				else if (simAgent.getGame().getGamePlayers().size() >= simAgent.getMaxPlayers()){
+				else if (simAgent.getGame().getPlayersContainer().getPlayers().size() >= simAgent.getMaxPlayers()){
 					AgentHelper.sendReply(myAgent, aclMsg, ACLMessage.FAILURE, new FailureMessage("Game full."));
 				}
-				else if (simAgent.getGame().getPlayerByName(request.getPlayerName()) != null){
+				else if (simAgent.getGame().getPlayersContainer().getPlayerByName(request.getPlayerName()) != null){
 					AgentHelper.sendReply(myAgent, aclMsg, ACLMessage.FAILURE, new FailureMessage("Pseudo already taken."));
 				}
 				else {

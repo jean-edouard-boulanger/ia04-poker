@@ -309,4 +309,17 @@ public class PlayersContainer {
 			return this.currentPlayerIndex + 1;
 		}
 	}
+	
+	public ArrayList<AID> getPlayersAIDs() {
+		if(players.size() == 0)
+			return null;
+		
+		ArrayList<AID> playersAIDs = new ArrayList<AID>();
+		
+		for(Player p : players) {
+			playersAIDs.add(p.getAID());
+		}
+		
+		return playersAIDs;
+	}
 }

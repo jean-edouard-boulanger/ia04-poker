@@ -189,12 +189,12 @@ public class Main extends Application {
         zone_carte.setHeight(150);
         zone_carte.setFill(Color.BEIGE);
         
-        ImageView im = new ImageView(new Image("images/as_carreau.png"));
+        ImageView im = new ImageView(new Image("images/KING_DIAMONDS.png"));
         im.setX(150);
         im.setY(500);
         im.setFitWidth(50);
         im.setFitHeight(72);
-        ImageView im2 = new ImageView(new Image("images/as_pique.png"));
+        ImageView im2 = new ImageView(new Image("images/ACE_SPADES.png"));
         im2.setX(225);
         im2.setY(500);
         im2.setFitWidth(50);
