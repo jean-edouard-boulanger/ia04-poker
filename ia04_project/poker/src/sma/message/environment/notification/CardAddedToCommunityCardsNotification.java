@@ -25,6 +25,6 @@ public class CardAddedToCommunityCardsNotification extends Message {
 	
 	@Override
 	public boolean accept(MessageVisitor visitor, ACLMessage aclMsg) {
-		return visitor.onCardAddedToCommunityCardsNotification(this, aclMsg);
+		return visitor.onEnvironmentChanged(this, aclMsg) | visitor.onCardAddedToCommunityCardsNotification(this, aclMsg);
 	}	
 }

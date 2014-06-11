@@ -37,6 +37,6 @@ public class PlayerBetNotification extends Message {
 	
 	@Override
 	public boolean accept(MessageVisitor visitor, ACLMessage aclMsg) {
-		return visitor.onPlayerBetNotification(this, aclMsg);
+		return visitor.onEnvironmentChanged(this, aclMsg) | visitor.onPlayerBetNotification(this, aclMsg);
 	}
 }

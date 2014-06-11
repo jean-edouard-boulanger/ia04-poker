@@ -49,7 +49,27 @@ public class MessageVisitor {
 	// Simulation
 	public boolean onPlayerSubscriptionRequest(PlayerSubscriptionRequest request, ACLMessage aclMsg){return false;}
 	
+	// Dealer
+	public boolean onDealRequest(DealRequest request, ACLMessage aclMsg){return false;}
+	
+	// Blind Management
+	public boolean onResetBlindRequest(ResetBlindRequest request, ACLMessage aclMsg) {return false;}
+	public boolean onRefreshBlindValueDefinitionRequest(GetBlindValueDefinitionRequest request, ACLMessage aclMsg) {return false;}
+	
 	// Environment
+	public boolean onSubscriptionOK(SubscriptionOKMessage notif, ACLMessage aclMsg){return false;}
+	public boolean onAddPlayerTableRequest(AddPlayerTableRequest notif, ACLMessage aclMsg){return false;}
+	public boolean onAddCommunityCardRequest(AddCommunityCardRequest notif, ACLMessage aclMsg) {return false;}
+	public boolean onDealCardToPlayerRequest(DealCardToPlayerRequest notif, ACLMessage aclMsg){return false;}
+	public boolean onCurrentPlayerChangeRequest(CurrentPlayerChangeRequest notif, ACLMessage aclMsg){return false;}
+	public boolean onEmptyCommunityCardsRequest(EmptyCommunityCardsRequest notif, ACLMessage aclMsg) {return false;}
+	public boolean onGiveTokenSetToPlayerRequest(GiveTokenSetToPlayerRequest notif, ACLMessage aclMsg) {return false;}
+	public boolean onBlindValueDefinitionChangeRequest(BlindValueDefinitionChangeRequest notif, ACLMessage aclMsg) {return false;}
+	public boolean onSetTokenValueDefinitionRequest(SetTokenValueDefinitionRequest notif,	ACLMessage aclMsg) {return false;}
+	
+	// Environment notification 
+	public boolean onEnvironmentChanged(Message notif, ACLMessage aclMsg){return false;}
+	
 	public boolean onPlayerReceivedUnknownCardNotification(PlayerReceivedUnknownCardNotification notification, ACLMessage aclMsg) {return false;}
 	public boolean onPlayerReceivedCardNotification(PlayerReceivedCardNotification notification, ACLMessage aclMsg){return false;}
 	public boolean onCardAddedToCommunityCardsNotification(CardAddedToCommunityCardsNotification notification, ACLMessage aclMsg){return false;}
@@ -62,25 +82,7 @@ public class MessageVisitor {
 	public boolean onBlindValueDefinitionChangedNotification(BlindValueDefinitionChangedNotification notification, ACLMessage aclMsg){return false;}
 	public boolean onCurrentPlayerChangedNotification(CurrentPlayerChangedNotification notification, ACLMessage aclMsg){return false;}
 	public boolean onTimeBeforeIncreasingBlindChangedNotification(TimeBeforeIncreasingBlindChangedNotification request, ACLMessage aclMsg) {return false;}
-	
-	// Environment notification 
-	public boolean onSubscriptionOK(SubscriptionOKMessage notif, ACLMessage aclMsg){return false;}
-	public boolean onAddPlayerTableRequest(AddPlayerTableRequest notif, ACLMessage aclMsg){return false;}
-	public boolean onAddCommunityCardRequest(AddCommunityCardRequest notif, ACLMessage aclMsg) {return false;}
-	public boolean onDealCardToPlayerRequest(DealCardToPlayerRequest notif, ACLMessage aclMsg){return false;}
-	public boolean onCurrentPlayerChangeRequest(CurrentPlayerChangeRequest notif, ACLMessage aclMsg){return false;}
-	public boolean onEmptyCommunityCardsRequest(EmptyCommunityCardsRequest notif, ACLMessage aclMsg) {return false;}
-	public boolean onGiveTokenSetToPlayerRequest(GiveTokenSetToPlayerRequest notif, ACLMessage aclMsg) {return false;}
-	public boolean onBlindValueDefinitionChangeRequest(BlindValueDefinitionChangeRequest notif, ACLMessage aclMsg) {return false;}
-	public boolean onSetTokenValueDefinitionRequest(SetTokenValueDefinitionRequest notif,	ACLMessage aclMsg) {return false;}
 	public boolean onBlindValueDefinitionUpdatedNotification(BlindValueDefinitionUpdatedNotification notif, ACLMessage aclMsg) {return false;}
 	public boolean onTokenValueDefinitionChangedNotification(TokenValueDefinitionChangedNotification notif, ACLMessage aclMsg) {return false;}
-	
-	// Dealer
-	public boolean onDealRequest(DealRequest request, ACLMessage aclMsg){return false;}
-	
-	// Blind Management
-	public boolean onResetBlindRequest(ResetBlindRequest request, ACLMessage aclMsg) {return false;}
-	public boolean onRefreshBlindValueDefinitionRequest(GetBlindValueDefinitionRequest request, ACLMessage aclMsg) {return false;}
 	
 }

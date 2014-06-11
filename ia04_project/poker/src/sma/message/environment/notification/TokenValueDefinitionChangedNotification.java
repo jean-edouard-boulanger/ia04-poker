@@ -26,6 +26,6 @@ public class TokenValueDefinitionChangedNotification extends Message {
 
 	@Override
 	public boolean accept(MessageVisitor visitor, ACLMessage aclMsg) {
-		return visitor.onTokenValueDefinitionChangedNotification(this, aclMsg);
+		return visitor.onEnvironmentChanged(this, aclMsg) | visitor.onTokenValueDefinitionChangedNotification(this, aclMsg);
 	}
 }

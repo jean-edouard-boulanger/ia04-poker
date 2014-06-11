@@ -24,7 +24,7 @@ public class CurrentPlayerChangedNotification extends Message {
 	
 	@Override
 	public boolean accept(MessageVisitor visitor, ACLMessage aclMsg) {
-		return visitor.onCurrentPlayerChangedNotification(this, aclMsg);
+		return visitor.onEnvironmentChanged(this, aclMsg) | visitor.onCurrentPlayerChangedNotification(this, aclMsg);
 	}
 	
 }

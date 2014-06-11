@@ -26,7 +26,7 @@ public class PlayerFoldedNotification extends Message {
 	
 	@Override
 	public boolean accept(MessageVisitor visitor, ACLMessage aclMsg) {
-		return visitor.onPlayerFoldedNotification(this, aclMsg);
+		return visitor.onEnvironmentChanged(this, aclMsg) | visitor.onPlayerFoldedNotification(this, aclMsg);
 	}
 	
 }

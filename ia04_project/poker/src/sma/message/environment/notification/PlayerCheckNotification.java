@@ -25,6 +25,6 @@ public class PlayerCheckNotification extends Message {
 	
 	@Override
 	public boolean accept(MessageVisitor visitor, ACLMessage aclMsg) {
-		return visitor.onPlayerCheckNotification(this, aclMsg);
+		return visitor.onEnvironmentChanged(this, aclMsg) | visitor.onPlayerCheckNotification(this, aclMsg);
 	}
 }

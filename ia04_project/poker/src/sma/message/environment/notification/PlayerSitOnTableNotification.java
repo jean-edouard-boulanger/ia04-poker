@@ -15,11 +15,6 @@ public class PlayerSitOnTableNotification extends Message {
 	public PlayerSitOnTableNotification(Player newPlayer){
 		this.newPlayer = newPlayer;
 	}
-	
-	@Override
-	public boolean accept(MessageVisitor visitor, ACLMessage aclMsg) {
-		return visitor.onPlayerSitOnTableNotification(this, aclMsg);
-	}
 
 	public Player getNewPlayer() {
 		return newPlayer;
@@ -27,5 +22,10 @@ public class PlayerSitOnTableNotification extends Message {
 
 	public void setNewPlayer(Player newPlayer) {
 		this.newPlayer = newPlayer;
+	}
+	
+	@Override
+	public boolean accept(MessageVisitor visitor, ACLMessage aclMsg) {
+		return visitor.onEnvironmentChanged(this, aclMsg) | visitor.onPlayerSitOnTableNotification(this, aclMsg);
 	}
 }
