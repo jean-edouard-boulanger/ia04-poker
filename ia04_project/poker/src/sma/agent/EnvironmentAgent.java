@@ -30,6 +30,7 @@ import sma.message.environment.notification.PlayerReceivedCardNotification;
 import sma.message.environment.notification.PlayerReceivedTokenSetNotification;
 import sma.message.environment.notification.PlayerReceivedUnknownCardNotification;
 import sma.message.environment.notification.PlayerSitOnTableNotification;
+import sma.message.environment.notification.TokenValueDefinitionChangedNotification;
 import sma.message.environment.request.AddCommunityCardRequest;
 import sma.message.environment.request.AddPlayerTableRequest;
 import sma.message.environment.request.BlindValueDefinitionChangeRequest;
@@ -37,6 +38,7 @@ import sma.message.environment.request.CurrentPlayerChangeRequest;
 import sma.message.environment.request.DealCardToPlayerRequest;
 import sma.message.environment.request.EmptyCommunityCardsRequest;
 import sma.message.environment.request.GiveTokenSetToPlayerRequest;
+import sma.message.environment.request.SetTokenValueDefinitionRequest;
 
 public class EnvironmentAgent extends Agent {
 	
@@ -233,6 +235,14 @@ public class EnvironmentAgent extends Agent {
 	
 			AgentHelper.sendReply(EnvironmentAgent.this, aclMsg, ACLMessage.INFORM, new OKMessage());
 			
+			return true;
+		}
+		
+		@Override
+		public boolean onSetTokenValueDefinitionRequest(SetTokenValueDefinitionRequest notif, ACLMessage aclMsg) {
+			game.setTokenValueDefinition(notif.getTokenValueDefinition());
+			AgentHelper.sendSimpleMessage(EnvironmentAgent.this, subscribers, ACLMessage.PROPAGATE, new TokenValueDefinitionChangedNotification(notif.getTokenValueDefinition()));
+			AgentHelper.sendReply(EnvironmentAgent.this, aclMsg, ACLMessage.INFORM, new OKMessage());
 			return true;
 		}
 		

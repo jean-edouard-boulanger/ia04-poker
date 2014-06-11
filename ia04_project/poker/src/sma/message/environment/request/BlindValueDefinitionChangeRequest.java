@@ -25,6 +25,6 @@ public class BlindValueDefinitionChangeRequest extends Message {
 	
 	@Override
 	public boolean accept(MessageVisitor visitor, ACLMessage aclMsg) {
-		return false;
+		return visitor.onBlindValueDefinitionChangeRequest(this, aclMsg);
 	}
 }

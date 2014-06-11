@@ -42,7 +42,7 @@ public class EnvironmentWatcherBhv extends CyclicBehaviour
 		TransactionBhv envSubscriptionBhv = new TransactionBhv(simAgent, null, environment, ACLMessage.SUBSCRIBE);
 		envSubscriptionBhv.setResponseVisitor(new MessageVisitor(){
 			@Override
-			public boolean onSubscriptionOKMessage(SubscriptionOKMessage msg, ACLMessage aclMsg) {
+			public boolean onSubscriptionOK(SubscriptionOKMessage msg, ACLMessage aclMsg) {
 				System.out.println("[" + simAgent.getLocalName() + "] subscription to environment succeded.");
 				simAgent.setGame(msg.getGame());
 				if(simAgent.getGame().getPlayersContainer().getPlayersAIDs() != null)

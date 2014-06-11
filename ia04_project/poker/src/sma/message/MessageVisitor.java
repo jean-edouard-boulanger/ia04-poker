@@ -1,8 +1,8 @@
 package sma.message;
 
 import jade.lang.acl.ACLMessage;
-import sma.message.blind.notification.TimeBeforeIncreasingBlindChangedNotification;
 import sma.message.blind.notification.BlindValueDefinitionUpdatedNotification;
+import sma.message.blind.notification.TimeBeforeIncreasingBlindChangedNotification;
 import sma.message.blind.request.ChangeTimeBeforeIncreasingBlindRequest;
 import sma.message.blind.request.GetBlindValueDefinitionRequest;
 import sma.message.dealer.request.DealRequest;
@@ -13,10 +13,11 @@ import sma.message.environment.notification.CurrentPlayerChangedNotification;
 import sma.message.environment.notification.PlayerBetNotification;
 import sma.message.environment.notification.PlayerCheckNotification;
 import sma.message.environment.notification.PlayerFoldedNotification;
-import sma.message.environment.notification.PlayerReceivedTokenSetNotification;
 import sma.message.environment.notification.PlayerReceivedCardNotification;
+import sma.message.environment.notification.PlayerReceivedTokenSetNotification;
 import sma.message.environment.notification.PlayerReceivedUnknownCardNotification;
 import sma.message.environment.notification.PlayerSitOnTableNotification;
+import sma.message.environment.notification.TokenValueDefinitionChangedNotification;
 import sma.message.environment.request.AddCommunityCardRequest;
 import sma.message.environment.request.AddPlayerTableRequest;
 import sma.message.environment.request.BlindValueDefinitionChangeRequest;
@@ -24,6 +25,7 @@ import sma.message.environment.request.CurrentPlayerChangeRequest;
 import sma.message.environment.request.DealCardToPlayerRequest;
 import sma.message.environment.request.EmptyCommunityCardsRequest;
 import sma.message.environment.request.GiveTokenSetToPlayerRequest;
+import sma.message.environment.request.SetTokenValueDefinitionRequest;
 
 /**
  * Pattern visitor implementation, this base class should have an
@@ -41,12 +43,13 @@ import sma.message.environment.request.GiveTokenSetToPlayerRequest;
  */
 public class MessageVisitor {
 	
-	public boolean onPlayerSubscriptionRequest(PlayerSubscriptionRequest request, ACLMessage aclMsg){return false;}
 	public boolean onFailureMessage(FailureMessage msg, ACLMessage aclMsg) {return false;}
 	public boolean onOKMessage(OKMessage okMessage, ACLMessage aclMsg) {return false;}
-	public boolean onSubscriptionOKMessage(SubscriptionOKMessage request, ACLMessage aclMsg){return false;}
 	
-
+	// Simulation
+	public boolean onPlayerSubscriptionRequest(PlayerSubscriptionRequest request, ACLMessage aclMsg){return false;}
+	
+	// Environment
 	public boolean onPlayerReceivedUnknownCardNotification(PlayerReceivedUnknownCardNotification notification, ACLMessage aclMsg) {return false;}
 	public boolean onPlayerReceivedCardNotification(PlayerReceivedCardNotification notification, ACLMessage aclMsg){return false;}
 	public boolean onCardAddedToCommunityCardsNotification(CardAddedToCommunityCardsNotification notification, ACLMessage aclMsg){return false;}
@@ -58,22 +61,26 @@ public class MessageVisitor {
 	public boolean onPlayerCheckNotification(PlayerCheckNotification notification, ACLMessage aclMsg){return false;}
 	public boolean onBlindValueDefinitionChangedNotification(BlindValueDefinitionChangedNotification notification, ACLMessage aclMsg){return false;}
 	public boolean onCurrentPlayerChangedNotification(CurrentPlayerChangedNotification notification, ACLMessage aclMsg){return false;}
+	public boolean onTimeBeforeIncreasingBlindChangedNotification(TimeBeforeIncreasingBlindChangedNotification request, ACLMessage aclMsg) {return false;}
 	
-	public boolean onAddPlayerTableRequest(AddPlayerTableRequest request, ACLMessage aclMsg){return false;}
-	public boolean onAddCommunityCardRequest(AddCommunityCardRequest request, ACLMessage aclMsg) {return false;}
-	public boolean onDealCardToPlayerRequest(DealCardToPlayerRequest request, ACLMessage aclMsg){return false;}
-	public boolean onCurrentPlayerChangeRequest(CurrentPlayerChangeRequest request, ACLMessage aclMsg){return false;}
-	public boolean onEmptyCommunityCardsRequest(EmptyCommunityCardsRequest request, ACLMessage aclMsg) {return false;}
-	public boolean onGiveTokenSetToPlayerRequest(GiveTokenSetToPlayerRequest request, ACLMessage aclMsg) {return false;}
-	public boolean onBlindValueDefinitionChangeRequest(BlindValueDefinitionChangeRequest request, ACLMessage aclMsg) {return false;}
+	// Environment notification 
+	public boolean onSubscriptionOK(SubscriptionOKMessage notif, ACLMessage aclMsg){return false;}
+	public boolean onAddPlayerTableRequest(AddPlayerTableRequest notif, ACLMessage aclMsg){return false;}
+	public boolean onAddCommunityCardRequest(AddCommunityCardRequest notif, ACLMessage aclMsg) {return false;}
+	public boolean onDealCardToPlayerRequest(DealCardToPlayerRequest notif, ACLMessage aclMsg){return false;}
+	public boolean onCurrentPlayerChangeRequest(CurrentPlayerChangeRequest notif, ACLMessage aclMsg){return false;}
+	public boolean onEmptyCommunityCardsRequest(EmptyCommunityCardsRequest notif, ACLMessage aclMsg) {return false;}
+	public boolean onGiveTokenSetToPlayerRequest(GiveTokenSetToPlayerRequest notif, ACLMessage aclMsg) {return false;}
+	public boolean onBlindValueDefinitionChangeRequest(BlindValueDefinitionChangeRequest notif, ACLMessage aclMsg) {return false;}
+	public boolean onSetTokenValueDefinitionRequest(SetTokenValueDefinitionRequest notif,	ACLMessage aclMsg) {return false;}
+	public boolean onBlindValueDefinitionUpdatedNotification(BlindValueDefinitionUpdatedNotification notif, ACLMessage aclMsg) {return false;}
+	public boolean onTokenValueDefinitionChangedNotification(TokenValueDefinitionChangedNotification notif, ACLMessage aclMsg) {return false;}
 	
-	//Dealer
+	// Dealer
 	public boolean onDealRequest(DealRequest request, ACLMessage aclMsg){return false;}
 	
-	//Blind Management functions
+	// Blind Management
 	public boolean onChangeTimeBeforeIncreasingBlindRequest(ChangeTimeBeforeIncreasingBlindRequest request, ACLMessage aclMsg) {return false;}
 	public boolean onGetBlindValueDefinitionRequest(GetBlindValueDefinitionRequest request, ACLMessage aclMsg) {return false;}
 	
-	public boolean onTimeBeforeIncreasingBlindChangedNotification(TimeBeforeIncreasingBlindChangedNotification request, ACLMessage aclMsg) {return false;}
-	public boolean onBlindValueDefinitionUpdatedNotification(BlindValueDefinitionUpdatedNotification request, ACLMessage aclMsg) {return false;}
 }

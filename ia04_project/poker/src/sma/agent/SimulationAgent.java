@@ -38,11 +38,12 @@ public class SimulationAgent extends GuiAgent {
 	
 	private PropertyChangeSupport changes = new PropertyChangeSupport(this);
 	private Game game;
-	private int maxPlayers = 2; //TODO: synchronize this parameter with the server GUI.
+	private int maxPlayers = 2;
 	private boolean serverStarted = false;
 	private boolean gameStarted = false;
 	private TokenSet defaultTokenSet;
-	
+	private int blindIncreaseDelayS;
+	private TokenValueDefinition defaultTokenValueDefinition;
 	
 	public enum GameEvent{NEW_HAND, NEW_ROUND, ROUND_ENDED, GAME_FINISHED, PLAY}
 	
@@ -59,13 +60,12 @@ public class SimulationAgent extends GuiAgent {
 		
 		// we create a default token distribution:
 		try {
-			TokenValueDefinition tvd = new TokenValueDefinition();
-			tvd.setValueForTokenType(TokenType.GREEN, 10);
-			tvd.setValueForTokenType(TokenType.BLACK, 1);
-			tvd.setValueForTokenType(TokenType.BLUE, 5);
-			tvd.setValueForTokenType(TokenType.WHITE, 25);
-			tvd.setValueForTokenType(TokenType.RED, 50);
-			game.setTokenValueDefinition(tvd);
+			defaultTokenValueDefinition = new TokenValueDefinition();
+			defaultTokenValueDefinition.setValueForTokenType(TokenType.GREEN, 10);
+			defaultTokenValueDefinition.setValueForTokenType(TokenType.BLACK, 1);
+			defaultTokenValueDefinition.setValueForTokenType(TokenType.BLUE, 5);
+			defaultTokenValueDefinition.setValueForTokenType(TokenType.WHITE, 25);
+			defaultTokenValueDefinition.setValueForTokenType(TokenType.RED, 50);
 		} catch (InvalidTokenValueException e) {
 			e.printStackTrace();
 		}
@@ -98,8 +98,8 @@ public class SimulationAgent extends GuiAgent {
 		switch (ServerWindow.ServerGuiEvent.values()[evt.getType()]) {
 		case LAUNCH_SERVER:
 			//TODO: handle properly parameters.
-			maxPlayers = (Integer)evt.getParameter(0);
-			int blindIncreaseInterval = (Integer)evt.getParameter(1);
+			this.maxPlayers = (Integer)evt.getParameter(0);
+			this.blindIncreaseDelayS = (Integer)evt.getParameter(1)*60;
 			int distribNb = (Integer)evt.getParameter(2);
 			StartServer();
 			break;
@@ -185,6 +185,17 @@ public class SimulationAgent extends GuiAgent {
 
 	public TokenSet getDefaultTokenSet() {
 		return defaultTokenSet;
+	}
+
+	/**
+	 * @return	the blind increase delay in seconds
+	 */
+	public int getBlindIncreaseDelayS() {
+		return this.blindIncreaseDelayS;
+	}
+
+	public TokenValueDefinition getDefaultTokenValueDefinition() {
+		return this.defaultTokenValueDefinition;
 	}
 	
 }

@@ -27,7 +27,7 @@ public class SubscriptionOKMessage extends OKMessage {
 	
 	@Override
 	public boolean accept(MessageVisitor visitor, ACLMessage aclMsg) {
-		return visitor.onOKMessage(this, aclMsg) || visitor.onSubscriptionOKMessage(this, aclMsg);
+		return visitor.onOKMessage(this, aclMsg) || visitor.onSubscriptionOK(this, aclMsg);
 	}
 	
 }

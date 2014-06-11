@@ -108,7 +108,7 @@ public class AgentHelper {
 			
 			sender.send(msg);
 		} catch(IOException ex){
-			System.out.println("[" + sender.getName() + "] Error while serializing reply, the message was not sent (" + ex.getMessage() + ").");
+			System.out.println("[" + sender.getName() + "] Error while serializing mssa, the message was not sent (" + ex.getMessage() + ").");
 		}
 	}	
 }
