@@ -110,13 +110,14 @@ public class BlindManagementAgent extends Agent {
 	private class BlindIncreasingBehaviour extends TickerBehaviour{
 		
 		public BlindIncreasingBehaviour(Agent agent, int timeBeforeIncreasingBlind){
-			super(agent, timeBeforeIncreasingBlind);
+			super(agent, timeBeforeIncreasingBlind * 1000);
 		}
 
 		@Override
 		protected void onTick() {
 			blindValueDefinition.increase();
-			System.out.println("[" + myAgent.getLocalName() + "] blind increased, now at: [" + blindValueDefinition.getBigBlindAmountDefinition() + ", " + blindValueDefinition.getBlindAmountDefinition() + ".");
+			System.out.println("[" + myAgent.getLocalName() + "] blind increased internally, now at: [" 
+					+ blindValueDefinition.getBigBlindAmountDefinition() + ", " + blindValueDefinition.getBlindAmountDefinition() + "] (environment not yet updated).");
 		}
 	}
 }
