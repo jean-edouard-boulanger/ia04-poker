@@ -11,8 +11,9 @@ import java.util.Random;
 import poker.game.exception.NoPlaceAvailableException;
 import poker.game.exception.NotRegisteredPlayerException;
 import poker.game.exception.PlayerAlreadyRegisteredException;
-import poker.game.exception.TablePlaceNotAvailableException;
 import poker.game.player.model.Player;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public class PlayersContainer {
 
@@ -33,6 +34,17 @@ public class PlayersContainer {
 	
 	public void setPlayers(ArrayList<Player> players) {
 		this.players = players;
+	}
+	
+	public Player getCurrentPlayer(){
+		return this.currentPlayer;
+	}
+	
+	public void setCurrentPlayer(Player currentPlayer) throws NotRegisteredPlayerException{
+		if(currentPlayer != null && this.getPlayerByAID(currentPlayer.getAID()) == null){
+			throw new NotRegisteredPlayerException(currentPlayer);
+		}
+		this.currentPlayer = currentPlayer;
 	}
 	
 	public Player getPlayerByAID(AID playerAID){
@@ -64,6 +76,7 @@ public class PlayersContainer {
 		return null;
 	}
 	
+	@JsonIgnore
 	public ArrayList<Integer> getUsedTablePlaces(){
 		ArrayList<Integer> usedPlacesIndex = new ArrayList<Integer>();
 		for(Player player : this.players){
@@ -72,6 +85,7 @@ public class PlayersContainer {
 		return usedPlacesIndex;
 	}
 	
+	@JsonIgnore
 	public ArrayList<Integer> getAvailableTablePlaces(){
 		ArrayList<Integer> freePlacesIndex = new ArrayList<Integer>(Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10));
 		for(Player p : this.players){
@@ -80,6 +94,7 @@ public class PlayersContainer {
 		return freePlacesIndex;
 	}
 	
+	@JsonIgnore
 	private int getFirstAvailableTablePlace() throws NoPlaceAvailableException{
 		ArrayList<Integer> places = this.getAvailableTablePlaces();
 		
@@ -90,6 +105,7 @@ public class PlayersContainer {
 		return places.get(0);
 	}
 	
+	@JsonIgnore
 	private int getRandomAvailableTablePlace() throws NoPlaceAvailableException{
 		ArrayList<Integer> places = this.getAvailableTablePlaces();
 		
@@ -138,17 +154,6 @@ public class PlayersContainer {
 	public void dropPlayer(Player p){
 		this.players.remove(p);
 		Collections.sort(this.players, new Player.PlayerTablePositionComparator());
-	}
-	
-	public Player getCurrentPlayer(){
-		return this.getCurrentPlayer();
-	}
-	
-	public void setCurrentPlayer(Player currentPlayer) throws NotRegisteredPlayerException{
-		if(this.getPlayerByAID(currentPlayer.getAID()) == null){
-			throw new NotRegisteredPlayerException(currentPlayer);
-		}
-		this.currentPlayer = currentPlayer;
 	}	
 	
 	public Player getPlayerNextTo(Player po){		
@@ -219,6 +224,7 @@ public class PlayersContainer {
 			throw new UnsupportedOperationException();
 		}
 		
+		@JsonIgnore
 		private int getNextPlayerIndex(){
 			if(this.currentPlayerIndex == this.tmpPlayers.size() - 1){
 				return 0;
@@ -227,18 +233,22 @@ public class PlayersContainer {
 		}
 	}
 	
+	@JsonIgnore
 	public PlayerIterator getIterator(){
 		return new PlayerIterator();
 	}
 	
+	@JsonIgnore
 	public PlayerIterator getIterator(Player firstPlayer){
 		return new PlayerIterator(firstPlayer);
 	}
 	
+	@JsonIgnore
 	public PlayerCircularIterator getCircularIterator(){
 		return new PlayerCircularIterator();
 	}
 	
+	@JsonIgnore
 	public PlayerCircularIterator getCircularIterator(Player firstPlayer){
 		return new PlayerCircularIterator(firstPlayer);
 	}
@@ -298,10 +308,12 @@ public class PlayersContainer {
 			throw new UnsupportedOperationException();
 		}
 		
+		@JsonIgnore
 		public int getLoopNumber(){
 			return this.loopNumber;
 		}
 		
+		@JsonIgnore
 		private int getNextPlayerIndex(){
 			if(this.currentPlayerIndex == players.size() - 1){
 				return 0;
@@ -310,6 +322,7 @@ public class PlayersContainer {
 		}
 	}
 	
+	@JsonIgnore
 	public ArrayList<AID> getPlayersAIDs() {
 		if(players.size() == 0)
 			return null;

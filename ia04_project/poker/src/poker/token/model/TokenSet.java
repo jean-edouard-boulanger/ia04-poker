@@ -29,7 +29,7 @@ public class TokenSet {
 		return this.tokensAmount;
 	}
 	
-	public void setMap(Map<TokenType, Integer> tokensAmount){
+	public void setTokensAmount(Map<TokenType, Integer> tokensAmount){
 		this.tokensAmount = tokensAmount;
 	}
 		
