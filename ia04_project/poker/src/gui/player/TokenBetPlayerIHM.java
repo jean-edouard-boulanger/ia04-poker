@@ -10,9 +10,11 @@ import javafx.scene.shape.Rectangle;
 
 public class TokenBetPlayerIHM extends Group {
 	
+	private Label label_bet;
+	
 	public TokenBetPlayerIHM(int x, int y, int bet)
 	{
-		Label label_bet = new Label(String.valueOf(Integer.valueOf(bet)));
+		label_bet = new Label(String.valueOf(Integer.valueOf(bet)));
 		label_bet.setLayoutX(x);
 		label_bet.setLayoutY(y);
 
@@ -20,5 +22,10 @@ public class TokenBetPlayerIHM extends Group {
 		
 		
 		this.getChildren().add(label_bet);
+	}
+	
+	public void setBet(int bet)
+	{
+		label_bet.setText(String.valueOf(Integer.valueOf(bet)));
 	}
 }

@@ -10,6 +10,8 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 
+import javax.swing.SwingUtilities;
+
 import poker.card.exception.CommunityCardsFullException;
 import poker.game.exception.NotRegisteredPlayerException;
 import poker.game.model.Game;
@@ -50,6 +52,7 @@ public class HumanPlayerAgent extends GuiAgent {
 	private HumanPlayerFailureMessageVisitor msgVisitor_failure;
 	
 	private WaitGameWindow wait_game_window;
+	private PlayerWindow player_window;
 	
 	public void setup()
 	{
@@ -60,13 +63,19 @@ public class HumanPlayerAgent extends GuiAgent {
 		this.msgVisitor_request = new HumanPlayerRequestMessageVisitor();
 		this.msgVisitor_failure = new HumanPlayerFailureMessageVisitor();
 
-		PlayerWindow player_window = new PlayerWindow();
-		player_window.setHumanPlayerAgent(this);
-		changes_game.addPropertyChangeListener(player_window);
-		PlayerWindow.launchWindow(new String[]{});
 		
-		wait_game_window = new WaitGameWindow(this);
-		changes_waitgame.addPropertyChangeListener(wait_game_window);
+		/*wait_game_window = new WaitGameWindow(this);
+		changes_waitgame.addPropertyChangeListener(wait_game_window);*/
+		
+		player_window = new PlayerWindow();
+  		player_window.setHumanPlayerAgent(HumanPlayerAgent.this);
+  		changes_game.addPropertyChangeListener(player_window);
+  		
+		 SwingUtilities.invokeLater(new Runnable() {
+	          public void run() {
+		      		player_window.launchWindow(new String[]{});	
+	          }
+	        });
 		
 		addBehaviour(new HumanPlayerReceiveRequestBehaviour(this));
 		addBehaviour(new HumanPlayerReceiveFailureBehaviour(this));
@@ -277,7 +286,7 @@ public class HumanPlayerAgent extends GuiAgent {
 			PlayerWindow player_window = new PlayerWindow();
 			player_window.setHumanPlayerAgent(this);
 			changes_game.addPropertyChangeListener(player_window);
-			PlayerWindow.launchWindow(new String[]{});
+			player_window.launchWindow(new String[]{});
 		}
 		
 		/**************************************
