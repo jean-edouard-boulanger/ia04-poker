@@ -80,7 +80,9 @@ public class SimulationAgent extends GuiAgent {
 			int nbTokens = 40;
 			this.defaultTokenSet = TokenSetFactory.createTokenSet(defaultTokenRepartiton, nbTokens);
 			
-		} catch (InvalidTokenAmountException | InvalidRepartitionException e) {
+		} catch (InvalidTokenAmountException e) {
+			e.printStackTrace();
+		} catch(InvalidRepartitionException e){
 			e.printStackTrace();
 		}
 		

@@ -50,7 +50,7 @@ public class EnvironmentAgent extends Agent {
 		this.game = new Game();
 		this.msgVisitor = new EnvironmentMessageVisitor();
 		this.notificationSubscriber = new NotificationSubscriber();
-		this.subscribers = new ArrayList<>();
+		this.subscribers = new ArrayList<AID>();
 	}
 	
 	@Override
