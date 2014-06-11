@@ -14,7 +14,7 @@ import sma.message.FailureMessage;
 import sma.message.Message;
 import sma.message.MessageVisitor;
 import sma.message.OKMessage;
-import sma.message.blind.request.ChangeTimeBeforeIncreasingBlindRequest;
+import sma.message.blind.request.ResetBlindRequest;
 import sma.message.environment.request.GiveTokenSetToPlayerRequest;
 import sma.message.environment.request.SetTokenValueDefinitionRequest;
 
@@ -77,7 +77,7 @@ public class InitGameBhv extends ParallelBehaviour
 	}
 	
 	private Behaviour getResetBlindBehviour(int time, TokenValueDefinition tokenValueDef){
-		Message msg = new ChangeTimeBeforeIncreasingBlindRequest(time, tokenValueDef);
+		Message msg = new ResetBlindRequest(time, tokenValueDef);
 		
 		TransactionBhv transaction = new TransactionBhv(myAgent, msg, blindManager);
 		transaction.setResponseVisitor(new MessageVisitor(){
@@ -99,7 +99,7 @@ public class InitGameBhv extends ParallelBehaviour
 	private Behaviour getSetTokenValueDefinitionBehviour(TokenValueDefinition tvf){
 		Message msg = new SetTokenValueDefinitionRequest(tvf);
 	
-		TransactionBhv transaction = new TransactionBhv(myAgent, msg, blindManager);
+		TransactionBhv transaction = new TransactionBhv(myAgent, msg, environment);
 		transaction.setResponseVisitor(new MessageVisitor(){
 			@Override
 			public boolean onOKMessage(OKMessage okMessage, ACLMessage aclMsg) {

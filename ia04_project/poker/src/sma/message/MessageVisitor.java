@@ -3,7 +3,7 @@ package sma.message;
 import jade.lang.acl.ACLMessage;
 import sma.message.blind.notification.BlindValueDefinitionUpdatedNotification;
 import sma.message.blind.notification.TimeBeforeIncreasingBlindChangedNotification;
-import sma.message.blind.request.ChangeTimeBeforeIncreasingBlindRequest;
+import sma.message.blind.request.ResetBlindRequest;
 import sma.message.blind.request.GetBlindValueDefinitionRequest;
 import sma.message.dealer.request.DealRequest;
 import sma.message.environment.notification.BlindValueDefinitionChangedNotification;
@@ -80,7 +80,7 @@ public class MessageVisitor {
 	public boolean onDealRequest(DealRequest request, ACLMessage aclMsg){return false;}
 	
 	// Blind Management
-	public boolean onChangeTimeBeforeIncreasingBlindRequest(ChangeTimeBeforeIncreasingBlindRequest request, ACLMessage aclMsg) {return false;}
+	public boolean onResetBlindRequest(ResetBlindRequest request, ACLMessage aclMsg) {return false;}
 	public boolean onRefreshBlindValueDefinitionRequest(GetBlindValueDefinitionRequest request, ACLMessage aclMsg) {return false;}
 	
 }

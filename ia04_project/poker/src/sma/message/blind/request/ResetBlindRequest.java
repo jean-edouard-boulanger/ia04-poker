@@ -5,16 +5,16 @@ import jade.lang.acl.ACLMessage;
 import sma.message.Message;
 import sma.message.MessageVisitor;
 
-public class ChangeTimeBeforeIncreasingBlindRequest extends Message {
+public class ResetBlindRequest extends Message {
 	
 	private int time;
 	private TokenValueDefinition tokenValueDefinition;
 	
-	public ChangeTimeBeforeIncreasingBlindRequest() {
+	public ResetBlindRequest() {
 		
 	}
 	
-	public ChangeTimeBeforeIncreasingBlindRequest(int time, TokenValueDefinition tokenValueDefinition) {
+	public ResetBlindRequest(int time, TokenValueDefinition tokenValueDefinition) {
 		this.time = time;
 		this.tokenValueDefinition = tokenValueDefinition;
 	}
@@ -27,16 +27,16 @@ public class ChangeTimeBeforeIncreasingBlindRequest extends Message {
 		this.time = time;
 	}
 
-	@Override
-	public boolean accept(MessageVisitor visitor, ACLMessage aclMsg) {
-		return visitor.onChangeTimeBeforeIncreasingBlindRequest(this, aclMsg);
-	}
-
 	public TokenValueDefinition getTokenValueDefinition() {
 		return tokenValueDefinition;
 	}
 
 	public void setTokenValueDefinition(TokenValueDefinition tokenValueDefinition) {
 		this.tokenValueDefinition = tokenValueDefinition;
+	}
+	
+	@Override
+	public boolean accept(MessageVisitor visitor, ACLMessage aclMsg) {
+		return visitor.onResetBlindRequest(this, aclMsg);
 	}
 }

@@ -13,7 +13,7 @@ import sma.message.NotificationSubscriber;
 import sma.message.OKMessage;
 import sma.message.blind.notification.BlindValueDefinitionUpdatedNotification;
 import sma.message.blind.notification.TimeBeforeIncreasingBlindChangedNotification;
-import sma.message.blind.request.ChangeTimeBeforeIncreasingBlindRequest;
+import sma.message.blind.request.ResetBlindRequest;
 import sma.message.blind.request.GetBlindValueDefinitionRequest;
 import sma.message.environment.notification.BlindValueDefinitionChangedNotification;
 import sma.message.environment.request.BlindValueDefinitionChangeRequest;
@@ -29,11 +29,11 @@ import jade.lang.acl.MessageTemplate;
 public class BlindManagementAgent extends Agent {
 	
 	private BlindIncreasingBehaviour blindIncreasingBehaviour;
-	private int timeBeforeIncreasingBlind;
 	private BlindValueDefinition blindValueDefinition;
 		
 	public BlindManagementAgent() {
 		this.blindValueDefinition = new BlindValueDefinition();
+		this.blindIncreasingBehaviour = null;
 	}
 	
 	@Override
@@ -41,59 +41,69 @@ public class BlindManagementAgent extends Agent {
 	{
 		super.setup();
 		DFServiceHelper.registerService(this, "BlindManagementAgent","BlindManager");
-		
 		this.addBehaviour(new ReceiveRequestBehaviour(this));
 	}
 	
 	private class ReceiveRequestBehaviour extends CyclicBehaviour {
+		private AID environment;
+
 		public ReceiveRequestBehaviour(Agent agent) {
 			super(agent);
+			environment = DFServiceHelper.searchService(myAgent, "PokerEnvironment", "Environment");
 		}
 
 		@Override
 		public void action() {
-			if(!AgentHelper.receiveMessage(this.myAgent, ACLMessage.REQUEST, new MessageVisitor(){
+			
+			boolean msgReceived = AgentHelper.receiveMessage(this.myAgent, ACLMessage.REQUEST, new MessageVisitor(){
 				
 				@Override
 				public boolean onRefreshBlindValueDefinitionRequest(GetBlindValueDefinitionRequest request, ACLMessage aclMsg) {
-					//Giving blind value to the environment
-					AID environment = DFServiceHelper.searchService(myAgent, "PokerEnvironment", "Environment");
-
-					//Transaction with environment
-					TransactionBhv transaction = new TransactionBhv(myAgent, new BlindValueDefinitionChangeRequest(blindValueDefinition), environment);
-					
-					transaction.setResponseVisitor(new MessageVisitor(){
-						@Override
-						public boolean onOKMessage(OKMessage okMessage, ACLMessage aclMsg) {
-							//Notifying the simulation that the environment that the blind was set:
-							AgentHelper.sendReply(BlindManagementAgent.this, aclMsg, ACLMessage.INFORM, new OKMessage());
-							
-							return true;
-						}
-					});
-					
+					setBlindAndReply(aclMsg); // we refresh the environment and reply to simulation
 					return true;
 				}
 				
 				//Changing time before increasing blind
 				@Override
-				public boolean onChangeTimeBeforeIncreasingBlindRequest(ChangeTimeBeforeIncreasingBlindRequest request, ACLMessage aclMsg) {
-					
-					timeBeforeIncreasingBlind = request.getTime();
+				public boolean onResetBlindRequest(ResetBlindRequest request, ACLMessage aclMsg) {
 					
 					blindValueDefinition = new BlindValueDefinition(request.getTokenValueDefinition());
+					if(blindIncreasingBehaviour != null)
+						myAgent.removeBehaviour(blindIncreasingBehaviour);
+					blindIncreasingBehaviour = new BlindIncreasingBehaviour(BlindManagementAgent.this, request.getTime());
+					myAgent.addBehaviour(blindIncreasingBehaviour);
 					
-					myAgent.removeBehaviour(blindIncreasingBehaviour);
-					
-					myAgent.addBehaviour(new BlindIncreasingBehaviour(BlindManagementAgent.this, timeBeforeIncreasingBlind));
-					
-					AgentHelper.sendReply(BlindManagementAgent.this, aclMsg, ACLMessage.INFORM, new TimeBeforeIncreasingBlindChangedNotification(timeBeforeIncreasingBlind));
+					// the blind was reset, so we have to notify the environment:
+					setBlindAndReply(aclMsg);
 					
 					return true;
 				}
-			})){
+			});
+			
+			if(!msgReceived)
 				block();
-			}
+		}
+		
+		private void setBlindAndReply(final ACLMessage requestAclMsg){
+			//Transaction with environment
+			TransactionBhv transaction = new TransactionBhv(myAgent, new BlindValueDefinitionChangeRequest(blindValueDefinition), environment);
+			transaction.setResponseVisitor(new MessageVisitor(){
+				@Override
+				public boolean onOKMessage(OKMessage okMessage, ACLMessage aclMsg){ 
+					// reset operation done, we reply to simulation:
+					AgentHelper.sendReply(myAgent, requestAclMsg, ACLMessage.INFORM, new OKMessage());		
+					return true;
+				}
+				
+				@Override
+				public boolean onFailureMessage(FailureMessage msg, ACLMessage aclMsg) {
+					AgentHelper.sendReply(myAgent, requestAclMsg, ACLMessage.FAILURE, new FailureMessage(msg.getMessage()));		
+					return true;
+				}
+			});
+			
+			// we start the transaction
+			myAgent.addBehaviour(transaction);
 		}
 	}
 	
@@ -106,22 +116,7 @@ public class BlindManagementAgent extends Agent {
 		@Override
 		protected void onTick() {
 			blindValueDefinition.increase();
+			System.out.println("[" + myAgent.getLocalName() + "] blind increased, now at: [" + blindValueDefinition.getBigBlindAmountDefinition() + ", " + blindValueDefinition.getBlindAmountDefinition() + ".");
 		}
-	}
-
-	public int getTimeBeforeIncreasingBlind() {
-		return timeBeforeIncreasingBlind;
-	}
-
-	public void setTimeBeforeIncreasingBlind(int timeBeforeIncreasingBlind) {
-		this.timeBeforeIncreasingBlind = timeBeforeIncreasingBlind;
-	}
-
-	public BlindValueDefinition getBlindValueDefinition() {
-		return blindValueDefinition;
-	}
-
-	public void setBlindValueDefinition(BlindValueDefinition blindValueDefinition) {
-		this.blindValueDefinition = blindValueDefinition;
 	}
 }
