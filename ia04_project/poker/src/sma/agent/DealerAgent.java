@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import poker.card.model.CardDeck;
+import poker.game.exception.NoPlaceAvailableException;
+import poker.game.exception.PlayerAlreadyRegisteredException;
 import poker.game.model.HandStep;
 import poker.game.model.PlayersContainer;
 import poker.game.model.PlayersContainer.PlayerCircularIterator;
@@ -15,6 +17,7 @@ import sma.message.FailureMessage;
 import sma.message.Message;
 import sma.message.MessageVisitor;
 import sma.message.OKMessage;
+import sma.message.SubscriptionOKMessage;
 import sma.message.dealer.request.DealRequest;
 import sma.message.environment.notification.PlayerSitOnTableNotification;
 import sma.message.environment.request.AddCommunityCardRequest;
@@ -22,10 +25,12 @@ import sma.message.environment.request.DealCardToPlayerRequest;
 import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.Behaviour;
+import jade.core.behaviours.CyclicBehaviour;
 import jade.core.behaviours.OneShotBehaviour;
 import jade.core.behaviours.ParallelBehaviour;
 import jade.core.behaviours.SequentialBehaviour;
 import jade.lang.acl.ACLMessage;
+import jade.lang.acl.MessageTemplate;
 
 public class DealerAgent extends Agent {
 
@@ -42,7 +47,8 @@ public class DealerAgent extends Agent {
 	}
 	
 	public void setup(){
-		this.addBehaviour(new ReceiveEnvironmentNotificationBehaviour());
+		DFServiceHelper.registerService(this, "DealerAgent","Dealer");
+		this.addBehaviour(new ReceiveEnvironmentNotificationBehaviour(this));
 		this.addBehaviour(new DealCardsBehaviour());
 	}
 	
@@ -68,18 +74,56 @@ public class DealerAgent extends Agent {
 	}
 	
 	
-	private class ReceiveEnvironmentNotificationBehaviour extends Behaviour{
+	private class ReceiveEnvironmentNotificationBehaviour extends CyclicBehaviour{
 		
+		private DealerAgent dealerAgent;
+		private AID environment;
+		
+		public ReceiveEnvironmentNotificationBehaviour(DealerAgent agent){
+			super(agent);
+			this.dealerAgent = agent;
+			this.environment = DFServiceHelper.searchService(dealerAgent,"PokerEnvironment", "Environment");
+			subscribeToEnvironment();
+		}
+		
+		/**
+		 * Handle environment events.
+		 */
 		@Override
 		public void action() {
-			// TODO Auto-generated method stub
 			
+			boolean msgReceived = AgentHelper.receiveMessage(this.myAgent,MessageTemplate.MatchPerformative(ACLMessage.PROPAGATE), new MessageVisitor(){
+				
+				//TODO
+				
+				// All other environment changes are discarded.
+				@Override
+				public boolean onEnvironmentChanged(Message notif, ACLMessage aclMsg) {	return true; }
+			});
+			
+			if(!msgReceived)
+				block();
 		}
-
-		@Override
-		public boolean done() {
-			// TODO Auto-generated method stub
-			return false;
+		
+		private void subscribeToEnvironment(){
+			
+			TransactionBhv envSubscriptionBhv = new TransactionBhv(dealerAgent, null, environment, ACLMessage.SUBSCRIBE);
+			envSubscriptionBhv.setResponseVisitor(new MessageVisitor(){
+				
+				@Override
+				public boolean onSubscriptionOK(SubscriptionOKMessage msg, ACLMessage aclMsg) {
+					System.out.println("[" + dealerAgent.getLocalName() + "] subscription to environment succeded.");
+					return true;
+				}
+				
+				@Override
+				public boolean onFailureMessage(FailureMessage msg, ACLMessage aclMsg) {
+					System.out.println("[" + dealerAgent.getLocalName() + "] subscription to environment failed: " + msg.getMessage());
+					return true;
+				}
+				
+			});
+			dealerAgent.addBehaviour(envSubscriptionBhv);
 		}
 		
 	}
