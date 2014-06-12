@@ -61,7 +61,6 @@ public class WaitGameWindow extends JFrame implements PropertyChangeListener {
 		panel.add(button_launch);
 		
 		this.setContentPane(panel);
-		this.setVisible(true);
 		
 		initializeAction();
 	}

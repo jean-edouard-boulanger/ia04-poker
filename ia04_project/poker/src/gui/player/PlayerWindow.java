@@ -1,24 +1,19 @@
 package gui.player;
 
-import gui.player.PersoIHM;
 import gui.player.PersoIHM.Sens;
 import gui.player.TokenPlayerIHM.ColorToken;
-import gui.server.ServerWindow;
-import jade.lang.acl.ACLMessage;
-import jade.tools.rma.StartDialog;
+import gui.player.WaitGameWindow.WaitGameGuiEvent;
+import jade.gui.GuiEvent;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.io.IOException;
-import java.net.URL;
-import java.util.ArrayList;
+import java.beans.PropertyChangeSupport;
 
 import javafx.application.Application;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -28,41 +23,15 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.transform.Scale;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
-
-import javax.swing.JLabel;
-import javax.swing.SwingUtilities;
-
-import com.fasterxml.jackson.core.JsonGenerationException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-
-import poker.card.exception.CommunityCardsFullException;
-import poker.card.helper.CardPickerHelper;
-import poker.card.helper.CustomPickSequence;
-import poker.card.heuristics.combination.exception.EmptyCardListException;
-import poker.card.heuristics.combination.exception.UnexpectedCombinationIdenticCards;
-import poker.card.heuristics.combination.helper.CardCombinations;
-import poker.card.heuristics.combination.helper.HandComparator;
-import poker.card.heuristics.combination.model.Combination;
-import poker.card.heuristics.combination.model.Hand;
-import poker.card.heuristics.probability.ProbabilityEvaluator;
-import poker.card.heuristics.probability.ProbabilityEvaluator.CombinationProbabilityReport;
 import poker.card.model.Card;
-import poker.card.model.CardDeck;
 import poker.card.model.CardRank;
 import poker.card.model.CardSuit;
-import poker.card.model.CommunityCards;
-import poker.card.model.GameDeck;
-import poker.card.model.UserDeck;
+import poker.game.player.model.Player;
 import sma.agent.HumanPlayerAgent;
-import sma.message.FailureMessage;
-import sma.message.Message;
-import sma.message.MessageVisitor;
 
 /**
  * 
@@ -72,17 +41,21 @@ import sma.message.MessageVisitor;
 public class PlayerWindow extends Application implements PropertyChangeListener {
 		
 	public enum PlayerGuiEvent {
+		INITIALIZING_ME,
+		INITIALIZING_OTHER,
 		PLAYER_RECEIVED_UNKNOWN_CARD,
 		PLAYER_RECEIVED_CARD,
 		ADD_COMMUNITY_CARD,
 		EMPTY_COMMUNITY_CARD,
 		PLAYER_FOLDED,
-		PLAYER_TABLE,
 		PLAYER_RECEIVED_TOKENSET,
 		PLAYER_BET,
 		PLAYER_CHECK,
 		BLIND_VALUE,
-		CURRENT_PLAYER_CHANGED
+		CURRENT_PLAYER_CHANGED,
+		
+		IHM_READY,
+		SHOW_IHM
 	}
 	
 	private Button button_fold;
@@ -112,9 +85,11 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 	private double stageInitialHeight = 0;
 	private double aspectRatio;
 	
+	private Stage primaryStage;
+	
 	public void setHumanPlayerAgent(HumanPlayerAgent agent)
 	{
-		this.human_player_agent = human_player_agent;
+		this.human_player_agent = agent;
 	}
 	
 	@Override
@@ -122,11 +97,14 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 		
 		//--------------------------------------
 		
+		this.primaryStage = primaryStage;
+		
 		primaryStage.setTitle("Poker");
         final Pane root = new Pane();
         root.setId("root");
                 
-        label_hand = new Label("Main 1");
+        label_hand = new Label("Main n°1");
+
         label_hand.setLayoutX(15);
         label_hand.setLayoutY(15);
         label_hand.getStyleClass().add("hand");
@@ -149,7 +127,9 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
         button_follow = new Button();
         button_follow.setLayoutX(335);
         button_follow.setLayoutY(490);
-        button_follow.setText("Suivre Ã  2");
+
+        button_follow.setText("Suivre à 2");
+
         button_follow.setPrefWidth(100);
         button_follow.getStyleClass().add("button_play");
         
@@ -170,7 +150,9 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
         button_relaunch = new Button();
         button_relaunch.setLayoutX(225);
         button_relaunch.setLayoutY(550);
-        button_relaunch.setText("Relancer Ã  5");
+
+        button_relaunch.setText("Relancer à 5");
+
         button_relaunch.setPrefWidth(100);
         button_relaunch.getStyleClass().add("button_play");
         
@@ -314,7 +296,6 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
         primaryStage.setScene(scene);
         primaryStage.setResizable(true);
         primaryStage.getScene().getStylesheets().setAll(PlayerWindow.class.getResource("/gui/player/application.css").toString());
-        primaryStage.show();
         
         // scale the entire scene as the stage is resized (see https://community.oracle.com/thread/2415190).
         this.stageInitialWidth = scene.getWidth();
@@ -351,18 +332,33 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 
 
         initializeAction();
+        
+        // Rajouter notification property pour dire à l'agent qu'on est prêt et n'afficher qu'à ce moment là les interfaces
+        
+        GuiEvent ev = new GuiEvent(this, PlayerGuiEvent.IHM_READY.ordinal());
+		human_player_agent.postGuiEvent(ev);
 	}
 
-	public static void launchWindow(String[] args) {
+	public static PlayerWindow launchWindow(HumanPlayerAgent agent, PropertyChangeSupport changes) {
 		try {
-			Application app1 = PlayerWindow.class.newInstance();
+			PlayerWindow app1 = PlayerWindow.class.newInstance();
+			app1.setHumanPlayerAgent(agent);
+			changes.addPropertyChangeListener(app1);
 			Stage newStage = new Stage();
 			app1.start(newStage);
+			
+			return app1;
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		//launch(args);
+		
+		return null;
+	}
+	
+	public void show()
+	{
+		this.primaryStage.show();
 	}
 	
 	public void initializeAction()
@@ -415,9 +411,45 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 	public void propertyChange(PropertyChangeEvent evt) {
 		
 		/**
+         *  -----  INITIALIZING ME -----
+         */
+		if(evt.getPropertyName().equals(PlayerGuiEvent.SHOW_IHM.toString()))
+		{
+			this.primaryStage.show();
+			
+			System.out.println("Initialiazing");
+		}
+		
+		/**
+         *  -----  INITIALIZING ME -----
+         */
+		else if(evt.getPropertyName().equals(PlayerGuiEvent.INITIALIZING_ME.toString()))
+		{
+			if(evt.getNewValue() instanceof Player)
+			{
+				
+			}
+			
+			System.out.println("Initialiazing");
+		}
+		
+		/**
+         *  -----  INITIALIZING AN OTHER PLAYER-----
+         */
+		if(evt.getPropertyName().equals(PlayerGuiEvent.INITIALIZING_OTHER.toString()))
+		{
+			if(evt.getNewValue() instanceof Player)
+			{
+				
+			}
+			
+			System.out.println("Initialiazing");
+		}
+		
+		/**
          *  -----  RECEIVED UKNOWN CARD -----
          */
-		if(evt.getPropertyName().equals(PlayerGuiEvent.PLAYER_RECEIVED_UNKNOWN_CARD.toString()))
+		else if(evt.getPropertyName().equals(PlayerGuiEvent.PLAYER_RECEIVED_UNKNOWN_CARD.toString()))
 		{
 				System.out.println("Empty community card");
 		}
