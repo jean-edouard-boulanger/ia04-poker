@@ -252,11 +252,11 @@ public class EnvironmentAgent extends Agent {
 		public boolean onSetDealerRequest(SetDealerRequest request, ACLMessage aclMsg) {
 			try {
 				game.getPlayersContainer().setDealer(request.getDealer());
+				AgentHelper.sendSimpleMessage(EnvironmentAgent.this, subscribers, ACLMessage.PROPAGATE, new DealerChangedNotification(request.getDealer()));
+				AgentHelper.sendReply(EnvironmentAgent.this, aclMsg, ACLMessage.INFORM, new OKMessage());
 			} catch (NotRegisteredPlayerException e) {
 				AgentHelper.sendReply(EnvironmentAgent.this, aclMsg, ACLMessage.FAILURE, new FailureMessage(e.getMessage()));
-			}
-			AgentHelper.sendSimpleMessage(EnvironmentAgent.this, subscribers, ACLMessage.PROPAGATE, new DealerChangedNotification(request.getDealer()));
-			AgentHelper.sendReply(EnvironmentAgent.this, aclMsg, ACLMessage.INFORM, new OKMessage());
+			}			
 			return true;
 		}
 		

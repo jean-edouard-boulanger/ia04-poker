@@ -5,11 +5,13 @@ import java.util.HashMap;
 
 import poker.card.model.CardDeck;
 import poker.game.exception.NoPlaceAvailableException;
+import poker.game.exception.NotRegisteredPlayerException;
 import poker.game.exception.PlayerAlreadyRegisteredException;
 import poker.game.model.HandStep;
 import poker.game.model.PlayersContainer;
 import poker.game.model.PlayersContainer.PlayerCircularIterator;
 import poker.game.player.model.Player;
+import poker.game.player.model.PlayerStatus;
 import sma.agent.helper.AgentHelper;
 import sma.agent.helper.DFServiceHelper;
 import sma.agent.helper.TransactionBhv;
@@ -19,6 +21,8 @@ import sma.message.MessageVisitor;
 import sma.message.OKMessage;
 import sma.message.SubscriptionOKMessage;
 import sma.message.dealer.request.DealRequest;
+import sma.message.environment.notification.DealerChangedNotification;
+import sma.message.environment.notification.PlayerFoldedNotification;
 import sma.message.environment.notification.PlayerSitOnTableNotification;
 import sma.message.environment.request.AddCommunityCardRequest;
 import sma.message.environment.request.DealCardToPlayerRequest;
@@ -94,7 +98,41 @@ public class DealerAgent extends Agent {
 			
 			boolean msgReceived = AgentHelper.receiveMessage(this.myAgent,MessageTemplate.MatchPerformative(ACLMessage.PROPAGATE), new MessageVisitor(){
 				
-				//TODO
+				// we update players list, players status change, dealer change 
+				
+				@Override
+				public boolean onPlayerSitOnTableNotification(PlayerSitOnTableNotification notif, ACLMessage aclMsg) {
+					try {
+						playersContainer.addPlayer(notif.getNewPlayer());
+					} catch (PlayerAlreadyRegisteredException | NoPlaceAvailableException e) {
+						System.out.println("[" + myAgent.getLocalName() + "] can't add player, environment inconsistency.");
+					}
+					return true;
+				}
+				
+				@Override
+				public boolean onPlayerFoldedNotification(PlayerFoldedNotification notif, ACLMessage aclMsg) {
+					Player player = playersContainer.getPlayerByAID(notif.getPlayerAID());
+					if(player != null)
+						player.setStatus(PlayerStatus.FOLDED);
+					else
+						System.out.println("[" + myAgent.getLocalName() + "] can't fold '" + notif.getPlayerAID().getLocalName() + "', not a player, environment inconsistency.");
+					
+					return true;
+				}
+				
+				@Override
+				public boolean onDealerChangedNotification(DealerChangedNotification notif, ACLMessage aclMsg) {
+					Player dealer = playersContainer.getPlayerByAID(notif.getDealer());
+					try {
+						playersContainer.setDealer(dealer);
+					} catch (NotRegisteredPlayerException e) {
+						System.out.println("[" + myAgent.getLocalName() + "] the dealer '" + notif.getDealer().getLocalName() + "' is not a player, environment inconsistency.");
+					}
+					return true;
+				}
+				
+				// TODO: player out
 				
 				// All other environment changes are discarded.
 				@Override
@@ -113,6 +151,8 @@ public class DealerAgent extends Agent {
 				@Override
 				public boolean onSubscriptionOK(SubscriptionOKMessage msg, ACLMessage aclMsg) {
 					System.out.println("[" + dealerAgent.getLocalName() + "] subscription to environment succeded.");
+					// Initialization of the initial player container.
+					playersContainer = msg.getGame().getPlayersContainer();
 					return true;
 				}
 				
