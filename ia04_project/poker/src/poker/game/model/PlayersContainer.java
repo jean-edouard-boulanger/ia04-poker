@@ -12,6 +12,8 @@ import poker.game.exception.NoPlaceAvailableException;
 import poker.game.exception.NotRegisteredPlayerException;
 import poker.game.exception.PlayerAlreadyRegisteredException;
 import poker.game.player.model.Player;
+import poker.game.player.model.PlayerRole;
+import poker.game.player.model.PlayerStatus;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -335,4 +337,69 @@ public class PlayersContainer {
 		
 		return playersAIDs;
 	}
+
+	@JsonIgnore
+	public void setDealer(AID dealer) throws NotRegisteredPlayerException {
+		setDealer(this.getPlayerByAID(dealer));
+	}
+	
+	@JsonIgnore
+	public void setDealer(Player dealer) throws NotRegisteredPlayerException {
+		if(dealer == null || !this.players.contains(dealer))
+			throw new NotRegisteredPlayerException(dealer);
+		
+		// we clear roles:
+		
+		Player oldDealer = getDealer();
+		if(oldDealer != null)
+			oldDealer.setRole(PlayerRole.USUAL);
+		
+		Player oldSmallBlind = getSmallBlind();
+		if(oldSmallBlind != null)
+			oldSmallBlind.setRole(PlayerRole.USUAL);
+		
+		Player oldBigBlind = getSmallBlind();
+		if(oldBigBlind != null)
+			oldBigBlind.setRole(PlayerRole.USUAL);
+		
+		// we set roles:
+		
+		dealer.setRole(PlayerRole.DEALER_BUTTON);
+		
+		Player smallBlind = this.getPlayerNextTo(dealer);
+		while (smallBlind.getStatus() != PlayerStatus.IN_GAME)
+			smallBlind = this.getPlayerNextTo(smallBlind);
+		smallBlind.setRole(PlayerRole.SMALL_BLIND);
+		
+		Player bigBlind = this.getPlayerNextTo(smallBlind);
+		while (bigBlind.getStatus() != PlayerStatus.IN_GAME)
+			bigBlind = this.getPlayerNextTo(bigBlind);
+		bigBlind.setRole(PlayerRole.BIG_BLIND);
+	}
+	
+	@JsonIgnore
+	public Player getDealer(){
+		for (Player player : this.players){
+			if(player.getRole() == PlayerRole.DEALER_BUTTON);
+		}
+		return null;
+	}
+	
+	@JsonIgnore
+	public Player getSmallBlind(){
+		for (Player player : this.players){
+			if(player.getRole() == PlayerRole.SMALL_BLIND);
+		}
+		return null;
+	}
+	
+	@JsonIgnore
+	public Player getBigBlind(){
+		for (Player player : this.players){
+			if(player.getRole() == PlayerRole.BIG_BLIND);
+		}
+		return null;
+	}
+	
+	
 }
