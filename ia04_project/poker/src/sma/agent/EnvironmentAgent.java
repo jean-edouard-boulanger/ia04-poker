@@ -26,6 +26,7 @@ import sma.message.SubscriptionOKMessage;
 import sma.message.environment.notification.BlindValueDefinitionChangedNotification;
 import sma.message.environment.notification.CardAddedToCommunityCardsNotification;
 import sma.message.environment.notification.CommunityCardsEmptiedNotification;
+import sma.message.environment.notification.DealerChangedNotification;
 import sma.message.environment.notification.PlayerReceivedCardNotification;
 import sma.message.environment.notification.PlayerReceivedTokenSetNotification;
 import sma.message.environment.notification.PlayerReceivedUnknownCardNotification;
@@ -38,6 +39,7 @@ import sma.message.environment.request.CurrentPlayerChangeRequest;
 import sma.message.environment.request.DealCardToPlayerRequest;
 import sma.message.environment.request.EmptyCommunityCardsRequest;
 import sma.message.environment.request.GiveTokenSetToPlayerRequest;
+import sma.message.environment.request.SetDealerRequest;
 import sma.message.environment.request.SetTokenValueDefinitionRequest;
 
 public class EnvironmentAgent extends Agent {
@@ -242,6 +244,18 @@ public class EnvironmentAgent extends Agent {
 		public boolean onSetTokenValueDefinitionRequest(SetTokenValueDefinitionRequest notif, ACLMessage aclMsg) {
 			game.setTokenValueDefinition(notif.getTokenValueDefinition());
 			AgentHelper.sendSimpleMessage(EnvironmentAgent.this, subscribers, ACLMessage.PROPAGATE, new TokenValueDefinitionChangedNotification(notif.getTokenValueDefinition()));
+			AgentHelper.sendReply(EnvironmentAgent.this, aclMsg, ACLMessage.INFORM, new OKMessage());
+			return true;
+		}
+		
+		@Override
+		public boolean onSetDealerRequest(SetDealerRequest request, ACLMessage aclMsg) {
+			try {
+				game.getPlayersContainer().setDealer(request.getDealer());
+			} catch (NotRegisteredPlayerException e) {
+				AgentHelper.sendReply(EnvironmentAgent.this, aclMsg, ACLMessage.FAILURE, new FailureMessage(e.getMessage()));
+			}
+			AgentHelper.sendSimpleMessage(EnvironmentAgent.this, subscribers, ACLMessage.PROPAGATE, new DealerChangedNotification(request.getDealer()));
 			AgentHelper.sendReply(EnvironmentAgent.this, aclMsg, ACLMessage.INFORM, new OKMessage());
 			return true;
 		}
