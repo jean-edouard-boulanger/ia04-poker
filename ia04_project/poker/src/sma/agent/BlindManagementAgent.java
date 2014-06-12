@@ -1,30 +1,20 @@
 package sma.agent;
 
-import java.util.ArrayList;
-
+import jade.core.AID;
+import jade.core.Agent;
+import jade.core.behaviours.CyclicBehaviour;
+import jade.core.behaviours.TickerBehaviour;
+import jade.lang.acl.ACLMessage;
 import poker.game.model.BlindValueDefinition;
-import poker.game.model.Game;
 import sma.agent.helper.AgentHelper;
 import sma.agent.helper.DFServiceHelper;
 import sma.agent.helper.TransactionBhv;
 import sma.message.FailureMessage;
 import sma.message.MessageVisitor;
-import sma.message.NotificationSubscriber;
 import sma.message.OKMessage;
-import sma.message.blind.notification.BlindValueDefinitionUpdatedNotification;
-import sma.message.blind.notification.TimeBeforeIncreasingBlindChangedNotification;
-import sma.message.blind.request.ResetBlindRequest;
 import sma.message.blind.request.GetBlindValueDefinitionRequest;
-import sma.message.environment.notification.BlindValueDefinitionChangedNotification;
+import sma.message.blind.request.ResetBlindRequest;
 import sma.message.environment.request.BlindValueDefinitionChangeRequest;
-import jade.core.AID;
-import jade.core.Agent;
-import jade.core.behaviours.Behaviour;
-import jade.core.behaviours.CyclicBehaviour;
-import jade.core.behaviours.OneShotBehaviour;
-import jade.core.behaviours.TickerBehaviour;
-import jade.lang.acl.ACLMessage;
-import jade.lang.acl.MessageTemplate;
 
 public class BlindManagementAgent extends Agent {
 	

@@ -1,10 +1,8 @@
 package sma.message;
 
 import jade.lang.acl.ACLMessage;
-import sma.message.blind.notification.BlindValueDefinitionUpdatedNotification;
-import sma.message.blind.notification.TimeBeforeIncreasingBlindChangedNotification;
-import sma.message.blind.request.ResetBlindRequest;
 import sma.message.blind.request.GetBlindValueDefinitionRequest;
+import sma.message.blind.request.ResetBlindRequest;
 import sma.message.dealer.request.DealRequest;
 import sma.message.environment.notification.BlindValueDefinitionChangedNotification;
 import sma.message.environment.notification.CardAddedToCommunityCardsNotification;
@@ -81,8 +79,6 @@ public class MessageVisitor {
 	public boolean onPlayerCheckNotification(PlayerCheckNotification notification, ACLMessage aclMsg){return false;}
 	public boolean onBlindValueDefinitionChangedNotification(BlindValueDefinitionChangedNotification notification, ACLMessage aclMsg){return false;}
 	public boolean onCurrentPlayerChangedNotification(CurrentPlayerChangedNotification notification, ACLMessage aclMsg){return false;}
-	public boolean onTimeBeforeIncreasingBlindChangedNotification(TimeBeforeIncreasingBlindChangedNotification request, ACLMessage aclMsg) {return false;}
-	public boolean onBlindValueDefinitionUpdatedNotification(BlindValueDefinitionUpdatedNotification notif, ACLMessage aclMsg) {return false;}
 	public boolean onTokenValueDefinitionChangedNotification(TokenValueDefinitionChangedNotification notif, ACLMessage aclMsg) {return false;}
 	
 }
