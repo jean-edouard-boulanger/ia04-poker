@@ -116,14 +116,14 @@ public class Main2 extends Application implements PropertyChangeListener {
 		
 		primaryStage.setTitle("Poker");
         Pane root = new Pane();
-        root.setId("root");
+        root.setId("background");
         
         Scene scene = new Scene(root, 700, 600);
         URL applicationCss = this.getClass().getResource("/gui/player/application.css");
         //scene.getStylesheets().add(applicationCss.toExternalForm());
         scene.setFill(Color.TRANSPARENT);
         
-        label_hand = new Label("Main n�1");
+        label_hand = new Label("Main n1");
         label_hand.setLayoutX(15);
         label_hand.setLayoutY(15);
         label_hand.getStyleClass().add("hand");
@@ -146,7 +146,7 @@ public class Main2 extends Application implements PropertyChangeListener {
         button_follow = new Button();
         button_follow.setLayoutX(335);
         button_follow.setLayoutY(490);
-        button_follow.setText("Suivre � 2");
+        button_follow.setText("Suivre à 2");
         button_follow.setPrefWidth(100);
         button_follow.getStyleClass().add("button_play");
         
@@ -167,7 +167,7 @@ public class Main2 extends Application implements PropertyChangeListener {
         button_relaunch = new Button();
         button_relaunch.setLayoutX(225);
         button_relaunch.setLayoutY(550);
-        button_relaunch.setText("Relancer � 5");
+        button_relaunch.setText("Relancer à 5");
         button_relaunch.setPrefWidth(100);
         button_relaunch.getStyleClass().add("button_play");
         
