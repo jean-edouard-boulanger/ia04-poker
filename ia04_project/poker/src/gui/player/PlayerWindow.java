@@ -30,6 +30,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.transform.Scale;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
@@ -104,6 +105,12 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 	
 	private HumanPlayerAgent human_player_agent;
 	
+	// scaling:
+	private double scaleRatio = 1;
+	private double stageInitialWidth = 0;
+	private double stageInitialHeight = 0;
+	private double aspectRatio;
+	
 	public void setHumanPlayerAgent(HumanPlayerAgent agent)
 	{
 		this.human_player_agent = human_player_agent;
@@ -115,14 +122,9 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 		//--------------------------------------
 		
 		primaryStage.setTitle("Poker");
-        Pane root = new Pane();
+        final Pane root = new Pane();
         root.setId("root");
-        
-        Scene scene = new Scene(root, 700, 600);
-        URL applicationCss = this.getClass().getResource("/gui/player/application.css");
-        //scene.getStylesheets().add(applicationCss.toExternalForm());
-        scene.setFill(Color.TRANSPARENT);
-        
+                
         label_hand = new Label("Main n°1");
         label_hand.setLayoutX(15);
         label_hand.setLayoutY(15);
@@ -301,11 +303,51 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
         root.getChildren().add(token_red);
         root.getChildren().add(im);
         root.getChildren().add(im2);
-
+        
+        final Pane background = new Pane();
+        background.setId("background");
+        background.getChildren().add(root);
+        Scene scene = new Scene(background, 700, 600);
+        scene.setFill(Color.TRANSPARENT);
+        
         primaryStage.setScene(scene);
-        primaryStage.setResizable(false);
+        primaryStage.setResizable(true);
         primaryStage.getScene().getStylesheets().setAll(PlayerWindow.class.getResource("/gui/player/application.css").toString());
         primaryStage.show();
+        
+        // scale the entire scene as the stage is resized (see https://community.oracle.com/thread/2415190).
+        this.stageInitialWidth = scene.getWidth();
+        this.stageInitialHeight = scene.getHeight();
+        this.aspectRatio = ((double)scene.getWidth())/scene.getHeight();
+
+        background.getScene().widthProperty().addListener(new ChangeListener<Number>() {
+	         @Override
+	         public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+	             double newWidth = newValue.doubleValue();
+	        	 if(background.getWidth()/background.getHeight() > aspectRatio)
+	        		 newWidth = (aspectRatio) * background.getHeight();
+	        	 
+	              scaleRatio = newWidth / stageInitialWidth;
+	              root.getTransforms().clear();
+	              Scale scale = new Scale(scaleRatio, scaleRatio, 0, 0);
+	              root.getTransforms().add(scale);
+	         }
+	    });
+		
+        background.getScene().heightProperty().addListener(new ChangeListener<Number>() {
+             @Override
+             public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+            	 double newHeight = newValue.doubleValue();
+	        	 if(background.getWidth()/background.getHeight() < aspectRatio)
+	        		 newHeight = background.getWidth() / aspectRatio;
+	        	 
+	        	 	scaleRatio = newHeight / stageInitialHeight;
+	        	 	root.getTransforms().clear();
+	              Scale scale = new Scale(scaleRatio, scaleRatio, 0, 0);
+	              root.getTransforms().add(scale);
+             }
+        });
+
 
         initializeAction();
 	}
