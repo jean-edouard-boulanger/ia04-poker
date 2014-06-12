@@ -48,12 +48,10 @@ public class EnvironmentAgent extends Agent {
 	
 	private ArrayList<AID> subscribers;
 	private EnvironmentMessageVisitor msgVisitor;
-	private NotificationSubscriber notificationSubscriber;
 	
 	public EnvironmentAgent(){
 		this.game = new Game();
 		this.msgVisitor = new EnvironmentMessageVisitor();
-		this.notificationSubscriber = new NotificationSubscriber();
 		this.subscribers = new ArrayList<AID>();
 	}
 	
