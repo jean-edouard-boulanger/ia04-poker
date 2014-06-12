@@ -57,7 +57,6 @@ public class MessageVisitor {
 	public boolean onRefreshBlindValueDefinitionRequest(GetBlindValueDefinitionRequest request, ACLMessage aclMsg) {return false;}
 	
 	// Environment
-	public boolean onSubscriptionOK(SubscriptionOKMessage notif, ACLMessage aclMsg){return false;}
 	public boolean onAddPlayerTableRequest(AddPlayerTableRequest notif, ACLMessage aclMsg){return false;}
 	public boolean onAddCommunityCardRequest(AddCommunityCardRequest notif, ACLMessage aclMsg) {return false;}
 	public boolean onDealCardToPlayerRequest(DealCardToPlayerRequest notif, ACLMessage aclMsg){return false;}
@@ -70,7 +69,7 @@ public class MessageVisitor {
 	
 	// Environment notification 
 	public boolean onEnvironmentChanged(Message notif, ACLMessage aclMsg){return false;}
-	
+	public boolean onSubscriptionOK(SubscriptionOKMessage notif, ACLMessage aclMsg){return false;}
 	public boolean onPlayerReceivedUnknownCardNotification(PlayerReceivedUnknownCardNotification notification, ACLMessage aclMsg) {return false;}
 	public boolean onPlayerReceivedCardNotification(PlayerReceivedCardNotification notification, ACLMessage aclMsg){return false;}
 	public boolean onCardAddedToCommunityCardsNotification(CardAddedToCommunityCardsNotification notification, ACLMessage aclMsg){return false;}
