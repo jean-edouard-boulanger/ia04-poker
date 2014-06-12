@@ -5,6 +5,7 @@ import gui.player.PersoIHM.Sens;
 import gui.player.TokenPlayerIHM.ColorToken;
 import gui.server.ServerWindow;
 import jade.lang.acl.ACLMessage;
+import jade.tools.rma.StartDialog;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -125,7 +126,7 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
         final Pane root = new Pane();
         root.setId("root");
                 
-        label_hand = new Label("Main n°1");
+        label_hand = new Label("Main nï¿½1");
         label_hand.setLayoutX(15);
         label_hand.setLayoutY(15);
         label_hand.getStyleClass().add("hand");
@@ -148,7 +149,7 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
         button_follow = new Button();
         button_follow.setLayoutX(335);
         button_follow.setLayoutY(490);
-        button_follow.setText("Suivre à 2");
+        button_follow.setText("Suivre ï¿½ 2");
         button_follow.setPrefWidth(100);
         button_follow.getStyleClass().add("button_play");
         
@@ -169,7 +170,7 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
         button_relaunch = new Button();
         button_relaunch.setLayoutX(225);
         button_relaunch.setLayoutY(550);
-        button_relaunch.setText("Relancer à 5");
+        button_relaunch.setText("Relancer ï¿½ 5");
         button_relaunch.setPrefWidth(100);
         button_relaunch.getStyleClass().add("button_play");
         
@@ -353,7 +354,15 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 	}
 
 	public static void launchWindow(String[] args) {
-		launch(args);
+		try {
+			Application app1 = PlayerWindow.class.newInstance();
+			Stage newStage = new Stage();
+			app1.start(newStage);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		//launch(args);
 	}
 	
 	public void initializeAction()
