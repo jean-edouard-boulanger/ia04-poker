@@ -16,7 +16,7 @@ import sma.message.dealer.request.DealRequest;
 import sma.message.environment.request.EmptyCommunityCardsRequest;
 
 /**
- * The behaviour handle the intialization of a new game:
+ * The behavior handle the initialization of a new game:
  * - community cards are removed from the table.
  * - player card are dealt
  * (those tasks are done in parallel).

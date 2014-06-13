@@ -127,7 +127,9 @@ public class SimulationAgent extends GuiAgent {
 			@Override
 			protected void handleStateEntered(Behaviour state){
 				super.handleStateEntered(state);
+				System.out.println("-------------------------------------------------------");
 				System.out.println("[" + this.myAgent.getLocalName() + "] Current state: " + this.getName(state));
+				System.out.println("-------------------------------------------------------");
 			}
 		};
 		
