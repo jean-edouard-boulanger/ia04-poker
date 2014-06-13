@@ -8,6 +8,9 @@ import jade.lang.acl.ACLMessage;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import javafx.application.Application;
 import javafx.event.ActionEvent;
@@ -23,15 +26,9 @@ import javafx.stage.Stage;
 
 import javax.swing.SwingUtilities;
 
-import com.fasterxml.jackson.core.JsonGenerationException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-
 import poker.card.exception.CommunityCardsFullException;
-import poker.card.helper.CardPickerHelper;
 import poker.card.helper.CustomPickSequence;
-import poker.card.helper.RandomCardDeckGenerator;
 import poker.card.heuristics.combination.exception.EmptyCardListException;
-import poker.card.heuristics.combination.exception.UnexpectedCombinationIdenticCards;
 import poker.card.heuristics.combination.helper.CardCombinations;
 import poker.card.heuristics.combination.helper.HandComparator;
 import poker.card.heuristics.combination.model.Combination;
@@ -39,12 +36,11 @@ import poker.card.heuristics.combination.model.Hand;
 import poker.card.heuristics.probability.ProbabilityEvaluator;
 import poker.card.heuristics.probability.ProbabilityEvaluator.CombinationProbabilityReport;
 import poker.card.model.Card;
-import poker.card.model.CardDeck;
 import poker.card.model.CardRank;
 import poker.card.model.CardSuit;
 import poker.card.model.CommunityCards;
-import poker.card.model.GameDeck;
 import poker.card.model.UserDeck;
+import poker.game.player.model.Player;
 import sma.message.FailureMessage;
 import sma.message.Message;
 import sma.message.MessageVisitor;
@@ -83,8 +79,8 @@ public class Main extends Application {
 			communityCards.pushCard(new Card(CardRank.TEN, CardSuit.DIAMONDS));
 			communityCards.pushCard(new Card(CardRank.QUEEN, CardSuit.SPADES));
 		//	communityCards.pushCard(new Card(CardRank.FIVE, CardSuit.DIAMONDS));
-			communityCards.pushCard(new Card(CardRank.JACK, CardSuit.HEARTS));
-			communityCards.pushCard(new Card(CardRank.KING, CardSuit.DIAMONDS));
+	//		communityCards.pushCard(new Card(CardRank.JACK, CardSuit.HEARTS));
+	//		communityCards.pushCard(new Card(CardRank.KING, CardSuit.DIAMONDS));
 			communityCards.pushCard(new Card(CardRank.ACE, CardSuit.CLUBS));
 		} catch (CommunityCardsFullException e1) {
 			// TODO Auto-generated catch block
@@ -99,9 +95,60 @@ public class Main extends Application {
 			
 			hands.add(h1);
 			hands.add(h2);
-			System.out.println(hands);
+		//	System.out.println(hands);
 			System.out.println(HandComparator.bestHand(hands));
+
+			
+			Player p1 =  new Player();
+			p1.setDeck(userDeck);
+			Player p2 =  new Player();
+			p2.setDeck(userDeck2);
+			
+			
+			
+			//Copying the cards of the players
+			Map<Player, Hand> winners = new HashMap<Player, Hand>();
+
+			ArrayList<Hand> winningHands = new ArrayList<Hand>();
+			ArrayList<Player> potentialWinners = new ArrayList<Player>();
+			potentialWinners.add(p1);
+			potentialWinners.add(p2);
+			
+			for(Player p : potentialWinners) {
+				ArrayList<Card> playerHandCards = p.getDeck().getCards();
+				playerHandCards.addAll(communityCards.getCommunityCards());
 				
+				try {
+					Hand h = CardCombinations.bestHandFromCards(playerHandCards);
+					winners.put(p, h);
+					winningHands.add(h);
+				} catch (EmptyCardListException e) {
+					e.printStackTrace();
+				}
+			}
+
+			//Getting the best hands (more than one in case of equality)
+			winningHands = HandComparator.bestHand(winningHands);
+			
+			Map<Player, Hand> winners2 = new HashMap<Player, Hand>();
+			
+			//Removing players without a winning hand
+			for(Hand h : winningHands) {
+				for(Entry<Player, Hand> entry : winners.entrySet()) {
+					if(h == entry.getValue()) {
+						winners2.put(entry.getKey(), entry.getValue());
+					}
+				}
+			}
+			
+			
+			for(Player p : winners2.keySet()) {
+				System.out.println(winners.get(p));
+			}
+			
+			
+			
+			
 		} catch (EmptyCardListException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();

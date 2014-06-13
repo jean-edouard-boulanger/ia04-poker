@@ -5,10 +5,19 @@ import jade.core.behaviours.CyclicBehaviour;
 import jade.lang.acl.ACLMessage;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import poker.card.exception.CommunityCardsFullException;
+import poker.card.heuristics.combination.exception.EmptyCardListException;
+import poker.card.heuristics.combination.helper.CardCombinations;
+import poker.card.heuristics.combination.helper.HandComparator;
+import poker.card.heuristics.combination.model.Hand;
+import poker.card.model.Card;
 import poker.card.model.CommunityCards;
 import poker.game.player.model.Player;
+import poker.game.player.model.PlayerStatus;
 import sma.agent.helper.AgentHelper;
 import sma.agent.helper.DFServiceHelper;
 import sma.message.MessageVisitor;
@@ -62,15 +71,18 @@ public class DetermineWinnerAgent extends Agent {
 		
 		@Override
 		public boolean onPlayerCardsRevealedNotification(PlayerCardsRevealedNotification playerCardsRevealed, ACLMessage aclMsg) {
-			players.add(playerCardsRevealed.getPlayer());
+			
+			//Adding player to potential winners if still in game (did not fold, not out)
+			if(playerCardsRevealed.getPlayer().getStatus() == PlayerStatus.IN_GAME)
+				players.add(playerCardsRevealed.getPlayer());
 			
 			return true;
 		}
 		
 		@Override
 		public boolean onDetermineWinnerRequest(DetermineWinnerRequest request, ACLMessage aclMsg) {
-			//Determine the winner
-			ArrayList<Player> winners = new ArrayList<Player>();
+			
+			Map<Player, Hand> winners = determineRoundWinners();
 			
 			//Sending the list of winners (could be more than one winner)
 			AgentHelper.sendReply(DetermineWinnerAgent.this, aclMsg, ACLMessage.INFORM, new WinnerDeterminedNotification(winners));
@@ -80,6 +92,43 @@ public class DetermineWinnerAgent extends Agent {
 			
 			return true;
 		}
+	}
+	
+	private Map<Player, Hand> determineRoundWinners() {
+
+		Map<Player, Hand> playerHandMap = new HashMap<Player, Hand>();
+
+		ArrayList<Hand> winningHands = new ArrayList<Hand>();
+		
+		for(Player p : players) {
+			ArrayList<Card> playerHandCards = p.getDeck().getCards();
+			playerHandCards.addAll(communityCards.getCommunityCards());
+			
+			try {
+				//Determine the best hand of the current player and the player and its hand to the map. Adding the hand to a list of hands to compare them easily.
+				Hand h = CardCombinations.bestHandFromCards(playerHandCards);
+				playerHandMap.put(p, h);
+				winningHands.add(h);
+			} catch (EmptyCardListException e) {
+				e.printStackTrace();
+			}
+		}
+
+		//Getting the best/winning hands (more than one in case of equality)
+		winningHands = HandComparator.bestHand(winningHands);
+		
+		Map<Player, Hand> winners = new HashMap<Player, Hand>();
+		
+		//Only keeping players with a winning hand
+		for(Hand h : winningHands) {
+			for(Entry<Player, Hand> entry : playerHandMap.entrySet()) {
+				if(h == entry.getValue()) {
+					winners.put(entry.getKey(), entry.getValue());
+				}
+			}
+		}
+				
+		return winners;
 	}
 	
 	private class ReceiveRequestBehaviour extends CyclicBehaviour {
