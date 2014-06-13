@@ -60,7 +60,7 @@ public class PlayersContainer {
 	
 	public Player getPlayerByName(String playerName) {
 		for(Player p : this.players){
-			if(p.getPlayerName().equals(playerName)){
+			if(p.getNickname().equals(playerName)){
 				return p;
 			}
 		}
@@ -259,7 +259,7 @@ public class PlayersContainer {
 		
 		private final int initialIndex;
 		private int currentPlayerIndex;
-		private int loopNumber = 0;
+		private int loopNumber = 1;
 		
 		public PlayerCircularIterator(){
 			Collections.sort(players, new Player.PlayerTablePositionComparator());

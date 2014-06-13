@@ -9,7 +9,7 @@ public class TablePlaceNotAvailableException extends Exception {
 	}
 	
 	public TablePlaceNotAvailableException(Player p){
-		super("The required place ( " + p.getTablePositionIndex() + " ) is not available, the player " + p.getPlayerName() + " [AID: " + p.getAID().toString() + "] is already sitting");
+		super("The required place ( " + p.getTablePositionIndex() + " ) is not available, the player " + p.getNickname() + " [AID: " + p.getAID().toString() + "] is already sitting");
 	}
 	
 }

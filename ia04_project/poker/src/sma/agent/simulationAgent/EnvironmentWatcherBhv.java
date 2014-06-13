@@ -74,7 +74,7 @@ public class EnvironmentWatcherBhv extends CyclicBehaviour
 			public boolean onPlayerSitOnTableNotification(PlayerSitOnTableNotification notification, ACLMessage aclMsg) {
 				try {
 					simAgent.getGame().getPlayersContainer().addPlayer(notification.getNewPlayer());
-					System.out.println("[" + simAgent.getLocalName() + "] player " + notification.getNewPlayer().getPlayerName() + " added.");
+					System.out.println("[" + simAgent.getLocalName() + "] player " + notification.getNewPlayer().getNickname() + " added.");
 				} catch (PlayerAlreadyRegisteredException e) {
 					// TODO Auto-generated catch block
 					

@@ -9,7 +9,7 @@ public class NotRegisteredPlayerException extends Exception {
 	}
 	
 	public NotRegisteredPlayerException(Player p){
-		super("The player " + p.getPlayerName() + " [ AID: " + p.getAID().toString() + " ] is not registered in the game");
+		super("The player " + p.getNickname() + " [ AID: " + p.getAID().toString() + " ] is not registered in the game");
 	}
 	
 }

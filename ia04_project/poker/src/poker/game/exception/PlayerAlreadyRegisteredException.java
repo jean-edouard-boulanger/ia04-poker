@@ -9,7 +9,7 @@ public class PlayerAlreadyRegisteredException extends Exception {
 	}
 	
 	public PlayerAlreadyRegisteredException(Player p){
-		super("Tried to add the player " + p.getPlayerName() + " [ AID : " + p.getAID().toString() +" ], who is already in the game");
+		super("Tried to add the player " + p.getNickname() + " [ AID : " + p.getAID().toString() +" ], who is already in the game");
 	}
 	
 }

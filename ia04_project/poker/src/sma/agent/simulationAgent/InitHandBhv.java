@@ -42,7 +42,7 @@ public class InitHandBhv extends ParallelBehaviour {
 		transaction.setResponseVisitor(new MessageVisitor(){
 			@Override
 			public boolean onOKMessage(OKMessage okMessage, ACLMessage aclMsg) {
-				System.out.println("[" + myAgent.getLocalName() + "] cards dealt successfullyt.");
+				System.out.println("[" + myAgent.getLocalName() + "] cards dealt successfully.");
 				return true;
 			}
 			@Override
@@ -62,7 +62,7 @@ public class InitHandBhv extends ParallelBehaviour {
 		transaction.setResponseVisitor(new MessageVisitor(){
 			@Override
 			public boolean onOKMessage(OKMessage okMessage, ACLMessage aclMsg) {
-				System.out.println("[" + myAgent.getLocalName() + "] community cards emptied successfuly.");
+				System.out.println("[" + myAgent.getLocalName() + "] community cards emptied successfully.");
 				return true;
 			}
 			@Override
