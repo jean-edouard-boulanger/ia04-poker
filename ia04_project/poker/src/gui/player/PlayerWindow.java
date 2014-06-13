@@ -10,6 +10,7 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -358,7 +359,12 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 	
 	public void show()
 	{
-		this.primaryStage.show();
+	    // dirty fix
+	    Platform.runLater(new Runnable() {
+		@Override public void run() {
+		    primaryStage.show();
+		}
+	    });
 	}
 	
 	public void initializeAction()
@@ -415,7 +421,7 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
          */
 		if(evt.getPropertyName().equals(PlayerGuiEvent.SHOW_IHM.toString()))
 		{
-			this.primaryStage.show();
+		    	show();
 			
 			System.out.println("Initialiazing");
 		}
