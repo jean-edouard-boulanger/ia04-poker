@@ -1,27 +1,22 @@
 package application.test;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-
 import gui.player.CommunautyCardIHM;
 import gui.player.PersoIHM;
+import gui.player.PersoIHM.Sens;
 import gui.player.PlayerWindow;
 import gui.player.TokenBetPlayerIHM;
 import gui.player.TokenPlayerIHM;
-import gui.player.PersoIHM.Sens;
-import gui.player.PlayerWindow.PlayerGuiEvent;
 import gui.player.TokenPlayerIHM.ColorToken;
-import gui.server.ServerWindow;
-import jade.lang.acl.ACLMessage;
 
-import java.io.IOException;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.net.URL;
-import java.util.ArrayList;
 
 import javafx.application.Application;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -34,38 +29,10 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
-
-import javax.swing.SwingUtilities;
-
-import com.fasterxml.jackson.core.JsonGenerationException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-
-import poker.card.exception.CommunityCardsFullException;
-import poker.card.helper.CardPickerHelper;
-import poker.card.helper.CustomPickSequence;
-import poker.card.helper.RandomCardDeckGenerator;
-import poker.card.heuristics.combination.exception.EmptyCardListException;
-import poker.card.heuristics.combination.exception.UnexpectedCombinationIdenticCards;
-import poker.card.heuristics.combination.helper.CardCombinations;
-import poker.card.heuristics.combination.helper.HandComparator;
-import poker.card.heuristics.combination.model.Combination;
-import poker.card.heuristics.combination.model.Hand;
-import poker.card.heuristics.probability.ProbabilityEvaluator;
-import poker.card.heuristics.probability.ProbabilityEvaluator.CombinationProbabilityReport;
 import poker.card.model.Card;
-import poker.card.model.CardDeck;
 import poker.card.model.CardRank;
 import poker.card.model.CardSuit;
-import poker.card.model.CommunityCards;
-import poker.card.model.GameDeck;
-import poker.card.model.UserDeck;
 import sma.agent.HumanPlayerAgent;
-import sma.message.FailureMessage;
-import sma.message.Message;
-import sma.message.MessageVisitor;
-import javafx.application.Application;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 
 public class Main2 extends Application implements PropertyChangeListener {
 
