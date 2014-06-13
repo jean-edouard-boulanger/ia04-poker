@@ -48,6 +48,7 @@ public class DealerAgent extends Agent {
 	public DealerAgent(){
 		super();
 		this.dealTransactionsErrors = new HashMap<String, ArrayList<String>>();
+		this.messageVisitor = new DealerMessageVisitor();
 	}
 	
 	public void setup(){
