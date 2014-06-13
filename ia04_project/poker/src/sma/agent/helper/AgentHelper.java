@@ -45,8 +45,15 @@ public class AgentHelper {
 			e.printStackTrace();
 			return false;
 		}
+
+		if(visitor == null){
+			System.err.println("SEVERE WARNING [" + agent.getLocalName() + " : AgentHelper.receiveMessage] Message visitor passed to receiveMessage is null");
+			agent.putBack(ACLmsg);
+			return false;
+		}
+		
 		// Horseshit !
-		if(visitor != null && !msg.accept(visitor, ACLmsg)){
+		if(!msg.accept(visitor, ACLmsg)){
 			System.out.println("[" + agent.getLocalName() + "] Warning non-handled message (" + ACLmsg.getContent() + ").");
 			agent.putBack(ACLmsg);
 			return false;
