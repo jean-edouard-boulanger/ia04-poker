@@ -162,7 +162,7 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 
         root.setId("root");
                 
-        label_hand = new Label("Main n�1");
+        label_hand = new Label("Main n°1");
 
         label_hand.setLayoutX(15);
         label_hand.setLayoutY(15);
@@ -187,7 +187,7 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
         button_follow.setLayoutX(335);
         button_follow.setLayoutY(490);
 
-        button_follow.setText("Suivre � 2");
+        button_follow.setText("Suivre à 2");
 
         button_follow.setPrefWidth(100);
         button_follow.getStyleClass().add("button_play");
@@ -210,7 +210,7 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
         button_relaunch.setLayoutX(225);
         button_relaunch.setLayoutY(550);
 
-        button_relaunch.setText("Relancer � 5");
+        button_relaunch.setText("Relancer à 5");
 
         button_relaunch.setPrefWidth(100);
         button_relaunch.getStyleClass().add("button_play");
@@ -337,6 +337,7 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
         
         this.list_card_player = new ArrayList<CardPlayerIHM>();
         
+        
         this.list_card_player.add(card_player_1);
         this.list_card_player.add(card_player_2);
         this.list_card_player.add(card_player_3);
@@ -439,8 +440,6 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 
 
         initializeAction();
-
-        initializeGame(10, 2);
         
         GuiEvent ev = new GuiEvent(this, PlayerGuiEvent.IHM_READY.ordinal());
 		human_player_agent.postGuiEvent(ev);
@@ -462,7 +461,7 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 	public void launchWindow(String[] args) {
 		launch(args);
         
-        // Rajouter notification property pour dire � l'agent qu'on est pr�t et n'afficher qu'� ce moment l� les interfaces
+        // Rajouter notification property pour dire à l'agent qu'on est projet n'afficher qu'à ce moment les interfaces
 	}
 
 	public static PlayerWindow launchWindow(HumanPlayerAgent agent, PropertyChangeSupport changes) {
@@ -482,6 +481,9 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 		return null;
 	}
 	
+	/**************************************
+     *  Interaction notification
+     */
 	public void show()
 	{
 	    PlatformHelper.run(new Runnable() {
@@ -489,6 +491,34 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 			    primaryStage.show();
 			}
 	    });
+	}
+	
+	public void initializeMe(final Player player)
+	{
+		 PlatformHelper.run(new Runnable() {
+				@Override public void run() {
+					int position_player = player.getTablePositionIndex();
+					
+					PlayerWindow.this.list_perso.get(position_player).setPseudo(player.getNickname());
+					root.getChildren().add(PlayerWindow.this.list_perso.get(position_player));
+					root.getChildren().add(PlayerWindow.this.list_card_player.get(position_player));
+			        root.getChildren().add(PlayerWindow.this.list_token_bet.get(position_player));
+				}
+		 });
+	}
+	
+	public void initializeOther(final Player player)
+	{
+		 PlatformHelper.run(new Runnable() {
+				@Override public void run() {
+					int position_player = player.getTablePositionIndex();
+					
+					PlayerWindow.this.list_perso.get(position_player).setPseudo(player.getNickname());
+					root.getChildren().add(PlayerWindow.this.list_perso.get(position_player));
+					root.getChildren().add(PlayerWindow.this.list_card_player.get(position_player));
+			        root.getChildren().add(PlayerWindow.this.list_token_bet.get(position_player));
+				}
+		 });
 	}
 	
 	public void initializeAction()
@@ -558,10 +588,12 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 		{
 			if(evt.getNewValue() instanceof Player)
 			{
-				
+				Player player = (Player)evt.getNewValue();
+				initializeMe(player);
+				System.out.println("[PlayerWindow] Initialiazing me");
 			}
 			
-			System.out.println("[PlayerWindow] Initialiazing");
+			System.out.println("[PlayerWindow] Initialiazing me");
 		}
 		
 		/**
@@ -571,10 +603,11 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 		{
 			if(evt.getNewValue() instanceof Player)
 			{
-				
+				Player player = (Player)evt.getNewValue();
+				initializeOther(player);
 			}
 			
-			System.out.println("[PlayerWindow] Initialiazing");
+			System.out.println("[PlayerWindow] Initialiazing other");
 		}
 		
 		/**
@@ -582,7 +615,8 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
          */
 		else if(evt.getPropertyName().equals(PlayerGuiEvent.PLAYER_RECEIVED_UNKNOWN_CARD.toString()))
 		{
-				System.out.println("[PlayerWindow] Player received unknown card.");
+				System.out.println("[PlayerWindow] Player "+ (Integer)evt.getNewValue() +" received an unknown card.");
+				this.list_card_player.get((Integer)evt.getNewValue()).addUnknownCard();
 		}
 		
 		/**

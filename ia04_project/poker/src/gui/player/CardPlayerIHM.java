@@ -20,37 +20,35 @@ public class CardPlayerIHM extends Group {
 	
 	private int current_position_x;
 	
+	private int number_cards = 0;
+	
 	public CardPlayerIHM(int x, int y)
 	{
-		
 		list_card = new ArrayList<ImageView>();
 		
 		this.x = x;
 		this.y = y;
-		
-		ImageView image_card = new ImageView(new Image("images/background_card.png"));
-		image_card.setLayoutX(x);
-		image_card.setLayoutY(y);
-		image_card.setFitWidth(20);
-		image_card.setFitHeight(32);
-		
-		this.getChildren().add(image_card);
-		addUnknownCard();
 	}
 	
 	public void addUnknownCard()
 	{
-		this.current_position_x += x + 5;
-		
-		ImageView image_card = new ImageView(new Image("images/background_card.png"));
-		image_card.setLayoutX(this.current_position_x);
-		image_card.setLayoutY(y);
-		image_card.setFitWidth(20);
-		image_card.setFitHeight(32);
+		if(this.number_cards < 2){
+			this.current_position_x += x + 5;
 			
-		
-		this.list_card.add(image_card);
-		this.getChildren().add(image_card);
+			ImageView image_card = new ImageView(new Image("images/background_card.png"));
+			image_card.setLayoutX(this.current_position_x);
+			image_card.setLayoutY(y);
+			image_card.setFitWidth(20);
+			image_card.setFitHeight(32);
+				
+			this.list_card.add(image_card);
+			this.getChildren().add(image_card);
+			
+			this.number_cards++;
+		}
+		else {
+			System.err.println("ERROR [IHM] Tried to add add unkown card, while the player already had two.");
+		}
 	}
 	
 	public void emptyCard()
@@ -60,5 +58,7 @@ public class CardPlayerIHM extends Group {
 		
 		this.list_card.clear();
 		this.current_position_x = x + 35;
+		
+		this.number_cards = 0;
 	}
 }
