@@ -138,8 +138,10 @@ public class HumanPlayerAgent extends GuiAgent {
 		@Override
 		public boolean onPlayerReceivedUnknownCardNotification(PlayerReceivedUnknownCardNotification notification, ACLMessage aclMsg) {
 			
-			if(!notification.getPlayerAID().equals(HumanPlayerAgent.this.getAID()))
-				changes_game.firePropertyChange(PlayerGuiEvent.PLAYER_RECEIVED_UNKNOWN_CARD.toString(), null, 5);
+			System.out.println("[HumanPlayerAgent] Unknown card notification received. PLAYER_RECEIVED_UNKNOWN_CARD fired");	
+			
+			// if(!notification.getPlayerAID().equals(HumanPlayerAgent.this.getAID()))
+				changes_game.firePropertyChange(PlayerGuiEvent.PLAYER_RECEIVED_UNKNOWN_CARD.toString(), null, game.getPlayersContainer().getPlayerByAID(notification.getPlayerAID()).getTablePositionIndex());
 			
 			return true;
 		}
@@ -147,7 +149,7 @@ public class HumanPlayerAgent extends GuiAgent {
 		@Override
 		public boolean onPlayerReceivedCardNotification(PlayerReceivedCardNotification notification, ACLMessage aclMsg){
 			
-			if(notification.getPlayerAID().equals(HumanPlayerAgent.this.getAID()))
+			// if(notification.getPlayerAID().equals(HumanPlayerAgent.this.getAID()))
 				changes_game.firePropertyChange(PlayerGuiEvent.PLAYER_RECEIVED_CARD.toString(), null, notification.getReceivedCard());
 			
 			return true;
