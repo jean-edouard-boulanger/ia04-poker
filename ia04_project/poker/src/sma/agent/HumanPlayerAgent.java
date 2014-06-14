@@ -41,6 +41,7 @@ import sma.message.environment.notification.PlayerReceivedCardNotification;
 import sma.message.environment.notification.PlayerReceivedTokenSetNotification;
 import sma.message.environment.notification.PlayerReceivedUnknownCardNotification;
 import sma.message.environment.notification.PlayerSitOnTableNotification;
+import sma.message.environment.notification.TokenValueDefinitionChangedNotification;
 
 public class HumanPlayerAgent extends GuiAgent {
 
@@ -151,7 +152,7 @@ public class HumanPlayerAgent extends GuiAgent {
 			
 			// if(notification.getPlayerAID().equals(HumanPlayerAgent.this.getAID()))
 				changes_game.firePropertyChange(PlayerGuiEvent.PLAYER_RECEIVED_CARD.toString(), null, notification.getReceivedCard());
-			
+
 			return true;
 		}
 		
@@ -260,12 +261,12 @@ public class HumanPlayerAgent extends GuiAgent {
 			
 			return true;
 		}
-		
+				
 		@Override
 		public boolean onSubscriptionOK(SubscriptionOKMessage notif, ACLMessage aclMsg){
 			
 			game = notif.getGame();
-			System.out.println("ii");
+			System.out.println("Subscription OK.");
 			
 			for(Player player : game.getPlayersContainer().getPlayers())
 			{
@@ -328,7 +329,7 @@ public class HumanPlayerAgent extends GuiAgent {
 	     */
 		if(arg0.getType() == PlayerGuiEvent.IHM_READY.ordinal())
 		{
-			System.out.println("ii");
+			System.out.println("IHM Ready");
 			wait_game_window.setVisible(true);
 			changes_game.firePropertyChange(PlayerGuiEvent.SHOW_IHM.toString(), null, null);
 		}

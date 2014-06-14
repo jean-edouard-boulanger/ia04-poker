@@ -534,6 +534,29 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 		 });
 	}
 	
+	public void initializePlayerReceivedCard(final Card card) {
+		 PlatformHelper.run(new Runnable() {
+				@Override public void run() {
+					Image image = CardImageHelper.getCardImage(card);
+					
+					if(player_cards.get(0).getImage() == null) {
+						player_cards.get(0).setImage(image);
+					}
+					else if(player_cards.get(1).getImage() == null) {
+						player_cards.get(1).setImage(image);
+					}
+				}
+		 });
+	}
+
+	public void initializePlayerReceivedUnknownCard(final Integer index) {
+		 PlatformHelper.run(new Runnable() {
+				@Override public void run() {
+					list_card_player.get(index).addUnknownCard();	
+				}
+		 });
+	}
+	
 	public void initializeAction()
 	{
 		/**************************************
@@ -629,7 +652,7 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 		else if(evt.getPropertyName().equals(PlayerGuiEvent.PLAYER_RECEIVED_UNKNOWN_CARD.toString()))
 		{
 				System.out.println("[PlayerWindow] Player "+ (Integer)evt.getNewValue() +" received an unknown card.");
-				this.list_card_player.get((Integer)evt.getNewValue()).addUnknownCard();
+				initializePlayerReceivedUnknownCard((Integer)evt.getNewValue());
 		}
 		
 		/**
@@ -637,15 +660,7 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
          */
 		else if(evt.getPropertyName().equals(PlayerGuiEvent.PLAYER_RECEIVED_CARD.toString()))
 		{
-			Image image = CardImageHelper.getCardImage((Card)evt.getNewValue());
-			
-			if(player_cards.get(0).getImage() == null) {
-				player_cards.get(0).setImage(image);
-			}
-			else if(player_cards.get(1).getImage() == null) {
-				player_cards.get(1).setImage(image);
-			}
-			
+			initializePlayerReceivedCard((Card)evt.getNewValue());
 			System.out.println("[PlayerWindow] Player received card." + (Card)evt.getNewValue());
 		}
 		

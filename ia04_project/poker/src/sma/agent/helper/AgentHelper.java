@@ -55,7 +55,7 @@ public class AgentHelper {
 		// Horseshit !
 		if(!msg.accept(visitor, ACLmsg)){
 			System.out.println("[" + agent.getLocalName() + "] Warning non-handled message (" + ACLmsg.getContent() + ").");
-			agent.putBack(ACLmsg);
+		//	agent.putBack(ACLmsg);
 			return false;
 		}
 		return true;
