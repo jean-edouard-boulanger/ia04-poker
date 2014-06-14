@@ -4,23 +4,32 @@ import gui.player.PlayerWindow;
 import gui.player.PlayerWindow.PlayerGuiEvent;
 import gui.player.WaitGameWindow;
 import gui.player.WaitGameWindow.WaitGameGuiEvent;
-import gui.server.ServerWindow;
+import jade.core.AID;
+import jade.core.Agent;
+import jade.core.behaviours.CyclicBehaviour;
+import jade.gui.GuiAgent;
+import jade.gui.GuiEvent;
+import jade.lang.acl.ACLMessage;
+import jade.lang.acl.MessageTemplate;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+
+import javafx.embed.swing.JFXPanel;
 
 import javax.swing.SwingUtilities;
 
 import poker.card.exception.CommunityCardsFullException;
-import poker.game.exception.NotRegisteredPlayerException;
+import poker.game.exception.NoPlaceAvailableException;
+import poker.game.exception.PlayerAlreadyRegisteredException;
 import poker.game.model.Game;
+import poker.game.player.model.Player;
 import sma.agent.helper.AgentHelper;
 import sma.agent.helper.DFServiceHelper;
 import sma.agent.helper.TransactionBhv;
 import sma.message.FailureMessage;
 import sma.message.MessageVisitor;
 import sma.message.PlayerSubscriptionRequest;
+import sma.message.SubscriptionOKMessage;
 import sma.message.environment.notification.BlindValueDefinitionChangedNotification;
 import sma.message.environment.notification.CardAddedToCommunityCardsNotification;
 import sma.message.environment.notification.CommunityCardsEmptiedNotification;
@@ -32,14 +41,6 @@ import sma.message.environment.notification.PlayerReceivedCardNotification;
 import sma.message.environment.notification.PlayerReceivedTokenSetNotification;
 import sma.message.environment.notification.PlayerReceivedUnknownCardNotification;
 import sma.message.environment.notification.PlayerSitOnTableNotification;
-import jade.core.AID;
-import jade.core.Agent;
-import jade.core.behaviours.CyclicBehaviour;
-import jade.domain.DFHSQLKB;
-import jade.gui.GuiAgent;
-import jade.gui.GuiEvent;
-import jade.lang.acl.ACLMessage;
-import jade.lang.acl.MessageTemplate;
 
 public class HumanPlayerAgent extends GuiAgent {
 
@@ -63,19 +64,26 @@ public class HumanPlayerAgent extends GuiAgent {
 		this.msgVisitor_request = new HumanPlayerRequestMessageVisitor();
 		this.msgVisitor_failure = new HumanPlayerFailureMessageVisitor();
 
+
+		wait_game_window = new WaitGameWindow(this);
+		changes_waitgame.addPropertyChangeListener(wait_game_window);
 		
-		/*wait_game_window = new WaitGameWindow(this);
-		changes_waitgame.addPropertyChangeListener(wait_game_window);*/
+        //Need to init the window via the SwingUtilities.invokeLater method on Mac to work
 		
-		player_window = new PlayerWindow();
-  		player_window.setHumanPlayerAgent(HumanPlayerAgent.this);
-  		changes_game.addPropertyChangeListener(player_window);
-  		
-		 SwingUtilities.invokeLater(new Runnable() {
-	          public void run() {
-		      		player_window.launchWindow(new String[]{});	
-	          }
-	        });
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				new JFXPanel();
+				javafx.application.Platform.runLater(new Runnable() {
+					
+					@Override
+					public void run() {
+			    		HumanPlayerAgent.this.player_window = PlayerWindow.launchWindow(HumanPlayerAgent.this, changes_game);
+					}
+				});
+				
+			}
+		});
 		
 		addBehaviour(new HumanPlayerReceiveRequestBehaviour(this));
 		addBehaviour(new HumanPlayerReceiveFailureBehaviour(this));
@@ -91,7 +99,7 @@ public class HumanPlayerAgent extends GuiAgent {
 		
 		public HumanPlayerReceiveRequestBehaviour(Agent agent){
 			super(agent);
-			this.receiveRequestMessageTemplate = MessageTemplate.MatchPerformative(ACLMessage.REQUEST);
+			this.receiveRequestMessageTemplate = MessageTemplate.MatchPerformative(ACLMessage.PROPAGATE);
 		}
 		
 		@Override
@@ -184,8 +192,15 @@ public class HumanPlayerAgent extends GuiAgent {
 		@Override
 		public boolean onPlayerSitOnTableNotification(PlayerSitOnTableNotification notification, ACLMessage aclMsg){
 			
+			try {
+				game.getPlayersContainer().addPlayer(notification.getNewPlayer());
+			} catch (PlayerAlreadyRegisteredException e) {
+				e.printStackTrace();
+			} catch (NoPlaceAvailableException e) {
+				e.printStackTrace();
+			}
 			// FIND THE PLAYER NUMBER AND SEND IT WITH CONTENT
-			changes_game.firePropertyChange(PlayerGuiEvent.PLAYER_TABLE.toString(), null, 5);
+			changes_game.firePropertyChange(PlayerGuiEvent.INITIALIZING_OTHER.toString(), null, notification.getNewPlayer());
 			
 			return true;
 		}
@@ -244,6 +259,28 @@ public class HumanPlayerAgent extends GuiAgent {
 			return true;
 		}
 		
+		@Override
+		public boolean onSubscriptionOK(SubscriptionOKMessage notif, ACLMessage aclMsg){
+			
+			game = notif.getGame();
+			System.out.println("ii");
+			
+			for(Player player : game.getPlayersContainer().getPlayers())
+			{
+				if(player.getAID() == HumanPlayerAgent.this.getAID())
+				{
+					changes_game.firePropertyChange(PlayerGuiEvent.INITIALIZING_ME.toString(), null, game);
+				}
+				else
+				{
+					changes_game.firePropertyChange(PlayerGuiEvent.INITIALIZING_OTHER.toString(), null, game);
+				}
+			}
+			
+			
+			return true;
+		}
+		
 	}
 	
 	/**************************************
@@ -278,20 +315,21 @@ public class HumanPlayerAgent extends GuiAgent {
 			AID simulation = DFServiceHelper.searchService(this, "PokerSimulation","Simulation");
 			this.addBehaviour(new TransactionBhv(this, new PlayerSubscriptionRequest(pseudo), simulation, ACLMessage.SUBSCRIBE));
 		}
-		
+		// Faire un behaviour comme dans la simulation
 		else if(arg0.getType() == WaitGameGuiEvent.GAME_START.ordinal())
 		{
 			wait_game_window.setVisible(false);
-			
-			PlayerWindow player_window = new PlayerWindow();
-			player_window.setHumanPlayerAgent(this);
-			changes_game.addPropertyChangeListener(player_window);
-			player_window.launchWindow(new String[]{});
 		}
 		
 		/**************************************
 	     *  IHM Player
 	     */
+		if(arg0.getType() == PlayerGuiEvent.IHM_READY.ordinal())
+		{
+			System.out.println("ii");
+			wait_game_window.setVisible(true);
+			changes_game.firePropertyChange(PlayerGuiEvent.SHOW_IHM.toString(), null, null);
+		}
 	}
 	
 	

@@ -1,7 +1,9 @@
 
-#root {
+#background {
 -fx-background-image:url('../../images/background.png');
--fx-background-size: 700px 450px;
+-fx-background-size: cover  ;
+-fx-background-repeat: no-repeat;
+-fx-background-position: center ;
 }
 
 .pseudo {

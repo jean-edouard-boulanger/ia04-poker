@@ -35,6 +35,6 @@ public class PlayerReceivedCardNotification extends Message {
 	
 	@Override
 	public boolean accept(MessageVisitor visitor, ACLMessage aclMsg) {
-		return visitor.onPlayerReceivedCardNotification(this, aclMsg);
+		return visitor.onEnvironmentChanged(this, aclMsg) | visitor.onPlayerReceivedCardNotification(this, aclMsg);
 	}
 }

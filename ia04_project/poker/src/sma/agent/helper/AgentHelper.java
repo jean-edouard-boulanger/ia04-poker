@@ -45,8 +45,16 @@ public class AgentHelper {
 			e.printStackTrace();
 			return false;
 		}
+
+		if(visitor == null){
+			System.err.println("SEVERE WARNING [" + agent.getLocalName() + " : AgentHelper.receiveMessage] Message visitor passed to receiveMessage is null");
+			agent.putBack(ACLmsg);
+			return false;
+		}
+		
 		// Horseshit !
-		if(visitor != null && !msg.accept(visitor, ACLmsg)){
+		if(!msg.accept(visitor, ACLmsg)){
+			System.out.println("[" + agent.getLocalName() + "] Warning non-handled message (" + ACLmsg.getContent() + ").");
 			agent.putBack(ACLmsg);
 			return false;
 		}
@@ -85,7 +93,7 @@ public class AgentHelper {
 				reply.setContent(data.toJson());
 			agent.send(reply);
 		} catch (IOException e) {
-			System.out.println("[" + agent.getName() + "] Error while serializing reply, the message was not sent (" + e.getMessage() + ").");
+			System.out.println("[" + agent.getLocalName() + "] Error while serializing reply, the message was not sent (" + e.getMessage() + ").");
 		}
 	}
 	
@@ -108,7 +116,7 @@ public class AgentHelper {
 			
 			sender.send(msg);
 		} catch(IOException ex){
-			System.out.println("[" + sender.getName() + "] Error while serializing reply, the message was not sent (" + ex.getMessage() + ").");
+			System.out.println("[" + sender.getLocalName() + "] Error while serializing mssa, the message was not sent (" + ex.getMessage() + ").");
 		}
 	}	
 }

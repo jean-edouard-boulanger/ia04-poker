@@ -25,6 +25,6 @@ public class BlindValueDefinitionChangedNotification extends Message {
 	
 	@Override
 	public boolean accept(MessageVisitor visitor, ACLMessage aclMsg) {
-		return visitor.onBlindValueDefinitionChangedNotification(this, aclMsg);
+		return visitor.onEnvironmentChanged(this, aclMsg) | visitor.onBlindValueDefinitionChangedNotification(this, aclMsg);
 	}
 }

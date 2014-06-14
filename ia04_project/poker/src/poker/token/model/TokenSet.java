@@ -17,6 +17,10 @@ public class TokenSet {
 		this.tokensAmount = new HashMap<TokenType, Integer>();
 	}
 	
+	public TokenSet(TokenSet set){
+		this.tokensAmount = new HashMap<TokenType, Integer>(set.tokensAmount);
+	}
+	
 	public TokenSet(Map<TokenType, Integer> tokensAmount){
 		this.tokensAmount = tokensAmount;
 	}
@@ -25,7 +29,7 @@ public class TokenSet {
 		return this.tokensAmount;
 	}
 	
-	public void setMap(Map<TokenType, Integer> tokensAmount){
+	public void setTokensAmount(Map<TokenType, Integer> tokensAmount){
 		this.tokensAmount = tokensAmount;
 	}
 		
@@ -62,19 +66,35 @@ public class TokenSet {
 		this.setAmountForTokenType(tokenType, newAmount);
 	}
 	
-	public void AddTokenSet(TokenSet addedTokenSet) throws InvalidTokenAmountException{
-		for(TokenType tt : TokenType.values()){
-			this.increaseAmountForTokenType(tt, addedTokenSet.getAmountForTokenType(tt));
+	public TokenSet AddTokenSet(TokenSet addedTokenSet){
+		int newValue = 0;
+		for(Map.Entry<TokenType, Integer> entry : this.tokensAmount.entrySet()){
+			newValue = this.getAmountForTokenType(entry.getKey()) + entry.getValue();
+			this.tokensAmount.put(entry.getKey(), newValue);
 		}
+		return this;
 	}	
 	
-	public void SubstractTokenSet(TokenSet substractedTokenSet) throws InvalidTokenAmountException{
-		for(TokenType tt : TokenType.values()){
-			this.decreaseAmountForTokenType(tt, substractedTokenSet.getAmountForTokenType(tt));
+	public TokenSet SubstractTokenSet(TokenSet substractedTokenSet) throws InvalidTokenAmountException{
+		Map<TokenType, Integer> tmpTokensAmount = new HashMap<TokenType, Integer>(this.tokensAmount);
+		
+		int newValue = 0;
+		for(Map.Entry<TokenType, Integer> entry : this.tokensAmount.entrySet()){
+			newValue = this.getAmountForTokenType(entry.getKey()) - entry.getValue();
+			tmpTokensAmount.put(entry.getKey(), newValue);
+			
+			if(newValue < 0){
+				throw new InvalidTokenAmountException();
+			}
+			
 		}
+		
+		this.tokensAmount = tmpTokensAmount;
+		
+		return this;
 	}
 	
-	public void reset(){
+	public void clear(){
 		for(TokenType tt : TokenType.values()){
 			this.tokensAmount.put(tt, 0);
 		}

@@ -1,15 +1,7 @@
 package poker.game.model;
 
-import jade.core.AID;
-
-import java.util.ArrayList;
-
 import poker.card.model.CardDeck;
 import poker.card.model.CommunityCards;
-import poker.card.model.GameDeck;
-import poker.game.exception.NotRegisteredPlayerException;
-import poker.game.exception.PlayerAlreadyRegisteredException;
-import poker.game.player.model.Player;
 import poker.token.model.TokenSet;
 import poker.token.model.TokenValueDefinition;
 
@@ -70,8 +62,6 @@ public class Game {
 	public void setPot(TokenSet pot) {
 		this.pot = pot;
 	}
-
-
 
 	public CommunityCards getCommunityCards() {
 		return communityCards;

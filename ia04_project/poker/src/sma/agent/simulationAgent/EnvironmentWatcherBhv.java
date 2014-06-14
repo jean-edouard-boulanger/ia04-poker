@@ -14,6 +14,7 @@ import sma.agent.helper.AgentHelper;
 import sma.agent.helper.DFServiceHelper;
 import sma.agent.helper.TransactionBhv;
 import sma.message.FailureMessage;
+import sma.message.Message;
 import sma.message.MessageVisitor;
 import sma.message.OKMessage;
 import sma.message.PlayerSubscriptionRequest;
@@ -41,8 +42,9 @@ public class EnvironmentWatcherBhv extends CyclicBehaviour
 		
 		TransactionBhv envSubscriptionBhv = new TransactionBhv(simAgent, null, environment, ACLMessage.SUBSCRIBE);
 		envSubscriptionBhv.setResponseVisitor(new MessageVisitor(){
+			
 			@Override
-			public boolean onSubscriptionOKMessage(SubscriptionOKMessage msg, ACLMessage aclMsg) {
+			public boolean onSubscriptionOK(SubscriptionOKMessage msg, ACLMessage aclMsg) {
 				System.out.println("[" + simAgent.getLocalName() + "] subscription to environment succeded.");
 				simAgent.setGame(msg.getGame());
 				if(simAgent.getGame().getPlayersContainer().getPlayersAIDs() != null)
@@ -55,6 +57,7 @@ public class EnvironmentWatcherBhv extends CyclicBehaviour
 				System.out.println("[" + simAgent.getLocalName() + "] subscription to environment failed: " + msg.getMessage());
 				return true;
 			}
+			
 		});
 		simAgent.addBehaviour(envSubscriptionBhv);
 	}
@@ -71,7 +74,7 @@ public class EnvironmentWatcherBhv extends CyclicBehaviour
 			public boolean onPlayerSitOnTableNotification(PlayerSitOnTableNotification notification, ACLMessage aclMsg) {
 				try {
 					simAgent.getGame().getPlayersContainer().addPlayer(notification.getNewPlayer());
-					System.out.println("[" + simAgent.getLocalName() + "] player " + notification.getNewPlayer().getPlayerName() + " added.");
+					System.out.println("[" + simAgent.getLocalName() + "] player " + notification.getNewPlayer().getNickname() + " added.");
 				} catch (PlayerAlreadyRegisteredException e) {
 					// TODO Auto-generated catch block
 					
@@ -88,6 +91,10 @@ public class EnvironmentWatcherBhv extends CyclicBehaviour
 				// TODO Auto-generated method stub
 				return true;
 			}
+			
+			// All other environment changes are discarded.
+			@Override
+			public boolean onEnvironmentChanged(Message notif, ACLMessage aclMsg) {	return true; }
 		});
 		
 		if(!msgReceived)

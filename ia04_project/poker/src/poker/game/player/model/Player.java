@@ -12,7 +12,7 @@ import poker.token.model.TokenValueDefinition;
 public class Player {
 	
 	protected AID aid;
-	protected String playerName;
+	protected String nickname;
 	protected Integer tablePositionIndex;
 	protected PlayerStatus status;
 	protected PlayerRole role;
@@ -22,7 +22,7 @@ public class Player {
 	
 	public Player(){
 		this.aid = null;
-		this.playerName = "";
+		this.nickname = "";
 		this.tokens = new TokenSet();
 		this.status = PlayerStatus.IN_GAME;
 		this.role = PlayerRole.USUAL;
@@ -31,7 +31,7 @@ public class Player {
 	
 	public Player(AID aid, String playerName) {
 		this.aid = aid;
-		this.playerName = playerName;
+		this.nickname = playerName;
 		this.tokens = new TokenSet();
 		this.status = PlayerStatus.IN_GAME;
 		this.role = PlayerRole.USUAL;
@@ -46,12 +46,12 @@ public class Player {
 		this.aid = aid;
 	}
 	
-	public String getPlayerName() {
-		return playerName;
+	public String getNickname() {
+		return nickname;
 	}
 	
-	public void setPlayerName(String playerName) {
-		this.playerName = playerName;
+	public void setNickname(String playerName) {
+		this.nickname = playerName;
 	}
 	
 	public Integer getTablePositionIndex() {

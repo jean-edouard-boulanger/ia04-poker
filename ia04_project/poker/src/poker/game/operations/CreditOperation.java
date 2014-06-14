@@ -22,11 +22,7 @@ public class CreditOperation extends Operation{
 	}
 
 	@Override
-	public void applyOperationToTokenSet(TokenSet tokenSet) throws OperationFailureException {
-		try {
-			tokenSet.AddTokenSet(this.creditedTokenSet);
-		} catch (InvalidTokenAmountException e) {
-			throw new OperationFailureException();
-		}
+	public void applyOperationToTokenSet(TokenSet tokenSet) {
+		tokenSet.AddTokenSet(this.creditedTokenSet);
 	}
 }

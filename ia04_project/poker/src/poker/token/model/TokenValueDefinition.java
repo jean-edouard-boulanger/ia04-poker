@@ -3,6 +3,8 @@ package poker.token.model;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import poker.token.exception.InvalidTokenValueException;
 
 public class TokenValueDefinition {
@@ -29,10 +31,15 @@ public class TokenValueDefinition {
 		return (value == null) ? 0 : value;
 	}
 	
+	public Map<TokenType, Integer> getTokenValues() {
+		return tokenValues;
+	}
+	
 	public void setTokenValues(Map<TokenType, Integer> tokenValues){
 		this.tokenValues = tokenValues;
 	}
 	
+	@JsonIgnore 
 	public Integer getMinimumTokenValue() {
 		int min = tokenValues.get(TokenType.BLACK);
 		

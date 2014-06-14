@@ -40,6 +40,10 @@ public class BlindValueDefinition {
 		return this.blindAmountDefinition;
 	}
 	
+	public int getBigBlindAmountDefinition(){
+		return this.blindAmountDefinition * 2;
+	}
+	
 	public void increase() {
 		blindAmountDefinition *= 2;
 	}

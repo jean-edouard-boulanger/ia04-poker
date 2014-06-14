@@ -52,14 +52,12 @@ public class DFServiceHelper {
 			sd.setName(name);
 			template.addServices(sd);
 			DFAgentDescription[] result = DFService.search(agent, template);
-			if (result.length > 0){
-				return result[0].getName();
-			}
-			else
-				return null;
+			if (result.length < 0)
+				throw new Exception("No service available.");
+			return result[0].getName();
 		} 
-		catch(FIPAException fe) { 
-			System.out.println("[" + agent.getLocalName() + "] Error while searching service in the DF (service type : " + type + ", service name : " + name + ").");
+		catch(Exception e) { 
+			System.out.println("[" + agent.getLocalName() + "] Error while searching service in the DF (service type : " + type + ", service name : " + name + ") : " + e.getMessage());
 			return null;
 		}
 	}

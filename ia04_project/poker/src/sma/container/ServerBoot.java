@@ -33,12 +33,16 @@ public class ServerBoot {
 			AgentController simulation = container.createNewAgent("Simulation", "sma.agent.SimulationAgent", null);
 			AgentController environment = container.createNewAgent("Environment", "sma.agent.EnvironmentAgent", null);
 			AgentController croupier = container.createNewAgent("Croupier", "sma.agent.DealerAgent", null);
-			AgentController blindManagement = container.createNewAgent("blindManagement", "sma.agent.BlindManagementAgent", null);
+			AgentController blindManagement = container.createNewAgent("BlindManager", "sma.agent.BlindManagementAgent", null);
+			AgentController determineWinner = container.createNewAgent("DetermineWinner", "sma.agent.DetermineWinnerAgent", null);
+			AgentController betManager = container.createNewAgent("BetManager", "sma.agent.BetManagerAgent", null);
 			
 			simulation.start();
 			environment.start();
 			croupier.start();
 			blindManagement.start();
+			determineWinner.start();
+			betManager.start();
 		} 
 		catch (Exception ex) 
 		{
