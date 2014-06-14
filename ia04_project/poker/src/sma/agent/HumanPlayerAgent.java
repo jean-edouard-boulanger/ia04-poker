@@ -53,7 +53,6 @@ public class HumanPlayerAgent extends GuiAgent {
 	private HumanPlayerFailureMessageVisitor msgVisitor_failure;
 	
 	private WaitGameWindow wait_game_window;
-	
 	private PlayerWindow player_window;
 	
 	public void setup()
@@ -64,6 +63,7 @@ public class HumanPlayerAgent extends GuiAgent {
 		
 		this.msgVisitor_request = new HumanPlayerRequestMessageVisitor();
 		this.msgVisitor_failure = new HumanPlayerFailureMessageVisitor();
+
 
 		wait_game_window = new WaitGameWindow(this);
 		changes_waitgame.addPropertyChangeListener(wait_game_window);
@@ -326,6 +326,7 @@ public class HumanPlayerAgent extends GuiAgent {
 	     */
 		if(arg0.getType() == PlayerGuiEvent.IHM_READY.ordinal())
 		{
+			System.out.println("ii");
 			wait_game_window.setVisible(true);
 			changes_game.firePropertyChange(PlayerGuiEvent.SHOW_IHM.toString(), null, null);
 		}

@@ -2,12 +2,13 @@ package gui.player;
 
 import gui.player.PersoIHM.Sens;
 import gui.player.TokenPlayerIHM.ColorToken;
-import gui.player.WaitGameWindow.WaitGameGuiEvent;
 import jade.gui.GuiEvent;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+import java.util.ArrayList;
+import java.util.List;
 
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -29,8 +30,6 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.transform.Scale;
 import javafx.stage.Stage;
 import poker.card.model.Card;
-import poker.card.model.CardRank;
-import poker.card.model.CardSuit;
 import poker.game.player.model.Player;
 import sma.agent.HumanPlayerAgent;
 
@@ -59,6 +58,9 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 		SHOW_IHM
 	}
 	
+	private final Pane root = new Pane();
+	
+	/** Interaction button */
 	private Button button_fold;
 	private Button button_follow;
 	private Button button_relaunch;
@@ -66,20 +68,76 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 	private Button button_add_bet;
 	private Button button_sub_bet;
 	
+	/** Hand number & min blind displaying */
 	private Label label_hand;
 	private Label label_min_blind;
 	
+	/** Log */
 	private TextArea textarea_log;
 	
+	/** Slide for bet */
 	private Slider slider_bet;
 	private TextField textfield_bet;
 	
+	/** Communauty card */
 	private CommunautyCardIHM communauty_card;
 	
 	private Rectangle zone_carte;
 	
+	/** Agent */
 	private HumanPlayerAgent human_player_agent;
 	
+	/** Players number */
+	private int nb_players;
+	private int num_player;
+	
+	/** Token player */
+	private TokenPlayerIHM token_white;
+	private TokenPlayerIHM token_black;
+	private TokenPlayerIHM token_blue;
+	private TokenPlayerIHM token_green;
+	private TokenPlayerIHM token_red;
+	
+	/** 10 players max */
+	
+	private List<PersoIHM> list_perso;
+	
+	PersoIHM perso_1;
+	PersoIHM perso_2;
+	PersoIHM perso_3;
+	PersoIHM perso_4;
+	PersoIHM perso_5;
+	PersoIHM perso_6;
+	PersoIHM perso_7;
+	PersoIHM perso_8;
+	PersoIHM perso_9;
+	PersoIHM perso_10;
+    
+	private List<TokenBetPlayerIHM> list_token_bet;
+	
+	TokenBetPlayerIHM bet_player_1;
+    TokenBetPlayerIHM bet_player_2;
+    TokenBetPlayerIHM bet_player_3;
+    TokenBetPlayerIHM bet_player_4;
+    TokenBetPlayerIHM bet_player_5;
+    TokenBetPlayerIHM bet_player_6;
+    TokenBetPlayerIHM bet_player_7;
+    TokenBetPlayerIHM bet_player_8;
+    TokenBetPlayerIHM bet_player_9;
+    TokenBetPlayerIHM bet_player_10;
+    
+    private List<CardPlayerIHM> list_card_player;
+    
+    CardPlayerIHM card_player_1;
+    CardPlayerIHM card_player_2;
+    CardPlayerIHM card_player_3;
+    CardPlayerIHM card_player_4;
+    CardPlayerIHM card_player_5;
+    CardPlayerIHM card_player_6;
+    CardPlayerIHM card_player_7;
+    CardPlayerIHM card_player_8;
+    CardPlayerIHM card_player_9;
+    CardPlayerIHM card_player_10;
 	// scaling:
 	private double scaleRatio = 1;
 	private double stageInitialWidth = 0;
@@ -101,7 +159,7 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 		this.primaryStage = primaryStage;
 		
 		primaryStage.setTitle("Poker");
-        final Pane root = new Pane();
+
         root.setId("root");
                 
         label_hand = new Label("Main n�1");
@@ -203,25 +261,92 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
         /**************************************
          *  Player's tokens
          */
-        TokenPlayerIHM token_white = new TokenPlayerIHM(485, 500, 25, ColorToken.WHITE);
-        TokenPlayerIHM token_black = new TokenPlayerIHM(515, 500, 25, ColorToken.BLACK);
-        TokenPlayerIHM token_blue = new TokenPlayerIHM(545, 500, 25, ColorToken.BLUE);
-        TokenPlayerIHM token_green = new TokenPlayerIHM(575, 500, 25, ColorToken.GREEN);
-        TokenPlayerIHM token_red = new TokenPlayerIHM(605, 500, 25, ColorToken.RED);
+        token_white = new TokenPlayerIHM(485, 500, 25, ColorToken.WHITE);
+        token_black = new TokenPlayerIHM(515, 500, 25, ColorToken.BLACK);
+        token_blue = new TokenPlayerIHM(545, 500, 25, ColorToken.BLUE);
+        token_green = new TokenPlayerIHM(575, 500, 25, ColorToken.GREEN);
+        token_red = new TokenPlayerIHM(605, 500, 25, ColorToken.RED);
         
+        /**************************************
+         *  Players's perso
+         */
+        perso_1 = new PersoIHM(50, 215, "pseudo", Sens.GAUCHE);
+        perso_2 = new PersoIHM(105, 90, "pseudo", Sens.HAUT);
+    	perso_3 = new PersoIHM(250, 50, "pseudo", Sens.HAUT);
+    	perso_4 = new PersoIHM(440, 50, "pseudo", Sens.HAUT);
+    	perso_5 = new PersoIHM(600, 90, "pseudo", Sens.HAUT);
+    	perso_6 = new PersoIHM(650, 215, "pseudo", Sens.DROITE);
+    	perso_7 = new PersoIHM(600, 330, "pseudo", Sens.BAS);
+    	perso_8 = new PersoIHM(440, 370, "pseudo", Sens.BAS);
+    	perso_9 = new PersoIHM(250, 370, "pseudo", Sens.BAS);
+    	perso_10 = new PersoIHM(105, 330, "pseudo", Sens.BAS);
+    	
+    	this.list_perso = new ArrayList<PersoIHM>();
+    	
+    	this.list_perso.add(perso_1);
+        this.list_perso.add(perso_2);
+        this.list_perso.add(perso_3);
+        this.list_perso.add(perso_4);
+        this.list_perso.add(perso_5);
+        this.list_perso.add(perso_6);
+        this.list_perso.add(perso_7);
+        this.list_perso.add(perso_8);
+        this.list_perso.add(perso_9);
+        this.list_perso.add(perso_10);
+    	
         /**************************************
          *  Players's bets
          */
-        TokenBetPlayerIHM bet_player_1 = new TokenBetPlayerIHM(170, 145, 400);
-        TokenBetPlayerIHM bet_player_2 = new TokenBetPlayerIHM(250, 115, 400);
-        TokenBetPlayerIHM bet_player_3 = new TokenBetPlayerIHM(440, 115, 400);
-        TokenBetPlayerIHM bet_player_4 = new TokenBetPlayerIHM(530, 145, 400);
-        TokenBetPlayerIHM bet_player_5 = new TokenBetPlayerIHM(550, 205, 400);
-        TokenBetPlayerIHM bet_player_6 = new TokenBetPlayerIHM(170, 260, 400);
-        TokenBetPlayerIHM bet_player_7 = new TokenBetPlayerIHM(250, 290, 400);
-        TokenBetPlayerIHM bet_player_8 = new TokenBetPlayerIHM(440, 290, 400);
-        TokenBetPlayerIHM bet_player_9 = new TokenBetPlayerIHM(530, 260, 400);
-        TokenBetPlayerIHM bet_player_10 = new TokenBetPlayerIHM(150, 205, 400);
+        bet_player_1 = new TokenBetPlayerIHM(150, 205, 0);
+        bet_player_2 = new TokenBetPlayerIHM(170, 145, 0);
+        bet_player_3 = new TokenBetPlayerIHM(250, 115, 0);
+        bet_player_4 = new TokenBetPlayerIHM(440, 115, 0);
+        bet_player_5 = new TokenBetPlayerIHM(530, 145, 0);
+        bet_player_6 = new TokenBetPlayerIHM(550, 205, 0);
+        bet_player_7 = new TokenBetPlayerIHM(530, 260, 0);
+        bet_player_8 = new TokenBetPlayerIHM(440, 270, 0);
+        bet_player_9 = new TokenBetPlayerIHM(250, 270, 0);
+        bet_player_10 = new TokenBetPlayerIHM(170, 260, 0);
+        
+        this.list_token_bet = new ArrayList<TokenBetPlayerIHM>();
+        
+        this.list_token_bet.add(bet_player_1);
+        this.list_token_bet.add(bet_player_2);
+        this.list_token_bet.add(bet_player_3);
+        this.list_token_bet.add(bet_player_4);
+        this.list_token_bet.add(bet_player_5);
+        this.list_token_bet.add(bet_player_6);
+        this.list_token_bet.add(bet_player_7);
+        this.list_token_bet.add(bet_player_8);
+        this.list_token_bet.add(bet_player_9);
+        this.list_token_bet.add(bet_player_10);
+        
+        /**************************************
+         *  Players's card
+         */
+        card_player_1 = new CardPlayerIHM(85, 205);
+        card_player_2 = new CardPlayerIHM(125, 110);
+        card_player_3 = new CardPlayerIHM(250, 75);
+        card_player_4 = new CardPlayerIHM(440, 75);
+        card_player_5 = new CardPlayerIHM(560, 110);
+        card_player_6 = new CardPlayerIHM(600, 200);
+        card_player_7 = new CardPlayerIHM(560, 280);
+        card_player_8 = new CardPlayerIHM(440, 315);
+        card_player_9 = new CardPlayerIHM(250, 315);
+        card_player_10 = new CardPlayerIHM(125, 285);
+        
+        this.list_card_player = new ArrayList<CardPlayerIHM>();
+        
+        this.list_card_player.add(card_player_1);
+        this.list_card_player.add(card_player_2);
+        this.list_card_player.add(card_player_3);
+        this.list_card_player.add(card_player_4);
+        this.list_card_player.add(card_player_5);
+        this.list_card_player.add(card_player_6);
+        this.list_card_player.add(card_player_7);
+        this.list_card_player.add(card_player_8);
+        this.list_card_player.add(card_player_9);
+        this.list_card_player.add(card_player_10);
         
         /**************************************
          *  Player's cards
@@ -251,26 +376,7 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
         root.getChildren().add(table);
         root.getChildren().add(communauty_card);
         root.getChildren().add(zone_carte);
-        root.getChildren().add(new PersoIHM(105, 90, "pseudo", Sens.HAUT));
-        root.getChildren().add(new PersoIHM(250, 50, "pseudo", Sens.HAUT));
-        root.getChildren().add(new PersoIHM(440, 50, "pseudo", Sens.HAUT));
-        root.getChildren().add(new PersoIHM(600, 90, "pseudo", Sens.HAUT));
-        root.getChildren().add(new PersoIHM(50, 215, "pseudo", Sens.GAUCHE));
-        root.getChildren().add(new PersoIHM(650, 215, "pseudo", Sens.DROITE));
-        root.getChildren().add(new PersoIHM(105, 330, "pseudo", Sens.BAS));
-        root.getChildren().add(new PersoIHM(250, 370, "pseudo", Sens.BAS));
-        root.getChildren().add(new PersoIHM(440, 370, "pseudo", Sens.BAS));
-        root.getChildren().add(new PersoIHM(600, 330, "pseudo", Sens.BAS));
-        root.getChildren().add(bet_player_1);
-        root.getChildren().add(bet_player_2);
-        root.getChildren().add(bet_player_3);
-        root.getChildren().add(bet_player_4);
-        root.getChildren().add(bet_player_5);
-        root.getChildren().add(bet_player_6);
-        root.getChildren().add(bet_player_7);
-        root.getChildren().add(bet_player_8);
-        root.getChildren().add(bet_player_9);
-        root.getChildren().add(bet_player_10);
+        
         root.getChildren().add(textarea_log);
         root.getChildren().add(button_add_bet);
         root.getChildren().add(button_sub_bet);
@@ -333,11 +439,30 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 
 
         initializeAction();
-        
-        // Rajouter notification property pour dire � l'agent qu'on est pr�t et n'afficher qu'� ce moment l� les interfaces
+
+        initializeGame(10, 2);
         
         GuiEvent ev = new GuiEvent(this, PlayerGuiEvent.IHM_READY.ordinal());
 		human_player_agent.postGuiEvent(ev);
+	}
+	
+	public void initializeGame(int nb_players, int num_player) {
+		this.nb_players = nb_players;
+		this.num_player = num_player;
+		
+		for(int i = 0; i < nb_players; i++)
+		{
+			this.list_perso.get(i).setPseudo("pseudo");
+			root.getChildren().add(this.list_perso.get(i));
+			root.getChildren().add(this.list_card_player.get(i));
+	        root.getChildren().add(this.list_token_bet.get(i));
+		}
+	}
+
+	public void launchWindow(String[] args) {
+		launch(args);
+        
+        // Rajouter notification property pour dire � l'agent qu'on est pr�t et n'afficher qu'� ce moment l� les interfaces
 	}
 
 	public static PlayerWindow launchWindow(HumanPlayerAgent agent, PropertyChangeSupport changes) {
@@ -359,11 +484,10 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 	
 	public void show()
 	{
-	    // dirty fix
-	    Platform.runLater(new Runnable() {
-		@Override public void run() {
-		    primaryStage.show();
-		}
+	    PlatformHelper.run(new Runnable() {
+			@Override public void run() {
+			    primaryStage.show();
+			}
 	    });
 	}
 	
@@ -398,7 +522,8 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 		 button_check.setOnAction(new EventHandler<ActionEvent>() {
 
 	            public void handle(ActionEvent event) {
-	                communauty_card.addCommunautyCard(new Card(CardRank.ACE, CardSuit.CLUBS));
+	                //communauty_card.addCommunautyCard(new Card(CardRank.ACE, CardSuit.CLUBS));
+	            	
 	            }
 	        });
 		 
@@ -417,7 +542,7 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 	public void propertyChange(PropertyChangeEvent evt) {
 		
 		/**
-         *  -----  INITIALIZING ME -----
+         *  -----  SHOW IHM -----
          */
 		if(evt.getPropertyName().equals(PlayerGuiEvent.SHOW_IHM.toString()))
 		{
