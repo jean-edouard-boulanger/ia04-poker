@@ -177,11 +177,11 @@ public class EnvironmentAgent extends Agent {
 			//Informing player who received the card
 			PlayerReceivedCardNotification notification = new PlayerReceivedCardNotification(request.getPlayerAID(), request.getDealtCard());
 			AgentHelper.sendSimpleMessage(EnvironmentAgent.this, request.getPlayerAID(), ACLMessage.PROPAGATE, notification);
-
+			
 			//Informing other players that he received a card (unknown for them)
-			ArrayList<AID> subscribersToNofitfy = new ArrayList<AID>(subscribers);
-			subscribersToNofitfy.remove(request.getPlayerAID());
-			AgentHelper.sendSimpleMessage(EnvironmentAgent.this, subscribersToNofitfy, ACLMessage.PROPAGATE, new PlayerReceivedUnknownCardNotification(request.getPlayerAID()));
+			ArrayList<AID> subscribersToNotify = new ArrayList<AID>(subscribers);
+			subscribersToNotify.remove(request.getPlayerAID());
+			AgentHelper.sendSimpleMessage(EnvironmentAgent.this, subscribersToNotify, ACLMessage.PROPAGATE, new PlayerReceivedUnknownCardNotification(request.getPlayerAID()));
 
 			AgentHelper.sendReply(EnvironmentAgent.this, aclMsg, ACLMessage.INFORM, new OKMessage());
 			return true;
