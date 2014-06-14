@@ -20,49 +20,49 @@ import sma.message.environment.request.AddPlayerTableRequest;
  */
 public class PlayerSubscriptionBhv extends CyclicBehaviour
 {
-	private SimulationAgent simAgent;
-	
-	public PlayerSubscriptionBhv(SimulationAgent agent){
-		super(agent);
-		this.simAgent = agent;
-	}
-	
-	/**
-	 * Register players if there is enough room (only if the server is started and the game not running).
-	 */
-	@Override
-	public void action() {
-			
-		boolean msgReceived = AgentHelper.receiveMessage(this.myAgent, ACLMessage.SUBSCRIBE, new MessageVisitor(){
-			@Override
-			public boolean onPlayerSubscriptionRequest(PlayerSubscriptionRequest request, ACLMessage aclMsg){
-				
-				if(!simAgent.isServerStarted()){
-					AgentHelper.sendReply(myAgent, aclMsg, ACLMessage.FAILURE, new FailureMessage("Server not ready."));
-				}
-				else if (simAgent.isGameStarted()){
-					AgentHelper.sendReply(myAgent, aclMsg, ACLMessage.FAILURE, new FailureMessage("Game already started."));
-				}
-				else if (simAgent.getGame().getPlayersContainer().getPlayers().size() >= simAgent.getMaxPlayers()){
-					AgentHelper.sendReply(myAgent, aclMsg, ACLMessage.FAILURE, new FailureMessage("Game full."));
-				}
-				else if (simAgent.getGame().getPlayersContainer().getPlayerByName(request.getPlayerName()) != null){
-					AgentHelper.sendReply(myAgent, aclMsg, ACLMessage.FAILURE, new FailureMessage("Pseudo already taken."));
-				}
-				else {
-					// we subscribe the player to the environment (async).
-					Player player = new Player(aclMsg.getSender(), request.getPlayerName());
-					AID environment = DFServiceHelper.searchService(simAgent, "PokerEnvironment", "Environment");
-					simAgent.addBehaviour(new TransactionBhv(simAgent, new AddPlayerTableRequest(player), environment));
-					AgentHelper.sendReply(simAgent, aclMsg, ACLMessage.INFORM, new OKMessage());
-				}
-				return true;
-			}
-		});
-		
-		if(!msgReceived)
-			block();
-		
-	}
-	
+    private SimulationAgent simAgent;
+
+    public PlayerSubscriptionBhv(SimulationAgent agent){
+	super(agent);
+	this.simAgent = agent;
+    }
+
+    /**
+     * Register players if there is enough room (only if the server is started and the game not running).
+     */
+    @Override
+    public void action() {
+
+	boolean msgReceived = AgentHelper.receiveMessage(this.myAgent, ACLMessage.SUBSCRIBE, new MessageVisitor(){
+	    @Override
+	    public boolean onPlayerSubscriptionRequest(PlayerSubscriptionRequest request, ACLMessage aclMsg){
+
+		if(!simAgent.isServerStarted()){
+		    AgentHelper.sendReply(myAgent, aclMsg, ACLMessage.FAILURE, new FailureMessage("Server not ready."));
+		}
+		else if (simAgent.isGameStarted()){
+		    AgentHelper.sendReply(myAgent, aclMsg, ACLMessage.FAILURE, new FailureMessage("Game already started."));
+		}
+		else if (simAgent.getGame().getPlayersContainer().getPlayers().size() >= simAgent.getMaxPlayers()){
+		    AgentHelper.sendReply(myAgent, aclMsg, ACLMessage.FAILURE, new FailureMessage("Game full."));
+		}
+		else if (simAgent.getGame().getPlayersContainer().getPlayerByName(request.getPlayerName()) != null){
+		    AgentHelper.sendReply(myAgent, aclMsg, ACLMessage.FAILURE, new FailureMessage("Pseudo already taken."));
+		}
+		else {
+		    // we subscribe the player to the environment (async).
+		    Player player = new Player(aclMsg.getSender(), request.getPlayerName());
+		    AID environment = DFServiceHelper.searchService(simAgent, "PokerEnvironment", "Environment");
+		    simAgent.addBehaviour(new TransactionBhv(simAgent, new AddPlayerTableRequest(player), environment));
+		    AgentHelper.sendReply(simAgent, aclMsg, ACLMessage.INFORM, new OKMessage());
+		}
+		return true;
+	    }
+	});
+
+	if(!msgReceived)
+	    block();
+
+    }
+
 }

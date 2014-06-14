@@ -12,8 +12,6 @@ import poker.game.exception.NoPlaceAvailableException;
 import poker.game.exception.NotRegisteredPlayerException;
 import poker.game.exception.PlayerAlreadyRegisteredException;
 import poker.game.player.model.Player;
-import poker.game.player.model.PlayerRole;
-import poker.game.player.model.PlayerStatus;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 

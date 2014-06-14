@@ -10,6 +10,8 @@ public class InitRoundBhv extends Behaviour {
 	public InitRoundBhv(SimulationAgent simAgent) {
 		super(simAgent);
 		this.simAgent = simAgent;
+		
+		
 	}
 
 	@Override
