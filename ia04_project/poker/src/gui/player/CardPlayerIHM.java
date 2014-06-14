@@ -28,12 +28,13 @@ public class CardPlayerIHM extends Group {
 		
 		this.x = x;
 		this.y = y;
+		this.current_position_x = x + 35;
 	}
 	
 	public void addUnknownCard()
 	{
 		if(this.number_cards < 2){
-			this.current_position_x += x + 5;
+			this.current_position_x += 5;
 			
 			ImageView image_card = new ImageView(new Image("images/background_card.png"));
 			image_card.setLayoutX(this.current_position_x);
