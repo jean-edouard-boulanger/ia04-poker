@@ -42,6 +42,7 @@ public class BetManagerAgent extends Agent {
 		
 		@Override
 		public void action() {
+
 			boolean msgReceived = AgentHelper.receiveMessage(this.myAgent, ACLMessage.REQUEST, ((BetManagerAgent)myAgent).getMsgVisitor());
 			
 			if(!msgReceived)
