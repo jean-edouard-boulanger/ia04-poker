@@ -337,6 +337,7 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
         
         this.list_card_player = new ArrayList<CardPlayerIHM>();
         
+        
         this.list_card_player.add(card_player_1);
         this.list_card_player.add(card_player_2);
         this.list_card_player.add(card_player_3);
@@ -582,7 +583,8 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
          */
 		else if(evt.getPropertyName().equals(PlayerGuiEvent.PLAYER_RECEIVED_UNKNOWN_CARD.toString()))
 		{
-				System.out.println("[PlayerWindow] Player received unknown card.");
+				System.out.println("[PlayerWindow] Player "+ (Integer)evt.getNewValue() +" received an unknown card.");
+				this.list_card_player.get((Integer)evt.getNewValue()).addUnknownCard();
 		}
 		
 		/**
