@@ -41,7 +41,7 @@ public class CardDeck {
 	
 	public void printDeck() {
 	    for (Card card : cardDeck) {
-		System.out.println(card);
+	    	System.out.println(card);
 	    }
 	}
 	
@@ -51,10 +51,12 @@ public class CardDeck {
 	static public CardDeck getNewRegularGameDeck() {
 	    Stack<Card> cards = new Stack<Card>();
 		
-	    for(CardSuit suit : CardSuit.values()) {
-		for(CardRank rank : CardRank.values()) {
-		    cards.add(new Card(rank, suit));
-		}
+	    for(CardSuit suit : CardSuit.values()) 
+	    {
+			for(CardRank rank : CardRank.values()) 
+			{
+			    cards.add(new Card(rank, suit));
+			}
 	    }
 	    CardDeck deck = new CardDeck(cards);
 	    deck.mixCards();
