@@ -131,7 +131,10 @@ public class EnvironmentAgent extends Agent {
 			// we sent a subscription notification to the player:
 			AgentHelper.sendSimpleMessage(EnvironmentAgent.this, request.getNewPlayer().getAID(), ACLMessage.PROPAGATE, new SubscriptionOKMessage(game));
 
-			AgentHelper.sendSimpleMessage(EnvironmentAgent.this, subscribers, ACLMessage.PROPAGATE, new PlayerSitOnTableNotification(request.getNewPlayer()));
+			ArrayList<AID> subscribersToNofitfy = new ArrayList<AID>(subscribers);
+			subscribersToNofitfy.remove(request.getNewPlayer().getAID());
+			AgentHelper.sendSimpleMessage(EnvironmentAgent.this, subscribersToNofitfy, ACLMessage.PROPAGATE, new PlayerSitOnTableNotification(request.getNewPlayer()));
+			
 			AgentHelper.sendReply(EnvironmentAgent.this, aclMsg, ACLMessage.INFORM, new OKMessage());
 
 			return true;

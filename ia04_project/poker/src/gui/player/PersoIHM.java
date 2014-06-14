@@ -11,11 +11,12 @@ import javafx.scene.shape.Rectangle;
 public class PersoIHM extends Group {
 	
 	private Label name;
+	private Circle circle;
 	
 	public enum Sens { GAUCHE, DROITE, HAUT, BAS }
 	public PersoIHM(int x, int y, String pseudo, Sens position)
 	{
-		Circle circle = new Circle();
+		circle = new Circle();
 		circle.setRadius(15);
 		circle.setFill(Color.AQUA);
 		circle.setCenterX(x);
@@ -56,6 +57,11 @@ public class PersoIHM extends Group {
 	public void setPseudo(String pseudo)
 	{
 		name.setText(pseudo);
+	}
+	
+	public void setMe()
+	{
+		circle.setFill(Color.GREEN);
 	}
 	
 	public void setCurrentPlayer()
