@@ -104,7 +104,7 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
         final Pane root = new Pane();
         root.setId("root");
                 
-        label_hand = new Label("Main n°1");
+        label_hand = new Label("Main nï¿½1");
 
         label_hand.setLayoutX(15);
         label_hand.setLayoutY(15);
@@ -129,7 +129,7 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
         button_follow.setLayoutX(335);
         button_follow.setLayoutY(490);
 
-        button_follow.setText("Suivre à 2");
+        button_follow.setText("Suivre ï¿½ 2");
 
         button_follow.setPrefWidth(100);
         button_follow.getStyleClass().add("button_play");
@@ -152,7 +152,7 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
         button_relaunch.setLayoutX(225);
         button_relaunch.setLayoutY(550);
 
-        button_relaunch.setText("Relancer à 5");
+        button_relaunch.setText("Relancer ï¿½ 5");
 
         button_relaunch.setPrefWidth(100);
         button_relaunch.getStyleClass().add("button_play");
@@ -334,7 +334,7 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 
         initializeAction();
         
-        // Rajouter notification property pour dire à l'agent qu'on est prêt et n'afficher qu'à ce moment là les interfaces
+        // Rajouter notification property pour dire ï¿½ l'agent qu'on est prï¿½t et n'afficher qu'ï¿½ ce moment lï¿½ les interfaces
         
         GuiEvent ev = new GuiEvent(this, PlayerGuiEvent.IHM_READY.ordinal());
 		human_player_agent.postGuiEvent(ev);
@@ -423,7 +423,7 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 		{
 		    	show();
 			
-			System.out.println("Initialiazing");
+			System.out.println("[PlayerWindow] Showing IHM");
 		}
 		
 		/**
@@ -436,7 +436,7 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 				
 			}
 			
-			System.out.println("Initialiazing");
+			System.out.println("[PlayerWindow] Initialiazing");
 		}
 		
 		/**
@@ -449,7 +449,7 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 				
 			}
 			
-			System.out.println("Initialiazing");
+			System.out.println("[PlayerWindow] Initialiazing");
 		}
 		
 		/**
@@ -457,7 +457,7 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
          */
 		else if(evt.getPropertyName().equals(PlayerGuiEvent.PLAYER_RECEIVED_UNKNOWN_CARD.toString()))
 		{
-				System.out.println("Empty community card");
+				System.out.println("[PlayerWindow] Player received unknown card.");
 		}
 		
 		/**
@@ -465,7 +465,7 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
          */
 		else if(evt.getPropertyName().equals(PlayerGuiEvent.PLAYER_RECEIVED_CARD.toString()))
 		{
-				System.out.println("Empty community card");
+				System.out.println("[PlayerWindow] Player received card.");
 		}
 		
 		/**
@@ -476,7 +476,7 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 			if(evt.getNewValue() instanceof Card)
 			{
 				communauty_card.addCommunautyCard((Card)evt.getNewValue());
-				System.out.println("Add community card");
+				System.out.println("[PlayerWindow] Add community card");
 			}
 		}
 		
@@ -486,7 +486,7 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 		else if(evt.getPropertyName().equals(PlayerGuiEvent.EMPTY_COMMUNITY_CARD.toString()))
 		{
 			communauty_card.emptyCommunautyCard();
-			System.out.println("Empty community card");
+			System.out.println("[PlayerWindow] Empty community card");
 		}
 	}
 }

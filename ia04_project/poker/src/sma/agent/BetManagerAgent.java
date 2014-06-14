@@ -17,8 +17,7 @@ public class BetManagerAgent extends Agent {
 
 	BetContainer betContainer;
 	PlayersContainer playersContainer;
-	
-	MessageVisitor betManagerMessageVisitor;
+	BetManagerMessageVisitor msgVisitor;
 	
 	public BetManagerAgent(){
 		super();
@@ -43,7 +42,7 @@ public class BetManagerAgent extends Agent {
 		
 		@Override
 		public void action() {
-			boolean msgReceived = AgentHelper.receiveMessage(this.myAgent, ACLMessage.REQUEST, ((DetermineWinnerAgent)myAgent).getMsgVisitor());
+			boolean msgReceived = AgentHelper.receiveMessage(this.myAgent, ACLMessage.REQUEST, ((BetManagerAgent)myAgent).getMsgVisitor());
 			
 			if(!msgReceived)
 				block();
@@ -73,5 +72,13 @@ public class BetManagerAgent extends Agent {
 	
 	private class BetManagerMessageVisitor extends MessageVisitor {	
 		
+	}
+
+	public BetManagerMessageVisitor getMsgVisitor() {
+		return msgVisitor;
+	}
+
+	public void setMsgVisitor(BetManagerMessageVisitor msgVisitor) {
+		this.msgVisitor = msgVisitor;
 	}
 }
