@@ -125,7 +125,7 @@ public class PlayersContainer {
 		}
 				
 		if(p.getTablePositionIndex() == null || (p.getTablePositionIndex() != null && this.getPlayerAtIndex(p.getTablePositionIndex())  != null)){
-			p.setTablePositionIndex(this.getFirstAvailableTablePlace());
+			p.setTablePositionIndex(this.getRandomAvailableTablePlace());
 		}
 		
 		this.players.add(p);
