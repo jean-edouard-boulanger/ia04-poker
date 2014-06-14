@@ -500,6 +500,7 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 					int position_player = player.getTablePositionIndex();
 					
 					PlayerWindow.this.list_perso.get(position_player).setPseudo(player.getNickname());
+					PlayerWindow.this.list_perso.get(position_player).setMe();
 					root.getChildren().add(PlayerWindow.this.list_perso.get(position_player));
 					root.getChildren().add(PlayerWindow.this.list_card_player.get(position_player));
 			        root.getChildren().add(PlayerWindow.this.list_token_bet.get(position_player));
