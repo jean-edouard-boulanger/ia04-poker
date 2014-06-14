@@ -269,11 +269,11 @@ public class HumanPlayerAgent extends GuiAgent {
 			{
 				if(player.getAID() == HumanPlayerAgent.this.getAID())
 				{
-					changes_game.firePropertyChange(PlayerGuiEvent.INITIALIZING_ME.toString(), null, game);
+					changes_game.firePropertyChange(PlayerGuiEvent.INITIALIZING_ME.toString(), null, player);
 				}
 				else
 				{
-					changes_game.firePropertyChange(PlayerGuiEvent.INITIALIZING_OTHER.toString(), null, game);
+					changes_game.firePropertyChange(PlayerGuiEvent.INITIALIZING_OTHER.toString(), null, player);
 				}
 			}
 			
