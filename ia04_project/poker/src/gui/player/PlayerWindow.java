@@ -29,6 +29,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.transform.Scale;
 import javafx.stage.Stage;
+import poker.card.helper.CardImageHelper;
 import poker.card.model.Card;
 import poker.game.player.model.Player;
 import sma.agent.HumanPlayerAgent;
@@ -138,6 +139,9 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
     CardPlayerIHM card_player_8;
     CardPlayerIHM card_player_9;
     CardPlayerIHM card_player_10;
+    
+    private List<ImageView> player_cards;
+    
 	// scaling:
 	private double scaleRatio = 1;
 	private double stageInitialWidth = 0;
@@ -352,18 +356,26 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
         /**************************************
          *  Player's cards
          */
-        ImageView im = new ImageView(new Image("images/ACE_DIAMONDS.png"));
+        
+        player_cards = new ArrayList<ImageView>();
+        
+        ImageView im = new ImageView();
         im.setX(295);
         im.setY(415);
         im.setFitWidth(40);
         im.setFitHeight(62);
         im.setRotate(-15);
-        ImageView im2 = new ImageView(new Image("images/ACE_SPADES.png"));
+        
+        player_cards.add(im);
+        
+        ImageView im2 = new ImageView();
         im2.setX(350);
         im2.setY(415);
         im2.setFitWidth(40);
         im2.setFitHeight(62);
         im2.setRotate(15);
+        
+        player_cards.add(im2);
         
         /**************************************
          *  Table
@@ -625,7 +637,16 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
          */
 		else if(evt.getPropertyName().equals(PlayerGuiEvent.PLAYER_RECEIVED_CARD.toString()))
 		{
-				System.out.println("[PlayerWindow] Player received card.");
+			Image image = CardImageHelper.getCardImage((Card)evt.getNewValue());
+			
+			if(player_cards.get(0).getImage() == null) {
+				player_cards.get(0).setImage(image);
+			}
+			else if(player_cards.get(1).getImage() == null) {
+				player_cards.get(1).setImage(image);
+			}
+			
+			System.out.println("[PlayerWindow] Player received card." + (Card)evt.getNewValue());
 		}
 		
 		/**
@@ -645,6 +666,9 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
          */
 		else if(evt.getPropertyName().equals(PlayerGuiEvent.EMPTY_COMMUNITY_CARD.toString()))
 		{
+			player_cards.get(0).setImage(null);
+			player_cards.get(1).setImage(null);
+
 			communauty_card.emptyCommunautyCard();
 			System.out.println("[PlayerWindow] Empty community card");
 		}
