@@ -9,6 +9,9 @@ import poker.game.model.BetContainer;
 import poker.game.model.Game;
 import poker.game.model.PlayersContainer;
 import poker.game.player.model.Player;
+import poker.token.exception.InvalidTokenAmountException;
+import poker.token.helpers.TokenSetValueEvaluator;
+import poker.token.model.TokenSet;
 import sma.agent.helper.AgentHelper;
 import sma.agent.helper.DFServiceHelper;
 import sma.agent.helper.TransactionBhv;
@@ -17,6 +20,7 @@ import sma.message.MessageVisitor;
 import sma.message.SubscriptionOKMessage;
 import sma.message.bet.request.BetRequest;
 import sma.message.environment.notification.PlayerReceivedTokenSetNotification;
+import sma.message.environment.notification.TokenValueDefinitionChangedNotification;
 
 public class BetManagerAgent extends Agent {
 
@@ -93,6 +97,26 @@ public class BetManagerAgent extends Agent {
 		public boolean onBetRequest(BetRequest request, ACLMessage aclMsg) {
 			
 			Player player = game.getPlayersContainer().getPlayerByAID(request.getPlayerAID());
+			
+			int playerPot = TokenSetValueEvaluator.evaluateTokenSetValue(game.getTokenValueDefinition(), player.getTokens());
+			
+			if(playerPot > request.getBet()) {
+				try {
+					player.getTokens().SubstractTokenSet(request.getTokenSet());
+					
+				} catch (InvalidTokenAmountException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			
+			return true;
+		}
+		
+		@Override
+		public boolean onTokenValueDefinitionChangedNotification(TokenValueDefinitionChangedNotification notif, ACLMessage aclMsg) {
+			
+			game.setTokenValueDefinition(notif.getTokenValueDefinition());
 			
 			return true;
 		}

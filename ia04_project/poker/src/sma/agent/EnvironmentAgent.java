@@ -240,6 +240,5 @@ public class EnvironmentAgent extends Agent {
 			}			
 			return true;
 		}
-
 	}
 }
