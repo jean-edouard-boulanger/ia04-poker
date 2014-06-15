@@ -168,7 +168,7 @@ public class BetManagerAgent extends Agent {
 		public boolean onPlayerReceivedTokenSetNotification(PlayerReceivedTokenSetNotification notification, ACLMessage aclMsg){
 			
 			Player player = game.getPlayersContainer().getPlayerByAID(notification.getPlayerAID());
-			player.setTokens(notification.getReceivedTokenSet());
+			player.setTokens(player.getTokens().AddTokenSet(notification.getReceivedTokenSet()));
 			
 			return true;
 		}
