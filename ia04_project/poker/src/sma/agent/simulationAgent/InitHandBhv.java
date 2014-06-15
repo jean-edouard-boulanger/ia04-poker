@@ -22,7 +22,7 @@ import sma.message.environment.request.SetDealerRequest;
  * - community cards are removed from the table.
  * - player card are dealt
  * - we set the dealer
- * (those tasks are done in parallel).
+ * - blinds are payed
  */
 public class InitHandBhv extends TaskRunnerBhv {
 
@@ -88,6 +88,11 @@ public class InitHandBhv extends TaskRunnerBhv {
 		"error setting dealer to " + dealer.getLocalName() + "."));		
 	return transaction;
     }
+    
+    private Behaviour paylBlindBhv(AID blind, int amount) {
+   	//TODO
+	return null;
+   }
 
     /**  Transition: return the NEW_ROUND transition code. */
     @Override
