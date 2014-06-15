@@ -1,12 +1,8 @@
 package application.test;
 
-import gui.player.PersoIHM;
-import gui.player.PersoIHM.Sens;
-import gui.server.ServerWindow;
 import jade.lang.acl.ACLMessage;
 
 import java.io.IOException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -15,17 +11,9 @@ import java.util.Map.Entry;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.scene.Group;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
-
-import javax.swing.SwingUtilities;
-
 import poker.card.exception.CommunityCardsFullException;
 import poker.card.helper.CustomPickSequence;
 import poker.card.heuristics.combination.exception.EmptyCardListException;

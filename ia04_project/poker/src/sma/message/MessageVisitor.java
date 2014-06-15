@@ -32,6 +32,7 @@ import sma.message.environment.request.PlayerBetRequest;
 import sma.message.environment.request.SetDealerRequest;
 import sma.message.environment.request.SetTokenValueDefinitionRequest;
 import sma.message.environment.request.ShowPlayerCardsRequest;
+import sma.message.simulation.request.PlayRequest;
 
 /**
  * Pattern visitor implementation, this base class should have an
@@ -99,5 +100,8 @@ public class MessageVisitor {
 	public boolean onTokenValueDefinitionChangedNotification(TokenValueDefinitionChangedNotification notif, ACLMessage aclMsg) {return false;}
 	public boolean onDealerChangedNotification(DealerChangedNotification dealerChangedNotification, ACLMessage aclMsg) {return false;}
 	public boolean onPlayerCardsRevealedNotification(PlayerCardsRevealedNotification playerCardsRevealed, ACLMessage aclMsg) {return false;}
+	
+	//Simulation
+	public boolean onPlayRequest(PlayRequest request, ACLMessage aclMessage){return false;}
 	
 }
