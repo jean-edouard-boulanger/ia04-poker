@@ -8,6 +8,8 @@ import jade.lang.acl.MessageTemplate;
 
 import java.util.ArrayList;
 
+import org.omg.CORBA.Request;
+
 import poker.card.exception.CommunityCardsFullException;
 import poker.card.exception.UserDeckFullException;
 import poker.card.model.Card;
@@ -15,14 +17,16 @@ import poker.game.exception.NoPlaceAvailableException;
 import poker.game.exception.NotRegisteredPlayerException;
 import poker.game.exception.PlayerAlreadyRegisteredException;
 import poker.game.model.Game;
+import poker.game.player.model.Player;
 import poker.token.exception.InvalidTokenAmountException;
 import sma.agent.helper.AgentHelper;
 import sma.agent.helper.DFServiceHelper;
 import sma.message.FailureMessage;
 import sma.message.MessageVisitor;
-import sma.message.NotificationSubscriber;
 import sma.message.OKMessage;
 import sma.message.SubscriptionOKMessage;
+import sma.message.bet.request.BetRequest;
+import sma.message.environment.notification.BetNotification;
 import sma.message.environment.notification.BlindValueDefinitionChangedNotification;
 import sma.message.environment.notification.CardAddedToCommunityCardsNotification;
 import sma.message.environment.notification.CommunityCardsEmptiedNotification;
@@ -223,7 +227,7 @@ public class EnvironmentAgent extends Agent {
 
 		@Override
 		public boolean onSetTokenValueDefinitionRequest(SetTokenValueDefinitionRequest notif, ACLMessage aclMsg) {
-			game.setTokenValueDefinition(notif.getTokenValueDefinition());
+			game.getBetContainer().setTokenValueDefinition(notif.getTokenValueDefinition());
 			AgentHelper.sendSimpleMessage(EnvironmentAgent.this, subscribers, ACLMessage.PROPAGATE, new TokenValueDefinitionChangedNotification(notif.getTokenValueDefinition()));
 			AgentHelper.sendReply(EnvironmentAgent.this, aclMsg, ACLMessage.INFORM, new OKMessage());
 			return true;
@@ -240,5 +244,20 @@ public class EnvironmentAgent extends Agent {
 			}			
 			return true;
 		}
+		
+		@Override
+		public boolean onBetRequest(BetRequest request, ACLMessage aclMsg) {
+			try {
+				Player player = game.getPlayersContainer().getPlayerByAID(request.getPlayerAID());
+				player.setTokens(player.getTokens().SubstractTokenSet(request.getTokenSet()));				
+				game.getBetContainer().addTokenToPlayerBet(request.getPlayerAID(), request.getTokenSet());
+				AgentHelper.sendSimpleMessage(EnvironmentAgent.this, subscribers, ACLMessage.PROPAGATE, new BetNotification(request.getPlayerAID(), request.getTokenSet()));
+				AgentHelper.sendReply(EnvironmentAgent.this, aclMsg, ACLMessage.INFORM, new OKMessage());
+			} catch (InvalidTokenAmountException e) {
+				AgentHelper.sendReply(EnvironmentAgent.this, aclMsg, ACLMessage.FAILURE, new FailureMessage(e.getMessage()));
+			}			
+			return true;
+		}
+		
 	}
 }

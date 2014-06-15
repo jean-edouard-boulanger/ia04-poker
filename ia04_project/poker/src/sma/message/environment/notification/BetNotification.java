@@ -6,15 +6,15 @@ import sma.message.MessageVisitor;
 import jade.core.AID;
 import jade.lang.acl.ACLMessage;
 
-public class PlayerBetNotification extends Message {
+public class BetNotification extends Message {
 
 	TokenSet betTokenSet;
 	private AID playerAID;
 
 	
-	public PlayerBetNotification(){}
+	public BetNotification(){}
 	
-	public PlayerBetNotification(AID playerAID, TokenSet betTokenSet){
+	public BetNotification(AID playerAID, TokenSet betTokenSet){
 		this.playerAID = playerAID;
 		this.betTokenSet = betTokenSet;
 	}
@@ -37,6 +37,6 @@ public class PlayerBetNotification extends Message {
 	
 	@Override
 	public boolean accept(MessageVisitor visitor, ACLMessage aclMsg) {
-		return visitor.onEnvironmentChanged(this, aclMsg) | visitor.onPlayerBetNotification(this, aclMsg);
+		return visitor.onEnvironmentChanged(this, aclMsg) | visitor.onBetNotification(this, aclMsg);
 	}
 }

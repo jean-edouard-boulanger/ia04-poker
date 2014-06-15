@@ -7,12 +7,13 @@ import poker.token.model.TokenValueDefinition;
 
 public class Game {
 	
-	private PlayersContainer playersContainer;
 	private CardDeck gameDeck;
 	private TokenSet pot;
 	private TokenValueDefinition tokenValueDefinition;
 	private BlindValueDefinition blindValueDefinition;
 	private CommunityCards communityCards;
+	private BetContainer betContainer;
+	private PlayersContainer playersContainer;
 	
 	public Game(){
 		this.playersContainer = new PlayersContainer();
@@ -21,6 +22,7 @@ public class Game {
 		this.tokenValueDefinition = new TokenValueDefinition();
 		this.blindValueDefinition = new BlindValueDefinition();
 		this.communityCards = new CommunityCards();
+		this.betContainer = new BetContainer();
 	}
 	
 	public void setPlayersContainer(PlayersContainer playersContainer){
@@ -39,14 +41,6 @@ public class Game {
 		this.gameDeck = gameDeck;
 	}
 
-	public TokenValueDefinition getTokenValueDefinition() {
-		return tokenValueDefinition;
-	}
-
-	public void setTokenValueDefinition(TokenValueDefinition tokenValueDefinition) {
-		this.tokenValueDefinition = tokenValueDefinition;
-	}
-
 	public BlindValueDefinition getBlindValueDefinition() {
 		return blindValueDefinition;
 	}
@@ -55,12 +49,12 @@ public class Game {
 		this.blindValueDefinition = blindValueDefinition;
 	}
 
-	public TokenSet getPot() {
-		return pot;
+	public BetContainer getBetContainer() {
+		return betContainer;
 	}
 
-	public void setPot(TokenSet pot) {
-		this.pot = pot;
+	public void setBetContainer(BetContainer betContainer) {
+		this.betContainer = betContainer;
 	}
 
 	public CommunityCards getCommunityCards() {

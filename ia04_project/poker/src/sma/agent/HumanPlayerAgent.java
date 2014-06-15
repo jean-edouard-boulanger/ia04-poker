@@ -34,7 +34,7 @@ import sma.message.environment.notification.BlindValueDefinitionChangedNotificat
 import sma.message.environment.notification.CardAddedToCommunityCardsNotification;
 import sma.message.environment.notification.CommunityCardsEmptiedNotification;
 import sma.message.environment.notification.CurrentPlayerChangedNotification;
-import sma.message.environment.notification.PlayerBetNotification;
+import sma.message.environment.notification.BetNotification;
 import sma.message.environment.notification.PlayerCheckNotification;
 import sma.message.environment.notification.PlayerFoldedNotification;
 import sma.message.environment.notification.PlayerReceivedCardNotification;
@@ -222,7 +222,7 @@ public class HumanPlayerAgent extends GuiAgent {
 		}
 
 		@Override
-		public boolean onPlayerBetNotification(PlayerBetNotification notification, ACLMessage aclMsg){
+		public boolean onBetNotification(BetNotification notification, ACLMessage aclMsg){
 
 			// FIND THE PLAYER NUMBER AND SEND IT WITH CONTENT
 			changes_game.firePropertyChange(PlayerGuiEvent.PLAYER_BET.toString(), null, 5);
