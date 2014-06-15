@@ -9,6 +9,7 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -32,7 +33,9 @@ import javafx.stage.Stage;
 import poker.card.helper.CardImageHelper;
 import poker.card.model.Card;
 import poker.game.player.model.Player;
+import poker.token.model.TokenType;
 import sma.agent.HumanPlayerAgent;
+import sma.message.environment.notification.PlayerReceivedTokenSetNotification;
 
 /**
  * 
@@ -49,7 +52,8 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 		ADD_COMMUNITY_CARD,
 		EMPTY_COMMUNITY_CARD,
 		PLAYER_FOLDED,
-		PLAYER_RECEIVED_TOKENSET,
+		PLAYER_RECEIVED_TOKENSET_ME,
+		PLAYER_RECEIVED_TOKENSET_OTHER,
 		PLAYER_BET,
 		PLAYER_CHECK,
 		BLIND_VALUE,
@@ -91,6 +95,8 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 	/** Players number */
 	private int nb_players;
 	private int num_player;
+	
+	private int current_player = 0;
 	
 	/** Token player */
 	private TokenPlayerIHM token_white;
@@ -265,11 +271,11 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
         /**************************************
          *  Player's tokens
          */
-        token_white = new TokenPlayerIHM(485, 500, 25, ColorToken.WHITE);
-        token_black = new TokenPlayerIHM(515, 500, 25, ColorToken.BLACK);
-        token_blue = new TokenPlayerIHM(545, 500, 25, ColorToken.BLUE);
-        token_green = new TokenPlayerIHM(575, 500, 25, ColorToken.GREEN);
-        token_red = new TokenPlayerIHM(605, 500, 25, ColorToken.RED);
+        token_white = new TokenPlayerIHM(485, 500, 0, ColorToken.WHITE);
+        token_black = new TokenPlayerIHM(515, 500, 0, ColorToken.BLACK);
+        token_blue = new TokenPlayerIHM(545, 500, 0, ColorToken.BLUE);
+        token_green = new TokenPlayerIHM(575, 500, 0, ColorToken.GREEN);
+        token_red = new TokenPlayerIHM(605, 500, 0, ColorToken.RED);
         
         /**************************************
          *  Players's perso
@@ -516,6 +522,8 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 					root.getChildren().add(PlayerWindow.this.list_perso.get(position_player));
 					root.getChildren().add(PlayerWindow.this.list_card_player.get(position_player));
 			        root.getChildren().add(PlayerWindow.this.list_token_bet.get(position_player));
+			        
+			        PlayerWindow.this.list_perso.get(position_player).setCurrentPlayer();
 				}
 		 });
 	}
@@ -553,6 +561,58 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 		 PlatformHelper.run(new Runnable() {
 				@Override public void run() {
 					list_card_player.get(index).addUnknownCard();	
+				}
+		 });
+	}
+	
+	public void addCommunityCard(final Card card) {
+		 PlatformHelper.run(new Runnable() {
+				@Override public void run() {
+					communauty_card.addCommunautyCard(card);
+				}
+		 });
+	}
+	
+	public void emptyCommunityCard() {
+		 PlatformHelper.run(new Runnable() {
+				@Override public void run() {
+					player_cards.get(0).setImage(null);
+					player_cards.get(1).setImage(null);
+
+					communauty_card.emptyCommunautyCard();
+				}
+		 });
+	}
+	
+	public void receivedTokensMe(final Player player) {
+		 PlatformHelper.run(new Runnable() {
+				@Override public void run() {
+					Map<TokenType, Integer> token_map = player.getTokens().getTokensAmount();
+					token_white.setMise(token_map.get(TokenType.WHITE));
+					token_green.setMise(token_map.get(TokenType.GREEN));
+					token_blue.setMise(token_map.get(TokenType.BLUE));
+					token_black.setMise(token_map.get(TokenType.BLACK));
+					token_red.setMise(token_map.get(TokenType.RED));
+					
+					PlayerWindow.this.list_perso.get(player.getTablePositionIndex()).setScore(PersoIHM.calculateScore(player.getTokens()));
+				}
+		 });
+	}
+	
+	public void receivedTokensOther(final Player player) {
+		 PlatformHelper.run(new Runnable() {
+				@Override public void run() {
+					PlayerWindow.this.list_perso.get(player.getTablePositionIndex()).setScore(PersoIHM.calculateScore(player.getTokens()));
+				}
+		 });
+	}
+	
+	public void changeCurrentPlayer(final Integer index_player) {
+		 PlatformHelper.run(new Runnable() {
+				@Override public void run() {
+					PlayerWindow.this.list_perso.get(PlayerWindow.this.current_player).unsetCurrentPlayer();
+					PlayerWindow.this.list_perso.get(index_player).setCurrentPlayer();
+					PlayerWindow.this.current_player = index_player;
 				}
 		 });
 	}
@@ -671,7 +731,7 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 		{
 			if(evt.getNewValue() instanceof Card)
 			{
-				communauty_card.addCommunautyCard((Card)evt.getNewValue());
+				addCommunityCard((Card)evt.getNewValue());
 				System.out.println("[PlayerWindow] Add community card");
 			}
 		}
@@ -681,11 +741,44 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
          */
 		else if(evt.getPropertyName().equals(PlayerGuiEvent.EMPTY_COMMUNITY_CARD.toString()))
 		{
-			player_cards.get(0).setImage(null);
-			player_cards.get(1).setImage(null);
-
-			communauty_card.emptyCommunautyCard();
+			emptyCommunityCard();
 			System.out.println("[PlayerWindow] Empty community card");
+		}
+		
+		/**
+         *  -----  PLAYER RECEIVED TOKENSET ME -----
+         */
+		else if(evt.getPropertyName().equals(PlayerGuiEvent.PLAYER_RECEIVED_TOKENSET_ME.toString()))
+		{
+			if(evt.getNewValue() instanceof Player)
+			{
+				receivedTokensMe((Player)evt.getNewValue());
+				System.out.println("[PlayerWindow] Player received token set me");
+			}
+		}
+		
+		/**
+         *  -----  PLAYER RECEIVED TOKENSET OTHER -----
+         */
+		else if(evt.getPropertyName().equals(PlayerGuiEvent.PLAYER_RECEIVED_TOKENSET_OTHER.toString()))
+		{
+			if(evt.getNewValue() instanceof Player)
+			{
+				receivedTokensOther((Player)evt.getNewValue());
+				System.out.println("[PlayerWindow] Player received token set other");
+			}
+		}
+		
+		/**
+         *  -----  CURRENT PLAYER -----
+         */
+		else if(evt.getPropertyName().equals(PlayerGuiEvent.CURRENT_PLAYER_CHANGED.toString()))
+		{
+			if(evt.getNewValue() instanceof Integer)
+			{
+				changeCurrentPlayer((Integer)evt.getNewValue());
+				System.out.println("[PlayerWindow] Player current changed");
+			}
 		}
 	}
 }
