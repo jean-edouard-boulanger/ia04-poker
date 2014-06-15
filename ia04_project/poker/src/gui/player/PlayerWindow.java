@@ -617,43 +617,43 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 		/**************************************
 		 *  Slide interaction to see the player's bet
 		 */
-		 button_add_bet.setOnAction(new EventHandler<ActionEvent>() {
+		button_add_bet.setOnAction(new EventHandler<ActionEvent>() {
 
-			 public void handle(ActionEvent event) {
-				 slider_bet.setValue(slider_bet.getValue() + 1);
-				 textfield_bet.setText(String.valueOf(Double.valueOf(slider_bet.getValue()).intValue() + 1));
-			 }
-		 });
+			public void handle(ActionEvent event) {
+				slider_bet.setValue(slider_bet.getValue() + 1);
+				textfield_bet.setText(String.valueOf(Double.valueOf(slider_bet.getValue()).intValue() + 1));
+			}
+		});
 
-		 button_sub_bet.setOnAction(new EventHandler<ActionEvent>() {
+		button_sub_bet.setOnAction(new EventHandler<ActionEvent>() {
 
-			 public void handle(ActionEvent event) {
-				 slider_bet.setValue(slider_bet.getValue() - 1);
-				 textfield_bet.setText(String.valueOf(Double.valueOf(slider_bet.getValue()).intValue() - 1));
-			 }
-		 });
+			public void handle(ActionEvent event) {
+				slider_bet.setValue(slider_bet.getValue() - 1);
+				textfield_bet.setText(String.valueOf(Double.valueOf(slider_bet.getValue()).intValue() - 1));
+			}
+		});
 
-		 slider_bet.valueProperty().addListener(new ChangeListener<Number>() {
-			 @Override
-			 public void changed(ObservableValue<? extends Number> ov, Number oldValue, Number newValue) {
-				 PlayerWindow.this.textfield_bet.setText(String.valueOf(newValue.intValue()));
-			 }
-		 });
+		slider_bet.valueProperty().addListener(new ChangeListener<Number>() {
+			@Override
+			public void changed(ObservableValue<? extends Number> ov, Number oldValue, Number newValue) {
+				PlayerWindow.this.textfield_bet.setText(String.valueOf(newValue.intValue()));
+			}
+		});
 
-		 button_check.setOnAction(new EventHandler<ActionEvent>() {
+		button_check.setOnAction(new EventHandler<ActionEvent>() {
 
-			 public void handle(ActionEvent event) {
-				 //communauty_card.addCommunautyCard(new Card(CardRank.ACE, CardSuit.CLUBS));
+			public void handle(ActionEvent event) {
+				//communauty_card.addCommunautyCard(new Card(CardRank.ACE, CardSuit.CLUBS));
 
-			 }
-		 });
+			}
+		});
 
-		 button_fold.setOnAction(new EventHandler<ActionEvent>() {
+		button_fold.setOnAction(new EventHandler<ActionEvent>() {
 
-			 public void handle(ActionEvent event) {
-				 communauty_card.emptyCommunautyCard();
-			 }
-		 });
+			public void handle(ActionEvent event) {
+				communauty_card.emptyCommunautyCard();
+			}
+		});
 	}
 
 	/**************************************
