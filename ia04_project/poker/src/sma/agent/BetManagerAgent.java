@@ -12,7 +12,6 @@ import poker.game.exception.NoPlaceAvailableException;
 import poker.game.exception.PlayerAlreadyRegisteredException;
 import poker.game.model.BetContainer;
 import poker.game.model.Game;
-import poker.game.model.PlayersContainer;
 import poker.game.player.model.Player;
 import poker.token.exception.InvalidTokenAmountException;
 import poker.token.helpers.TokenSetValueEvaluator;
@@ -132,7 +131,7 @@ public class BetManagerAgent extends Agent {
 					player.getTokens().SubstractTokenSet(tokenSetToSubstract);
 					
 					//Creating extra token set user paid (Ex: Used paid 50 instead of 40)
-					int amountToGenerate = TokenSetValueEvaluator.evaluateTokenSetValue(game.getBetContainer().getTokenValueDefinition(), request.getTokenSet());
+					int amountToGenerate = TokenSetValueEvaluator.evaluateTokenSetValue(game.getBetContainer().getTokenValueDefinition(), tokenSetToSubstract) - request.getBet();
 					
 					TokenSet tokenSetToAddToPlayer = TokenSetValueEvaluator.tokenSetFromAmount(amountToGenerate, game.getBetContainer().getTokenValueDefinition());
 					
