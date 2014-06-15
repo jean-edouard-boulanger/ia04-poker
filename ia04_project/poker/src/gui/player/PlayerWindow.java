@@ -217,7 +217,7 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 		textarea_log.setPrefHeight(125);
 		textarea_log.setPrefWidth(200);
 		textarea_log.setWrapText(true);
-		textarea_log.setText("Log for the game");
+		textarea_log.setText("");
 		textarea_log.setEditable(false);
 		textarea_log.getStyleClass().add("log");
 
@@ -522,6 +522,10 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 		human_player_agent.postGuiEvent(ev);
 	}
 	
+	public void appendToGameLog(String text){
+		textarea_log.appendText(text);
+	}
+	
 	public void initializeGame(int nb_players, int num_player) {
 		this.nb_players = nb_players;
 		this.num_player = num_player;
@@ -743,6 +747,8 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 						Player player = (Player)evt.getNewValue();
 						initializeMe(player);
 						System.out.println("[PlayerWindow] Initialiazing me");
+						
+						appendToGameLog("You joined the table.\n");
 					}
 
 					System.out.println("[PlayerWindow] Initialiazing me");
@@ -755,8 +761,11 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 				{
 					if(evt.getNewValue() instanceof Player)
 					{
+						
 						Player player = (Player)evt.getNewValue();
 						initializeOther(player);
+						
+						appendToGameLog("The player '" + player.getNickname() + "' joined the table.\n");
 					}
 
 					System.out.println("[PlayerWindow] Initialiazing other");
@@ -790,7 +799,10 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 				 */
 				else if(evt.getPropertyName().equals(PlayerGuiEvent.PLAYER_RECEIVED_CARD.toString()))
 				{
-					initializePlayerReceivedCard((Card)evt.getNewValue());
+					Card card = (Card)evt.getNewValue();
+					
+					initializePlayerReceivedCard(card);
+					appendToGameLog("You received the card " + card.getStandardNotation() + "\n");
 					System.out.println("[PlayerWindow] Player received card." + (Card)evt.getNewValue());
 				}
 
@@ -844,9 +856,12 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 				 */
 				else if(evt.getPropertyName().equals(PlayerGuiEvent.CURRENT_PLAYER_CHANGED.toString()))
 				{
-					if(evt.getNewValue() instanceof Integer)
+					if(evt.getNewValue() instanceof Player)
 					{
-						changeCurrentPlayer((Integer)evt.getNewValue());
+						Player player = (Player)evt.getNewValue();
+						
+						appendToGameLog("The player '" + player.getNickname() + "' is now playing\n");
+						changeCurrentPlayer(player.getTablePositionIndex());
 						System.out.println("[PlayerWindow] Player current changed");
 					}
 				}
@@ -906,7 +921,11 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 				{
 					if(evt.getNewValue() instanceof BlindValueDefinition)
 					{
+						
 						BlindValueDefinition bv = (BlindValueDefinition)evt.getNewValue();
+						
+						appendToGameLog("Blinds changed! Small blind: " + bv.getBlindAmountDefinition() + ", Big blind: " + bv.getBigBlindAmountDefinition() + "\n");
+						
 						System.out.println("[PlayerWindow] Small blind changed, new value: " + bv.getBlindAmountDefinition());
 						setBlinds(bv);
 					}

@@ -28,4 +28,22 @@ public enum CardRank {
 	public CardRank getNext() {
 		return values()[(ordinal()+1) % values().length];
 	}
+	
+	public String getSymbol(){
+		if(this.cardRank >= 2 && this.cardRank < 11){
+			return String.valueOf(cardRank);
+		}
+		else if(this.cardRank == 11){
+			return "J";
+		}
+		else if(this.cardRank == 12){
+			return "Q";
+		}
+		else if(this.cardRank == 13){
+			return "K";
+		}
+		else{
+			return "A";
+		}
+	}
 }

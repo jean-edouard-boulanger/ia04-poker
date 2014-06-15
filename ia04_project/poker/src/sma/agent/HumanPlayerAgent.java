@@ -277,7 +277,7 @@ public class HumanPlayerAgent extends GuiAgent {
 				return true;
 			}*/
 			int playerIndex = game.getPlayersContainer().getPlayerByAID(notification.getPlayerAID()).getTablePositionIndex();
-			changes_game.firePropertyChange(PlayerGuiEvent.CURRENT_PLAYER_CHANGED.toString(), null, Integer.valueOf(playerIndex));
+			changes_game.firePropertyChange(PlayerGuiEvent.CURRENT_PLAYER_CHANGED.toString(), null, game.getPlayersContainer().getPlayerByAID(notification.getPlayerAID()));
 
 			return true;
 		}

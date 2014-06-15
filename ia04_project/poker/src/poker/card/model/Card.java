@@ -27,6 +27,10 @@ public class Card {
 		return "|" + rank + " of " + suit + "|";
 	}
 
+	public String getStandardNotation(){
+		return rank.getSymbol() + suit.getSymbol();
+	}
+	
 	private void setSuit(CardSuit suit) {
 		this.suit = suit;
 	}

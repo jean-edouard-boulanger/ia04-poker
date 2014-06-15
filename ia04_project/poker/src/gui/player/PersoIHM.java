@@ -81,7 +81,7 @@ public class PersoIHM extends Group {
 		this.getChildren().add(image_player);
 
 		//SequentialTransition transition_image_current = createTransition(iv, img)
-		t_current_player = new FadeTransition(Duration.millis(500), image_current_player);
+		t_current_player = new FadeTransition(Duration.millis(800), image_current_player);
 		t_current_player.setFromValue(1.0);
 		t_current_player.setToValue(0.3);
 		t_current_player.setCycleCount(Timeline.INDEFINITE);
