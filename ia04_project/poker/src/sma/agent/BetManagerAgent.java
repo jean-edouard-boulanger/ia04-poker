@@ -17,6 +17,7 @@ import sma.agent.helper.DFServiceHelper;
 import sma.agent.helper.TransactionBhv;
 import sma.message.FailureMessage;
 import sma.message.MessageVisitor;
+import sma.message.OKMessage;
 import sma.message.SubscriptionOKMessage;
 import sma.message.bet.request.BetRequest;
 import sma.message.environment.notification.PlayerReceivedTokenSetNotification;
@@ -27,6 +28,7 @@ public class BetManagerAgent extends Agent {
 	BetContainer betContainer;
 	BetManagerMessageVisitor msgVisitor;
 	Game game;
+	AID environment;
 	
 	public BetManagerAgent(){
 		super();
@@ -37,7 +39,7 @@ public class BetManagerAgent extends Agent {
 	public void setup(){
 		super.setup();
 		DFServiceHelper.registerService(this, "BetManagerAgent","BetManager");
-		
+	    this.environment = DFServiceHelper.searchService(this,"PokerEnvironment", "Environment");
 		this.addBehaviour(new ReceiveRequestBehaviour(this));
 	}
 	
@@ -106,12 +108,15 @@ public class BetManagerAgent extends Agent {
 					player.getTokens().SubstractTokenSet(request.getTokenSet());
 					
 					//Notifying the environment
-					
+					AgentHelper.sendSimpleMessage(BetManagerAgent.this, environment, ACLMessage.REQUEST, request);
 					
 				} catch (InvalidTokenAmountException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
+			}
+			else {
+				AgentHelper.sendReply(BetManagerAgent.this, aclMsg, ACLMessage.INFORM, new FailureMessage());
 			}
 			
 			return true;
