@@ -23,7 +23,6 @@ import sma.message.FailureMessage;
 import sma.message.MessageVisitor;
 import sma.message.OKMessage;
 import sma.message.SubscriptionOKMessage;
-import sma.message.bet.request.BetRequest;
 import sma.message.environment.notification.BetNotification;
 import sma.message.environment.notification.BlindValueDefinitionChangedNotification;
 import sma.message.environment.notification.CardAddedToCommunityCardsNotification;
@@ -41,6 +40,7 @@ import sma.message.environment.request.CurrentPlayerChangeRequest;
 import sma.message.environment.request.DealCardToPlayerRequest;
 import sma.message.environment.request.EmptyCommunityCardsRequest;
 import sma.message.environment.request.GiveTokenSetToPlayerRequest;
+import sma.message.environment.request.PlayerBetRequest;
 import sma.message.environment.request.SetDealerRequest;
 import sma.message.environment.request.SetTokenValueDefinitionRequest;
 
@@ -244,12 +244,12 @@ public class EnvironmentAgent extends Agent {
 		}
 		
 		@Override
-		public boolean onBetRequest(BetRequest request, ACLMessage aclMsg) {
+		public boolean onPlayerBetRequest(PlayerBetRequest request, ACLMessage aclMsg) {
 			try {
 				Player player = game.getPlayersContainer().getPlayerByAID(request.getPlayerAID());
-				player.setTokens(player.getTokens().SubstractTokenSet(request.getTokenSet()));				
-				game.getBetContainer().addTokenToPlayerBet(request.getPlayerAID(), request.getTokenSet());
-				AgentHelper.sendSimpleMessage(EnvironmentAgent.this, subscribers, ACLMessage.PROPAGATE, new BetNotification(request.getPlayerAID(), request.getTokenSet()));
+				player.setTokens(player.getTokens().SubstractTokenSet(request.getBet()));				
+				game.getBetContainer().addTokenToPlayerBet(request.getPlayerAID(), request.getBet());
+				AgentHelper.sendSimpleMessage(EnvironmentAgent.this, subscribers, ACLMessage.PROPAGATE, new BetNotification(request.getPlayerAID(), request.getBet()));
 				AgentHelper.sendReply(EnvironmentAgent.this, aclMsg, ACLMessage.INFORM, new OKMessage());
 			} catch (InvalidTokenAmountException e) {
 				AgentHelper.sendReply(EnvironmentAgent.this, aclMsg, ACLMessage.FAILURE, new FailureMessage(e.getMessage()));

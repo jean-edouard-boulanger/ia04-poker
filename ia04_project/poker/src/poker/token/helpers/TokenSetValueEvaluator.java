@@ -2,6 +2,7 @@ package poker.token.helpers;
 
 import poker.game.exception.ExcessiveBetException;
 import poker.token.exception.InvalidTokenAmountException;
+import poker.token.exception.InvalidTokenValueException;
 import poker.token.model.TokenSet;
 import poker.token.model.TokenType;
 import poker.token.model.TokenValueDefinition;
@@ -64,5 +65,21 @@ public class TokenSetValueEvaluator {
 		}
 		
 		return betTokenSet;
+	}
+	
+	public static TokenSet tokenSetFromAmount(int amount, TokenValueDefinition tokenValueDefinition) {
+		TokenSet tokenSet = new TokenSet();
+		
+		TokenType tokenType;
+		try {
+			tokenType = tokenValueDefinition.getTokenTypeForValue(tokenValueDefinition.getMinimumTokenValue());
+			tokenSet.setAmountForTokenType(tokenType, amount);
+
+		} catch (InvalidTokenValueException | InvalidTokenAmountException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
+		return tokenSet;
 	}
 }

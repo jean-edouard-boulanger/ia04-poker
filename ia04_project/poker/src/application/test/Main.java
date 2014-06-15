@@ -87,8 +87,8 @@ public class Main extends Application {
 
 	    int nbTokens = 40;
 	    TokenSet tokenSet = TokenSetFactory.createTokenSet(defaultTokenRepartiton, nbTokens);
-	    
-		TokenSet ts = TokenSetValueEvaluator.tokenSetForBet(400, defaultTokenValueDefinition, tokenSet);
+	    TokenSet ts = TokenSetValueEvaluator.tokenSetFromAmount(500, defaultTokenValueDefinition);
+	//	TokenSet ts = TokenSetValueEvaluator.tokenSetForBet(400, defaultTokenValueDefinition, tokenSet);
 		System.out.println(ts);
 		UserDeck userDeck = new UserDeck();
 		
