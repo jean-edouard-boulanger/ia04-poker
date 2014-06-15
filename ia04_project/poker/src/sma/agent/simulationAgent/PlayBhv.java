@@ -1,9 +1,22 @@
 package sma.agent.simulationAgent;
 
-import sma.agent.SimulationAgent;
 import jade.core.behaviours.Behaviour;
+import sma.agent.SimulationAgent;
+import sma.agent.helper.SimpleVisitor;
+import sma.agent.helper.TransactionBhv;
+import sma.agent.helper.experimental.Task;
+import sma.agent.helper.experimental.TaskRunnerBhv;
+import sma.message.Message;
+import sma.message.dealer.request.DealRequest;
 
-public class PlayBhv extends Behaviour {
+/**
+ * - ask current player to play
+ * - check player move (if check or bet)
+ * - modify environment (if fold or all-in)
+ * - check if the round is done 
+ * - increment current player
+ */
+public class PlayBhv extends TaskRunnerBhv {
 	
 	private SimulationAgent simAgent;
 
@@ -13,16 +26,38 @@ public class PlayBhv extends Behaviour {
 	}
 
 	@Override
-	public void action() {
-		// TODO Auto-generated method stub
+	public void onStart() {
+		
+		while(true); // !!!!!!!!!! temporary !!!!!!!!!!!!
 
+		//Task mainTask = Task.New(playBhv())
+		//		.then(checkIfRoundDone());
+		
+		//this.setBehaviour(mainTask);
+		//super.onStart();
 	}
-
-	@Override
-	public boolean done() {
-		// TODO Auto-generated method stub
-		return false;
+	
+	private Behaviour playBhv(){
+		/*Message msg = new PlayRequest(round);
+		TransactionBhv transaction = new TransactionBhv(myAgent, msg, dealerAgent);
+		transaction.setResponseVisitor(new SimpleVisitor(myAgent,
+				"community cards dealt successfully.",
+				"error while dealing community cards."));		
+		return transaction;*/
+		return null;
 	}
+	
+	private Behaviour checkIfRoundDone(){
+		/*Message msg = new PlayRequest(round);
+		TransactionBhv transaction = new TransactionBhv(myAgent, msg, dealerAgent);
+		transaction.setResponseVisitor(new SimpleVisitor(myAgent,
+				"community cards dealt successfully.",
+				"error while dealing community cards."));		
+		return transaction;*/
+		return null;
+	}
+	
+	
 	
 	/**
 	 * Transition: 
@@ -44,7 +79,7 @@ public class PlayBhv extends Behaviour {
 	 * @return true if the round is finished.
 	 */
 	private boolean checkIfRoundFinished() {
-		// TODO Auto-generated method stub
+		// TODO
 		return false;
 	}
 

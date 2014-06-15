@@ -118,7 +118,7 @@ public class BetManagerAgent extends Agent {
 		playerBetTransaction.setResponseVisitor(new MessageVisitor(){
 			
 			@Override
-			public boolean onOKMessage(SubscriptionOKMessage msg, ACLMessage aclMsg) {
+			public boolean onOKMessage(OKMessage msg, ACLMessage aclMsg) {
 				System.out.println("[" + BetManagerAgent.this.getLocalName() + "] player bet succeded.");
 				return true;
 			}
