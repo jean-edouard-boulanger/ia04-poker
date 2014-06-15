@@ -33,6 +33,7 @@ import javafx.scene.transform.Scale;
 import javafx.stage.Stage;
 import poker.card.helper.CardImageHelper;
 import poker.card.model.Card;
+import poker.game.model.BlindValueDefinition;
 import poker.game.player.model.Player;
 import poker.token.model.TokenType;
 import sma.agent.HumanPlayerAgent;
@@ -58,6 +59,9 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 		PLAYER_BET,
 		PLAYER_CHECK,
 		BLIND_VALUE,
+		DEALER_PLAYER_CHANGED,
+		SMALL_BLIND_PLAYER,
+		BIG_BLIND_PLAYER,
 		CURRENT_PLAYER_CHANGED,
 
 		IHM_READY,
@@ -606,6 +610,10 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 		PlayerWindow.this.list_perso.get(index_player).setCurrentPlayer();
 		PlayerWindow.this.current_player = index_player;
 	}
+	
+	public void changeBlind(BlindValueDefinition blind_definition) {
+		this.label_min_blind.setText(String.valueOf(blind_definition.getBlindAmountDefinition()));
+	}
 
 	public void initializeAction()
 	{
@@ -772,6 +780,8 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 					for(Map.Entry<TokenType, Integer> entry : eventData.getTokenSet().getTokensAmount().entrySet()){
 						playerTokens.get(entry.getKey()).setMise(entry.getValue());
 					}
+					
+					PlayerWindow.this.slider_bet.setMax(eventData.getTokenSetValuation());
 				}
 
 				/**
@@ -793,7 +803,55 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 						changeCurrentPlayer((Integer)evt.getNewValue());
 						System.out.println("[PlayerWindow] Player current changed");
 					}
-				}	
+				}
+				
+				/**
+				 *  -----  DEALER CHANGED PLAYER -----
+				 */
+				else if(evt.getPropertyName().equals(PlayerGuiEvent.DEALER_PLAYER_CHANGED.toString()))
+				{
+					if(evt.getNewValue() instanceof Integer)
+					{
+						
+						System.out.println("[PlayerWindow] Player dealer changed");
+					}
+				}
+				
+				/**
+				 *  -----  SMALL BLIND PLAYER -----
+				 */
+				else if(evt.getPropertyName().equals(PlayerGuiEvent.SMALL_BLIND_PLAYER.toString()))
+				{
+					if(evt.getNewValue() instanceof Player)
+					{
+						
+						System.out.println("[PlayerWindow] Player small blind");
+					}
+				}
+				
+				/**
+				 *  -----  BIG BLIND PLAYER -----
+				 */
+				else if(evt.getPropertyName().equals(PlayerGuiEvent.BIG_BLIND_PLAYER.toString()))
+				{
+					if(evt.getNewValue() instanceof Player)
+					{
+						
+						System.out.println("[PlayerWindow] Player big blind");
+					}
+				}
+				
+				/**
+				 *  -----  BLIND CHANGED -----
+				 */
+				else if(evt.getPropertyName().equals(PlayerGuiEvent.BLIND_VALUE.toString()))
+				{
+					if(evt.getNewValue() instanceof BlindValueDefinition)
+					{
+						
+						System.out.println("[PlayerWindow] Blind changed");
+					}
+				}
 				
 				/**
 				 *  -----  BET PLAYER -----
