@@ -78,8 +78,8 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 
 	/** Interaction button */
 	private Button button_fold;
-	private Button button_follow;
-	private Button button_relaunch;
+	private Button button_call;
+	private Button button_raise;
 	private Button button_check;
 	private Button button_add_bet;
 	private Button button_sub_bet;
@@ -223,21 +223,21 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 
 		this.betButtons = new HashMap<BetType, Button>();
 		
-		button_follow = new Button();
-		button_follow.setLayoutX(335);
-		button_follow.setLayoutY(490);
+		button_call = new Button();
+		button_call.setLayoutX(335);
+		button_call.setLayoutY(480);
 
-		button_follow.setText("Suivre à 2");
+		button_call.setText("Call (2)");
 
-		betButtons.put(BetType.CALL, button_follow);
+		betButtons.put(BetType.CALL, button_call);
 		
-		button_follow.setPrefWidth(100);
-		button_follow.getStyleClass().add("button_play");
+		button_call.setPrefWidth(100);
+		button_call.getStyleClass().add("button_play");
 
 		button_check = new Button();
 		button_check.setLayoutX(335);
-		button_check.setLayoutY(550);
-		button_check.setText("Checker");
+		button_check.setLayoutY(540);
+		button_check.setText("Check");
 		button_check.setPrefWidth(100);
 		button_check.getStyleClass().add("button_play");
 
@@ -245,34 +245,34 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 		
 		button_fold = new Button();
 		button_fold.setLayoutX(225);
-		button_fold.setLayoutY(490);
-		button_fold.setText("Se coucher");
+		button_fold.setLayoutY(480);
+		button_fold.setText("Fold");
 		button_fold.setPrefWidth(100);
 		button_fold.getStyleClass().add("button_play");
 
 		betButtons.put(BetType.FOLD, button_fold);
 		
 		// Relancer = "To raise", champion ...
-		button_relaunch = new Button();
-		button_relaunch.setLayoutX(225);
-		button_relaunch.setLayoutY(550);
+		button_raise = new Button();
+		button_raise.setLayoutX(225);
+		button_raise.setLayoutY(540);
 
-		button_relaunch.setText("Relancer à 5");
+		button_raise.setText("Raise (4)");
 
-		button_relaunch.setPrefWidth(100);
-		button_relaunch.getStyleClass().add("button_play");
+		button_raise.setPrefWidth(100);
+		button_raise.getStyleClass().add("button_play");
 
-		betButtons.put(BetType.RAISE, button_relaunch);
+		betButtons.put(BetType.RAISE, button_raise);
 		
 		button_add_bet = new Button();
-		button_add_bet.setLayoutX(660);
-		button_add_bet.setLayoutY(550);
+		button_add_bet.setLayoutX(655);
+		button_add_bet.setLayoutY(565);
 		button_add_bet.setText("+");
 		button_add_bet.getStyleClass().add("button_slider");
 
 		button_sub_bet = new Button();
 		button_sub_bet.setLayoutX(450);
-		button_sub_bet.setLayoutY(550);
+		button_sub_bet.setLayoutY(565);
 		button_sub_bet.setText("-");
 		button_sub_bet.getStyleClass().add("button_slider");
 
@@ -282,21 +282,21 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 		slider_bet.setMin(0);
 		slider_bet.setMax(50);
 		slider_bet.setValue(0);
-		slider_bet.setShowTickLabels(true);
+		slider_bet.setShowTickLabels(false);
 		slider_bet.setShowTickMarks(false);
 		slider_bet.setMajorTickUnit(5);
 		slider_bet.setMinorTickCount(0);
 		slider_bet.setSnapToTicks(true);
 		slider_bet.setBlockIncrement(1);
-		slider_bet.setLayoutX(485);
-		slider_bet.setLayoutY(550);
-		slider_bet.setPrefWidth(175);
+		slider_bet.setLayoutX(492);
+		slider_bet.setLayoutY(570);
+		slider_bet.setPrefWidth(150);
 
 		textfield_bet = new TextField();
 		textfield_bet.setText("0");
-		textfield_bet.setLayoutX(485);
-		textfield_bet.setLayoutY(525);
-		textfield_bet.setPrefWidth(175);
+		textfield_bet.setLayoutX(492);
+		textfield_bet.setLayoutY(535);
+		textfield_bet.setPrefWidth(150);
 		textfield_bet.setEditable(false);
 
 		communauty_card = new CommunautyCardIHM(250, 185);
@@ -311,10 +311,10 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 		 *  Player's tokens
 		 */
 		token_white = new TokenPlayerIHM(485, 500, 0, ColorToken.WHITE);
-		token_black = new TokenPlayerIHM(515, 500, 0, ColorToken.BLACK);
-		token_blue = new TokenPlayerIHM(545, 500, 0, ColorToken.BLUE);
-		token_green = new TokenPlayerIHM(575, 500, 0, ColorToken.GREEN);
-		token_red = new TokenPlayerIHM(605, 500, 0, ColorToken.RED);
+		token_black = new TokenPlayerIHM(515, 500, 0, ColorToken.RED);
+		token_blue = new TokenPlayerIHM(545, 500, 0, ColorToken.GREEN);
+		token_green = new TokenPlayerIHM(575, 500, 0, ColorToken.BLUE);
+		token_red = new TokenPlayerIHM(605, 500, 0, ColorToken.BLACK);
 
 		playerTokens = new HashMap<TokenType, TokenPlayerIHM>();		
 		playerTokens.put(TokenType.WHITE, token_white);
@@ -456,8 +456,8 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 		root.getChildren().add(button_sub_bet);
 		root.getChildren().add(button_check);
 		root.getChildren().add(button_fold);
-		root.getChildren().add(button_follow);
-		root.getChildren().add(button_relaunch);
+		root.getChildren().add(button_call);
+		root.getChildren().add(button_raise);
 		root.getChildren().add(slider_bet);
 		root.getChildren().add(textfield_bet);
 		root.getChildren().add(token_white);
