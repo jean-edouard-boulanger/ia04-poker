@@ -324,8 +324,8 @@ public class HumanPlayerAgent extends GuiAgent {
 				Player smallBlindPlayer = game.getPlayersContainer().getSmallBlind();
 				
 				changes_game.firePropertyChange(PlayerGuiEvent.DEALER_PLAYER_CHANGED.toString(), null, dealerPlayer);
-				changes_game.firePropertyChange(PlayerGuiEvent.SMALL_BLIND_PLAYER.toString(), null, bigBlindPlayer);
-				changes_game.firePropertyChange(PlayerGuiEvent.BIG_BLIND_PLAYER.toString(), null, smallBlindPlayer);
+				changes_game.firePropertyChange(PlayerGuiEvent.SMALL_BLIND_PLAYER.toString(), null, smallBlindPlayer);
+				changes_game.firePropertyChange(PlayerGuiEvent.BIG_BLIND_PLAYER.toString(), null, bigBlindPlayer);
 			} catch (NotRegisteredPlayerException e) {
 				e.printStackTrace();
 			}
