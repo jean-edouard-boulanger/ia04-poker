@@ -1,4 +1,4 @@
-package gui.player.poker.tokens;
+package gui.player.poker.token;
 
 import javafx.scene.image.Image;
 

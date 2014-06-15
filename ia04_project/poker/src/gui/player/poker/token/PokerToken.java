@@ -1,4 +1,6 @@
-package gui.player.poker.tokens;
+package gui.player.poker.token;
+
+import gui.player.PersoIHM;
 
 import com.sun.javafx.geom.Point2D;
 
@@ -13,12 +15,14 @@ public abstract class PokerToken extends Group {
 	
 	public PokerToken(){
 		this.tokenImageView = new ImageView();
-		this.tokenImageView.setFitWidth(30);
+		this.tokenImageView.setFitWidth(20);
 		this.tokenImageView.setPreserveRatio(true);
 		this.tokenImageView.setSmooth(true);
 		this.tokenImageView.setCache(true);
 		this.tokenImageView.setLayoutX(0);
 		this.tokenImageView.setLayoutY(0);
+		
+		this.setVisible(false);
 		
 		this.getChildren().add(tokenImageView);
 	}
@@ -45,4 +49,10 @@ public abstract class PokerToken extends Group {
 		transition.setNode(tokenImageView);
 		transition.play();
 	}
+	
+	public void animatedMoveToPlayer(PersoIHM perso){
+		Point2D destPoint = perso.getBlindTokenPosition();
+		this.animatedMoveTo(destPoint);
+	}
+	
 }

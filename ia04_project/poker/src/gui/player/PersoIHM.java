@@ -1,6 +1,10 @@
 package gui.player;
 
+import jade.core.behaviours.SenderBehaviour;
+
 import java.util.Map;
+
+import com.sun.javafx.geom.Point2D;
 
 import javafx.animation.FadeTransition;
 import javafx.animation.Timeline;
@@ -18,12 +22,15 @@ public class PersoIHM extends Group {
 
 	private String pseudo;
 
+	private Point2D refPosition;
+	private Sens refSens;
+	
 	private ImageView image_current_player;
 	private ImageView image_player;
 
 	FadeTransition t_current_player;
 
-	public enum Sens { GAUCHE, DROITE, HAUT, BAS }
+	public enum Sens { GAUCHE, DROITE, HAUT, BAS, HAUT_GAUCHE, HAUT_DROITE, BAS_GAUCHE, BAS_DROITE }
 	public PersoIHM(int x, int y, String pseudo, Sens position)
 	{
 		image_player = new ImageView(new Image("images/player_other.png"));
@@ -36,14 +43,16 @@ public class PersoIHM extends Group {
 		image_current_player.setLayoutY(y - image_current_player.getBoundsInLocal().getWidth() / 2);
 		image_current_player.setVisible(false);
 
-
+		this.refPosition = new Point2D(x, y);
+		this.refSens = position;
+		
 		name = new Label(pseudo + " (0)");
 
 		name.getStyleClass().add("pseudo");
 
 		this.pseudo = pseudo;
 
-		if(position.equals(Sens.HAUT))
+		if(position.equals(Sens.HAUT) || this.refSens == Sens.HAUT_GAUCHE || this.refSens == Sens.HAUT_DROITE)
 		{
 			name.setLayoutX(x-20);
 			name.setLayoutY(y-40);
@@ -61,7 +70,7 @@ public class PersoIHM extends Group {
 			name.setLayoutY(y+20);
 		}
 
-		if(position.equals(Sens.BAS))
+		if(position.equals(Sens.BAS)  || this.refSens == Sens.BAS_GAUCHE || this.refSens == Sens.BAS_DROITE)
 		{
 			name.setLayoutX(x-20);
 			name.setLayoutY(y+25);
@@ -107,6 +116,85 @@ public class PersoIHM extends Group {
 		name.setText(pseudo + " (" + score + ")");
 	}
 
+	public Point2D getBlindTokenPosition(){
+		Point2D pos = new Point2D();
+				
+		if(this.refSens == Sens.HAUT){
+			pos.x = this.refPosition.x + 15;
+			pos.y = this.refPosition.y + 50;
+		}
+		else if(this.refSens == Sens.BAS){
+			pos.x = this.refPosition.x - 15;
+			pos.y = this.refPosition.y - 60;
+		}
+		else if(this.refSens == Sens.GAUCHE){
+			pos.x = this.refPosition.x + 60;
+			pos.y = this.refPosition.y + 15;
+		}
+		else if(this.refSens == Sens.DROITE){
+			pos.x = this.refPosition.x - 60;
+			pos.y = this.refPosition.y - 15;
+		}
+		else if(this.refSens.equals(Sens.HAUT_DROITE)){
+			pos.x = this.refPosition.x - 35;
+			pos.y = this.refPosition.y + 45;
+		}
+		else if(this.refSens.equals(Sens.HAUT_GAUCHE)){
+			pos.x = this.refPosition.x + 35;
+			pos.y = this.refPosition.y + 45;
+		}
+		else if(this.refSens.equals(Sens.BAS_DROITE)){
+			pos.x = this.refPosition.x - 50;
+			pos.y = this.refPosition.y - 40;
+		}
+		else if(this.refSens.equals(Sens.BAS_GAUCHE)){
+			pos.x = this.refPosition.x + 50;
+			pos.y = this.refPosition.y - 40;
+		}
+		
+		return pos;	
+	}
+	
+	public Point2D getDealerTokenPosition(){
+		Point2D pos = new Point2D();
+		
+		if(this.refSens == Sens.HAUT){
+			pos.x = this.refPosition.x - 15;
+			pos.y = this.refPosition.y + 50;
+		}
+		else if(this.refSens == Sens.BAS){
+			pos.x = this.refPosition.x + 15;
+			pos.y = this.refPosition.y - 60;
+		}
+		else if(this.refSens == Sens.GAUCHE){
+			pos.x = this.refPosition.x + 60;
+			pos.y = this.refPosition.y - 15;
+		}
+		else if(this.refSens == Sens.DROITE){
+			pos.x = this.refPosition.x - 60;
+			pos.y = this.refPosition.y + 15;
+		}
+		else if(this.refSens.equals(Sens.HAUT_DROITE)){
+			pos.x = this.refPosition.x - 45;
+			pos.y = this.refPosition.y + 35;
+		}
+		else if(this.refSens.equals(Sens.HAUT_GAUCHE)){
+			pos.x = this.refPosition.x + 45;
+			pos.y = this.refPosition.y + 35;
+		}
+		else if(this.refSens.equals(Sens.BAS_DROITE)){
+			pos.x = this.refPosition.x - 40;
+			pos.y = this.refPosition.y - 50;
+		}
+		else if(this.refSens.equals(Sens.BAS_GAUCHE)){
+			pos.x = this.refPosition.x + 40;
+			pos.y = this.refPosition.y - 50;
+		}
+		
+		return pos;	
+	}
+	
+	
 	/*
 	 * Regarde poker.token.helpers.TokenSetValueEvaluator
 	 * Il calcule a valeur d'une main à partir d'un TokenSet, et de la definition de la valeur des jetons
@@ -121,5 +209,9 @@ public class PersoIHM extends Group {
 		}
 
 		return score;
+	}
+
+	public void setRefPosition(Point2D refPosition) {
+		this.refPosition = refPosition;
 	}
 }

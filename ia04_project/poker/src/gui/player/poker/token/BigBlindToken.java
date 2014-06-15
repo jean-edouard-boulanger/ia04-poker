@@ -1,4 +1,4 @@
-package gui.player.poker.tokens;
+package gui.player.poker.token;
 
 import com.sun.javafx.geom.Point2D;
 

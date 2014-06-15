@@ -1,4 +1,6 @@
-package gui.player.poker.tokens;
+package gui.player.poker.token;
+
+import gui.player.PersoIHM;
 
 import com.sun.javafx.geom.Point2D;
 
@@ -18,5 +20,10 @@ public class DealerToken extends PokerToken {
 		super(center);
 		this.tokenImageView = new ImageView(PICTURE_PATH);
 	}
-
+	
+	@Override
+	public void animatedMoveToPlayer(PersoIHM perso){
+		Point2D destPoint = perso.getDealerTokenPosition();
+		this.animatedMoveTo(destPoint);
+	}
 }

@@ -4,6 +4,9 @@ import gui.player.PersoIHM.Sens;
 import gui.player.TokenPlayerIHM.ColorToken;
 import gui.player.event.model.PlayRequestEventData;
 import gui.player.event.model.PlayerReceivedTokenSetEventData;
+import gui.player.poker.token.BigBlindToken;
+import gui.player.poker.token.DealerToken;
+import gui.player.poker.token.SmallBlindToken;
 import jade.gui.GuiEvent;
 
 import java.beans.PropertyChangeEvent;
@@ -161,6 +164,11 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 
 	private HashMap<TokenType, TokenPlayerIHM> playerTokens;
 	
+	//Poker tokens (Big blind, small blnd, dealer)
+	private DealerToken dealerToken;
+	private BigBlindToken bigBlindToken;
+	private SmallBlindToken smallBlindToken;
+	
 	// scaling:
 	private double scaleRatio = 1;
 	private double stageInitialWidth = 0;
@@ -173,7 +181,8 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 	{
 		this.human_player_agent = agent;
 	}
-
+	
+	
 	@Override
 	public void start(Stage primaryStage) {
 
@@ -185,7 +194,7 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 
 		root.setId("root");
 
-		label_hand = new Label("Main n�1");
+		label_hand = new Label("Main n°1");
 
 		label_hand.setLayoutX(15);
 		label_hand.setLayoutY(15);
@@ -313,15 +322,15 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 		 *  Players's perso
 		 */
 		perso_1 = new PersoIHM(50, 215, "pseudo", Sens.GAUCHE);
-		perso_2 = new PersoIHM(105, 90, "pseudo", Sens.HAUT);
+		perso_2 = new PersoIHM(105, 90, "pseudo", Sens.HAUT_GAUCHE);
 		perso_3 = new PersoIHM(250, 50, "pseudo", Sens.HAUT);
 		perso_4 = new PersoIHM(440, 50, "pseudo", Sens.HAUT);
-		perso_5 = new PersoIHM(600, 90, "pseudo", Sens.HAUT);
+		perso_5 = new PersoIHM(600, 90, "pseudo", Sens.HAUT_DROITE);
 		perso_6 = new PersoIHM(650, 215, "pseudo", Sens.DROITE);
-		perso_7 = new PersoIHM(600, 330, "pseudo", Sens.BAS);
+		perso_7 = new PersoIHM(600, 330, "pseudo", Sens.BAS_DROITE);
 		perso_8 = new PersoIHM(440, 370, "pseudo", Sens.BAS);
 		perso_9 = new PersoIHM(250, 370, "pseudo", Sens.BAS);
-		perso_10 = new PersoIHM(105, 330, "pseudo", Sens.BAS);
+		perso_10 = new PersoIHM(105, 330, "pseudo", Sens.BAS_GAUCHE);
 
 		this.list_perso = new ArrayList<PersoIHM>();
 
@@ -416,6 +425,13 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 		player_cards.add(im2);
 
 		/**************************************
+		 * Poker Tokens
+		 */
+		this.dealerToken = new DealerToken();
+		this.bigBlindToken = new BigBlindToken();
+		this.smallBlindToken = new SmallBlindToken();
+		
+		/**************************************
 		 *  Table
 		 */
 		ImageView table = new ImageView(new Image("images/table_resize.png"));
@@ -445,6 +461,10 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 		root.getChildren().add(im);
 		root.getChildren().add(im2);
 
+		root.getChildren().add(dealerToken);
+		root.getChildren().add(bigBlindToken);
+		root.getChildren().add(smallBlindToken);
+		
 		final Pane background = new Pane();
 		background.setId("background");
 		background.getChildren().add(root);
@@ -551,6 +571,10 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 		root.getChildren().add(PlayerWindow.this.list_token_bet.get(position_player));
 
 		PlayerWindow.this.list_perso.get(position_player).setCurrentPlayer();
+		
+		//TODO remove this after debug
+		this.dealerToken.setCenter(this.list_perso.get(position_player).getDealerTokenPosition());
+		this.dealerToken.setVisible(true);
 	}
 
 	public void initializeOther(final Player player)
