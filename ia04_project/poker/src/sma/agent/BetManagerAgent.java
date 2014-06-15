@@ -19,6 +19,7 @@ import sma.agent.helper.AgentHelper;
 import sma.agent.helper.DFServiceHelper;
 import sma.agent.helper.TransactionBhv;
 import sma.message.FailureMessage;
+import sma.message.Message;
 import sma.message.MessageVisitor;
 import sma.message.OKMessage;
 import sma.message.SubscriptionOKMessage;
@@ -117,7 +118,7 @@ public class BetManagerAgent extends Agent {
 		playerBetTransaction.setResponseVisitor(new MessageVisitor(){
 			
 			@Override
-			public boolean onSubscriptionOK(SubscriptionOKMessage msg, ACLMessage aclMsg) {
+			public boolean onOKMessage(SubscriptionOKMessage msg, ACLMessage aclMsg) {
 				System.out.println("[" + BetManagerAgent.this.getLocalName() + "] player bet succeded.");
 				return true;
 			}
@@ -133,7 +134,7 @@ public class BetManagerAgent extends Agent {
 		giveTokenSetToPlayerTransaction.setResponseVisitor(new MessageVisitor(){
 			
 			@Override
-			public boolean onSubscriptionOK(SubscriptionOKMessage msg, ACLMessage aclMsg) {
+			public boolean onOKMessage(OKMessage msg, ACLMessage aclMsg) {
 				System.out.println("[" + BetManagerAgent.this.getLocalName() + "] added token set to player.");
 				return true;
 			}
@@ -247,6 +248,10 @@ public class BetManagerAgent extends Agent {
 			
 			return true;
 		}
+		
+		// All other environment changes are discarded.
+	    @Override
+	    public boolean onEnvironmentChanged(Message notif, ACLMessage aclMsg) {	return true; }
 	}
 
 	public BetManagerMessageVisitor getMsgVisitor() {

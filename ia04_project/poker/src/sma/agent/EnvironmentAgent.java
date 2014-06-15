@@ -196,6 +196,7 @@ public class EnvironmentAgent extends Agent {
 				return true;
 			}
 			AgentHelper.sendSimpleMessage(EnvironmentAgent.this, subscribers, ACLMessage.PROPAGATE, new CurrentPlayerChangeRequest(request.getPlayerAID()));
+			AgentHelper.sendReply(EnvironmentAgent.this, aclMsg, ACLMessage.INFORM, new OKMessage());
 			return true;
 		}
 
