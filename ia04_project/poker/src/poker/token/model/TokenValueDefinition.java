@@ -31,6 +31,17 @@ public class TokenValueDefinition {
 		return (value == null) ? 0 : value;
 	}
 	
+	public TokenType getTokenTypeForValue(int value) throws InvalidTokenValueException {
+		
+		for(TokenType t : tokenValues.keySet()) {
+			if(tokenValues.get(t) == value) {
+				return t;
+			}
+		}
+		
+		throw new InvalidTokenValueException();
+	}
+	
 	public Map<TokenType, Integer> getTokenValues() {
 		return tokenValues;
 	}

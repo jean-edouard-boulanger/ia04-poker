@@ -1,18 +1,17 @@
 package sma.message;
 
 import jade.lang.acl.ACLMessage;
-import sma.message.bet.notification.BetNotification;
 import sma.message.bet.request.BetRequest;
 import sma.message.blind.request.GetBlindValueDefinitionRequest;
 import sma.message.blind.request.ResetBlindRequest;
 import sma.message.dealer.request.DealRequest;
 import sma.message.determine_winner.DetermineWinnerRequest;
+import sma.message.environment.notification.BetNotification;
 import sma.message.environment.notification.BlindValueDefinitionChangedNotification;
 import sma.message.environment.notification.CardAddedToCommunityCardsNotification;
 import sma.message.environment.notification.CommunityCardsEmptiedNotification;
 import sma.message.environment.notification.CurrentPlayerChangedNotification;
 import sma.message.environment.notification.DealerChangedNotification;
-import sma.message.environment.notification.PlayerBetNotification;
 import sma.message.environment.notification.PlayerCardsRevealedNotification;
 import sma.message.environment.notification.PlayerCheckNotification;
 import sma.message.environment.notification.PlayerFoldedNotification;
@@ -29,6 +28,7 @@ import sma.message.environment.request.CurrentPlayerChangeRequest;
 import sma.message.environment.request.DealCardToPlayerRequest;
 import sma.message.environment.request.EmptyCommunityCardsRequest;
 import sma.message.environment.request.GiveTokenSetToPlayerRequest;
+import sma.message.environment.request.PlayerBetRequest;
 import sma.message.environment.request.SetDealerRequest;
 import sma.message.environment.request.SetTokenValueDefinitionRequest;
 import sma.message.environment.request.ShowPlayerCardsRequest;
@@ -62,13 +62,12 @@ public class MessageVisitor {
 	public boolean onResetBlindRequest(ResetBlindRequest request, ACLMessage aclMsg) {return false;}
 	public boolean onRefreshBlindValueDefinitionRequest(GetBlindValueDefinitionRequest request, ACLMessage aclMsg) {return false;}
 	
-	//Determine winner
+	// Determine winner
 	public boolean onDetermineWinnerRequest(DetermineWinnerRequest request, ACLMessage aclMsg) {return false;}
 	public boolean onWinnerDeterminedNotification(WinnerDeterminedNotification notification, ACLMessage aclMsg) {return false;}
 	
-	//Bet
+	// Bet
 	public boolean onBetRequest(BetRequest request, ACLMessage aclMsg) {return false;}
-	public boolean onBetNotification(BetNotification notification, ACLMessage aclMsg) {return false;}
 	
 	// Environment
 	public boolean onAddPlayerTableRequest(AddPlayerTableRequest notif, ACLMessage aclMsg){return false;}
@@ -81,6 +80,7 @@ public class MessageVisitor {
 	public boolean onSetTokenValueDefinitionRequest(SetTokenValueDefinitionRequest notif,	ACLMessage aclMsg) {return false;}
 	public boolean onSetDealerRequest(SetDealerRequest setDealerRequest,ACLMessage aclMsg) {return false;}
 	public boolean onShowPlayerCardsRequest(ShowPlayerCardsRequest showPlayerRequest, ACLMessage aclMsg) {return false;}
+	public boolean onPlayerBetRequest(PlayerBetRequest playerBetRequest, ACLMessage aclMsg) { return false; }
 	
 	// Environment notification 
 	public boolean onEnvironmentChanged(Message notif, ACLMessage aclMsg){return false;}
@@ -92,11 +92,12 @@ public class MessageVisitor {
 	public boolean onPlayerFoldedNotification(PlayerFoldedNotification notification, ACLMessage aclMsg){return false;}
 	public boolean onPlayerSitOnTableNotification(PlayerSitOnTableNotification notification, ACLMessage aclMsg){return false;}
 	public boolean onPlayerReceivedTokenSetNotification(PlayerReceivedTokenSetNotification notification, ACLMessage aclMsg){return false;}
-	public boolean onPlayerBetNotification(PlayerBetNotification notification, ACLMessage aclMsg){return false;}
+	public boolean onBetNotification(BetNotification notification, ACLMessage aclMsg){return false;}
 	public boolean onPlayerCheckNotification(PlayerCheckNotification notification, ACLMessage aclMsg){return false;}
 	public boolean onBlindValueDefinitionChangedNotification(BlindValueDefinitionChangedNotification notification, ACLMessage aclMsg){return false;}
 	public boolean onCurrentPlayerChangedNotification(CurrentPlayerChangedNotification notification, ACLMessage aclMsg){return false;}
 	public boolean onTokenValueDefinitionChangedNotification(TokenValueDefinitionChangedNotification notif, ACLMessage aclMsg) {return false;}
 	public boolean onDealerChangedNotification(DealerChangedNotification dealerChangedNotification, ACLMessage aclMsg) {return false;}
 	public boolean onPlayerCardsRevealedNotification(PlayerCardsRevealedNotification playerCardsRevealed, ACLMessage aclMsg) {return false;}
+	
 }

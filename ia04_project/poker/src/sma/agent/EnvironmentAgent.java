@@ -15,12 +15,15 @@ import poker.game.exception.NoPlaceAvailableException;
 import poker.game.exception.NotRegisteredPlayerException;
 import poker.game.exception.PlayerAlreadyRegisteredException;
 import poker.game.model.Game;
+import poker.game.player.model.Player;
+import poker.token.exception.InvalidTokenAmountException;
 import sma.agent.helper.AgentHelper;
 import sma.agent.helper.DFServiceHelper;
 import sma.message.FailureMessage;
 import sma.message.MessageVisitor;
 import sma.message.OKMessage;
 import sma.message.SubscriptionOKMessage;
+import sma.message.environment.notification.BetNotification;
 import sma.message.environment.notification.BlindValueDefinitionChangedNotification;
 import sma.message.environment.notification.CardAddedToCommunityCardsNotification;
 import sma.message.environment.notification.CommunityCardsEmptiedNotification;
@@ -37,6 +40,7 @@ import sma.message.environment.request.CurrentPlayerChangeRequest;
 import sma.message.environment.request.DealCardToPlayerRequest;
 import sma.message.environment.request.EmptyCommunityCardsRequest;
 import sma.message.environment.request.GiveTokenSetToPlayerRequest;
+import sma.message.environment.request.PlayerBetRequest;
 import sma.message.environment.request.SetDealerRequest;
 import sma.message.environment.request.SetTokenValueDefinitionRequest;
 
@@ -221,7 +225,7 @@ public class EnvironmentAgent extends Agent {
 
 		@Override
 		public boolean onSetTokenValueDefinitionRequest(SetTokenValueDefinitionRequest notif, ACLMessage aclMsg) {
-			game.setTokenValueDefinition(notif.getTokenValueDefinition());
+			game.getBetContainer().setTokenValueDefinition(notif.getTokenValueDefinition());
 			AgentHelper.sendSimpleMessage(EnvironmentAgent.this, subscribers, ACLMessage.PROPAGATE, new TokenValueDefinitionChangedNotification(notif.getTokenValueDefinition()));
 			AgentHelper.sendReply(EnvironmentAgent.this, aclMsg, ACLMessage.INFORM, new OKMessage());
 			return true;
@@ -238,5 +242,20 @@ public class EnvironmentAgent extends Agent {
 			}			
 			return true;
 		}
+		
+		@Override
+		public boolean onPlayerBetRequest(PlayerBetRequest request, ACLMessage aclMsg) {
+			try {
+				Player player = game.getPlayersContainer().getPlayerByAID(request.getPlayerAID());
+				player.setTokens(player.getTokens().SubstractTokenSet(request.getBet()));				
+				game.getBetContainer().addTokenToPlayerBet(request.getPlayerAID(), request.getBet());
+				AgentHelper.sendSimpleMessage(EnvironmentAgent.this, subscribers, ACLMessage.PROPAGATE, new BetNotification(request.getPlayerAID(), request.getBet()));
+				AgentHelper.sendReply(EnvironmentAgent.this, aclMsg, ACLMessage.INFORM, new OKMessage());
+			} catch (InvalidTokenAmountException e) {
+				AgentHelper.sendReply(EnvironmentAgent.this, aclMsg, ACLMessage.FAILURE, new FailureMessage(e.getMessage()));
+			}			
+			return true;
+		}
+		
 	}
 }

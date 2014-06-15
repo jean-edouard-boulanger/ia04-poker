@@ -86,15 +86,9 @@ public class Main extends Application {
 	    defaultTokenRepartiton.setRepartitionForToken(TokenType.BLACK, 5);
 
 	    int nbTokens = 40;
-	    //TokenSet tokenSet = TokenSetFactory.createTokenSet(defaultTokenRepartiton, nbTokens);
-	    TokenSet tokenSet = new TokenSet();
-	    
-	    tokenSet.setAmountForTokenType(TokenType.WHITE, 0);
-	    tokenSet.setAmountForTokenType(TokenType.RED, 1);
-	    
-	    System.out.println(tokenSet);
-	    
-		TokenSet ts = TokenSetValueEvaluator.tokenSetForBet(5, defaultTokenValueDefinition, tokenSet);
+	    TokenSet tokenSet = TokenSetFactory.createTokenSet(defaultTokenRepartiton, nbTokens);
+	    TokenSet ts = TokenSetValueEvaluator.tokenSetFromAmount(500, defaultTokenValueDefinition);
+	//	TokenSet ts = TokenSetValueEvaluator.tokenSetForBet(400, defaultTokenValueDefinition, tokenSet);
 		System.out.println(ts);
 		UserDeck userDeck = new UserDeck();
 		
