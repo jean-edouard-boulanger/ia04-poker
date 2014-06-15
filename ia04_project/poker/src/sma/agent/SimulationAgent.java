@@ -3,16 +3,13 @@ package sma.agent;
 import gui.server.ServerWindow;
 import jade.core.behaviours.Behaviour;
 import jade.core.behaviours.FSMBehaviour;
-import jade.core.behaviours.SequentialBehaviour;
 import jade.gui.GuiAgent;
 import jade.gui.GuiEvent;
 
 import java.beans.PropertyChangeSupport;
-import java.util.Arrays;
-import java.util.List;
 
-import poker.game.model.BlindValueDefinition;
 import poker.game.model.Game;
+import poker.game.model.Round;
 import poker.token.exception.InvalidRepartitionException;
 import poker.token.exception.InvalidTokenAmountException;
 import poker.token.exception.InvalidTokenValueException;
@@ -30,7 +27,6 @@ import sma.agent.simulationAgent.InitHandBhv;
 import sma.agent.simulationAgent.InitRoundBhv;
 import sma.agent.simulationAgent.PlayBhv;
 import sma.agent.simulationAgent.PlayerSubscriptionBhv;
-import sma.agent.simulationAgent.Round;
 
 /**
  * Simulation agent.
