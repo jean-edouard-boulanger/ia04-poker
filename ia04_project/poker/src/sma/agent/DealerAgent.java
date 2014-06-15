@@ -280,7 +280,7 @@ public class DealerAgent extends Agent {
 	    }
 	    else 
 	    {
-		AgentHelper.sendReply(DealerAgent.this, aclMsg, ACLMessage.FAILURE, new FailureMessage("No card dealt at that step"));
+		AgentHelper.sendReply(DealerAgent.this, aclMsg, ACLMessage.INFORM, new OKMessage()); // No card dealt at that step
 		return true;
 	    }
 

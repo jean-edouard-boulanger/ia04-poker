@@ -7,6 +7,7 @@ import sma.agent.SimulationAgent;
 import sma.agent.helper.DFServiceHelper;
 import sma.agent.helper.SimpleVisitor;
 import sma.agent.helper.TransactionBhv;
+import sma.agent.helper.experimental.Task;
 import sma.agent.helper.experimental.TaskRunnerBhv;
 import sma.message.Message;
 import sma.message.dealer.request.DealRequest;
@@ -18,6 +19,12 @@ public class InitRoundBhv extends TaskRunnerBhv {
     public InitRoundBhv(SimulationAgent simAgent) {
 	super(simAgent);
 	this.dealerAgent = DFServiceHelper.searchService(simAgent, "DealerAgent","Dealer");
+	
+	// we update the current round:
+	simAgent.setCurrentRound(simAgent.getCurrentRound().getNext()); //TODO: maybe we need to notify the environment about that
+	
+	// we deal community cards
+	setBehaviour(dealCommunityCardsBhv(simAgent.getCurrentRound())); 
     }
     
     private Behaviour dealCommunityCardsBhv(Round round) {

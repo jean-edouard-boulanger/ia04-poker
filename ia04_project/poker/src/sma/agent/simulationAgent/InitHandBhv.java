@@ -35,7 +35,7 @@ public class InitHandBhv extends TaskRunnerBhv {
 	this.environment = DFServiceHelper.searchService(simAgent, "PokerEnvironment", "Environment");
 	this.dealerAgent = DFServiceHelper.searchService(simAgent, "DealerAgent","Dealer");
 	
-	simAgent.setCurrentRound(Round.PREFLOP);
+	simAgent.setCurrentRound(Round.PLAYER_CARDS_DEAL);
 
 	Player dealer = getDealer(simAgent.getGame().getPlayersContainer());
 	
