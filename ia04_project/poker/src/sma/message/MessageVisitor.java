@@ -1,6 +1,8 @@
 package sma.message;
 
 import jade.lang.acl.ACLMessage;
+import sma.message.bet.notification.BetNotification;
+import sma.message.bet.request.BetRequest;
 import sma.message.blind.request.GetBlindValueDefinitionRequest;
 import sma.message.blind.request.ResetBlindRequest;
 import sma.message.dealer.request.DealRequest;
@@ -63,6 +65,10 @@ public class MessageVisitor {
 	//Determine winner
 	public boolean onDetermineWinnerRequest(DetermineWinnerRequest request, ACLMessage aclMsg) {return false;}
 	public boolean onWinnerDeterminedNotification(WinnerDeterminedNotification notification, ACLMessage aclMsg) {return false;}
+	
+	//Bet
+	public boolean onBetRequest(BetRequest request, ACLMessage aclMsg) {return false;}
+	public boolean onBetNotification(BetNotification notification, ACLMessage aclMsg) {return false;}
 	
 	// Environment
 	public boolean onAddPlayerTableRequest(AddPlayerTableRequest notif, ACLMessage aclMsg){return false;}
