@@ -16,12 +16,9 @@ public class InitRoundBhv extends TaskRunnerBhv {
     private AID dealerAgent;
 
     public InitRoundBhv(SimulationAgent simAgent) {
-	super();
+	super(simAgent);
 	this.dealerAgent = DFServiceHelper.searchService(simAgent, "DealerAgent","Dealer");
     }
-    
-    
-    
     
     private Behaviour cardDistributionBhv(Round round) {
 	Message msg = new DealRequest(round);

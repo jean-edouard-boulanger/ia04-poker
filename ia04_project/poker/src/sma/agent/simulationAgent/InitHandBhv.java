@@ -30,7 +30,7 @@ public class InitHandBhv extends TaskRunnerBhv {
     private AID dealerAgent;
 
     public InitHandBhv(SimulationAgent simAgent) {
-	super();
+	super(simAgent);
 
 	this.environment = DFServiceHelper.searchService(simAgent, "PokerEnvironment", "Environment");
 	this.dealerAgent = DFServiceHelper.searchService(simAgent, "DealerAgent","Dealer");

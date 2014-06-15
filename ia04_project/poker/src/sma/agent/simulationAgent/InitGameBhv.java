@@ -33,7 +33,7 @@ public class InitGameBhv extends TaskRunnerBhv
      * @param simAgent	Agent owning the behavior
      */
     public InitGameBhv(SimulationAgent simAgent) {
-	super();
+	super(simAgent);
 
 	this.environment = DFServiceHelper.searchService(simAgent, "PokerEnvironment", "Environment");
 	this.blindManager = DFServiceHelper.searchService(simAgent, "BlindManagementAgent","BlindManager");

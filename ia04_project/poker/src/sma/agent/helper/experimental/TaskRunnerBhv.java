@@ -1,5 +1,6 @@
 package sma.agent.helper.experimental;
 
+import jade.core.Agent;
 import jade.core.behaviours.Behaviour;
 import jade.core.behaviours.SequentialBehaviour;
 
@@ -17,7 +18,8 @@ public class TaskRunnerBhv extends SequentialBehaviour {
 
     private boolean isStarted;
 
-    public TaskRunnerBhv(){
+    public TaskRunnerBhv(Agent agent){
+	super(agent);
 	isStarted = false;
     };
     
