@@ -62,11 +62,13 @@ public class SimulationAgent extends GuiAgent {
 	// we create a default token distribution:
 	try {
 	    defaultTokenValueDefinition = new TokenValueDefinition();
+
+	    defaultTokenValueDefinition.setValueForTokenType(TokenType.WHITE, 1);
+	    defaultTokenValueDefinition.setValueForTokenType(TokenType.RED, 5);
 	    defaultTokenValueDefinition.setValueForTokenType(TokenType.GREEN, 10);
-	    defaultTokenValueDefinition.setValueForTokenType(TokenType.BLACK, 1);
-	    defaultTokenValueDefinition.setValueForTokenType(TokenType.BLUE, 5);
-	    defaultTokenValueDefinition.setValueForTokenType(TokenType.WHITE, 25);
-	    defaultTokenValueDefinition.setValueForTokenType(TokenType.RED, 50);
+	    defaultTokenValueDefinition.setValueForTokenType(TokenType.BLUE, 25);
+	    defaultTokenValueDefinition.setValueForTokenType(TokenType.BLACK, 50);
+	    
 	} catch (InvalidTokenValueException e) {
 	    e.printStackTrace();
 	}

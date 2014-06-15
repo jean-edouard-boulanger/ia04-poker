@@ -82,6 +82,7 @@ public class BetManagerAgent extends Agent {
 				@Override
 				public boolean onSubscriptionOK(SubscriptionOKMessage msg, ACLMessage aclMsg) {
 					System.out.println("[" + myAgent.getLocalName() + "] subscription to environment succeded.");
+					((BetManagerAgent)myAgent).game = msg.getGame();
 					return true;
 				}
 				
