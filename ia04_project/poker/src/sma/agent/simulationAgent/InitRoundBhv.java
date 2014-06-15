@@ -1,37 +1,49 @@
 package sma.agent.simulationAgent;
 
-import sma.agent.SimulationAgent;
+import jade.core.AID;
 import jade.core.behaviours.Behaviour;
+import poker.game.model.Round;
+import sma.agent.SimulationAgent;
+import sma.agent.helper.DFServiceHelper;
+import sma.agent.helper.SimpleVisitor;
+import sma.agent.helper.TransactionBhv;
+import sma.agent.helper.experimental.Task;
+import sma.agent.helper.experimental.TaskRunnerBhv;
+import sma.message.Message;
+import sma.message.dealer.request.DealRequest;
 
-public class InitRoundBhv extends Behaviour {
+public class InitRoundBhv extends TaskRunnerBhv {
+
+    private AID dealerAgent;
+
+    public InitRoundBhv(SimulationAgent simAgent) {
+	super(simAgent);
+	this.dealerAgent = DFServiceHelper.searchService(simAgent, "DealerAgent","Dealer");
 	
-	private SimulationAgent simAgent;
-
-	public InitRoundBhv(SimulationAgent simAgent) {
-		super(simAgent);
-		this.simAgent = simAgent;
-	}
-
-	@Override
-	public void action() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public boolean done() {
-		// TODO Auto-generated method stub
-		return false;
-	}
+	// we update the current round:
+	simAgent.setCurrentRound(simAgent.getCurrentRound().getNext()); //TODO: maybe we need to notify the environment about that
 	
-	/**
-	 * Transition: 
-	 * Return the PLAY transition code.
-	 */
-	@Override
-	public int onEnd(){
-		return SimulationAgent.GameEvent.PLAY.ordinal();
-		
-	}
+	// we deal community cards
+	setBehaviour(dealCommunityCardsBhv(simAgent.getCurrentRound())); 
+    }
+    
+    private Behaviour dealCommunityCardsBhv(Round round) {
+	Message msg = new DealRequest(round);
+	TransactionBhv transaction = new TransactionBhv(myAgent, msg, dealerAgent);
+	transaction.setResponseVisitor(new SimpleVisitor(myAgent,
+		"community cards dealt successfully.",
+		"error while dealing community cards."));		
+	return transaction;
+    }
+        
+    /**
+     * Transition: 
+     * Return the PLAY transition code.
+     */
+    @Override
+    public int onEnd(){
+	return SimulationAgent.GameEvent.PLAY.ordinal();
+
+    }
 
 }

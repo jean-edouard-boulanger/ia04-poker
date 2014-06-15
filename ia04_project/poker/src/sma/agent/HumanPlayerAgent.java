@@ -106,7 +106,7 @@ public class HumanPlayerAgent extends GuiAgent {
 		@Override
 		public void action() {
 			if(!AgentHelper.receiveMessage(this.myAgent, receiveRequestMessageTemplate, msgVisitor_request)){
-				block();
+				//block();
 			}
 		}
 	}

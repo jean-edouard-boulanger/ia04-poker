@@ -19,6 +19,7 @@ import sma.message.MessageVisitor;
 import sma.message.OKMessage;
 import sma.message.PlayerSubscriptionRequest;
 import sma.message.SubscriptionOKMessage;
+import sma.message.environment.notification.BlindValueDefinitionChangedNotification;
 import sma.message.environment.notification.PlayerSitOnTableNotification;
 import sma.message.environment.request.AddPlayerTableRequest;
 
@@ -28,78 +29,79 @@ import sma.message.environment.request.AddPlayerTableRequest;
  */
 public class EnvironmentWatcherBhv extends CyclicBehaviour
 {
-	private SimulationAgent simAgent;
-	private AID environment;
+    private SimulationAgent simAgent;
+    private AID environment;
+
+    public EnvironmentWatcherBhv(SimulationAgent agent){
+	super(agent);
+	this.simAgent = agent;
+	this.environment = DFServiceHelper.searchService(simAgent,"PokerEnvironment", "Environment");
+	subscribeToEnvironment();
+    }
+
+    private void subscribeToEnvironment(){
+
+	TransactionBhv envSubscriptionBhv = new TransactionBhv(simAgent, null, environment, ACLMessage.SUBSCRIBE);
+	envSubscriptionBhv.setResponseVisitor(new MessageVisitor(){
+
+	    @Override
+	    public boolean onSubscriptionOK(SubscriptionOKMessage msg, ACLMessage aclMsg) {
+		System.out.println("[" + simAgent.getLocalName() + "] subscription to environment succeded.");
+		simAgent.setGame(msg.getGame());
+		if(simAgent.getGame().getPlayersContainer().getPlayersAIDs() != null)
+		    System.out.println("[" + simAgent.getLocalName() + "] " + simAgent.getGame().getPlayersContainer().getPlayersAIDs().size()  + " already added.");
+		return true;
+	    }
+
+	    @Override
+	    public boolean onFailureMessage(FailureMessage msg, ACLMessage aclMsg) {
+		System.out.println("[" + simAgent.getLocalName() + "] subscription to environment failed: " + msg.getMessage());
+		return true;
+	    }
+
+	});
+	simAgent.addBehaviour(envSubscriptionBhv);
+    }
+
+    /**
+     * Handle environment events.
+     */
+    @Override
+    public void action() {
 	
-	public EnvironmentWatcherBhv(SimulationAgent agent){
-		super(agent);
-		this.simAgent = agent;
-		this.environment = DFServiceHelper.searchService(simAgent,"PokerEnvironment", "Environment");
-		subscribeToEnvironment();
-	}
-	
-	private void subscribeToEnvironment(){
-		
-		TransactionBhv envSubscriptionBhv = new TransactionBhv(simAgent, null, environment, ACLMessage.SUBSCRIBE);
-		envSubscriptionBhv.setResponseVisitor(new MessageVisitor(){
-			
-			@Override
-			public boolean onSubscriptionOK(SubscriptionOKMessage msg, ACLMessage aclMsg) {
-				System.out.println("[" + simAgent.getLocalName() + "] subscription to environment succeded.");
-				simAgent.setGame(msg.getGame());
-				if(simAgent.getGame().getPlayersContainer().getPlayersAIDs() != null)
-					System.out.println("[" + simAgent.getLocalName() + "] " + simAgent.getGame().getPlayersContainer().getPlayersAIDs().size()  + " already added.");
-				return true;
-			}
-			
-			@Override
-			public boolean onFailureMessage(FailureMessage msg, ACLMessage aclMsg) {
-				System.out.println("[" + simAgent.getLocalName() + "] subscription to environment failed: " + msg.getMessage());
-				return true;
-			}
-			
-		});
-		simAgent.addBehaviour(envSubscriptionBhv);
-	}
-	
-	/**
-	 * Handle environment events.
-	 */
-	@Override
-	public void action() {
-		
-		//TEST:
-		boolean msgReceived = AgentHelper.receiveMessage(this.myAgent,MessageTemplate.MatchPerformative(ACLMessage.PROPAGATE), new MessageVisitor(){
-			@Override
-			public boolean onPlayerSitOnTableNotification(PlayerSitOnTableNotification notification, ACLMessage aclMsg) {
-				try {
-					simAgent.getGame().getPlayersContainer().addPlayer(notification.getNewPlayer());
-					System.out.println("[" + simAgent.getLocalName() + "] player " + notification.getNewPlayer().getNickname() + " added.");
-				} catch (PlayerAlreadyRegisteredException e) {
-					// TODO Auto-generated catch block
-					
-					e.printStackTrace();
-				} catch (NoPlaceAvailableException e) {
-					// TODO Auto-generated catch block
-					
-					e.printStackTrace();
-				}
-				return true;
-			}
-			@Override
-			public boolean onOKMessage(OKMessage okMessage, ACLMessage aclMsg) {
-				// TODO Auto-generated method stub
-				return true;
-			}
-			
-			// All other environment changes are discarded.
-			@Override
-			public boolean onEnvironmentChanged(Message notif, ACLMessage aclMsg) {	return true; }
-		});
-		
-		if(!msgReceived)
-			block();
-		
-	}
-	
+	boolean msgReceived = AgentHelper.receiveMessage(this.myAgent,MessageTemplate.MatchPerformative(ACLMessage.PROPAGATE), new MessageVisitor(){
+	    
+	    @Override
+	    public boolean onPlayerSitOnTableNotification(PlayerSitOnTableNotification notification, ACLMessage aclMsg) {
+		try {
+		    simAgent.getGame().getPlayersContainer().addPlayer(notification.getNewPlayer());
+		    System.out.println("[" + simAgent.getLocalName() + "] player " + notification.getNewPlayer().getNickname() + " added.");
+		} catch (PlayerAlreadyRegisteredException e) {
+		    // TODO Auto-generated catch block
+
+		    e.printStackTrace();
+		} catch (NoPlaceAvailableException e) {
+		    // TODO Auto-generated catch block
+
+		    e.printStackTrace();
+		}
+		return true;
+	    }
+	    
+	    @Override
+	    public boolean onBlindValueDefinitionChangedNotification(BlindValueDefinitionChangedNotification notif, ACLMessage aclMsg) {
+		simAgent.getGame().setBlindValueDefinition(notif.getNewBlindValueDefinition());
+	        return true;
+	    }
+
+	    // All other environment changes are discarded.
+	    @Override
+	    public boolean onEnvironmentChanged(Message notif, ACLMessage aclMsg) {	return true; }
+	});
+
+	if(!msgReceived)
+	    block();
+
+    }
+
 }

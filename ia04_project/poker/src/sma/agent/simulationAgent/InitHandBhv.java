@@ -2,86 +2,97 @@ package sma.agent.simulationAgent;
 
 import jade.core.AID;
 import jade.core.behaviours.Behaviour;
-import jade.core.behaviours.ParallelBehaviour;
-import jade.lang.acl.ACLMessage;
-import poker.game.model.HandStep;
+import poker.game.exception.NotRegisteredPlayerException;
+import poker.game.model.PlayersContainer;
+import poker.game.model.Round;
+import poker.game.player.model.Player;
 import sma.agent.SimulationAgent;
 import sma.agent.helper.DFServiceHelper;
+import sma.agent.helper.SimpleVisitor;
 import sma.agent.helper.TransactionBhv;
-import sma.message.FailureMessage;
+import sma.agent.helper.experimental.Task;
+import sma.agent.helper.experimental.TaskRunnerBhv;
 import sma.message.Message;
-import sma.message.MessageVisitor;
-import sma.message.OKMessage;
 import sma.message.dealer.request.DealRequest;
 import sma.message.environment.request.EmptyCommunityCardsRequest;
+import sma.message.environment.request.SetDealerRequest;
 
 /**
- * The behaviour handle the intialization of a new game:
+ * The behavior handle the initialization of a new game:
  * - community cards are removed from the table.
  * - player card are dealt
+ * - we set the dealer
  * (those tasks are done in parallel).
  */
-public class InitHandBhv extends ParallelBehaviour {
+public class InitHandBhv extends TaskRunnerBhv {
 
-	private AID environment;
-	private AID dealer;
+    private AID environment;
+    private AID dealerAgent;
 
-	public InitHandBhv(SimulationAgent simAgent) {
-		super(simAgent, ParallelBehaviour.WHEN_ALL);
-		this.environment = DFServiceHelper.searchService(simAgent, "PokerEnvironment", "Environment");
-		this.dealer = DFServiceHelper.searchService(simAgent, "DealerAgent","Dealer");
-		
-		this.addSubBehaviour(getCommunityCardResetBehavior());
-		this.addSubBehaviour(getCardDistributionBehavior());
-	}
+    public InitHandBhv(SimulationAgent simAgent) {
+	super(simAgent);
+
+	this.environment = DFServiceHelper.searchService(simAgent, "PokerEnvironment", "Environment");
+	this.dealerAgent = DFServiceHelper.searchService(simAgent, "DealerAgent","Dealer");
 	
-	private Behaviour getCardDistributionBehavior() {
-		Message msg = new DealRequest(HandStep.PLAYER_CARDS_DEAL);
-		
-		TransactionBhv transaction = new TransactionBhv(myAgent, msg, dealer);
-		transaction.setResponseVisitor(new MessageVisitor(){
-			@Override
-			public boolean onOKMessage(OKMessage okMessage, ACLMessage aclMsg) {
-				System.out.println("[" + myAgent.getLocalName() + "] cards dealt successfully.");
-				return true;
-			}
-			@Override
-			public boolean onFailureMessage(FailureMessage msg,ACLMessage aclMsg) {
-				System.out.println("[" + myAgent.getLocalName() + "] error dealing cards: " + msg.getMessage());
-				return true;
-			}
-		});	
-		
-		return transaction;
-	}
+	simAgent.setCurrentRound(Round.PLAYER_CARDS_DEAL);
 
-	private Behaviour getCommunityCardResetBehavior() {
-		Message msg = new EmptyCommunityCardsRequest();
-		
-		TransactionBhv transaction = new TransactionBhv(myAgent, msg, environment);
-		transaction.setResponseVisitor(new MessageVisitor(){
-			@Override
-			public boolean onOKMessage(OKMessage okMessage, ACLMessage aclMsg) {
-				System.out.println("[" + myAgent.getLocalName() + "] community cards emptied successfully.");
-				return true;
-			}
-			@Override
-			public boolean onFailureMessage(FailureMessage msg,ACLMessage aclMsg) {
-				System.out.println("[" + myAgent.getLocalName() + "] error while cleaning community cards: " + msg.getMessage());
-				return true;
-			}
-		});	
-		
-		return transaction;
-	}
+	Player dealer = getDealer(simAgent.getGame().getPlayersContainer());
+	
+	setBehaviour(Task.New(setDealerBhv(dealer.getAID())) // first we set the dealer token
+		.whenAll(communityCardResetBhv(), dealCardBhv())); // then we remove community cards & deal cards to player (in parallel)
+    }
 
-	/**
-	 * Transition: return the NEW_ROUND transition code.
-	 */
-	@Override
-	public int onEnd(){
-		return SimulationAgent.GameEvent.NEW_ROUND.ordinal();
-		
+    private Player getDealer(PlayersContainer container) {
+	// we determine the current, if no dealer is set we choose the first player:
+	if(container.getDealer() == null) {
+	    try {
+		container.setDealer(container.getPlayersAIDs().get(0));
+	    } catch (NotRegisteredPlayerException e) {
+		e.printStackTrace(); //TODO: handle exceptions
+	    }
 	}
+	else{
+	    try {
+		container.setDealer(container.getPlayerNextTo(container.getDealer()));
+	    } catch (NotRegisteredPlayerException e) {
+		e.printStackTrace(); // TODO Auto-generated catch block
+	    }
+	}
+	return container.getDealer();
+    }
+
+    private Behaviour dealCardBhv() {
+	Message msg = new DealRequest(Round.PLAYER_CARDS_DEAL);
+	TransactionBhv transaction = new TransactionBhv(myAgent, msg, dealerAgent);
+	transaction.setResponseVisitor(new SimpleVisitor(myAgent,
+		"cards dealt successfully.",
+		"error while dealing cards."));		
+	return transaction;
+    }
+
+    private Behaviour communityCardResetBhv() {
+	Message msg = new EmptyCommunityCardsRequest();
+	TransactionBhv transaction = new TransactionBhv(myAgent, msg, environment);
+	transaction.setResponseVisitor(new SimpleVisitor(myAgent,
+		"community cards emptied successfully.",
+		"error while cleaning community cards"));
+	return transaction;
+    }
+
+    private Behaviour setDealerBhv(AID dealer) {
+	Message msg = new SetDealerRequest(dealer);
+	TransactionBhv transaction = new TransactionBhv(myAgent, msg, environment);
+	transaction.setResponseVisitor(new SimpleVisitor(myAgent,
+		"dealer set successfuly successfully to " + dealer.getLocalName() + ".",
+		"error setting dealer to " + dealer.getLocalName() + "."));		
+	return transaction;
+    }
+
+    /**  Transition: return the NEW_ROUND transition code. */
+    @Override
+    public int onEnd(){
+	return SimulationAgent.GameEvent.NEW_ROUND.ordinal();
+    }
 
 }

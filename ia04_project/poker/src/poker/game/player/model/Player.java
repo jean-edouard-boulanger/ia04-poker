@@ -4,6 +4,8 @@ import jade.core.AID;
 
 import java.util.Comparator;
 
+import javax.swing.text.StyledEditorKit.BoldAction;
+
 import poker.card.model.UserDeck;
 import poker.token.helpers.TokenSetValueEvaluator;
 import poker.token.model.TokenSet;
@@ -15,18 +17,13 @@ public class Player {
 	protected String nickname;
 	protected Integer tablePositionIndex;
 	protected PlayerStatus status;
-	protected PlayerRole role;
+	boolean isDealer;
 	
 	protected UserDeck deck;
 	protected TokenSet tokens;
 	
 	public Player(){
-		this.aid = null;
-		this.nickname = "";
-		this.tokens = new TokenSet();
-		this.status = PlayerStatus.IN_GAME;
-		this.role = PlayerRole.USUAL;
-		this.deck = new UserDeck();
+		this(null, "");
 	}
 	
 	public Player(AID aid, String playerName) {
@@ -34,7 +31,7 @@ public class Player {
 		this.nickname = playerName;
 		this.tokens = new TokenSet();
 		this.status = PlayerStatus.IN_GAME;
-		this.role = PlayerRole.USUAL;
+		this.isDealer = false;
 		this.deck = new UserDeck();
 	}
 
@@ -86,12 +83,12 @@ public class Player {
 		this.status = status;
 	}
 	
-	public PlayerRole getRole(){
-		return role;
+	public boolean isDealer(){
+		return this.isDealer;
 	}
 	
-	public void setRole(PlayerRole role){
-		this.role = role;
+	public void setDealer(boolean isDealer){
+		this.isDealer = isDealer;
 	}
 	
 	public int getBankroll(TokenValueDefinition tokenValueDefinition){
