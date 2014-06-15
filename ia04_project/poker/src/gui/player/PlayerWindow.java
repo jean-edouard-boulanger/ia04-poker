@@ -82,6 +82,8 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 	/** Slide for bet */
 	private Slider slider_bet;
 	private TextField textfield_bet;
+	
+	private int slider_min_token = 1;
 
 	/** Communauty card */
 	private CommunautyCardIHM communauty_card;
@@ -241,13 +243,13 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 		slider_bet = new Slider();
 		slider_bet.setMin(0);
 		slider_bet.setMax(50);
-		slider_bet.setValue(5);
+		slider_bet.setValue(0);
 		slider_bet.setShowTickLabels(true);
-		slider_bet.setShowTickMarks(true);
+		slider_bet.setShowTickMarks(false);
 		slider_bet.setMajorTickUnit(5);
 		slider_bet.setMinorTickCount(0);
 		slider_bet.setSnapToTicks(true);
-		slider_bet.setBlockIncrement(25);
+		slider_bet.setBlockIncrement(1);
 		slider_bet.setLayoutX(485);
 		slider_bet.setLayoutY(550);
 		slider_bet.setPrefWidth(175);
@@ -534,8 +536,9 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 	{
 		PlatformHelper.run(new Runnable() {
 			@Override public void run() {
+				PlayerWindow.this.slider_min_token = min_token;
 				slider_bet.setMajorTickUnit(min_token);
-				slider_bet.setBlockIncrement(25);
+				slider_bet.setBlockIncrement(min_token);
 			}
 		});
 	}
@@ -600,16 +603,28 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 		button_add_bet.setOnAction(new EventHandler<ActionEvent>() {
 
 			public void handle(ActionEvent event) {
-				slider_bet.setValue(slider_bet.getValue() + 1);
-				textfield_bet.setText(String.valueOf(Double.valueOf(slider_bet.getValue()).intValue() + 1));
+				int value_slide = Double.valueOf(slider_bet.getValue()).intValue();
+				int new_value = value_slide + slider_min_token;
+				
+				if(new_value <= slider_bet.getMax())
+				{
+					slider_bet.setValue(new_value);
+					textfield_bet.setText(String.valueOf(new_value));
+				}
 			}
 		});
 
 		button_sub_bet.setOnAction(new EventHandler<ActionEvent>() {
 
 			public void handle(ActionEvent event) {
-				slider_bet.setValue(slider_bet.getValue() - 1);
-				textfield_bet.setText(String.valueOf(Double.valueOf(slider_bet.getValue()).intValue() - 1));
+				int value_slide = Double.valueOf(slider_bet.getValue()).intValue();
+				int new_value = value_slide - slider_min_token;
+				
+				if(new_value >= slider_bet.getMin())
+				{
+					slider_bet.setValue(new_value);
+					textfield_bet.setText(String.valueOf(new_value));
+				}
 			}
 		});
 

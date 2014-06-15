@@ -41,6 +41,7 @@ import sma.message.environment.notification.PlayerReceivedCardNotification;
 import sma.message.environment.notification.PlayerReceivedTokenSetNotification;
 import sma.message.environment.notification.PlayerReceivedUnknownCardNotification;
 import sma.message.environment.notification.PlayerSitOnTableNotification;
+import sma.message.environment.notification.TokenValueDefinitionChangedNotification;
 
 public class HumanPlayerAgent extends GuiAgent {
 
@@ -264,7 +265,6 @@ public class HumanPlayerAgent extends GuiAgent {
 
 			return true;
 		}
-<<<<<<< HEAD
 		
 		@Override
 		public boolean onTokenValueDefinitionChangedNotification(TokenValueDefinitionChangedNotification notif, ACLMessage aclMsg) {
@@ -276,9 +276,6 @@ public class HumanPlayerAgent extends GuiAgent {
 			return true;
 		}
 				
-=======
-
->>>>>>> 80efebb5fdfb41c234c897ea828453593dc9b9fd
 		@Override
 		public boolean onSubscriptionOK(SubscriptionOKMessage notif, ACLMessage aclMsg){
 
@@ -298,12 +295,7 @@ public class HumanPlayerAgent extends GuiAgent {
 					changes_game.firePropertyChange(PlayerGuiEvent.INITIALIZING_OTHER.toString(), null, player);
 				}
 			}
-<<<<<<< HEAD
-			
-=======
 
-
->>>>>>> 80efebb5fdfb41c234c897ea828453593dc9b9fd
 			return true;
 		}
 
