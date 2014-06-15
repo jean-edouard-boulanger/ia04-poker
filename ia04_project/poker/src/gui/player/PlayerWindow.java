@@ -47,6 +47,7 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 	public enum PlayerGuiEvent {
 		INITIALIZING_ME,
 		INITIALIZING_OTHER,
+		INITIALIZING_MIN_TOKEN,
 		PLAYER_RECEIVED_UNKNOWN_CARD,
 		PLAYER_RECEIVED_CARD,
 		ADD_COMMUNITY_CARD,
@@ -83,6 +84,8 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 	/** Slide for bet */
 	private Slider slider_bet;
 	private TextField textfield_bet;
+	
+	private int slider_min_token = 1;
 
 	/** Communauty card */
 	private CommunautyCardIHM communauty_card;
@@ -174,7 +177,7 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 
 		root.setId("root");
 
-		label_hand = new Label("Main nÂ°1");
+		label_hand = new Label("Main n°1");
 
 		label_hand.setLayoutX(15);
 		label_hand.setLayoutY(15);
@@ -199,7 +202,7 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 		button_follow.setLayoutX(335);
 		button_follow.setLayoutY(490);
 
-		button_follow.setText("Suivre Ã  2");
+		button_follow.setText("Suivre à 2");
 
 		button_follow.setPrefWidth(100);
 		button_follow.getStyleClass().add("button_play");
@@ -222,7 +225,7 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 		button_relaunch.setLayoutX(225);
 		button_relaunch.setLayoutY(550);
 
-		button_relaunch.setText("Relancer Ã  5");
+		button_relaunch.setText("Relancer à  5");
 
 		button_relaunch.setPrefWidth(100);
 		button_relaunch.getStyleClass().add("button_play");
@@ -244,19 +247,19 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 		slider_bet = new Slider();
 		slider_bet.setMin(0);
 		slider_bet.setMax(50);
-		slider_bet.setValue(5);
+		slider_bet.setValue(0);
 		slider_bet.setShowTickLabels(true);
-		slider_bet.setShowTickMarks(true);
+		slider_bet.setShowTickMarks(false);
 		slider_bet.setMajorTickUnit(5);
 		slider_bet.setMinorTickCount(0);
 		slider_bet.setSnapToTicks(true);
-		slider_bet.setBlockIncrement(25);
+		slider_bet.setBlockIncrement(1);
 		slider_bet.setLayoutX(485);
 		slider_bet.setLayoutY(550);
 		slider_bet.setPrefWidth(175);
 
 		textfield_bet = new TextField();
-		textfield_bet.setText("5");
+		textfield_bet.setText("0");
 		textfield_bet.setLayoutX(485);
 		textfield_bet.setLayoutY(525);
 		textfield_bet.setPrefWidth(175);
@@ -273,11 +276,11 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 		/**************************************
 		 *  Player's tokens
 		 */
-		token_white = new TokenPlayerIHM(485, 500, 25, ColorToken.WHITE);
-		token_black = new TokenPlayerIHM(515, 500, 25, ColorToken.BLACK);
-		token_blue = new TokenPlayerIHM(545, 500, 25, ColorToken.BLUE);
-		token_green = new TokenPlayerIHM(575, 500, 25, ColorToken.GREEN);
-		token_red = new TokenPlayerIHM(605, 500, 25, ColorToken.RED);
+		token_white = new TokenPlayerIHM(485, 500, 0, ColorToken.WHITE);
+		token_black = new TokenPlayerIHM(515, 500, 0, ColorToken.BLACK);
+		token_blue = new TokenPlayerIHM(545, 500, 0, ColorToken.BLUE);
+		token_green = new TokenPlayerIHM(575, 500, 0, ColorToken.GREEN);
+		token_red = new TokenPlayerIHM(605, 500, 0, ColorToken.RED);
 
 		playerTokens = new HashMap<TokenType, TokenPlayerIHM>();		
 		playerTokens.put(TokenType.WHITE, token_white);
@@ -540,6 +543,17 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 		root.getChildren().add(PlayerWindow.this.list_card_player.get(position_player));
 		root.getChildren().add(PlayerWindow.this.list_token_bet.get(position_player));
 	}
+	
+	public void initializeMinToken(final Integer min_token)
+	{
+		PlatformHelper.run(new Runnable() {
+			@Override public void run() {
+				PlayerWindow.this.slider_min_token = min_token;
+				slider_bet.setMajorTickUnit(min_token);
+				slider_bet.setBlockIncrement(min_token);
+			}
+		});
+	}
 
 	public void initializePlayerReceivedCard(final Card card) {
 		Image image = CardImageHelper.getCardImage(card);
@@ -568,14 +582,19 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 	}
 
 	public void receivedTokensMe(final Player player) {
-		Map<TokenType, Integer> token_map = player.getTokens().getTokensAmount();
-		token_white.setMise(token_map.get(TokenType.WHITE));
-		token_green.setMise(token_map.get(TokenType.GREEN));
-		token_blue.setMise(token_map.get(TokenType.BLUE));
-		token_black.setMise(token_map.get(TokenType.BLACK));
-		token_red.setMise(token_map.get(TokenType.RED));
+		PlatformHelper.run(new Runnable() {
+			@Override public void run() {
+				Map<TokenType, Integer> token_map = player.getTokens().getTokensAmount();
+				token_white.setMise(token_map.get(TokenType.WHITE));
+				token_green.setMise(token_map.get(TokenType.GREEN));
+				token_blue.setMise(token_map.get(TokenType.BLUE));
+				token_black.setMise(token_map.get(TokenType.BLACK));
+				token_red.setMise(token_map.get(TokenType.RED));
 
-		PlayerWindow.this.list_perso.get(player.getTablePositionIndex()).setScore(PersoIHM.calculateScore(player.getTokens()));
+				PlayerWindow.this.list_perso.get(player.getTablePositionIndex()).setScore(PersoIHM.calculateScore(player.getTokens()));
+				PlayerWindow.this.slider_bet.setMax(PersoIHM.calculateScore(player.getTokens()));
+			}
+		});
 	}
 
 	public void receivedTokensOther(final Player player) {
@@ -596,16 +615,28 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 		button_add_bet.setOnAction(new EventHandler<ActionEvent>() {
 
 			public void handle(ActionEvent event) {
-				slider_bet.setValue(slider_bet.getValue() + 1);
-				textfield_bet.setText(String.valueOf(Double.valueOf(slider_bet.getValue()).intValue() + 1));
+				int value_slide = Double.valueOf(slider_bet.getValue()).intValue();
+				int new_value = value_slide + slider_min_token;
+				
+				if(new_value <= slider_bet.getMax())
+				{
+					slider_bet.setValue(new_value);
+					textfield_bet.setText(String.valueOf(new_value));
+				}
 			}
 		});
 
 		button_sub_bet.setOnAction(new EventHandler<ActionEvent>() {
 
 			public void handle(ActionEvent event) {
-				slider_bet.setValue(slider_bet.getValue() - 1);
-				textfield_bet.setText(String.valueOf(Double.valueOf(slider_bet.getValue()).intValue() - 1));
+				int value_slide = Double.valueOf(slider_bet.getValue()).intValue();
+				int new_value = value_slide - slider_min_token;
+				
+				if(new_value >= slider_bet.getMin())
+				{
+					slider_bet.setValue(new_value);
+					textfield_bet.setText(String.valueOf(new_value));
+				}
 			}
 		});
 
@@ -675,6 +706,20 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 					}
 
 					System.out.println("[PlayerWindow] Initialiazing other");
+				}
+				
+				/**
+				 *  -----  INITIALIZING MIN TOKEN -----
+				 */
+				if(evt.getPropertyName().equals(PlayerGuiEvent.INITIALIZING_MIN_TOKEN.toString()))
+				{
+					if(evt.getNewValue() instanceof Integer)
+					{
+						Integer min_token = (Integer)evt.getNewValue();
+						initializeMinToken(min_token);
+					}
+
+					System.out.println("[PlayerWindow] Initialiazing min token");
 				}
 
 				/**
