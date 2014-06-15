@@ -43,6 +43,7 @@ public class BetManagerAgent extends Agent {
 		super();
 		betContainer = new BetContainer();
 		game = new Game();
+		this.msgVisitor = new BetManagerMessageVisitor();
 	}
 	
 	public void setup(){
