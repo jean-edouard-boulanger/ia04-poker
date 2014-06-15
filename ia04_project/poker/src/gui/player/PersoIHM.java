@@ -2,24 +2,15 @@ package gui.player;
 
 import java.util.Map;
 
-import poker.token.model.TokenSet;
-import poker.token.model.TokenType;
-import javafx.animation.Animation;
 import javafx.animation.FadeTransition;
-import javafx.animation.KeyFrame;
-import javafx.animation.SequentialTransition;
-import javafx.animation.SequentialTransitionBuilder;
 import javafx.animation.Timeline;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
-import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
+import poker.token.model.TokenSet;
+import poker.token.model.TokenType;
 
 public class PersoIHM extends Group {
 
@@ -35,8 +26,6 @@ public class PersoIHM extends Group {
 	public enum Sens { GAUCHE, DROITE, HAUT, BAS }
 	public PersoIHM(int x, int y, String pseudo, Sens position)
 	{
-
-
 		image_player = new ImageView(new Image("images/player_other.png"));
 		image_player.setLayoutX(x - image_player.getBoundsInLocal().getWidth() / 2);
 		image_player.setLayoutY(y - image_player.getBoundsInLocal().getWidth() / 2);
