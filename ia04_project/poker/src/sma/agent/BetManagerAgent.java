@@ -221,6 +221,8 @@ public class BetManagerAgent extends Agent {
 			return true;
 		}
 		
+		//TODO: onRoundFinishedNotification : reset bets + put bets in pot
+		
 		@Override
 		public boolean onPlayerSitOnTableNotification(PlayerSitOnTableNotification notification, ACLMessage aclMsg) {
 			try {
