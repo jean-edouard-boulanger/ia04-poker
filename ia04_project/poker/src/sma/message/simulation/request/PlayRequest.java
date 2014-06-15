@@ -11,8 +11,8 @@ public class PlayRequest extends Message {
 	
 	public PlayRequest() {}
 	
-	public PlayRequest(boolean requestResentFollowedToError, String errorMessage){
-		this.requestResentFollowedToError = requestResentFollowedToError;
+	public PlayRequest(String errorMessage){
+		this.requestResentFollowedToError = true;
 		this.errorMessage = errorMessage;
 	}
 
@@ -30,6 +30,7 @@ public class PlayRequest extends Message {
 
 	public void setErrorMessage(String errorMessage) {
 		this.errorMessage = errorMessage;
+		requestResentFollowedToError = true;
 	}
 
 	@Override

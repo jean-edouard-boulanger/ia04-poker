@@ -276,8 +276,8 @@ public class HumanPlayerAgent extends GuiAgent {
 				AgentHelper.sendReply(EnvironmentAgent.this, aclMsg, ACLMessage.INFORM, new FailureMessage(ex.getMessage()));
 				return true;
 			}*/
-
-			changes_game.firePropertyChange(PlayerGuiEvent.CURRENT_PLAYER_CHANGED.toString(), null, Integer.valueOf(notification.getPlayerTablePositionIndex()));
+			int playerIndex = game.getPlayersContainer().getPlayerByAID(notification.getPlayerAID()).getTablePositionIndex();
+			changes_game.firePropertyChange(PlayerGuiEvent.CURRENT_PLAYER_CHANGED.toString(), null, Integer.valueOf(playerIndex));
 
 			return true;
 		}

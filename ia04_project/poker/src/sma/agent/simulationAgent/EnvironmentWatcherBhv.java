@@ -7,6 +7,7 @@ import jade.core.behaviours.CyclicBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import poker.game.exception.NoPlaceAvailableException;
+import poker.game.exception.NotRegisteredPlayerException;
 import poker.game.exception.PlayerAlreadyRegisteredException;
 import poker.game.player.model.Player;
 import sma.agent.SimulationAgent;
@@ -20,6 +21,7 @@ import sma.message.OKMessage;
 import sma.message.PlayerSubscriptionRequest;
 import sma.message.SubscriptionOKMessage;
 import sma.message.environment.notification.BlindValueDefinitionChangedNotification;
+import sma.message.environment.notification.CurrentPlayerChangedNotification;
 import sma.message.environment.notification.PlayerSitOnTableNotification;
 import sma.message.environment.request.AddPlayerTableRequest;
 
@@ -92,6 +94,18 @@ public class EnvironmentWatcherBhv extends CyclicBehaviour
 	    public boolean onBlindValueDefinitionChangedNotification(BlindValueDefinitionChangedNotification notif, ACLMessage aclMsg) {
 	    	simAgent.getGame().setBlindValueDefinition(notif.getNewBlindValueDefinition());
 	        return true;
+	    }
+	    
+	    @Override
+	    public boolean onCurrentPlayerChangedNotification(CurrentPlayerChangedNotification notification, ACLMessage aclMsg) {
+	    	Player p = simAgent.getGame().getPlayersContainer().getPlayerByAID(notification.getPlayerAID());
+	    	try {
+				simAgent.getGame().getPlayersContainer().setCurrentPlayer(p);
+			} catch (NotRegisteredPlayerException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+	    	return true;
 	    }
 
 	    // All other environment changes are discarded.

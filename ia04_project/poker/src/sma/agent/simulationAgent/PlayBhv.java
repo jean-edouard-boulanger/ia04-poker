@@ -1,13 +1,17 @@
 package sma.agent.simulationAgent;
 
+import jade.core.AID;
 import jade.core.behaviours.Behaviour;
+import jade.lang.acl.ACLMessage;
 import sma.agent.SimulationAgent;
 import sma.agent.helper.SimpleVisitor;
 import sma.agent.helper.TransactionBhv;
 import sma.agent.helper.experimental.Task;
 import sma.agent.helper.experimental.TaskRunnerBhv;
 import sma.message.Message;
-import sma.message.dealer.request.DealRequest;
+import sma.message.MessageVisitor;
+import sma.message.bet.request.BetRequest;
+import sma.message.simulation.request.PlayRequest;
 
 /**
  * - ask current player to play
@@ -28,33 +32,43 @@ public class PlayBhv extends TaskRunnerBhv {
 	@Override
 	public void onStart() {
 		
-		while(true); // !!!!!!!!!! temporary !!!!!!!!!!!!
-
-		//Task mainTask = Task.New(playBhv())
-		//		.then(checkIfRoundDone());
+		Task mainTask = Task.New(playBhv())
+				.then(checkIfRoundDone());
 		
-		//this.setBehaviour(mainTask);
-		//super.onStart();
+		this.setBehaviour(mainTask);
+		super.onStart();
 	}
 	
 	private Behaviour playBhv(){
-		/*Message msg = new PlayRequest(round);
-		TransactionBhv transaction = new TransactionBhv(myAgent, msg, dealerAgent);
-		transaction.setResponseVisitor(new SimpleVisitor(myAgent,
-				"community cards dealt successfully.",
-				"error while dealing community cards."));		
-		return transaction;*/
-		return null;
+		Message msg = new PlayRequest();
+		AID currPlayer = simAgent.getGame().getPlayersContainer().getCurrentPlayer().getAID();
+		TransactionBhv transaction = new TransactionBhv(myAgent, msg, currPlayer);
+		transaction.setResponseVisitor(new MessageVisitor(){
+			
+			@Override
+			public boolean onBetRequest(BetRequest request, ACLMessage aclMsg) {
+				// TODO: check action withBetManager
+				return true;
+			}
+			
+			//TODO: fold
+			//TODO: all-in		
+			
+		});		
+		return transaction;
 	}
 	
 	private Behaviour checkIfRoundDone(){
+
+		while(true); // !!!!!!!!!! temporary !!!!!!!!!!!!
+		
 		/*Message msg = new PlayRequest(round);
 		TransactionBhv transaction = new TransactionBhv(myAgent, msg, dealerAgent);
 		transaction.setResponseVisitor(new SimpleVisitor(myAgent,
 				"community cards dealt successfully.",
 				"error while dealing community cards."));		
 		return transaction;*/
-		return null;
+		//return null;
 	}
 	
 	
