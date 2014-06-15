@@ -1,17 +1,14 @@
 package sma.agent;
 
-import gui.player.PlayerWindow.PlayerGuiEvent;
 import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.CyclicBehaviour;
 import jade.lang.acl.ACLMessage;
 import poker.game.model.BetContainer;
 import poker.game.model.Game;
-import poker.game.model.PlayersContainer;
 import poker.game.player.model.Player;
 import poker.token.exception.InvalidTokenAmountException;
 import poker.token.helpers.TokenSetValueEvaluator;
-import poker.token.model.TokenSet;
 import sma.agent.helper.AgentHelper;
 import sma.agent.helper.DFServiceHelper;
 import sma.agent.helper.TransactionBhv;
@@ -103,7 +100,7 @@ public class BetManagerAgent extends Agent {
 			if(playerPot > request.getBet()) {
 				try {
 					//Removing tokens of the used if allowed to
-					player.getTokens().SubstractTokenSet(request.getTokenSet());
+					// ?? player.getTokens().SubstractTokenSet(request.getTokenSet());
 					
 					//Notifying the environment
 					
