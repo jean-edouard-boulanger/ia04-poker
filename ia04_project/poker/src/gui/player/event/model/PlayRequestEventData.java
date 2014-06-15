@@ -10,8 +10,8 @@ public class PlayRequestEventData {
 	
 	int minimumBetAmount = 0;
 	int maximumBetAmount = 0;
-	int sliderStep = 0;
-	
+	int raiseAmount = 0;
+		
 	boolean requestResentFollowedToError = false;
 	String errorMessage;
 	
@@ -57,14 +57,6 @@ public class PlayRequestEventData {
 		this.minimumBetAmount = minimumBetAmount;
 	}
 
-	public int getSliderStep() {
-		return sliderStep;
-	}
-
-	public void setSliderStep(int sliderStep) {
-		this.sliderStep = sliderStep;
-	}
-
 	public boolean isRequestResentFollowedToError() {
 		return requestResentFollowedToError;
 	}
@@ -87,5 +79,13 @@ public class PlayRequestEventData {
 
 	public void setMaximumBetAmount(int maximumBetAmount) {
 		this.maximumBetAmount = maximumBetAmount;
+	}
+
+	public int getRaiseAmount() {
+		return raiseAmount;
+	}
+
+	public void setRaiseAmount(int raiseAmount) {
+		this.raiseAmount = raiseAmount;
 	}	
 }

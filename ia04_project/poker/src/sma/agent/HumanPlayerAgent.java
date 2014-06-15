@@ -346,7 +346,8 @@ public class HumanPlayerAgent extends GuiAgent {
 
 			int currentBetAmount = TokenSetValueEvaluator.evaluateTokenSetValue(game.getBetContainer().getTokenValueDefinition(), me.getTokens());
 
-
+			int minimumTokenValue = game.getBetContainer().getTokenValueDefinition().getValueForTokenType(TokenType.WHITE);
+			
 			// The minimum bet amount is either equal to current bet, 
 			// or to the smallest token value if the current bet is equal to 0, 
 			// or to the player bankroll if the the current bet is >= to the player's bankroll
@@ -360,25 +361,26 @@ public class HumanPlayerAgent extends GuiAgent {
 				eventData.addAvailableAction(BetType.FOLD);
 			}
 			else if(game.getBetContainer().getCurrentBetAmount() == 0){
-				minimumBetAmount = game.getBetContainer().getTokenValueDefinition().getValueForTokenType(TokenType.WHITE);
+				minimumBetAmount = minimumTokenValue;
+				
+				eventData.removeAvailableAction(BetType.CALL);
+				eventData.removeAvailableAction(BetType.RAISE);
 			}
 			else {
 				minimumBetAmount = game.getBetContainer().getCurrentBetAmount();
 			}
 			eventData.setMinimumBetAmount(minimumBetAmount);
 
-			// The slide increment is equal to the smallest token value
-			eventData.setSliderStep(game.getBetContainer().getTokenValueDefinition().getValueForTokenType(TokenType.WHITE));
-
-
 			// The maximum bet amount is equal to the bankroll of the player
 			eventData.setMaximumBetAmount(game.getPlayersContainer().getPlayerByAID(getAID()).getBankroll(game.getBetContainer().getTokenValueDefinition()));
 
-			changes_game.firePropertyChange(PlayerGuiEvent.PLAY_REQUEST.toString(), null, request);
-
+			eventData.setRaiseAmount(minimumBetAmount * 2);
+			
 			eventData.setErrorMessage(request.getErrorMessage());
 			eventData.setRequestResentFollowedToError(request.isRequestResentFollowedToError());
 
+			changes_game.firePropertyChange(PlayerGuiEvent.PLAY_REQUEST.toString(), null, eventData);
+			
 			return true;
 		}
 	}
