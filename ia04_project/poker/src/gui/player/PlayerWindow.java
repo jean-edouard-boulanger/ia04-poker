@@ -2,6 +2,7 @@ package gui.player;
 
 import gui.player.PersoIHM.Sens;
 import gui.player.TokenPlayerIHM.ColorToken;
+import gui.player.event.model.PlayRequestEventData;
 import gui.player.event.model.PlayerReceivedTokenSetEventData;
 import jade.gui.GuiEvent;
 
@@ -33,6 +34,7 @@ import javafx.scene.transform.Scale;
 import javafx.stage.Stage;
 import poker.card.helper.CardImageHelper;
 import poker.card.model.Card;
+import poker.game.model.BetType;
 import poker.game.model.BlindValueDefinition;
 import poker.game.player.model.Player;
 import poker.token.model.TokenType;
@@ -78,7 +80,8 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 	private Button button_check;
 	private Button button_add_bet;
 	private Button button_sub_bet;
-
+	private HashMap<BetType, Button> betButtons;
+	
 	/** Hand number & min blind displaying */
 	private Label label_hand;
 	private Label label_min_blind;
@@ -203,12 +206,16 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 		textarea_log.setEditable(false);
 		textarea_log.getStyleClass().add("log");
 
+		this.betButtons = new HashMap<BetType, Button>();
+		
 		button_follow = new Button();
 		button_follow.setLayoutX(335);
 		button_follow.setLayoutY(490);
 
-		button_follow.setText("Suivre � 2");
+		button_follow.setText("Suivre à 2");
 
+		betButtons.put(BetType.CALL, button_follow);
+		
 		button_follow.setPrefWidth(100);
 		button_follow.getStyleClass().add("button_play");
 
@@ -219,6 +226,8 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 		button_check.setPrefWidth(100);
 		button_check.getStyleClass().add("button_play");
 
+		betButtons.put(BetType.CHECK, button_check);
+		
 		button_fold = new Button();
 		button_fold.setLayoutX(225);
 		button_fold.setLayoutY(490);
@@ -226,15 +235,20 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 		button_fold.setPrefWidth(100);
 		button_fold.getStyleClass().add("button_play");
 
+		betButtons.put(BetType.FOLD, button_fold);
+		
+		// Relancer = "To raise", champion ...
 		button_relaunch = new Button();
 		button_relaunch.setLayoutX(225);
 		button_relaunch.setLayoutY(550);
 
-		button_relaunch.setText("Relancer � 5");
+		button_relaunch.setText("Relancer à 5");
 
 		button_relaunch.setPrefWidth(100);
 		button_relaunch.getStyleClass().add("button_play");
 
+		betButtons.put(BetType.RAISE, button_relaunch);
+		
 		button_add_bet = new Button();
 		button_add_bet.setLayoutX(660);
 		button_add_bet.setLayoutY(550);
@@ -861,16 +875,34 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 				{
 					if(evt.getNewValue() instanceof Integer)
 					{
-						
 						System.out.println("[PlayerWindow] Player bet");
 					}
 				}
 				
 				/**
-				 * ------ Occurs when the player is ordered to play
+				 * ------ PLAY REQUEST ----
 				 */
 				else if(evt.getPropertyName().equals(PlayerGuiEvent.PLAY_REQUEST.toString())){
-					
+					if(evt.getNewValue() instanceof PlayRequestEventData){
+						
+						PlayRequestEventData eventData = (PlayRequestEventData) evt.getNewValue();
+						
+						for(Button bt : betButtons.values()){
+							bt.setDisable(true);
+						}
+						
+						betButtons.get(BetType.CALL).setText("Call ("+ eventData.getMinimumBetAmount() +")");
+						betButtons.get(BetType.ALL_IN).setText("All in (" + eventData.getMaximumBetAmount() + ")");
+						betButtons.get(BetType.RAISE).setText("Raise (" + eventData.getRaiseAmount() + ")");
+						
+						slider_bet.setMin(eventData.getMinimumBetAmount());
+						slider_bet.setMax(eventData.getMaximumBetAmount());
+						
+						for(BetType t : eventData.getAvailableActions()){
+							betButtons.get(t).setDisable(false);
+						}
+						
+					}
 				}
 			}
 		});
