@@ -2,12 +2,14 @@ package gui.player;
 
 import gui.player.PersoIHM.Sens;
 import gui.player.TokenPlayerIHM.ColorToken;
+import gui.player.event.model.PlayerReceivedTokenSet;
 import jade.gui.GuiEvent;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -149,6 +151,8 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 
 	private List<ImageView> player_cards;
 
+	private HashMap<TokenType, TokenPlayerIHM> playerTokens;
+	
 	// scaling:
 	private double scaleRatio = 1;
 	private double stageInitialWidth = 0;
@@ -278,6 +282,14 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 		token_green = new TokenPlayerIHM(575, 500, 0, ColorToken.GREEN);
 		token_red = new TokenPlayerIHM(605, 500, 0, ColorToken.RED);
 
+		playerTokens = new HashMap<TokenType, TokenPlayerIHM>();		
+		playerTokens.put(TokenType.WHITE, token_white);
+		playerTokens.put(TokenType.RED, token_red);
+		playerTokens.put(TokenType.GREEN, token_green);
+		playerTokens.put(TokenType.BLUE, token_blue);
+		playerTokens.put(TokenType.BLACK, token_black);
+
+		
 		/**************************************
 		 *  Players's perso
 		 */
@@ -754,10 +766,11 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 				 */
 				else if(evt.getPropertyName().equals(PlayerGuiEvent.PLAYER_RECEIVED_TOKENSET_ME.toString()))
 				{
-					if(evt.getNewValue() instanceof Player)
-					{
-						receivedTokensMe((Player)evt.getNewValue());
-						System.out.println("[PlayerWindow] Player received token set me");
+					PlayerReceivedTokenSet eventData = (PlayerReceivedTokenSet) evt.getNewValue();
+					list_perso.get(eventData.getPlayerIndex()).setScore(eventData.getTokenSetValuation());
+					
+					for(Map.Entry<TokenType, Integer> entry : eventData.getTokenSet().getTokensAmount().entrySet()){
+						playerTokens.get(entry.getKey()).setMise(entry.getValue());
 					}
 				}
 
@@ -766,11 +779,8 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 				 */
 				else if(evt.getPropertyName().equals(PlayerGuiEvent.PLAYER_RECEIVED_TOKENSET_OTHER.toString()))
 				{
-					if(evt.getNewValue() instanceof Player)
-					{
-						receivedTokensOther((Player)evt.getNewValue());
-						System.out.println("[PlayerWindow] Player received token set other");
-					}
+					PlayerReceivedTokenSet eventData = (PlayerReceivedTokenSet) evt.getNewValue();
+					list_perso.get(eventData.getPlayerIndex()).setScore(eventData.getTokenSetValuation());
 				}
 
 				/**

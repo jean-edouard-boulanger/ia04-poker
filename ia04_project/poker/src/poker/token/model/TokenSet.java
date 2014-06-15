@@ -99,4 +99,16 @@ public class TokenSet {
 			this.tokensAmount.put(tt, 0);
 		}
 	}
+	
+	public String toString() {
+		String tokenSet = "TokenSet\n";
+		
+		int value = 0;
+		
+		for(Map.Entry<TokenType, Integer> entry : this.tokensAmount.entrySet()) {
+			tokenSet += entry.getKey() + ": " + entry.getValue() + "\n";
+		}
+		
+		return tokenSet;
+	}
 }

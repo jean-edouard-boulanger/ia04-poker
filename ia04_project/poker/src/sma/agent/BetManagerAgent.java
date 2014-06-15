@@ -98,11 +98,15 @@ public class BetManagerAgent extends Agent {
 			
 			Player player = game.getPlayersContainer().getPlayerByAID(request.getPlayerAID());
 			
-			int playerPot = TokenSetValueEvaluator.evaluateTokenSetValue(game.getTokenValueDefinition(), player.getTokens());
+			int playerPot = TokenSetValueEvaluator.evaluateTokenSetValue(game.getBetContainer().getTokenValueDefinition(), player.getTokens());
 			
 			if(playerPot > request.getBet()) {
 				try {
+					//Removing tokens of the used if allowed to
 					player.getTokens().SubstractTokenSet(request.getTokenSet());
+					
+					//Notifying the environment
+					
 					
 				} catch (InvalidTokenAmountException e) {
 					// TODO Auto-generated catch block
@@ -116,7 +120,7 @@ public class BetManagerAgent extends Agent {
 		@Override
 		public boolean onTokenValueDefinitionChangedNotification(TokenValueDefinitionChangedNotification notif, ACLMessage aclMsg) {
 			
-			game.setTokenValueDefinition(notif.getTokenValueDefinition());
+			game.getBetContainer().setTokenValueDefinition(notif.getTokenValueDefinition());
 			
 			return true;
 		}
