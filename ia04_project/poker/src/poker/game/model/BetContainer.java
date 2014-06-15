@@ -29,6 +29,10 @@ public class BetContainer {
 		return tokenValueDefinition;
 	}
 	
+	public void resetPlayerBets() {
+		playersBets = new HashMap<AID, TokenSet>();
+	}
+	
 	public void setTokenValueDefinition(TokenValueDefinition tokenValueDefinition) {
 		this.tokenValueDefinition = tokenValueDefinition;
 	}
@@ -66,7 +70,7 @@ public class BetContainer {
 	}
 	
 	public void addTokenToPlayerBet(AID playerAID, TokenSet betToAdd){
-		if(!this.playersBets.containsKey(playerAID))
+		if(this.playersBets.containsKey(playerAID))
 			this.playersBets.put(playerAID, this.playersBets.get(playerAID).AddTokenSet(betToAdd));
 		else
 			this.playersBets.put(playerAID, betToAdd);

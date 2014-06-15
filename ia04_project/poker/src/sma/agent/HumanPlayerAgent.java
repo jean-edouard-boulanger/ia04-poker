@@ -22,6 +22,7 @@ import javax.swing.SwingUtilities;
 
 import poker.card.exception.CommunityCardsFullException;
 import poker.game.exception.NoPlaceAvailableException;
+import poker.game.exception.NotRegisteredPlayerException;
 import poker.game.exception.PlayerAlreadyRegisteredException;
 import poker.game.model.BetType;
 import poker.game.model.Game;
@@ -316,6 +317,18 @@ public class HumanPlayerAgent extends GuiAgent {
 		@Override
 		public boolean onDealerChangedNotification(DealerChangedNotification dealerChangedNotification, ACLMessage aclMsg) {
 
+			try {
+				game.getPlayersContainer().setDealer(dealerChangedNotification.getDealer());
+				game.getPlayersContainer().getBigBlind();
+				game.getPlayersContainer().getSmallBlind();
+				
+				changes_game.firePropertyChange(PlayerGuiEvent.DEALER_PLAYER_CHANGED.toString(), null, game.getPlayersContainer().getDealer());
+				changes_game.firePropertyChange(PlayerGuiEvent.SMALL_BLIND_PLAYER.toString(), null, game.getPlayersContainer().getSmallBlind());
+				changes_game.firePropertyChange(PlayerGuiEvent.BIG_BLIND_PLAYER.toString(), null, game.getPlayersContainer().getBigBlind());
+			} catch (NotRegisteredPlayerException e) {
+				e.printStackTrace();
+			}
+			
 			return true;
 		}
 
