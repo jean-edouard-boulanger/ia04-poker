@@ -267,6 +267,7 @@ public class HumanPlayerAgent extends GuiAgent {
 			
 			game = notif.getGame();
 			System.out.println("Subscription OK.");
+			wait_game_window.setVisible(false);
 			
 			for(Player player : game.getPlayersContainer().getPlayers())
 			{

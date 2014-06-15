@@ -681,6 +681,7 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
          */
 		else if(evt.getPropertyName().equals(PlayerGuiEvent.EMPTY_COMMUNITY_CARD.toString()))
 		{
+			//Removing displayed cards of the player
 			player_cards.get(0).setImage(null);
 			player_cards.get(1).setImage(null);
 
