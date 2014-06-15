@@ -33,6 +33,10 @@ public class BetContainer {
 		playersBets = new HashMap<AID, TokenSet>();
 	}
 	
+	public void resetPot() {
+		pot = new TokenSet();
+	}
+	
 	public void setTokenValueDefinition(TokenValueDefinition tokenValueDefinition) {
 		this.tokenValueDefinition = tokenValueDefinition;
 	}
