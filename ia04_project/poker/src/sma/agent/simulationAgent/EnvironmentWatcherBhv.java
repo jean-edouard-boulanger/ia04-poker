@@ -90,7 +90,7 @@ public class EnvironmentWatcherBhv extends CyclicBehaviour
 	    
 	    @Override
 	    public boolean onBlindValueDefinitionChangedNotification(BlindValueDefinitionChangedNotification notif, ACLMessage aclMsg) {
-		simAgent.getGame().setBlindValueDefinition(notif.getNewBlindValueDefinition());
+	    	simAgent.getGame().setBlindValueDefinition(notif.getNewBlindValueDefinition());
 	        return true;
 	    }
 
