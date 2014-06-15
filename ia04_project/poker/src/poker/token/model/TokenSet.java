@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import poker.token.exception.InvalidTokenAmountException;
+import poker.token.helpers.TokenSetValueEvaluator;
 
 /**
  * Classe representant une collection de jetons de poker
@@ -105,8 +106,8 @@ public class TokenSet {
 		
 		int value = 0;
 		
-		for(Map.Entry<TokenType, Integer> entry : this.tokensAmount.entrySet()) {
-			tokenSet += entry.getKey() + ": " + entry.getValue() + "\n";
+		for(TokenType tt : TokenType.values()){
+			tokenSet += tt + " : " + this.getAmountForTokenType(tt) + "\n";
 		}
 		
 		return tokenSet;

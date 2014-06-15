@@ -72,23 +72,29 @@ public class Main extends Application {
 	public void start(Stage primaryStage) throws InvalidTokenValueException, InvalidTokenAmountException, InvalidRepartitionException, ExcessiveBetException {
 		
 	    TokenValueDefinition defaultTokenValueDefinition = new TokenValueDefinition();
-	    defaultTokenValueDefinition.setValueForTokenType(TokenType.GREEN, 10);
-	    defaultTokenValueDefinition.setValueForTokenType(TokenType.BLACK, 1);
-	    defaultTokenValueDefinition.setValueForTokenType(TokenType.BLUE, 5);
-	    defaultTokenValueDefinition.setValueForTokenType(TokenType.WHITE, 25);
-	    defaultTokenValueDefinition.setValueForTokenType(TokenType.RED, 50);
+	    defaultTokenValueDefinition.setValueForTokenType(TokenType.WHITE, 1);
+	    defaultTokenValueDefinition.setValueForTokenType(TokenType.RED, 10);
+	    defaultTokenValueDefinition.setValueForTokenType(TokenType.GREEN, 20);
+	    defaultTokenValueDefinition.setValueForTokenType(TokenType.BLUE, 50);
+	    defaultTokenValueDefinition.setValueForTokenType(TokenType.BLACK, 100);
 	    
 	    TokenRepartition defaultTokenRepartiton = new TokenRepartition();
-	    defaultTokenRepartiton.setRepartitionForToken(TokenType.GREEN, 30);
-	    defaultTokenRepartiton.setRepartitionForToken(TokenType.BLACK, 30);
-	    defaultTokenRepartiton.setRepartitionForToken(TokenType.BLUE, 20);
-	    defaultTokenRepartiton.setRepartitionForToken(TokenType.WHITE, 10);
-	    defaultTokenRepartiton.setRepartitionForToken(TokenType.RED, 10);
+	    defaultTokenRepartiton.setRepartitionForToken(TokenType.WHITE, 40);
+	    defaultTokenRepartiton.setRepartitionForToken(TokenType.RED, 30);
+	    defaultTokenRepartiton.setRepartitionForToken(TokenType.GREEN, 15);
+	    defaultTokenRepartiton.setRepartitionForToken(TokenType.BLUE, 10);
+	    defaultTokenRepartiton.setRepartitionForToken(TokenType.BLACK, 5);
 
 	    int nbTokens = 40;
-	    TokenSet tokenSet = TokenSetFactory.createTokenSet(defaultTokenRepartiton, nbTokens);
+	    //TokenSet tokenSet = TokenSetFactory.createTokenSet(defaultTokenRepartiton, nbTokens);
+	    TokenSet tokenSet = new TokenSet();
 	    
-		TokenSet ts = TokenSetValueEvaluator.tokenSetForBet(400, defaultTokenValueDefinition, tokenSet);
+	    tokenSet.setAmountForTokenType(TokenType.WHITE, 0);
+	    tokenSet.setAmountForTokenType(TokenType.RED, 1);
+	    
+	    System.out.println(tokenSet);
+	    
+		TokenSet ts = TokenSetValueEvaluator.tokenSetForBet(5, defaultTokenValueDefinition, tokenSet);
 		System.out.println(ts);
 		UserDeck userDeck = new UserDeck();
 		
@@ -236,6 +242,8 @@ public class Main extends Application {
 		
 		//--------------------------------------
 		
+		/*
+		
 		primaryStage.setTitle("Poker");
         Group root = new Group();
         Scene scene = new Scene(root, 900, 600);
@@ -305,6 +313,9 @@ public class Main extends Application {
         });
         
         initializeAction();
+        
+        */
+        
 	}
 	
 	public static void main(String[] args) {

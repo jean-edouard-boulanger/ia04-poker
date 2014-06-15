@@ -33,33 +33,33 @@ public class TokenSetValueEvaluator {
 		int remaining = amount;
 		int optAmount = 0;
 		int effectiveAmount = 0;
+		int totalAmount = 0;
 		
-		for(TokenType tt : TokenType.values()){
+		TokenType tokenTypeList[] = TokenType.values();
+		for(int i = tokenTypeList.length - 1; i >= 0 && remaining > 0; i--){
 			
-			if(remaining == 0){
-				break;
-			}
+			int playerOwnedAmount = playerTokenSet.getAmountForTokenType(tokenTypeList[i]);
+			optAmount = remaining / tokenValueDefinition.getValueForTokenType(tokenTypeList[i]);
 			
-			optAmount = remaining / tokenValueDefinition.getValueForTokenType(tt);
-			effectiveAmount = optAmount - playerTokenSet.getAmountForTokenType(tt);
+			effectiveAmount = (optAmount > playerOwnedAmount) ? playerOwnedAmount : optAmount;
+
+			remaining -= effectiveAmount * tokenValueDefinition.getValueForTokenType(tokenTypeList[i]);
 			
-			betTokenSet.setAmountForTokenType(tt, effectiveAmount);
-			
-			remaining -= effectiveAmount;
+			totalAmount = betTokenSet.getAmountForTokenType(tokenTypeList[i]) + effectiveAmount;
+			betTokenSet.setAmountForTokenType(tokenTypeList[i], totalAmount);
 		}
 		
 		if(remaining > 0){
-			int totalAmount = 0;
-			TokenType tokenTypeList[] = TokenType.values();
-			for(int i = tokenTypeList.length - 1; i >= 0 && remaining > 0; i--){
+			for(TokenType tt : TokenType.values()){
+
+				int playerOwnedAmount = playerTokenSet.getAmountForTokenType(tt);
 				
-				optAmount = (int) Math.ceil(remaining / (float)tokenValueDefinition.getValueForTokenType(tokenTypeList[i]));
-				effectiveAmount = optAmount -playerTokenSet.getAmountForTokenType(tokenTypeList[i]);
-		
-				remaining -= effectiveAmount;
-				
-				totalAmount = betTokenSet.getAmountForTokenType(tokenTypeList[i]) + effectiveAmount;
-				betTokenSet.setAmountForTokenType(tokenTypeList[i], totalAmount);
+				optAmount = (int) Math.ceil(remaining / (float)tokenValueDefinition.getValueForTokenType(tt));
+				effectiveAmount = (optAmount > playerOwnedAmount) ? playerOwnedAmount : optAmount;
+			
+				remaining -= effectiveAmount * tokenValueDefinition.getValueForTokenType(tt);
+			
+				betTokenSet.increaseAmountForTokenType(tt, effectiveAmount);
 			}
 		}
 		
