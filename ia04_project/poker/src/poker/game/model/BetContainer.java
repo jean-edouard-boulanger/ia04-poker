@@ -29,12 +29,12 @@ public class BetContainer {
 		return tokenValueDefinition;
 	}
 	
-	public void resetPlayerBets() {
-		playersBets = new HashMap<AID, TokenSet>();
+	public void clearPlayerBets() {
+		playersBets.clear();
 	}
 	
-	public void resetPot() {
-		pot = new TokenSet();
+	public void clearPot() {
+		pot.clear();
 	}
 	
 	public void setTokenValueDefinition(TokenValueDefinition tokenValueDefinition) {
