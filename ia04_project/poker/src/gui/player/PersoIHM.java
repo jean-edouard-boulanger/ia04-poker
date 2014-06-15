@@ -48,7 +48,7 @@ public class PersoIHM extends Group {
 		name = new Label(pseudo + " (0)");
 
 		name.getStyleClass().add("pseudo");
-		
+
 		this.pseudo = pseudo;
 		
 		t_current_player = new Timeline();
@@ -115,6 +115,7 @@ public class PersoIHM extends Group {
 	
 	public void setPseudo(String pseudo)
 	{
+		this.pseudo = pseudo;
 		name.setText(pseudo + " (0)");
 	}
 	

@@ -271,12 +271,9 @@ public class HumanPlayerAgent extends GuiAgent {
 			
 			game = notif.getGame();
 			System.out.println("Subscription OK.");
-<<<<<<< HEAD
 			wait_game_window.setVisible(false);
 			
-=======
 			//Traiter blind et min token 
->>>>>>> c1bacf53ecd37c9cb676a3b719db6aff6cc153f3
 			for(Player player : game.getPlayersContainer().getPlayers())
 			{
 				if(player.getAID().equals(HumanPlayerAgent.this.getAID()))
