@@ -265,6 +265,16 @@ public class HumanPlayerAgent extends GuiAgent {
 			
 			return true;
 		}
+		
+		@Override
+		public boolean onTokenValueDefinitionChangedNotification(TokenValueDefinitionChangedNotification notif, ACLMessage aclMsg) {
+			
+			game.setTokenValueDefinition(notif.getTokenValueDefinition());
+			
+			changes_game.firePropertyChange(PlayerGuiEvent.INITIALIZING_MIN_TOKEN.toString(), null, game.getTokenValueDefinition().getMinimumTokenValue());
+			
+			return true;
+		}
 				
 		@Override
 		public boolean onSubscriptionOK(SubscriptionOKMessage notif, ACLMessage aclMsg){
@@ -285,7 +295,6 @@ public class HumanPlayerAgent extends GuiAgent {
 					changes_game.firePropertyChange(PlayerGuiEvent.INITIALIZING_OTHER.toString(), null, player);
 				}
 			}
-			
 			
 			return true;
 		}
