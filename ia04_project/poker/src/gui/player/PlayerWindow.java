@@ -85,9 +85,10 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 	private Button button_sub_bet;
 	private HashMap<BetType, Button> betButtons;
 	
-	/** Hand number & min blind displaying */
+	/** Hand number & small blind displaying */
 	private Label label_hand;
-	private Label label_min_blind;
+	private Label label_small_blind;
+	private Label label_big_blind;
 
 	/** Log */
 	private TextArea textarea_log;
@@ -200,11 +201,16 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 		label_hand.setLayoutY(15);
 		label_hand.getStyleClass().add("hand");
 
-		label_min_blind = new Label("Min blind : 1");
-		label_min_blind.setLayoutX(15);
-		label_min_blind.setLayoutY(425);
-		label_min_blind.getStyleClass().add("min-blind");
+		label_small_blind = new Label("Small blind : 1");
+		label_small_blind.setLayoutX(15);
+		label_small_blind.setLayoutY(400);
+		label_small_blind.getStyleClass().add("min-blind");
 
+		label_big_blind = new Label("Big blind : 2");
+		label_big_blind.setLayoutX(15);
+		label_big_blind.setLayoutY(425);
+		label_big_blind.getStyleClass().add("min-blind");
+		
 		textarea_log = new TextArea();
 		textarea_log.setLayoutX(5);
 		textarea_log.setLayoutY(470);
@@ -439,7 +445,8 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 		table.setY(75);
 
 		root.getChildren().add(label_hand);
-		root.getChildren().add(label_min_blind);
+		root.getChildren().add(label_small_blind);
+		root.getChildren().add(label_big_blind);
 		root.getChildren().add(table);
 		root.getChildren().add(communauty_card);
 		root.getChildren().add(zone_carte);
@@ -514,7 +521,7 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 		GuiEvent ev = new GuiEvent(this, PlayerGuiEvent.IHM_READY.ordinal());
 		human_player_agent.postGuiEvent(ev);
 	}
-
+	
 	public void initializeGame(int nb_players, int num_player) {
 		this.nb_players = nb_players;
 		this.num_player = num_player;
@@ -571,10 +578,6 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 		root.getChildren().add(PlayerWindow.this.list_token_bet.get(position_player));
 
 		PlayerWindow.this.list_perso.get(position_player).setCurrentPlayer();
-		
-		//TODO remove this after debug
-		this.dealerToken.setCenter(this.list_perso.get(position_player).getDealerTokenPosition());
-		this.dealerToken.setVisible(true);
 	}
 
 	public void initializeOther(final Player player)
@@ -650,10 +653,12 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 		PlayerWindow.this.current_player = index_player;
 	}
 	
-	public void changeBlind(BlindValueDefinition blind_definition) {
-		this.label_min_blind.setText(String.valueOf(blind_definition.getBlindAmountDefinition()));
-	}
 
+	public void setBlinds(BlindValueDefinition blind_definition) {
+		this.label_small_blind.setText(String.valueOf(blind_definition.getBlindAmountDefinition()));
+		this.label_big_blind.setText(String.valueOf(blind_definition.getBigBlindAmountDefinition()));
+	}
+	
 	public void initializeAction()
 	{
 		/**************************************
@@ -851,7 +856,10 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 				{
 					if(evt.getNewValue() instanceof Integer)
 					{
+						int playerIndex = (int) evt.getNewValue();
 						
+						dealerToken.animatedMoveToPlayer(list_perso.get(playerIndex));
+						dealerToken.setVisible(true);
 						System.out.println("[PlayerWindow] Player dealer changed");
 					}
 				}
@@ -863,7 +871,11 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 				{
 					if(evt.getNewValue() instanceof Player)
 					{
+						Player player = (Player)evt.getNewValue();
+						int playerIndex = player.getTablePositionIndex();
 						
+						smallBlindToken.setVisible(true);
+						smallBlindToken.animatedMoveToPlayer(list_perso.get(playerIndex));
 						System.out.println("[PlayerWindow] Player small blind");
 					}
 				}
@@ -875,7 +887,11 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 				{
 					if(evt.getNewValue() instanceof Player)
 					{
+						Player player = (Player)evt.getNewValue();
+						int playerIndex = player.getTablePositionIndex();
 						
+						bigBlindToken.animatedMoveToPlayer(list_perso.get(playerIndex));
+						bigBlindToken.setVisible(true);
 						System.out.println("[PlayerWindow] Player big blind");
 					}
 				}
@@ -887,8 +903,9 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 				{
 					if(evt.getNewValue() instanceof BlindValueDefinition)
 					{
-						
-						System.out.println("[PlayerWindow] Blind changed");
+						BlindValueDefinition bv = (BlindValueDefinition)evt.getNewValue();
+						System.out.println("[PlayerWindow] Small blind changed, new value: " + bv.getBlindAmountDefinition());
+						setBlinds(bv);
 					}
 				}
 				
