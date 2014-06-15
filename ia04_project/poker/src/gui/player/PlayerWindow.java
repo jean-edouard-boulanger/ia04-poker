@@ -648,15 +648,17 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 	}
 
 	public void changeCurrentPlayer(final Integer index_player) {
-		PlayerWindow.this.list_perso.get(PlayerWindow.this.current_player).unsetCurrentPlayer();
+		for(PersoIHM persoIHM : this.list_perso){
+			persoIHM.unsetCurrentPlayer();
+		}
 		PlayerWindow.this.list_perso.get(index_player).setCurrentPlayer();
 		PlayerWindow.this.current_player = index_player;
 	}
 	
 
 	public void setBlinds(BlindValueDefinition blind_definition) {
-		this.label_small_blind.setText(String.valueOf(blind_definition.getBlindAmountDefinition()));
-		this.label_big_blind.setText(String.valueOf(blind_definition.getBigBlindAmountDefinition()));
+		this.label_small_blind.setText("Small blind : " + String.valueOf(blind_definition.getBlindAmountDefinition()));
+		this.label_big_blind.setText("Big blind : " + String.valueOf(blind_definition.getBigBlindAmountDefinition()));
 	}
 	
 	public void initializeAction()
@@ -854,9 +856,10 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 				 */
 				else if(evt.getPropertyName().equals(PlayerGuiEvent.DEALER_PLAYER_CHANGED.toString()))
 				{
-					if(evt.getNewValue() instanceof Integer)
+					if(evt.getNewValue() instanceof Player)
 					{
-						int playerIndex = (int) evt.getNewValue();
+						Player player = (Player) evt.getNewValue();
+						int playerIndex = player.getTablePositionIndex();
 						
 						dealerToken.animatedMoveToPlayer(list_perso.get(playerIndex));
 						dealerToken.setVisible(true);
@@ -874,8 +877,8 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 						Player player = (Player)evt.getNewValue();
 						int playerIndex = player.getTablePositionIndex();
 						
-						smallBlindToken.setVisible(true);
 						smallBlindToken.animatedMoveToPlayer(list_perso.get(playerIndex));
+						smallBlindToken.setVisible(true);
 						System.out.println("[PlayerWindow] Player small blind");
 					}
 				}
