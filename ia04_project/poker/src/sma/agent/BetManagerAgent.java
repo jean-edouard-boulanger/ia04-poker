@@ -1,8 +1,5 @@
 package sma.agent;
 
-import java.util.ArrayList;
-
-import gui.player.PlayerWindow.PlayerGuiEvent;
 import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.CyclicBehaviour;
@@ -25,11 +22,13 @@ import sma.message.FailureMessage;
 import sma.message.MessageVisitor;
 import sma.message.OKMessage;
 import sma.message.SubscriptionOKMessage;
+import sma.message.bet.notification.PotAmountNotification;
 import sma.message.bet.request.BetRequest;
+import sma.message.bet.request.GetPotAmountRequest;
 import sma.message.environment.notification.PlayerReceivedTokenSetNotification;
 import sma.message.environment.notification.PlayerSitOnTableNotification;
 import sma.message.environment.notification.TokenValueDefinitionChangedNotification;
-import sma.message.environment.request.AddPlayerTableRequest;
+import sma.message.environment.notification.WinnerDeterminedNotification;
 import sma.message.environment.request.GiveTokenSetToPlayerRequest;
 import sma.message.environment.request.PlayerBetRequest;
 
@@ -42,8 +41,8 @@ public class BetManagerAgent extends Agent {
 	
 	public BetManagerAgent(){
 		super();
-		betContainer = new BetContainer();
 		game = new Game();
+		msgVisitor = new BetManagerMessageVisitor();
 	}
 	
 	public void setup(){
@@ -177,7 +176,7 @@ public class BetManagerAgent extends Agent {
 			
 			int playerPot = TokenSetValueEvaluator.evaluateTokenSetValue(game.getBetContainer().getTokenValueDefinition(), player.getTokens());
 			
-			if(playerPot > request.getBet()) {
+			if(playerPot >= request.getBet() && request.getBet() >= game.getBetContainer().getCurrentBetAmount()) {
 				try {
 					//Removing tokens of the used if allowed to
 					TokenSet tokenSetToSubstract = TokenSetValueEvaluator.tokenSetForBet(request.getBet(), game.getBetContainer().getTokenValueDefinition(), player.getTokens());
@@ -188,6 +187,9 @@ public class BetManagerAgent extends Agent {
 					
 					TokenSet tokenSetToAddToPlayer = TokenSetValueEvaluator.tokenSetFromAmount(amountToGenerate, game.getBetContainer().getTokenValueDefinition());
 					
+					//Updating the player's bet amount
+					game.getBetContainer().setPlayerCurrentBet(request.getPlayerAID(), TokenSetValueEvaluator.tokenSetFromAmount(request.getBet(), game.getBetContainer().getTokenValueDefinition()));
+					
 					//Notifying the environment: sequential behaviour					
 					notifyBetToEnvironment(new PlayerBetRequest(tokenSetToSubstract, request.getPlayerAID()), new GiveTokenSetToPlayerRequest(tokenSetToAddToPlayer, request.getPlayerAID()), aclMsg);					
 				} catch (InvalidTokenAmountException | ExcessiveBetException e) {
@@ -196,7 +198,7 @@ public class BetManagerAgent extends Agent {
 				}
 			}
 			else {
-				AgentHelper.sendReply(BetManagerAgent.this, aclMsg, ACLMessage.INFORM, new FailureMessage("Player does not have enough token."));
+				AgentHelper.sendReply(BetManagerAgent.this, aclMsg, ACLMessage.INFORM, new FailureMessage("Player does not have enough token or tried to place a too small bet."));
 			}
 			
 			return true;
@@ -206,6 +208,15 @@ public class BetManagerAgent extends Agent {
 		public boolean onTokenValueDefinitionChangedNotification(TokenValueDefinitionChangedNotification notif, ACLMessage aclMsg) {
 			
 			game.getBetContainer().setTokenValueDefinition(notif.getTokenValueDefinition());
+			
+			return true;
+		}
+		
+		@Override
+		public boolean onWinnerDeterminedNotification(WinnerDeterminedNotification notification, ACLMessage aclMsg) {
+			
+			//End of the round, have to reset the bets of the players
+			game.getBetContainer().resetPlayerBets();
 			
 			return true;
 		}
@@ -223,6 +234,16 @@ public class BetManagerAgent extends Agent {
 			}
 			return true;
 		}		
+		
+		@Override
+		public boolean onGetPotAmountRequest(GetPotAmountRequest request, ACLMessage aclMsg) {
+
+			PotAmountNotification potAmountNotification = new PotAmountNotification(game.getBetContainer().getPot());
+			
+			AgentHelper.sendReply(BetManagerAgent.this, aclMsg, ACLMessage.INFORM, potAmountNotification);
+			
+			return true;
+		}
 	}
 
 	public BetManagerMessageVisitor getMsgVisitor() {
