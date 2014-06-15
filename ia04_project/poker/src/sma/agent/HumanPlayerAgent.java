@@ -34,6 +34,7 @@ import sma.message.environment.notification.BlindValueDefinitionChangedNotificat
 import sma.message.environment.notification.CardAddedToCommunityCardsNotification;
 import sma.message.environment.notification.CommunityCardsEmptiedNotification;
 import sma.message.environment.notification.CurrentPlayerChangedNotification;
+import sma.message.environment.notification.DealerChangedNotification;
 import sma.message.environment.notification.PlayerBetNotification;
 import sma.message.environment.notification.PlayerCheckNotification;
 import sma.message.environment.notification.PlayerFoldedNotification;
@@ -225,8 +226,9 @@ public class HumanPlayerAgent extends GuiAgent {
 		@Override
 		public boolean onPlayerBetNotification(PlayerBetNotification notification, ACLMessage aclMsg){
 
-			// FIND THE PLAYER NUMBER AND SEND IT WITH CONTENT
-			changes_game.firePropertyChange(PlayerGuiEvent.PLAYER_BET.toString(), null, 5);
+			
+			// Update la mise minimum pour relancer après
+			changes_game.firePropertyChange(PlayerGuiEvent.PLAYER_BET.toString(), null, notification);
 
 			return true;
 		}
@@ -283,7 +285,6 @@ public class HumanPlayerAgent extends GuiAgent {
 			System.out.println("Subscription OK.");
 			wait_game_window.setVisible(false);
 
-			//Traiter blind et min token 
 			for(Player player : game.getPlayersContainer().getPlayers())
 			{
 				if(player.getAID().equals(HumanPlayerAgent.this.getAID()))
@@ -295,6 +296,12 @@ public class HumanPlayerAgent extends GuiAgent {
 					changes_game.firePropertyChange(PlayerGuiEvent.INITIALIZING_OTHER.toString(), null, player);
 				}
 			}
+
+			return true;
+		}
+		
+		@Override
+		public boolean onDealerChangedNotification(DealerChangedNotification dealerChangedNotification, ACLMessage aclMsg) {
 
 			return true;
 		}

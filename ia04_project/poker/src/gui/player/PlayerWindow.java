@@ -784,6 +784,18 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 						System.out.println("[PlayerWindow] Player current changed");
 					}
 				}	
+				
+				/**
+				 *  -----  BET PLAYER -----
+				 */
+				else if(evt.getPropertyName().equals(PlayerGuiEvent.PLAYER_BET.toString()))
+				{
+					if(evt.getNewValue() instanceof Integer)
+					{
+						
+						System.out.println("[PlayerWindow] Player bet");
+					}
+				}	
 			}
 		});
 	}
