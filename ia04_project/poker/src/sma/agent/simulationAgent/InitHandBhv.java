@@ -129,6 +129,14 @@ public class InitHandBhv extends TaskRunnerBhv {
 		while(nextPlayer.getStatus() == PlayerStatus.OUT)
 			nextPlayer = it.next();
 		
+		// DEBUG:
+		try {
+			simAgent.getGame().getPlayersContainer().setCurrentPlayer(nextPlayer);
+		} catch (NotRegisteredPlayerException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 		Message msg = new CurrentPlayerChangeRequest(nextPlayer.getAID());
 		TransactionBhv transaction = new TransactionBhv(myAgent, msg, environment);
 		transaction.setResponseVisitor(new SimpleVisitor(myAgent,

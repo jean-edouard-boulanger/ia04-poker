@@ -23,9 +23,11 @@ import sma.message.Message;
 import sma.message.MessageVisitor;
 import sma.message.OKMessage;
 import sma.message.SubscriptionOKMessage;
+import sma.message.bet.notification.BetsMergedNotification;
 import sma.message.bet.notification.PotAmountNotification;
 import sma.message.bet.request.BetRequest;
 import sma.message.bet.request.GetPotAmountRequest;
+import sma.message.bet.request.MergeBetsRequest;
 import sma.message.environment.notification.PlayerReceivedTokenSetNotification;
 import sma.message.environment.notification.PlayerSitOnTableNotification;
 import sma.message.environment.notification.TokenValueDefinitionChangedNotification;
@@ -166,7 +168,7 @@ public class BetManagerAgent extends Agent {
 		public boolean onPlayerReceivedTokenSetNotification(PlayerReceivedTokenSetNotification notification, ACLMessage aclMsg){
 			
 			Player player = game.getPlayersContainer().getPlayerByAID(notification.getPlayerAID());
-			player.setTokens(notification.getReceivedTokenSet());
+			player.setTokens(player.getTokens().AddTokenSet(notification.getReceivedTokenSet()));
 			
 			return true;
 		}
@@ -218,12 +220,20 @@ public class BetManagerAgent extends Agent {
 		public boolean onWinnerDeterminedNotification(WinnerDeterminedNotification notification, ACLMessage aclMsg) {
 			
 			//End of the round, have to reset the bets of the players
-			game.getBetContainer().resetPlayerBets();
+			game.getBetContainer().clearPlayerBets();
 			
 			return true;
 		}
 		
-		//TODO: onRoundFinishedNotification : reset bets + put bets in pot
+		@Override
+		public boolean onMergeBetsRequest(MergeBetsRequest request, ACLMessage aclMsg) {
+			
+			game.getBetContainer().transferCurrentBetsToPot();
+			
+			AgentHelper.sendReply(BetManagerAgent.this, aclMsg, ACLMessage.INFORM, new BetsMergedNotification());
+			
+			return true;
+		}
 		
 		@Override
 		public boolean onPlayerSitOnTableNotification(PlayerSitOnTableNotification notification, ACLMessage aclMsg) {
