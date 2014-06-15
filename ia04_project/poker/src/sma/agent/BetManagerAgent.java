@@ -6,6 +6,7 @@ import gui.player.PlayerWindow.PlayerGuiEvent;
 import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.CyclicBehaviour;
+import jade.core.behaviours.OneShotBehaviour;
 import jade.core.behaviours.SequentialBehaviour;
 import jade.lang.acl.ACLMessage;
 import poker.game.exception.ExcessiveBetException;
@@ -109,7 +110,7 @@ public class BetManagerAgent extends Agent {
 		}	
 	}
 
-	private void notifyBetToEnvironment(PlayerBetRequest playerBetRequest, GiveTokenSetToPlayerRequest giveTokenSetToPlayerRequest) {
+	private void notifyBetToEnvironment(PlayerBetRequest playerBetRequest, GiveTokenSetToPlayerRequest giveTokenSetToPlayerRequest, final ACLMessage messageToAnswer) {
 		
 		SequentialBehaviour sequentialBehaviour = new SequentialBehaviour(BetManagerAgent.this);
 		
@@ -147,7 +148,15 @@ public class BetManagerAgent extends Agent {
 
 		sequentialBehaviour.addSubBehaviour(playerBetTransaction);
 		sequentialBehaviour.addSubBehaviour(giveTokenSetToPlayerTransaction);
-
+		sequentialBehaviour.addSubBehaviour(new OneShotBehaviour() {
+			
+			@Override
+			public void action() {
+				AgentHelper.sendReply(BetManagerAgent.this, messageToAnswer, ACLMessage.INFORM, new OKMessage());
+			}
+		});
+		
+		
 		BetManagerAgent.this.addBehaviour(sequentialBehaviour);
 	}
 	
@@ -181,10 +190,7 @@ public class BetManagerAgent extends Agent {
 					TokenSet tokenSetToAddToPlayer = TokenSetValueEvaluator.tokenSetFromAmount(amountToGenerate, game.getBetContainer().getTokenValueDefinition());
 					
 					//Notifying the environment: sequential behaviour					
-					notifyBetToEnvironment(new PlayerBetRequest(tokenSetToSubstract, request.getPlayerAID()), new GiveTokenSetToPlayerRequest(tokenSetToAddToPlayer, request.getPlayerAID()));
-					
-					AgentHelper.sendReply(BetManagerAgent.this, aclMsg, ACLMessage.INFORM, new OKMessage());
-					
+					notifyBetToEnvironment(new PlayerBetRequest(tokenSetToSubstract, request.getPlayerAID()), new GiveTokenSetToPlayerRequest(tokenSetToAddToPlayer, request.getPlayerAID()), aclMsg);					
 				} catch (InvalidTokenAmountException | ExcessiveBetException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
