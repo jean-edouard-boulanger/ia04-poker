@@ -41,88 +41,87 @@ import sma.message.environment.notification.PlayerReceivedCardNotification;
 import sma.message.environment.notification.PlayerReceivedTokenSetNotification;
 import sma.message.environment.notification.PlayerReceivedUnknownCardNotification;
 import sma.message.environment.notification.PlayerSitOnTableNotification;
-import sma.message.environment.notification.TokenValueDefinitionChangedNotification;
 
 public class HumanPlayerAgent extends GuiAgent {
 
 	private PropertyChangeSupport changes_waitgame = new PropertyChangeSupport(this);
 	private PropertyChangeSupport changes_game = new PropertyChangeSupport(this);
-	
+
 	private Game game;
-	
+
 	private HumanPlayerRequestMessageVisitor msgVisitor_request;
 	private HumanPlayerFailureMessageVisitor msgVisitor_failure;
-	
+
 	private WaitGameWindow wait_game_window;
 	private PlayerWindow player_window;
-	
+
 	public void setup()
 	{
 		//super.setup();
-		
+
 		game = new Game();
-		
+
 		this.msgVisitor_request = new HumanPlayerRequestMessageVisitor();
 		this.msgVisitor_failure = new HumanPlayerFailureMessageVisitor();
 
 
 		wait_game_window = new WaitGameWindow(this);
 		changes_waitgame.addPropertyChangeListener(wait_game_window);
-		
-        //Need to init the window via the SwingUtilities.invokeLater method on Mac to work
-		
+
+		//Need to init the window via the SwingUtilities.invokeLater method on Mac to work
+
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {
 				new JFXPanel();
 				javafx.application.Platform.runLater(new Runnable() {
-					
+
 					@Override
 					public void run() {
-			    		HumanPlayerAgent.this.player_window = PlayerWindow.launchWindow(HumanPlayerAgent.this, changes_game);
+						HumanPlayerAgent.this.player_window = PlayerWindow.launchWindow(HumanPlayerAgent.this, changes_game);
 					}
 				});
-				
+
 			}
 		});
-		
+
 		addBehaviour(new HumanPlayerReceiveRequestBehaviour(this));
 		addBehaviour(new HumanPlayerReceiveFailureBehaviour(this));
 
 	}
-	
-	 /**************************************
-     *  Listening request
-     */
+
+	/**************************************
+	 *  Listening request
+	 */
 	private class HumanPlayerReceiveRequestBehaviour extends CyclicBehaviour{
-		
+
 		MessageTemplate receiveRequestMessageTemplate;
-		
+
 		public HumanPlayerReceiveRequestBehaviour(Agent agent){
 			super(agent);
 			this.receiveRequestMessageTemplate = MessageTemplate.MatchPerformative(ACLMessage.PROPAGATE);
 		}
-		
+
 		@Override
 		public void action() {
 			if(!AgentHelper.receiveMessage(this.myAgent, receiveRequestMessageTemplate, msgVisitor_request)){
-				//block();
+				block();
 			}
 		}
 	}
-	
-	 /**************************************
-     *  Listening failure
-     */
+
+	/**************************************
+	 *  Listening failure
+	 */
 	private class HumanPlayerReceiveFailureBehaviour extends CyclicBehaviour{
-		
+
 		MessageTemplate receiveFailureMessageTemplate;
-		
+
 		public HumanPlayerReceiveFailureBehaviour(Agent agent){
 			super(agent);
 			this.receiveFailureMessageTemplate = MessageTemplate.MatchPerformative(ACLMessage.FAILURE);
 		}
-		
+
 		@Override
 		public void action() {
 			if(!AgentHelper.receiveMessage(this.myAgent, receiveFailureMessageTemplate, msgVisitor_failure)){
@@ -132,69 +131,69 @@ public class HumanPlayerAgent extends GuiAgent {
 	}
 
 	/**************************************
-     *  Request message visitor
-     */
+	 *  Request message visitor
+	 */
 	private class HumanPlayerRequestMessageVisitor extends MessageVisitor {
-		
+
 		@Override
 		public boolean onPlayerReceivedUnknownCardNotification(PlayerReceivedUnknownCardNotification notification, ACLMessage aclMsg) {
-			
+
 			System.out.println("[HumanPlayerAgent] Unknown card notification received. PLAYER_RECEIVED_UNKNOWN_CARD fired");	
-			
+
 			// if(!notification.getPlayerAID().equals(HumanPlayerAgent.this.getAID()))
-				changes_game.firePropertyChange(PlayerGuiEvent.PLAYER_RECEIVED_UNKNOWN_CARD.toString(), null, game.getPlayersContainer().getPlayerByAID(notification.getPlayerAID()).getTablePositionIndex());
-			
-			return true;
-		}
-		
-		@Override
-		public boolean onPlayerReceivedCardNotification(PlayerReceivedCardNotification notification, ACLMessage aclMsg){
-			
-			// if(notification.getPlayerAID().equals(HumanPlayerAgent.this.getAID()))
-				changes_game.firePropertyChange(PlayerGuiEvent.PLAYER_RECEIVED_CARD.toString(), null, notification.getReceivedCard());
+			changes_game.firePropertyChange(PlayerGuiEvent.PLAYER_RECEIVED_UNKNOWN_CARD.toString(), null, game.getPlayersContainer().getPlayerByAID(notification.getPlayerAID()).getTablePositionIndex());
 
 			return true;
 		}
-		
+
+		@Override
+		public boolean onPlayerReceivedCardNotification(PlayerReceivedCardNotification notification, ACLMessage aclMsg){
+
+			// if(notification.getPlayerAID().equals(HumanPlayerAgent.this.getAID()))
+			changes_game.firePropertyChange(PlayerGuiEvent.PLAYER_RECEIVED_CARD.toString(), null, notification.getReceivedCard());
+
+			return true;
+		}
+
 		@Override
 		public boolean onCardAddedToCommunityCardsNotification(CardAddedToCommunityCardsNotification notification, ACLMessage aclMsg) {
-			
+
 			try {
-				
+
 				game.getCommunityCards().pushCard(notification.getNewCommunityCard());
-				
+
 				changes_game.firePropertyChange(PlayerGuiEvent.ADD_COMMUNITY_CARD.toString(), null, notification.getNewCommunityCard());
-				
+
 			} catch (CommunityCardsFullException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			
+
 			return true;
 		}
-		
+
 		@Override
 		public boolean onCommunityCardsEmptiedNotification(CommunityCardsEmptiedNotification notification, ACLMessage aclMsg) {
-			
+
 			game.getCommunityCards().popCards();
-			
+
 			changes_game.firePropertyChange(PlayerGuiEvent.EMPTY_COMMUNITY_CARD.toString(), null, null);
-			
+
 			return true;
 		}
-		
+
 		@Override
 		public boolean onPlayerFoldedNotification(PlayerFoldedNotification notification, ACLMessage aclMsg){
-			
+
 			// FIND THE PLAYER NUMBER AND SEND IT WITH CONTENT
 			changes_game.firePropertyChange(PlayerGuiEvent.PLAYER_FOLDED.toString(), null, 5);
-			
+
 			return true;
 		}
-		
+
 		@Override
 		public boolean onPlayerSitOnTableNotification(PlayerSitOnTableNotification notification, ACLMessage aclMsg){
-			
+
 			try {
 				game.getPlayersContainer().addPlayer(notification.getNewPlayer());
 			} catch (PlayerAlreadyRegisteredException e) {
@@ -204,55 +203,55 @@ public class HumanPlayerAgent extends GuiAgent {
 			}
 			// FIND THE PLAYER NUMBER AND SEND IT WITH CONTENT
 			changes_game.firePropertyChange(PlayerGuiEvent.INITIALIZING_OTHER.toString(), null, notification.getNewPlayer());
-			
+
 			return true;
 		}
-		
+
 		@Override
 		public boolean onPlayerReceivedTokenSetNotification(PlayerReceivedTokenSetNotification notification, ACLMessage aclMsg){
-			
+
 			Player player = game.getPlayersContainer().getPlayerByAID(notification.getPlayerAID());
 			player.setTokens(notification.getReceivedTokenSet());
-			
+
 			if(notification.getPlayerAID().equals(HumanPlayerAgent.this.getAID()))
 				changes_game.firePropertyChange(PlayerGuiEvent.PLAYER_RECEIVED_TOKENSET_ME.toString(), null, player);
 			else
 				changes_game.firePropertyChange(PlayerGuiEvent.PLAYER_RECEIVED_TOKENSET_OTHER.toString(), null, player);
-			
+
 			return true;
 		}
-		
+
 		@Override
 		public boolean onPlayerBetNotification(PlayerBetNotification notification, ACLMessage aclMsg){
-			
+
 			// FIND THE PLAYER NUMBER AND SEND IT WITH CONTENT
 			changes_game.firePropertyChange(PlayerGuiEvent.PLAYER_BET.toString(), null, 5);
-			
+
 			return true;
 		}
-		
+
 		@Override
 		public boolean onPlayerCheckNotification(PlayerCheckNotification notification, ACLMessage aclMsg){
-			
+
 			// FIND THE PLAYER NUMBER AND SEND IT WITH CONTENT
 			changes_game.firePropertyChange(PlayerGuiEvent.PLAYER_CHECK.toString(), null, 5);
-			
+
 			return true;
 		}
-		
+
 		@Override
 		public boolean onBlindValueDefinitionChangedNotification(BlindValueDefinitionChangedNotification notification, ACLMessage aclMsg){
-			
+
 			game.setBlindValueDefinition(notification.getNewBlindValueDefinition());
-			
+
 			changes_game.firePropertyChange(PlayerGuiEvent.BLIND_VALUE.toString(), null, notification.getNewBlindValueDefinition());
-			
+
 			return true;
 		}
-		
+
 		@Override
 		public boolean onCurrentPlayerChangedNotification(CurrentPlayerChangedNotification notification, ACLMessage aclMsg){
-			
+
 			/*try{
 				game.getPlayersContainer().getPlayerAtIndex(0).getStatus()HumanPlayerAgent
 			}
@@ -260,11 +259,12 @@ public class HumanPlayerAgent extends GuiAgent {
 				AgentHelper.sendReply(EnvironmentAgent.this, aclMsg, ACLMessage.INFORM, new FailureMessage(ex.getMessage()));
 				return true;
 			}*/
-			
+
 			changes_game.firePropertyChange(PlayerGuiEvent.CURRENT_PLAYER_CHANGED.toString(), null, Integer.valueOf(notification.getPlayerTablePositionIndex()));
-			
+
 			return true;
 		}
+<<<<<<< HEAD
 		
 		@Override
 		public boolean onTokenValueDefinitionChangedNotification(TokenValueDefinitionChangedNotification notif, ACLMessage aclMsg) {
@@ -276,13 +276,16 @@ public class HumanPlayerAgent extends GuiAgent {
 			return true;
 		}
 				
+=======
+
+>>>>>>> 80efebb5fdfb41c234c897ea828453593dc9b9fd
 		@Override
 		public boolean onSubscriptionOK(SubscriptionOKMessage notif, ACLMessage aclMsg){
-			
+
 			game = notif.getGame();
 			System.out.println("Subscription OK.");
 			wait_game_window.setVisible(false);
-			
+
 			//Traiter blind et min token 
 			for(Player player : game.getPlayersContainer().getPlayers())
 			{
@@ -295,17 +298,22 @@ public class HumanPlayerAgent extends GuiAgent {
 					changes_game.firePropertyChange(PlayerGuiEvent.INITIALIZING_OTHER.toString(), null, player);
 				}
 			}
+<<<<<<< HEAD
 			
+=======
+
+
+>>>>>>> 80efebb5fdfb41c234c897ea828453593dc9b9fd
 			return true;
 		}
-		
+
 	}
-	
+
 	/**************************************
-     *  Failure message visitor
-     */
+	 *  Failure message visitor
+	 */
 	private class HumanPlayerFailureMessageVisitor extends MessageVisitor {
-		
+
 		@Override
 		public boolean onFailureMessage(FailureMessage msg, ACLMessage aclMsg) {
 
@@ -313,22 +321,22 @@ public class HumanPlayerAgent extends GuiAgent {
 			 * A AMELIORER, DISTINCTION ENTRE LES ERREURS
 			 */
 			changes_waitgame.firePropertyChange(WaitGameGuiEvent.FAILURE_CONNECT.toString(), null, null);
-			
+
 			return true;	
 		}
 	}
-	
+
 	/**************************************
-     *  Evenement depuis IHM
-     */
+	 *  Evenement depuis IHM
+	 */
 	@Override
 	protected void onGuiEvent(GuiEvent arg0) {
 		/**************************************
-	     *  IHM WaitGame
-	     */
+		 *  IHM WaitGame
+		 */
 		if(arg0.getType() == WaitGameGuiEvent.TRY_CONNECT.ordinal())
 		{
-			
+
 			String pseudo = (String) arg0.getParameter(0);
 			AID simulation = DFServiceHelper.searchService(this, "PokerSimulation","Simulation");
 			this.addBehaviour(new TransactionBhv(this, new PlayerSubscriptionRequest(pseudo), simulation, ACLMessage.SUBSCRIBE));
@@ -338,10 +346,10 @@ public class HumanPlayerAgent extends GuiAgent {
 		{
 			wait_game_window.setVisible(false);
 		}
-		
+
 		/**************************************
-	     *  IHM Player
-	     */
+		 *  IHM Player
+		 */
 		if(arg0.getType() == PlayerGuiEvent.IHM_READY.ordinal())
 		{
 			System.out.println("IHM Ready");
@@ -349,8 +357,8 @@ public class HumanPlayerAgent extends GuiAgent {
 			changes_game.firePropertyChange(PlayerGuiEvent.SHOW_IHM.toString(), null, null);
 		}
 	}
-	
-	
+
+
 	private static String generateNickName(){
 		//TODO: To be improved...
 		return Long.toHexString(Double.doubleToLongBits(Math.random()));

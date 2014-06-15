@@ -504,42 +504,30 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 
 	public void show()
 	{
-		PlatformHelper.run(new Runnable() {
-			@Override public void run() {
-				primaryStage.show();
-			}
-		});
+		primaryStage.show();
 	}
 
 	public void initializeMe(final Player player)
 	{
-		PlatformHelper.run(new Runnable() {
-			@Override public void run() {
-				int position_player = player.getTablePositionIndex();
+		int position_player = player.getTablePositionIndex();
 
-				PlayerWindow.this.list_perso.get(position_player).setPseudo(player.getNickname());
-				PlayerWindow.this.list_perso.get(position_player).setMe();
-				root.getChildren().add(PlayerWindow.this.list_perso.get(position_player));
-				root.getChildren().add(PlayerWindow.this.list_card_player.get(position_player));
-				root.getChildren().add(PlayerWindow.this.list_token_bet.get(position_player));
+		PlayerWindow.this.list_perso.get(position_player).setPseudo(player.getNickname());
+		PlayerWindow.this.list_perso.get(position_player).setMe();
+		root.getChildren().add(PlayerWindow.this.list_perso.get(position_player));
+		root.getChildren().add(PlayerWindow.this.list_card_player.get(position_player));
+		root.getChildren().add(PlayerWindow.this.list_token_bet.get(position_player));
 
-				PlayerWindow.this.list_perso.get(position_player).setCurrentPlayer();
-			}
-		});
+		PlayerWindow.this.list_perso.get(position_player).setCurrentPlayer();
 	}
 
 	public void initializeOther(final Player player)
 	{
-		PlatformHelper.run(new Runnable() {
-			@Override public void run() {
-				int position_player = player.getTablePositionIndex();
+		int position_player = player.getTablePositionIndex();
 
-				PlayerWindow.this.list_perso.get(position_player).setPseudo(player.getNickname());
-				root.getChildren().add(PlayerWindow.this.list_perso.get(position_player));
-				root.getChildren().add(PlayerWindow.this.list_card_player.get(position_player));
-				root.getChildren().add(PlayerWindow.this.list_token_bet.get(position_player));
-			}
-		});
+		PlayerWindow.this.list_perso.get(position_player).setPseudo(player.getNickname());
+		root.getChildren().add(PlayerWindow.this.list_perso.get(position_player));
+		root.getChildren().add(PlayerWindow.this.list_card_player.get(position_player));
+		root.getChildren().add(PlayerWindow.this.list_token_bet.get(position_player));
 	}
 	
 	public void initializeMinToken(final Integer min_token)
@@ -553,18 +541,14 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 	}
 
 	public void initializePlayerReceivedCard(final Card card) {
-		PlatformHelper.run(new Runnable() {
-			@Override public void run() {
-				Image image = CardImageHelper.getCardImage(card);
+		Image image = CardImageHelper.getCardImage(card);
 
-				if(player_cards.get(0).getImage() == null) {
-					player_cards.get(0).setImage(image);
-				}
-				else if(player_cards.get(1).getImage() == null) {
-					player_cards.get(1).setImage(image);
-				}
-			}
-		});
+		if(player_cards.get(0).getImage() == null) {
+			player_cards.get(0).setImage(image);
+		}
+		else if(player_cards.get(1).getImage() == null) {
+			player_cards.get(1).setImage(image);
+		}
 	}
 
 	public void initializePlayerReceivedUnknownCard(final Integer index) {
@@ -572,22 +556,14 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 	}
 
 	public void addCommunityCard(final Card card) {
-		PlatformHelper.run(new Runnable() {
-			@Override public void run() {
-				communauty_card.addCommunautyCard(card);
-			}
-		});
+		communauty_card.addCommunautyCard(card);
 	}
 
 	public void emptyCommunityCard() {
-		PlatformHelper.run(new Runnable() {
-			@Override public void run() {
-				player_cards.get(0).setImage(null);
-				player_cards.get(1).setImage(null);
+		player_cards.get(0).setImage(null);
+		player_cards.get(1).setImage(null);
 
-				communauty_card.emptyCommunautyCard();
-			}
-		});
+		communauty_card.emptyCommunautyCard();
 	}
 
 	public void receivedTokensMe(final Player player) {
@@ -607,21 +583,13 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 	}
 
 	public void receivedTokensOther(final Player player) {
-		PlatformHelper.run(new Runnable() {
-			@Override public void run() {
-				PlayerWindow.this.list_perso.get(player.getTablePositionIndex()).setScore(PersoIHM.calculateScore(player.getTokens()));
-			}
-		});
+		PlayerWindow.this.list_perso.get(player.getTablePositionIndex()).setScore(PersoIHM.calculateScore(player.getTokens()));
 	}
 
 	public void changeCurrentPlayer(final Integer index_player) {
-		PlatformHelper.run(new Runnable() {
-			@Override public void run() {
-				PlayerWindow.this.list_perso.get(PlayerWindow.this.current_player).unsetCurrentPlayer();
-				PlayerWindow.this.list_perso.get(index_player).setCurrentPlayer();
-				PlayerWindow.this.current_player = index_player;
-			}
-		});
+		PlayerWindow.this.list_perso.get(PlayerWindow.this.current_player).unsetCurrentPlayer();
+		PlayerWindow.this.list_perso.get(index_player).setCurrentPlayer();
+		PlayerWindow.this.current_player = index_player;
 	}
 
 	public void initializeAction()
@@ -629,43 +597,43 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 		/**************************************
 		 *  Slide interaction to see the player's bet
 		 */
-		 button_add_bet.setOnAction(new EventHandler<ActionEvent>() {
+		button_add_bet.setOnAction(new EventHandler<ActionEvent>() {
 
-			 public void handle(ActionEvent event) {
-				 slider_bet.setValue(slider_bet.getValue() + 1);
-				 textfield_bet.setText(String.valueOf(Double.valueOf(slider_bet.getValue()).intValue() + 1));
-			 }
-		 });
+			public void handle(ActionEvent event) {
+				slider_bet.setValue(slider_bet.getValue() + 1);
+				textfield_bet.setText(String.valueOf(Double.valueOf(slider_bet.getValue()).intValue() + 1));
+			}
+		});
 
-		 button_sub_bet.setOnAction(new EventHandler<ActionEvent>() {
+		button_sub_bet.setOnAction(new EventHandler<ActionEvent>() {
 
-			 public void handle(ActionEvent event) {
-				 slider_bet.setValue(slider_bet.getValue() - 1);
-				 textfield_bet.setText(String.valueOf(Double.valueOf(slider_bet.getValue()).intValue() - 1));
-			 }
-		 });
+			public void handle(ActionEvent event) {
+				slider_bet.setValue(slider_bet.getValue() - 1);
+				textfield_bet.setText(String.valueOf(Double.valueOf(slider_bet.getValue()).intValue() - 1));
+			}
+		});
 
-		 slider_bet.valueProperty().addListener(new ChangeListener<Number>() {
-			 @Override
-			 public void changed(ObservableValue<? extends Number> ov, Number oldValue, Number newValue) {
-				 PlayerWindow.this.textfield_bet.setText(String.valueOf(newValue.intValue()));
-			 }
-		 });
+		slider_bet.valueProperty().addListener(new ChangeListener<Number>() {
+			@Override
+			public void changed(ObservableValue<? extends Number> ov, Number oldValue, Number newValue) {
+				PlayerWindow.this.textfield_bet.setText(String.valueOf(newValue.intValue()));
+			}
+		});
 
-		 button_check.setOnAction(new EventHandler<ActionEvent>() {
+		button_check.setOnAction(new EventHandler<ActionEvent>() {
 
-			 public void handle(ActionEvent event) {
-				 //communauty_card.addCommunautyCard(new Card(CardRank.ACE, CardSuit.CLUBS));
+			public void handle(ActionEvent event) {
+				//communauty_card.addCommunautyCard(new Card(CardRank.ACE, CardSuit.CLUBS));
 
-			 }
-		 });
+			}
+		});
 
-		 button_fold.setOnAction(new EventHandler<ActionEvent>() {
+		button_fold.setOnAction(new EventHandler<ActionEvent>() {
 
-			 public void handle(ActionEvent event) {
-				 communauty_card.emptyCommunautyCard();
-			 }
-		 });
+			public void handle(ActionEvent event) {
+				communauty_card.emptyCommunautyCard();
+			}
+		});
 	}
 
 	/**************************************
