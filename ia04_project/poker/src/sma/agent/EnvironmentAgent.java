@@ -8,8 +8,6 @@ import jade.lang.acl.MessageTemplate;
 
 import java.util.ArrayList;
 
-import org.omg.CORBA.Request;
-
 import poker.card.exception.CommunityCardsFullException;
 import poker.card.exception.UserDeckFullException;
 import poker.card.model.Card;

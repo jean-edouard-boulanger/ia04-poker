@@ -102,7 +102,11 @@ public class BetManagerAgent extends Agent {
 			
 			if(playerPot > request.getBet()) {
 				try {
+					//Removing tokens of the used if allowed to
 					player.getTokens().SubstractTokenSet(request.getTokenSet());
+					
+					//Notifying the environment
+					
 					
 				} catch (InvalidTokenAmountException e) {
 					// TODO Auto-generated catch block
