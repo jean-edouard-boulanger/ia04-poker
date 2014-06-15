@@ -4,6 +4,7 @@ import gui.player.PlayerWindow;
 import gui.player.PlayerWindow.PlayerGuiEvent;
 import gui.player.WaitGameWindow;
 import gui.player.WaitGameWindow.WaitGameGuiEvent;
+import gui.player.event.model.PlayerReceivedTokenSet;
 import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.CyclicBehaviour;
@@ -23,6 +24,7 @@ import poker.game.exception.NoPlaceAvailableException;
 import poker.game.exception.PlayerAlreadyRegisteredException;
 import poker.game.model.Game;
 import poker.game.player.model.Player;
+import poker.token.helpers.TokenSetValueEvaluator;
 import sma.agent.helper.AgentHelper;
 import sma.agent.helper.DFServiceHelper;
 import sma.agent.helper.TransactionBhv;
@@ -41,6 +43,7 @@ import sma.message.environment.notification.PlayerReceivedCardNotification;
 import sma.message.environment.notification.PlayerReceivedTokenSetNotification;
 import sma.message.environment.notification.PlayerReceivedUnknownCardNotification;
 import sma.message.environment.notification.PlayerSitOnTableNotification;
+import sma.message.environment.notification.TokenValueDefinitionChangedNotification;
 
 public class HumanPlayerAgent extends GuiAgent {
 
@@ -213,11 +216,18 @@ public class HumanPlayerAgent extends GuiAgent {
 			Player player = game.getPlayersContainer().getPlayerByAID(notification.getPlayerAID());
 			player.setTokens(notification.getReceivedTokenSet());
 
-			if(notification.getPlayerAID().equals(HumanPlayerAgent.this.getAID()))
-				changes_game.firePropertyChange(PlayerGuiEvent.PLAYER_RECEIVED_TOKENSET_ME.toString(), null, player);
-			else
-				changes_game.firePropertyChange(PlayerGuiEvent.PLAYER_RECEIVED_TOKENSET_OTHER.toString(), null, player);
-
+			PlayerReceivedTokenSet eventData = new PlayerReceivedTokenSet();
+			eventData.setPlayerIndex(game.getPlayersContainer().getPlayerByAID(notification.getPlayerAID()).getTablePositionIndex());
+			eventData.setTokenSetValuation(TokenSetValueEvaluator.evaluateTokenSetValue(game.getTokenValueDefinition(), notification.getReceivedTokenSet()));
+			
+			if(notification.getPlayerAID().equals(HumanPlayerAgent.this.getAID())){
+				eventData.setTokenSet(notification.getReceivedTokenSet());
+				changes_game.firePropertyChange(PlayerGuiEvent.PLAYER_RECEIVED_TOKENSET_ME.toString(), null, eventData);
+			}
+			else{
+				changes_game.firePropertyChange(PlayerGuiEvent.PLAYER_RECEIVED_TOKENSET_OTHER.toString(), null, eventData);
+			}
+			
 			return true;
 		}
 
@@ -264,7 +274,17 @@ public class HumanPlayerAgent extends GuiAgent {
 
 			return true;
 		}
-
+		
+		@Override
+		public boolean onTokenValueDefinitionChangedNotification(TokenValueDefinitionChangedNotification notif, ACLMessage aclMsg) {
+			
+			game.setTokenValueDefinition(notif.getTokenValueDefinition());
+			
+			changes_game.firePropertyChange(PlayerGuiEvent.INITIALIZING_MIN_TOKEN.toString(), null, game.getTokenValueDefinition().getMinimumTokenValue());
+			
+			return true;
+		}
+				
 		@Override
 		public boolean onSubscriptionOK(SubscriptionOKMessage notif, ACLMessage aclMsg){
 
@@ -284,7 +304,6 @@ public class HumanPlayerAgent extends GuiAgent {
 					changes_game.firePropertyChange(PlayerGuiEvent.INITIALIZING_OTHER.toString(), null, player);
 				}
 			}
-
 
 			return true;
 		}
