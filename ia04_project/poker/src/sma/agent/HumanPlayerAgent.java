@@ -106,7 +106,7 @@ public class HumanPlayerAgent extends GuiAgent {
 		@Override
 		public void action() {
 			if(!AgentHelper.receiveMessage(this.myAgent, receiveRequestMessageTemplate, msgVisitor_request)){
-				block();
+				//block();
 			}
 		}
 	}
@@ -211,8 +211,13 @@ public class HumanPlayerAgent extends GuiAgent {
 		@Override
 		public boolean onPlayerReceivedTokenSetNotification(PlayerReceivedTokenSetNotification notification, ACLMessage aclMsg){
 			
-			// FIND THE PLAYER NUMBER AND SEND IT WITH CONTENT
-			changes_game.firePropertyChange(PlayerGuiEvent.PLAYER_RECEIVED_TOKENSET.toString(), null, 5);
+			Player player = game.getPlayersContainer().getPlayerByAID(notification.getPlayerAID());
+			player.setTokens(notification.getReceivedTokenSet());
+			
+			if(notification.getPlayerAID().equals(HumanPlayerAgent.this.getAID()))
+				changes_game.firePropertyChange(PlayerGuiEvent.PLAYER_RECEIVED_TOKENSET_ME.toString(), null, player);
+			else
+				changes_game.firePropertyChange(PlayerGuiEvent.PLAYER_RECEIVED_TOKENSET_OTHER.toString(), null, player);
 			
 			return true;
 		}
@@ -249,15 +254,14 @@ public class HumanPlayerAgent extends GuiAgent {
 		public boolean onCurrentPlayerChangedNotification(CurrentPlayerChangedNotification notification, ACLMessage aclMsg){
 			
 			/*try{
-				game.setCurrentPlayer(notification.getPlayerTablePositionIndex());
+				game.getPlayersContainer().getPlayerAtIndex(0).getStatus()HumanPlayerAgent
 			}
 			catch(NotRegisteredPlayerException ex){
 				AgentHelper.sendReply(EnvironmentAgent.this, aclMsg, ACLMessage.INFORM, new FailureMessage(ex.getMessage()));
 				return true;
 			}*/
 			
-			// FIND THE PLAYER NUMBER AND SEND IT WITH CONTENT
-			changes_game.firePropertyChange(PlayerGuiEvent.CURRENT_PLAYER_CHANGED.toString(), null, notification.getPlayerTablePositionIndex());
+			changes_game.firePropertyChange(PlayerGuiEvent.CURRENT_PLAYER_CHANGED.toString(), null, Integer.valueOf(notification.getPlayerTablePositionIndex()));
 			
 			return true;
 		}
@@ -267,8 +271,12 @@ public class HumanPlayerAgent extends GuiAgent {
 			
 			game = notif.getGame();
 			System.out.println("Subscription OK.");
+<<<<<<< HEAD
 			wait_game_window.setVisible(false);
 			
+=======
+			//Traiter blind et min token 
+>>>>>>> c1bacf53ecd37c9cb676a3b719db6aff6cc153f3
 			for(Player player : game.getPlayersContainer().getPlayers())
 			{
 				if(player.getAID().equals(HumanPlayerAgent.this.getAID()))

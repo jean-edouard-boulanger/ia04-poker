@@ -1,28 +1,28 @@
 package sma.message.dealer.request;
 
-import poker.game.model.HandStep;
+import poker.game.model.Round;
 import jade.lang.acl.ACLMessage;
 import sma.message.Message;
 import sma.message.MessageVisitor;
 
 public class DealRequest extends Message{
 
-	HandStep handStep;
+	Round handStep;
 	
 	public DealRequest(){}
 	
-	public DealRequest(HandStep handStep){this.handStep = handStep;}
+	public DealRequest(Round handStep){this.handStep = handStep;}
 	
 	@Override
 	public boolean accept(MessageVisitor visitor, ACLMessage aclMsg) {
 		return visitor.onDealRequest(this, aclMsg);
 	}	
 	
-	public void setHandStep(HandStep handStep){
+	public void setHandStep(Round handStep){
 		this.handStep = handStep;
 	}
 	
-	public HandStep getHandStep(){
+	public Round getHandStep(){
 		return this.handStep;
 	}
 	

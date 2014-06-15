@@ -25,6 +25,6 @@ public class DealerChangedNotification extends Message {
 	
 	@Override
 	public boolean accept(MessageVisitor visitor, ACLMessage aclMsg) {
-		return visitor.onDealerChangedNotification(this, aclMsg);
+		return visitor.onEnvironmentChanged(this, aclMsg) | visitor.onDealerChangedNotification(this, aclMsg);
 	}
 }

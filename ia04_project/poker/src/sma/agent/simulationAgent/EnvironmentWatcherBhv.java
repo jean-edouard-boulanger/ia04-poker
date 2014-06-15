@@ -19,6 +19,7 @@ import sma.message.MessageVisitor;
 import sma.message.OKMessage;
 import sma.message.PlayerSubscriptionRequest;
 import sma.message.SubscriptionOKMessage;
+import sma.message.environment.notification.BlindValueDefinitionChangedNotification;
 import sma.message.environment.notification.PlayerSitOnTableNotification;
 import sma.message.environment.request.AddPlayerTableRequest;
 
@@ -58,10 +59,6 @@ public class EnvironmentWatcherBhv extends CyclicBehaviour
 		return true;
 	    }
 
-	    // All other environment changes are discarded.
-	    @Override
-	    public boolean onEnvironmentChanged(Message notif, ACLMessage aclMsg) {	return true; }
-
 	});
 	simAgent.addBehaviour(envSubscriptionBhv);
     }
@@ -71,9 +68,9 @@ public class EnvironmentWatcherBhv extends CyclicBehaviour
      */
     @Override
     public void action() {
-
-	//TEST:
+	
 	boolean msgReceived = AgentHelper.receiveMessage(this.myAgent,MessageTemplate.MatchPerformative(ACLMessage.PROPAGATE), new MessageVisitor(){
+	    
 	    @Override
 	    public boolean onPlayerSitOnTableNotification(PlayerSitOnTableNotification notification, ACLMessage aclMsg) {
 		try {
@@ -90,10 +87,11 @@ public class EnvironmentWatcherBhv extends CyclicBehaviour
 		}
 		return true;
 	    }
+	    
 	    @Override
-	    public boolean onOKMessage(OKMessage okMessage, ACLMessage aclMsg) {
-		// TODO Auto-generated method stub
-		return true;
+	    public boolean onBlindValueDefinitionChangedNotification(BlindValueDefinitionChangedNotification notif, ACLMessage aclMsg) {
+		simAgent.getGame().setBlindValueDefinition(notif.getNewBlindValueDefinition());
+	        return true;
 	    }
 
 	    // All other environment changes are discarded.

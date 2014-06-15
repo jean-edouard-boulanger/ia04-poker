@@ -2,25 +2,19 @@ package sma.agent.simulationAgent;
 
 import jade.core.AID;
 import jade.core.behaviours.Behaviour;
-import jade.core.behaviours.ParallelBehaviour;
-import jade.core.behaviours.SequentialBehaviour;
-import jade.lang.acl.ACLMessage;
 import poker.game.exception.NotRegisteredPlayerException;
-import poker.game.model.HandStep;
 import poker.game.model.PlayersContainer;
+import poker.game.model.Round;
 import poker.game.player.model.Player;
 import sma.agent.SimulationAgent;
 import sma.agent.helper.DFServiceHelper;
 import sma.agent.helper.SimpleVisitor;
 import sma.agent.helper.TransactionBhv;
 import sma.agent.helper.experimental.Task;
-import sma.message.FailureMessage;
+import sma.agent.helper.experimental.TaskRunnerBhv;
 import sma.message.Message;
-import sma.message.MessageVisitor;
-import sma.message.OKMessage;
 import sma.message.dealer.request.DealRequest;
 import sma.message.environment.request.EmptyCommunityCardsRequest;
-import sma.message.environment.request.GiveTokenSetToPlayerRequest;
 import sma.message.environment.request.SetDealerRequest;
 
 /**
@@ -30,7 +24,7 @@ import sma.message.environment.request.SetDealerRequest;
  * - we set the dealer
  * (those tasks are done in parallel).
  */
-public class InitHandBhv extends SequentialBehaviour {
+public class InitHandBhv extends TaskRunnerBhv {
 
     private AID environment;
     private AID dealerAgent;
@@ -41,17 +35,12 @@ public class InitHandBhv extends SequentialBehaviour {
 	this.environment = DFServiceHelper.searchService(simAgent, "PokerEnvironment", "Environment");
 	this.dealerAgent = DFServiceHelper.searchService(simAgent, "DealerAgent","Dealer");
 	
-	simAgent.setCurrentRound(Round.preflop);
+	simAgent.setCurrentRound(Round.PLAYER_CARDS_DEAL);
 
 	Player dealer = getDealer(simAgent.getGame().getPlayersContainer());
 	
-	Task mainTask = Task.New(communityCardResetBhv())
-		.then(cardDistributionBhv())
-		.then(setDealerBhv(dealer.getAID()));
-	
-	this.addSubBehaviour(mainTask);
-	
-	
+	setBehaviour(Task.New(setDealerBhv(dealer.getAID())) // first we set the dealer token
+		.whenAll(communityCardResetBhv(), dealCardBhv())); // then we remove community cards & deal cards to player (in parallel)
     }
 
     private Player getDealer(PlayersContainer container) {
@@ -73,8 +62,8 @@ public class InitHandBhv extends SequentialBehaviour {
 	return container.getDealer();
     }
 
-    private Behaviour cardDistributionBhv() {
-	Message msg = new DealRequest(HandStep.PLAYER_CARDS_DEAL);
+    private Behaviour dealCardBhv() {
+	Message msg = new DealRequest(Round.PLAYER_CARDS_DEAL);
 	TransactionBhv transaction = new TransactionBhv(myAgent, msg, dealerAgent);
 	transaction.setResponseVisitor(new SimpleVisitor(myAgent,
 		"cards dealt successfully.",

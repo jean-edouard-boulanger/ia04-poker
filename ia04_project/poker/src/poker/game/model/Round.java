@@ -1,17 +1,15 @@
-package sma.agent.simulationAgent;
-
-import poker.card.model.CardRank;
+package poker.game.model;
 
 public enum Round {
-    
-    preflop(0), 
-    flop(1), 
-    turn(2), 
-    river(3),
-    showdown(4);
-    
+    PLAYER_CARDS_DEAL(0),
+    PREFLOP(1), 
+    FLOP(2), 
+    TURN(3), 
+    RIVER(4),
+    SHOWDOWN(5);
+
     private int cardRank;
-    
+
     private Round(int rank) {
 	this.cardRank = rank;
     }
@@ -24,5 +22,5 @@ public enum Round {
 	if(cardRank == values().length)
 	    return null;
 	return values()[(ordinal()+1)];
-    }
+    }	
 }

@@ -64,11 +64,12 @@ public class ServerWindow extends JFrame implements PropertyChangeListener {
 		Integer[] nb_player = new Integer[]{2,3,4,5,6,7,8,9,10};
 		list_nb_player = new JComboBox<Integer>(nb_player);
 		list_nb_player.setPreferredSize(new Dimension(300,25));
+		list_nb_player.setSelectedIndex(2);
 		
 		JLabel label_time_increase = new JLabel("Nombre de minutes avant augmentation : ");
 		nb_tour_increase = new JFormattedTextField(NumberFormat.getIntegerInstance());
 		nb_tour_increase.setPreferredSize(new Dimension(300, 25));
-		nb_tour_increase.setText("1");
+		nb_tour_increase.setText("5");
 		
 		ButtonGroup radio_group = new ButtonGroup();
 		

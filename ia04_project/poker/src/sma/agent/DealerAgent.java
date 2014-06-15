@@ -16,7 +16,7 @@ import poker.card.model.CardDeck;
 import poker.game.exception.NoPlaceAvailableException;
 import poker.game.exception.NotRegisteredPlayerException;
 import poker.game.exception.PlayerAlreadyRegisteredException;
-import poker.game.model.HandStep;
+import poker.game.model.Round;
 import poker.game.model.PlayersContainer;
 import poker.game.model.PlayersContainer.PlayerCircularIterator;
 import poker.game.player.model.Player;
@@ -222,8 +222,8 @@ public class DealerAgent extends Agent {
 	    registerDealTransaction(aclMsg.getConversationId());
 	    SequentialBehaviour globalTransactionBehaviour = new SequentialBehaviour();
 
-	    HandStep handStep = request.getHandStep();
-	    if(handStep == HandStep.PLAYER_CARDS_DEAL)
+	    Round handStep = request.getHandStep();
+	    if(handStep == Round.PLAYER_CARDS_DEAL)
 	    {
 		// we reset the game deck before dealing players cards.
 		cardDeck = CardDeck.getNewRegularGameDeck();
@@ -251,10 +251,10 @@ public class DealerAgent extends Agent {
 		    globalTransactionBehaviour.addSubBehaviour(dealSingleCardBhv);
 		}
 	    }
-	    else if(handStep == HandStep.FLOP || handStep == HandStep.TURN || handStep == HandStep.RIVER)
+	    else if(handStep == Round.FLOP || handStep == Round.TURN || handStep == Round.RIVER)
 	    {
 		int nbDealtCards = 1;
-		if(handStep == HandStep.FLOP){
+		if(handStep == Round.FLOP){
 		    nbDealtCards = 3;
 		}
 
@@ -280,7 +280,7 @@ public class DealerAgent extends Agent {
 	    }
 	    else 
 	    {
-		AgentHelper.sendReply(DealerAgent.this, aclMsg, ACLMessage.FAILURE, new FailureMessage("No card dealt at that step"));
+		AgentHelper.sendReply(DealerAgent.this, aclMsg, ACLMessage.INFORM, new OKMessage()); // No card dealt at that step
 		return true;
 	    }
 

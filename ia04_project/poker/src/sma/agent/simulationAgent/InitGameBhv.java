@@ -2,13 +2,6 @@ package sma.agent.simulationAgent;
 
 import jade.core.AID;
 import jade.core.behaviours.Behaviour;
-import jade.core.behaviours.ParallelBehaviour;
-import jade.core.behaviours.SequentialBehaviour;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import poker.game.player.model.Player;
 import poker.token.model.TokenSet;
 import poker.token.model.TokenValueDefinition;
 import sma.agent.SimulationAgent;
@@ -17,6 +10,7 @@ import sma.agent.helper.SimpleVisitor;
 import sma.agent.helper.TransactionBhv;
 import sma.agent.helper.experimental.Task;
 import sma.agent.helper.experimental.Task.Parallel;
+import sma.agent.helper.experimental.TaskRunnerBhv;
 import sma.message.Message;
 import sma.message.blind.request.ResetBlindRequest;
 import sma.message.environment.request.GiveTokenSetToPlayerRequest;
@@ -25,7 +19,7 @@ import sma.message.environment.request.SetTokenValueDefinitionRequest;
 /**
  * Start a new game, give every players a token set, reset blinds.
  */
-public class InitGameBhv extends SequentialBehaviour  
+public class InitGameBhv extends TaskRunnerBhv  
 {
     private AID environment;
     private AID blindManager;
@@ -55,7 +49,7 @@ public class InitGameBhv extends SequentialBehaviour
 	    par.add(giveTokenBehaviour(p, simAgent.getDefaultTokenSet()));
 	
 	// again in parallel, we reset the blind agent.
-	addSubBehaviour(par.add(resetBlind).whenAll());
+	this.setBehaviour(par.add(resetBlind).whenAll());
     }
 
     private Behaviour giveTokenBehaviour(AID player, TokenSet tokens){
