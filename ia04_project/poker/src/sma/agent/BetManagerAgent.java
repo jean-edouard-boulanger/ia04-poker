@@ -1,10 +1,15 @@
 package sma.agent;
 
+import java.util.ArrayList;
+
 import gui.player.PlayerWindow.PlayerGuiEvent;
 import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.CyclicBehaviour;
 import jade.lang.acl.ACLMessage;
+import poker.game.exception.ExcessiveBetException;
+import poker.game.exception.NoPlaceAvailableException;
+import poker.game.exception.PlayerAlreadyRegisteredException;
 import poker.game.model.BetContainer;
 import poker.game.model.Game;
 import poker.game.model.PlayersContainer;
@@ -21,7 +26,9 @@ import sma.message.OKMessage;
 import sma.message.SubscriptionOKMessage;
 import sma.message.bet.request.BetRequest;
 import sma.message.environment.notification.PlayerReceivedTokenSetNotification;
+import sma.message.environment.notification.PlayerSitOnTableNotification;
 import sma.message.environment.notification.TokenValueDefinitionChangedNotification;
+import sma.message.environment.request.AddPlayerTableRequest;
 
 public class BetManagerAgent extends Agent {
 
@@ -41,6 +48,7 @@ public class BetManagerAgent extends Agent {
 		DFServiceHelper.registerService(this, "BetManagerAgent","BetManager");
 	    this.environment = DFServiceHelper.searchService(this,"PokerEnvironment", "Environment");
 		this.addBehaviour(new ReceiveRequestBehaviour(this));
+		this.addBehaviour(new ReceiveNotificationBehaviour(this));
 	}
 	
 	private class ReceiveRequestBehaviour extends CyclicBehaviour {
@@ -84,6 +92,21 @@ public class BetManagerAgent extends Agent {
 		}
 	}
 	
+	private class ReceiveNotificationBehaviour extends CyclicBehaviour {
+		public ReceiveNotificationBehaviour(Agent agent) {
+			myAgent = agent;
+		}
+		
+		@Override
+		public void action() {
+			boolean msgReceived = AgentHelper.receiveMessage(this.myAgent, ACLMessage.PROPAGATE, ((BetManagerAgent)myAgent).getMsgVisitor());
+			
+			if(!msgReceived)
+				block();
+		}	
+	}
+
+	
 	private class BetManagerMessageVisitor extends MessageVisitor {	
 		
 		@Override
@@ -105,18 +128,24 @@ public class BetManagerAgent extends Agent {
 			if(playerPot > request.getBet()) {
 				try {
 					//Removing tokens of the used if allowed to
-					player.getTokens().SubstractTokenSet(request.getTokenSet());
+					TokenSet tokenSetToSubstract = TokenSetValueEvaluator.tokenSetForBet(request.getBet(), game.getBetContainer().getTokenValueDefinition(), player.getTokens());
+					player.getTokens().SubstractTokenSet(tokenSetToSubstract);
+					
+					//Creating extra token set user paid (Ex: Used paid 50 instead of 40)
+					int amountToGenerate = TokenSetValueEvaluator.evaluateTokenSetValue(game.getBetContainer().getTokenValueDefinition(), request.getTokenSet());
+					
+					TokenSet tokenSetToAddToPlayer = TokenSetValueEvaluator.tokenSetFromAmount(amountToGenerate, game.getBetContainer().getTokenValueDefinition());
 					
 					//Notifying the environment
 					AgentHelper.sendSimpleMessage(BetManagerAgent.this, environment, ACLMessage.REQUEST, request);
 					
-				} catch (InvalidTokenAmountException e) {
+				} catch (InvalidTokenAmountException | ExcessiveBetException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
 			else {
-				AgentHelper.sendReply(BetManagerAgent.this, aclMsg, ACLMessage.INFORM, new FailureMessage());
+				AgentHelper.sendReply(BetManagerAgent.this, aclMsg, ACLMessage.INFORM, new FailureMessage("Player does not have enough token."));
 			}
 			
 			return true;
@@ -129,6 +158,20 @@ public class BetManagerAgent extends Agent {
 			
 			return true;
 		}
+		
+		@Override
+		public boolean onPlayerSitOnTableNotification(PlayerSitOnTableNotification notification, ACLMessage aclMsg) {
+			try {
+				game.getPlayersContainer().addPlayer(notification.getNewPlayer());
+			} catch (PlayerAlreadyRegisteredException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (NoPlaceAvailableException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			return true;
+		}		
 	}
 
 	public BetManagerMessageVisitor getMsgVisitor() {
