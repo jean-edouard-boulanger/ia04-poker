@@ -92,7 +92,7 @@ public class BetManagerAgent extends Agent {
 		@Override
 		public boolean onBetRequest(BetRequest request, ACLMessage aclMsg) {
 			
-			
+			Player player = game.getPlayersContainer().getPlayerByAID(request.getPlayerAID());
 			
 			return true;
 		}

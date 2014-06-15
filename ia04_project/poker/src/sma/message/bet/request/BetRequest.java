@@ -10,14 +10,14 @@ public class BetRequest extends Message {
 
 	private int bet;
 	private TokenSet tokenSet;
-	private AID player;
+	private AID playerAID;
 	
 	public BetRequest(){}
 	
 	public BetRequest(int bet, TokenSet tokenSet, AID player) {
 		this.bet = bet;
 		this.tokenSet = tokenSet;
-		this.player = player;
+		this.playerAID = player;
 	}
 	
 	@Override
@@ -41,12 +41,12 @@ public class BetRequest extends Message {
 		this.tokenSet = tokenSet;
 	}
 
-	public AID getPlayer() {
-		return player;
+	public AID getPlayerAID() {
+		return playerAID;
 	}
 
-	public void setPlayer(AID player) {
-		this.player = player;
+	public void setPlayerAID(AID player) {
+		this.playerAID = player;
 	}
 
 }
