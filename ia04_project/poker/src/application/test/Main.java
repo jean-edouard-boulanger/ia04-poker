@@ -1,12 +1,8 @@
 package application.test;
 
-import gui.player.PersoIHM;
-import gui.player.PersoIHM.Sens;
-import gui.server.ServerWindow;
 import jade.lang.acl.ACLMessage;
 
 import java.io.IOException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -15,17 +11,9 @@ import java.util.Map.Entry;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.scene.Group;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
-
-import javax.swing.SwingUtilities;
-
 import poker.card.exception.CommunityCardsFullException;
 import poker.card.helper.CustomPickSequence;
 import poker.card.heuristics.combination.exception.EmptyCardListException;
@@ -72,18 +60,18 @@ public class Main extends Application {
 	public void start(Stage primaryStage) throws InvalidTokenValueException, InvalidTokenAmountException, InvalidRepartitionException, ExcessiveBetException {
 		
 	    TokenValueDefinition defaultTokenValueDefinition = new TokenValueDefinition();
-	    defaultTokenValueDefinition.setValueForTokenType(TokenType.GREEN, 10);
-	    defaultTokenValueDefinition.setValueForTokenType(TokenType.BLACK, 1);
-	    defaultTokenValueDefinition.setValueForTokenType(TokenType.BLUE, 5);
-	    defaultTokenValueDefinition.setValueForTokenType(TokenType.WHITE, 25);
-	    defaultTokenValueDefinition.setValueForTokenType(TokenType.RED, 50);
+	    defaultTokenValueDefinition.setValueForTokenType(TokenType.WHITE, 1);
+	    defaultTokenValueDefinition.setValueForTokenType(TokenType.RED, 10);
+	    defaultTokenValueDefinition.setValueForTokenType(TokenType.GREEN, 20);
+	    defaultTokenValueDefinition.setValueForTokenType(TokenType.BLUE, 50);
+	    defaultTokenValueDefinition.setValueForTokenType(TokenType.BLACK, 100);
 	    
 	    TokenRepartition defaultTokenRepartiton = new TokenRepartition();
-	    defaultTokenRepartiton.setRepartitionForToken(TokenType.GREEN, 30);
-	    defaultTokenRepartiton.setRepartitionForToken(TokenType.BLACK, 30);
-	    defaultTokenRepartiton.setRepartitionForToken(TokenType.BLUE, 20);
-	    defaultTokenRepartiton.setRepartitionForToken(TokenType.WHITE, 10);
-	    defaultTokenRepartiton.setRepartitionForToken(TokenType.RED, 10);
+	    defaultTokenRepartiton.setRepartitionForToken(TokenType.WHITE, 40);
+	    defaultTokenRepartiton.setRepartitionForToken(TokenType.RED, 30);
+	    defaultTokenRepartiton.setRepartitionForToken(TokenType.GREEN, 15);
+	    defaultTokenRepartiton.setRepartitionForToken(TokenType.BLUE, 10);
+	    defaultTokenRepartiton.setRepartitionForToken(TokenType.BLACK, 5);
 
 	    int nbTokens = 40;
 	    TokenSet tokenSet = TokenSetFactory.createTokenSet(defaultTokenRepartiton, nbTokens);
@@ -236,6 +224,8 @@ public class Main extends Application {
 		
 		//--------------------------------------
 		
+		/*
+		
 		primaryStage.setTitle("Poker");
         Group root = new Group();
         Scene scene = new Scene(root, 900, 600);
@@ -305,6 +295,9 @@ public class Main extends Application {
         });
         
         initializeAction();
+        
+        */
+        
 	}
 	
 	public static void main(String[] args) {

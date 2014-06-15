@@ -1,7 +1,9 @@
 package sma.message;
 
 import jade.lang.acl.ACLMessage;
+import sma.message.bet.notification.PotAmountNotification;
 import sma.message.bet.request.BetRequest;
+import sma.message.bet.request.GetPotAmountRequest;
 import sma.message.blind.request.GetBlindValueDefinitionRequest;
 import sma.message.blind.request.ResetBlindRequest;
 import sma.message.dealer.request.DealRequest;
@@ -32,6 +34,7 @@ import sma.message.environment.request.PlayerBetRequest;
 import sma.message.environment.request.SetDealerRequest;
 import sma.message.environment.request.SetTokenValueDefinitionRequest;
 import sma.message.environment.request.ShowPlayerCardsRequest;
+import sma.message.simulation.request.PlayRequest;
 
 /**
  * Pattern visitor implementation, this base class should have an
@@ -68,6 +71,8 @@ public class MessageVisitor {
 	
 	// Bet
 	public boolean onBetRequest(BetRequest request, ACLMessage aclMsg) {return false;}
+	public boolean onGetPotAmountRequest(GetPotAmountRequest request, ACLMessage aclMsg) {return false;}
+	public boolean onPotAmountNotification(PotAmountNotification request, ACLMessage aclMsg) {return false;}
 	
 	// Environment
 	public boolean onAddPlayerTableRequest(AddPlayerTableRequest notif, ACLMessage aclMsg){return false;}
@@ -99,5 +104,8 @@ public class MessageVisitor {
 	public boolean onTokenValueDefinitionChangedNotification(TokenValueDefinitionChangedNotification notif, ACLMessage aclMsg) {return false;}
 	public boolean onDealerChangedNotification(DealerChangedNotification dealerChangedNotification, ACLMessage aclMsg) {return false;}
 	public boolean onPlayerCardsRevealedNotification(PlayerCardsRevealedNotification playerCardsRevealed, ACLMessage aclMsg) {return false;}
+	
+	//Simulation
+	public boolean onPlayRequest(PlayRequest request, ACLMessage aclMessage){return false;}
 	
 }

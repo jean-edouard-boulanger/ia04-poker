@@ -2,7 +2,7 @@ package gui.player;
 
 import gui.player.PersoIHM.Sens;
 import gui.player.TokenPlayerIHM.ColorToken;
-import gui.player.event.model.PlayerReceivedTokenSet;
+import gui.player.event.model.PlayerReceivedTokenSetEventData;
 import jade.gui.GuiEvent;
 
 import java.beans.PropertyChangeEvent;
@@ -65,7 +65,8 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 		CURRENT_PLAYER_CHANGED,
 
 		IHM_READY,
-		SHOW_IHM
+		SHOW_IHM,
+		PLAY_REQUEST
 	}
 
 	private final Pane root = new Pane();
@@ -181,7 +182,7 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 
 		root.setId("root");
 
-		label_hand = new Label("Main n°1");
+		label_hand = new Label("Main nï¿½1");
 
 		label_hand.setLayoutX(15);
 		label_hand.setLayoutY(15);
@@ -206,7 +207,7 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 		button_follow.setLayoutX(335);
 		button_follow.setLayoutY(490);
 
-		button_follow.setText("Suivre à 2");
+		button_follow.setText("Suivre ï¿½ 2");
 
 		button_follow.setPrefWidth(100);
 		button_follow.getStyleClass().add("button_play");
@@ -229,7 +230,7 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 		button_relaunch.setLayoutX(225);
 		button_relaunch.setLayoutY(550);
 
-		button_relaunch.setText("Relancer à  5");
+		button_relaunch.setText("Relancer ï¿½ 5");
 
 		button_relaunch.setPrefWidth(100);
 		button_relaunch.getStyleClass().add("button_play");
@@ -774,7 +775,7 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 				 */
 				else if(evt.getPropertyName().equals(PlayerGuiEvent.PLAYER_RECEIVED_TOKENSET_ME.toString()))
 				{
-					PlayerReceivedTokenSet eventData = (PlayerReceivedTokenSet) evt.getNewValue();
+					PlayerReceivedTokenSetEventData eventData = (PlayerReceivedTokenSetEventData) evt.getNewValue();
 					list_perso.get(eventData.getPlayerIndex()).setScore(eventData.getTokenSetValuation());
 					
 					for(Map.Entry<TokenType, Integer> entry : eventData.getTokenSet().getTokensAmount().entrySet()){
@@ -789,7 +790,7 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 				 */
 				else if(evt.getPropertyName().equals(PlayerGuiEvent.PLAYER_RECEIVED_TOKENSET_OTHER.toString()))
 				{
-					PlayerReceivedTokenSet eventData = (PlayerReceivedTokenSet) evt.getNewValue();
+					PlayerReceivedTokenSetEventData eventData = (PlayerReceivedTokenSetEventData) evt.getNewValue();
 					list_perso.get(eventData.getPlayerIndex()).setScore(eventData.getTokenSetValuation());
 				}
 
@@ -863,7 +864,14 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 						
 						System.out.println("[PlayerWindow] Player bet");
 					}
-				}	
+				}
+				
+				/**
+				 * ------ Occurs when the player is ordered to play
+				 */
+				else if(evt.getPropertyName().equals(PlayerGuiEvent.PLAY_REQUEST.toString())){
+					
+				}
 			}
 		});
 	}

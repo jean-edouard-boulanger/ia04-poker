@@ -4,7 +4,8 @@ import gui.player.PlayerWindow;
 import gui.player.PlayerWindow.PlayerGuiEvent;
 import gui.player.WaitGameWindow;
 import gui.player.WaitGameWindow.WaitGameGuiEvent;
-import gui.player.event.model.PlayerReceivedTokenSet;
+import gui.player.event.model.PlayRequestEventData;
+import gui.player.event.model.PlayerReceivedTokenSetEventData;
 import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.CyclicBehaviour;
@@ -23,9 +24,11 @@ import poker.card.exception.CommunityCardsFullException;
 import poker.game.exception.NoPlaceAvailableException;
 import poker.game.exception.NotRegisteredPlayerException;
 import poker.game.exception.PlayerAlreadyRegisteredException;
+import poker.game.model.BetType;
 import poker.game.model.Game;
 import poker.game.player.model.Player;
 import poker.token.helpers.TokenSetValueEvaluator;
+import poker.token.model.TokenType;
 import sma.agent.helper.AgentHelper;
 import sma.agent.helper.DFServiceHelper;
 import sma.agent.helper.TransactionBhv;
@@ -46,6 +49,7 @@ import sma.message.environment.notification.PlayerReceivedTokenSetNotification;
 import sma.message.environment.notification.PlayerReceivedUnknownCardNotification;
 import sma.message.environment.notification.PlayerSitOnTableNotification;
 import sma.message.environment.notification.TokenValueDefinitionChangedNotification;
+import sma.message.simulation.request.PlayRequest;
 
 public class HumanPlayerAgent extends GuiAgent {
 
@@ -218,10 +222,10 @@ public class HumanPlayerAgent extends GuiAgent {
 			Player player = game.getPlayersContainer().getPlayerByAID(notification.getPlayerAID());
 			player.setTokens(notification.getReceivedTokenSet());
 
-			PlayerReceivedTokenSet eventData = new PlayerReceivedTokenSet();
+			PlayerReceivedTokenSetEventData eventData = new PlayerReceivedTokenSetEventData();
 			eventData.setPlayerIndex(game.getPlayersContainer().getPlayerByAID(notification.getPlayerAID()).getTablePositionIndex());
 			eventData.setTokenSetValuation(TokenSetValueEvaluator.evaluateTokenSetValue(game.getBetContainer().getTokenValueDefinition(), notification.getReceivedTokenSet()));
-			
+
 			if(notification.getPlayerAID().equals(HumanPlayerAgent.this.getAID())){
 				eventData.setTokenSet(notification.getReceivedTokenSet());
 				changes_game.firePropertyChange(PlayerGuiEvent.PLAYER_RECEIVED_TOKENSET_ME.toString(), null, eventData);
@@ -229,15 +233,15 @@ public class HumanPlayerAgent extends GuiAgent {
 			else{
 				changes_game.firePropertyChange(PlayerGuiEvent.PLAYER_RECEIVED_TOKENSET_OTHER.toString(), null, eventData);
 			}
-			
+
 			return true;
 		}
 
 		@Override
 		public boolean onBetNotification(BetNotification notification, ACLMessage aclMsg){
 
-			
-			// Update la mise minimum pour relancer après
+
+			// Update la mise minimum pour relancer aprï¿½s
 			changes_game.firePropertyChange(PlayerGuiEvent.PLAYER_BET.toString(), null, notification);
 
 			return true;
@@ -277,17 +281,17 @@ public class HumanPlayerAgent extends GuiAgent {
 
 			return true;
 		}
-		
+
 		@Override
 		public boolean onTokenValueDefinitionChangedNotification(TokenValueDefinitionChangedNotification notif, ACLMessage aclMsg) {
-			
+
 			game.getBetContainer().setTokenValueDefinition(notif.getTokenValueDefinition());
-			
+
 			changes_game.firePropertyChange(PlayerGuiEvent.INITIALIZING_MIN_TOKEN.toString(), null, game.getBetContainer().getTokenValueDefinition().getMinimumTokenValue());
-			
+
 			return true;
 		}
-				
+
 		@Override
 		public boolean onSubscriptionOK(SubscriptionOKMessage notif, ACLMessage aclMsg){
 
@@ -309,7 +313,7 @@ public class HumanPlayerAgent extends GuiAgent {
 
 			return true;
 		}
-		
+
 		@Override
 		public boolean onDealerChangedNotification(DealerChangedNotification dealerChangedNotification, ACLMessage aclMsg) {
 
@@ -328,6 +332,55 @@ public class HumanPlayerAgent extends GuiAgent {
 			return true;
 		}
 
+		@Override
+		public boolean onPlayRequest(PlayRequest request, ACLMessage aclMessage){
+
+			Player me = game.getPlayersContainer().getPlayerByAID(getAID());
+
+			PlayRequestEventData eventData = new PlayRequestEventData();
+			eventData.addAllAvailableActions();
+
+			if(game.getBetContainer().getCurrentBetAmount() > 0){
+				eventData.removeAvailableAction(BetType.CHECK);
+			}
+
+			int currentBetAmount = TokenSetValueEvaluator.evaluateTokenSetValue(game.getBetContainer().getTokenValueDefinition(), me.getTokens());
+
+
+			// The minimum bet amount is either equal to current bet, 
+			// or to the smallest token value if the current bet is equal to 0, 
+			// or to the player bankroll if the the current bet is >= to the player's bankroll
+			int minimumBetAmount = 0;
+			if(currentBetAmount <= game.getBetContainer().getCurrentBetAmount()){
+				minimumBetAmount = currentBetAmount;
+
+				// Force the player to go all in if the current bet is >= to its bankroll (Can also fold)
+				eventData.clearAvailableActions();
+				eventData.addAvailableAction(BetType.ALL_IN);
+				eventData.addAvailableAction(BetType.FOLD);
+			}
+			else if(game.getBetContainer().getCurrentBetAmount() == 0){
+				minimumBetAmount = game.getBetContainer().getTokenValueDefinition().getValueForTokenType(TokenType.WHITE);
+			}
+			else {
+				minimumBetAmount = game.getBetContainer().getCurrentBetAmount();
+			}
+			eventData.setMinimumBetAmount(minimumBetAmount);
+
+			// The slide increment is equal to the smallest token value
+			eventData.setSliderStep(game.getBetContainer().getTokenValueDefinition().getValueForTokenType(TokenType.WHITE));
+
+
+			// The maximum bet amount is equal to the bankroll of the player
+			eventData.setMaximumBetAmount(game.getPlayersContainer().getPlayerByAID(getAID()).getBankroll(game.getBetContainer().getTokenValueDefinition()));
+
+			changes_game.firePropertyChange(PlayerGuiEvent.PLAY_REQUEST.toString(), null, request);
+
+			eventData.setErrorMessage(request.getErrorMessage());
+			eventData.setRequestResentFollowedToError(request.isRequestResentFollowedToError());
+
+			return true;
+		}
 	}
 
 	/**************************************
