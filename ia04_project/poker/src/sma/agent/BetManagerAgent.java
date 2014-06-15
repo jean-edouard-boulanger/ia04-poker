@@ -6,6 +6,7 @@ import gui.player.PlayerWindow.PlayerGuiEvent;
 import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.CyclicBehaviour;
+import jade.core.behaviours.SequentialBehaviour;
 import jade.lang.acl.ACLMessage;
 import poker.game.exception.ExcessiveBetException;
 import poker.game.exception.NoPlaceAvailableException;
@@ -28,6 +29,8 @@ import sma.message.environment.notification.PlayerReceivedTokenSetNotification;
 import sma.message.environment.notification.PlayerSitOnTableNotification;
 import sma.message.environment.notification.TokenValueDefinitionChangedNotification;
 import sma.message.environment.request.AddPlayerTableRequest;
+import sma.message.environment.request.GiveTokenSetToPlayerRequest;
+import sma.message.environment.request.PlayerBetRequest;
 
 public class BetManagerAgent extends Agent {
 
@@ -105,6 +108,47 @@ public class BetManagerAgent extends Agent {
 		}	
 	}
 
+	private void notifyBetToEnvironment(PlayerBetRequest playerBetRequest, GiveTokenSetToPlayerRequest giveTokenSetToPlayerRequest) {
+		
+		SequentialBehaviour sequentialBehaviour = new SequentialBehaviour(BetManagerAgent.this);
+		
+		TransactionBhv playerBetTransaction = new TransactionBhv(this, playerBetRequest, environment, ACLMessage.REQUEST);
+		playerBetTransaction.setResponseVisitor(new MessageVisitor(){
+			
+			@Override
+			public boolean onSubscriptionOK(SubscriptionOKMessage msg, ACLMessage aclMsg) {
+				System.out.println("[" + BetManagerAgent.this.getLocalName() + "] player bet succeded.");
+				return true;
+			}
+			
+			@Override
+			public boolean onFailureMessage(FailureMessage msg, ACLMessage aclMsg) {
+				System.out.println("[" + BetManagerAgent.this.getLocalName() + "] player bet failed: " + msg.getMessage());
+				return true;
+			}
+		});
+		
+		TransactionBhv giveTokenSetToPlayerTransaction = new TransactionBhv(this, giveTokenSetToPlayerRequest, environment, ACLMessage.REQUEST);
+		giveTokenSetToPlayerTransaction.setResponseVisitor(new MessageVisitor(){
+			
+			@Override
+			public boolean onSubscriptionOK(SubscriptionOKMessage msg, ACLMessage aclMsg) {
+				System.out.println("[" + BetManagerAgent.this.getLocalName() + "] added token set to player.");
+				return true;
+			}
+			
+			@Override
+			public boolean onFailureMessage(FailureMessage msg, ACLMessage aclMsg) {
+				System.out.println("[" + BetManagerAgent.this.getLocalName() + "] added token set to player: " + msg.getMessage());
+				return true;
+			}
+		});
+
+		sequentialBehaviour.addSubBehaviour(playerBetTransaction);
+		sequentialBehaviour.addSubBehaviour(giveTokenSetToPlayerTransaction);
+
+		BetManagerAgent.this.addBehaviour(sequentialBehaviour);
+	}
 	
 	private class BetManagerMessageVisitor extends MessageVisitor {	
 		
@@ -135,8 +179,10 @@ public class BetManagerAgent extends Agent {
 					
 					TokenSet tokenSetToAddToPlayer = TokenSetValueEvaluator.tokenSetFromAmount(amountToGenerate, game.getBetContainer().getTokenValueDefinition());
 					
-					//Notifying the environment
-					AgentHelper.sendSimpleMessage(BetManagerAgent.this, environment, ACLMessage.REQUEST, request);
+					//Notifying the environment: sequential behaviour					
+					notifyBetToEnvironment(new PlayerBetRequest(tokenSetToSubstract, request.getPlayerAID()), new GiveTokenSetToPlayerRequest(tokenSetToAddToPlayer, request.getPlayerAID()));
+					
+					AgentHelper.sendReply(BetManagerAgent.this, aclMsg, ACLMessage.INFORM, new OKMessage());
 					
 				} catch (InvalidTokenAmountException | ExcessiveBetException e) {
 					// TODO Auto-generated catch block
