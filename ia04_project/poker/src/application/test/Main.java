@@ -40,7 +40,17 @@ import poker.card.model.CardRank;
 import poker.card.model.CardSuit;
 import poker.card.model.CommunityCards;
 import poker.card.model.UserDeck;
+import poker.game.exception.ExcessiveBetException;
 import poker.game.player.model.Player;
+import poker.token.exception.InvalidRepartitionException;
+import poker.token.exception.InvalidTokenAmountException;
+import poker.token.exception.InvalidTokenValueException;
+import poker.token.factories.TokenSetFactory;
+import poker.token.helpers.TokenSetValueEvaluator;
+import poker.token.model.TokenRepartition;
+import poker.token.model.TokenSet;
+import poker.token.model.TokenType;
+import poker.token.model.TokenValueDefinition;
 import sma.message.FailureMessage;
 import sma.message.Message;
 import sma.message.MessageVisitor;
@@ -59,8 +69,27 @@ public class Main extends Application {
 	private Rectangle zone_carte;
 	
 	@Override
-	public void start(Stage primaryStage) {
+	public void start(Stage primaryStage) throws InvalidTokenValueException, InvalidTokenAmountException, InvalidRepartitionException, ExcessiveBetException {
 		
+	    TokenValueDefinition defaultTokenValueDefinition = new TokenValueDefinition();
+	    defaultTokenValueDefinition.setValueForTokenType(TokenType.GREEN, 10);
+	    defaultTokenValueDefinition.setValueForTokenType(TokenType.BLACK, 1);
+	    defaultTokenValueDefinition.setValueForTokenType(TokenType.BLUE, 5);
+	    defaultTokenValueDefinition.setValueForTokenType(TokenType.WHITE, 25);
+	    defaultTokenValueDefinition.setValueForTokenType(TokenType.RED, 50);
+	    
+	    TokenRepartition defaultTokenRepartiton = new TokenRepartition();
+	    defaultTokenRepartiton.setRepartitionForToken(TokenType.GREEN, 30);
+	    defaultTokenRepartiton.setRepartitionForToken(TokenType.BLACK, 30);
+	    defaultTokenRepartiton.setRepartitionForToken(TokenType.BLUE, 20);
+	    defaultTokenRepartiton.setRepartitionForToken(TokenType.WHITE, 10);
+	    defaultTokenRepartiton.setRepartitionForToken(TokenType.RED, 10);
+
+	    int nbTokens = 40;
+	    TokenSet tokenSet = TokenSetFactory.createTokenSet(defaultTokenRepartiton, nbTokens);
+	    
+		TokenSet ts = TokenSetValueEvaluator.tokenSetForBet(400, defaultTokenValueDefinition, tokenSet);
+		System.out.println(ts);
 		UserDeck userDeck = new UserDeck();
 		
 		userDeck.setCard1(new Card(CardRank.JACK, CardSuit.CLUBS));
