@@ -20,12 +20,12 @@ public class InitRoundBhv extends TaskRunnerBhv {
 	this.dealerAgent = DFServiceHelper.searchService(simAgent, "DealerAgent","Dealer");
     }
     
-    private Behaviour cardDistributionBhv(Round round) {
+    private Behaviour dealCommunityCardsBhv(Round round) {
 	Message msg = new DealRequest(round);
 	TransactionBhv transaction = new TransactionBhv(myAgent, msg, dealerAgent);
 	transaction.setResponseVisitor(new SimpleVisitor(myAgent,
-		"cards dealt successfully.",
-		"error while dealing cards."));		
+		"community cards dealt successfully.",
+		"error while dealing community cards."));		
 	return transaction;
     }
         

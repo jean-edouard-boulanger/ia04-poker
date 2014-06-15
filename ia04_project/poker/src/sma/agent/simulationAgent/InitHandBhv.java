@@ -39,11 +39,8 @@ public class InitHandBhv extends TaskRunnerBhv {
 
 	Player dealer = getDealer(simAgent.getGame().getPlayersContainer());
 	
-	Task mainTask = Task.New(communityCardResetBhv())
-		.then(cardDistributionBhv())
-		.then(setDealerBhv(dealer.getAID()));
-	
-	setBehaviour(mainTask);
+	setBehaviour(Task.New(setDealerBhv(dealer.getAID())) // first we set the dealer token
+		.whenAll(communityCardResetBhv(), dealCardBhv())); // then we remove community cards & deal cards to player (in parallel)
     }
 
     private Player getDealer(PlayersContainer container) {
@@ -65,7 +62,7 @@ public class InitHandBhv extends TaskRunnerBhv {
 	return container.getDealer();
     }
 
-    private Behaviour cardDistributionBhv() {
+    private Behaviour dealCardBhv() {
 	Message msg = new DealRequest(Round.PLAYER_CARDS_DEAL);
 	TransactionBhv transaction = new TransactionBhv(myAgent, msg, dealerAgent);
 	transaction.setResponseVisitor(new SimpleVisitor(myAgent,
