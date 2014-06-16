@@ -35,8 +35,8 @@ public class PlayBhv extends TaskRunnerBhv {
 	@Override
 	public void onStart() {
 		
-		Task mainTask = Task.New(playBhv())
-				.then(checkIfRoundDone());
+		Task mainTask = Task.New(playBhv());
+				//.then(checkIfRoundDone());
 		
 		this.setBehaviour(mainTask);
 		super.onStart();
@@ -44,7 +44,7 @@ public class PlayBhv extends TaskRunnerBhv {
 	
 	private Behaviour playBhv(){
 		System.out.println("[Simulation:PlayBhv] waiting for player to bet.");
-		PlayRequest msg = new PlayRequest();
+		Message msg = new PlayRequest();
 		final AID currPlayer = simAgent.getGame().getPlayersContainer().getCurrentPlayer().getAID();
 		TransactionBhv transaction = new TransactionBhv(myAgent, msg, currPlayer);
 		transaction.setResponseVisitor(new MessageVisitor(){
