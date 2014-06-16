@@ -445,22 +445,6 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 		this.bigBlindToken = new BigBlindTokenIHM();
 		this.smallBlindToken = new SmallBlindTokenIHM();
 		
-		/***************************************
-		 * Pot
-		 */
-		
-		//Remove that after debug
-				
-		TokenSet tokenSet = new TokenSet();
-		try {
-			tokenSet.setAmountForTokenType(TokenType.WHITE, 10);
-		} catch (InvalidTokenAmountException e) {
-			e.printStackTrace();
-		}
-		//_________________
-		this.pot = new PotIHM(new Point2D(400,300), tokenSet);
-		root.getChildren().add(this.pot);
-		
 		/**************************************
 		 *  Table
 		 */
@@ -495,6 +479,26 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 		root.getChildren().add(dealerToken);
 		root.getChildren().add(bigBlindToken);
 		root.getChildren().add(smallBlindToken);
+		
+		/***************************************
+		 * Pot
+		 */
+		
+		//Remove that after debug
+		/*	
+		TokenSet tokenSet = new TokenSet();
+		try {
+			tokenSet.setAmountForTokenType(TokenType.WHITE, 10);
+			tokenSet.setAmountForTokenType(TokenType.BLUE, 15);
+			tokenSet.setAmountForTokenType(TokenType.RED, 40);
+			tokenSet.setAmountForTokenType(TokenType.BLACK, 20);
+		} catch (InvalidTokenAmountException e) {
+			e.printStackTrace();
+		}
+		*/
+		this.pot = new PotIHM(new Point2D(355, 245)/*, tokenSet*/);
+		root.getChildren().add(this.pot);
+		
 		
 		final Pane background = new Pane();
 		background.setId("background");

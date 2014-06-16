@@ -19,7 +19,7 @@ public class TokenStackIHM extends Group {
 		this.tokenPileImageView = new ImageView();
 		
 		this.tokenPileImageView.setSmooth(true);
-		this.tokenPileImageView.setScaleX(20);
+		this.tokenPileImageView.setFitWidth(20);
 		this.tokenPileImageView.setPreserveRatio(true);
 		this.tokenPileImageView.setLayoutX(0);
 		this.tokenPileImageView.setLayoutY(0);
@@ -50,7 +50,7 @@ public class TokenStackIHM extends Group {
 	
 	public void setCenter(Point2D center){
 		this.tokenPileImageView.setLayoutX(center.x - this.tokenPileImageView.getFitWidth() / 2);
-		this.tokenPileImageView.setLayoutX(center.y - this.tokenPileImageView.getFitHeight() / 2);
+		this.tokenPileImageView.setLayoutY(center.y - this.tokenPileImageView.getFitHeight() / 2);
 	}
 	
 	public void simulateAddTokens(){

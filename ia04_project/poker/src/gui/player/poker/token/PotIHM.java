@@ -29,6 +29,7 @@ public class PotIHM extends Group {
 	
 	public PotIHM(Point2D center, TokenSet t){
 		this(center);
+		this.tokenSet = t;
 		this.refresh();
 	}
 	
@@ -78,18 +79,19 @@ public class PotIHM extends Group {
 				tokenStack.setCenter(currentDrawingCenter);
 				this.getChildren().add(tokenStack);
 			}
+			currentDrawingCenter.x += tokenStack.getFitWidth();
 		}
 		
 	}
 	
 	public void AddTokenSet(TokenSet t){
-		this.tokenSet.AddTokenSet(t);
+		this.tokenSet.addTokenSet(t);
 		this.refresh();
 	}
 	
 	public void SubstractTokenSet(TokenSet t){
 		try {
-			this.tokenSet.SubstractTokenSet(t);
+			this.tokenSet.substractTokenSet(t);
 		} catch (InvalidTokenAmountException e) {
 			System.err.println("ERROR [IHM : gui.player.poker.token.Pot] " + e.getMessage());
 		}
