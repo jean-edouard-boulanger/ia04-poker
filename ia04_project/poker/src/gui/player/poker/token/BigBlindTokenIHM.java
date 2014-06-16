@@ -4,16 +4,16 @@ import com.sun.javafx.geom.Point2D;
 
 import javafx.scene.image.Image;
 
-public class BigBlindToken extends PokerToken {
+public class BigBlindTokenIHM extends PokerTokenIHM {
 
 	private static final String PICTURE_PATH = "images/token_big_blind.png";
 	
-	public BigBlindToken(){
+	public BigBlindTokenIHM(){
 		super();
 		this.tokenImageView.setImage(new Image(PICTURE_PATH));
 	}
 	
-	public BigBlindToken(Point2D center){
+	public BigBlindTokenIHM(Point2D center){
 		super(center);
 		this.tokenImageView.setImage(new Image(PICTURE_PATH));
 	}

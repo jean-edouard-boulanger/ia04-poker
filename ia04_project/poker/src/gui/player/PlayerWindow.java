@@ -4,9 +4,10 @@ import gui.player.PersoIHM.Sens;
 import gui.player.TokenPlayerIHM.ColorToken;
 import gui.player.event.model.PlayRequestEventData;
 import gui.player.event.model.PlayerTokenSetChangedEventData;
-import gui.player.poker.token.BigBlindToken;
-import gui.player.poker.token.DealerToken;
-import gui.player.poker.token.SmallBlindToken;
+import gui.player.poker.token.BigBlindTokenIHM;
+import gui.player.poker.token.DealerTokenIHM;
+import gui.player.poker.token.PotIHM;
+import gui.player.poker.token.SmallBlindTokenIHM;
 import jade.gui.GuiEvent;
 
 import java.beans.PropertyChangeEvent;
@@ -42,6 +43,8 @@ import poker.game.model.BlindValueDefinition;
 import poker.game.player.model.Player;
 import poker.token.model.TokenType;
 import sma.agent.HumanPlayerAgent;
+
+import com.sun.javafx.geom.Point2D;
 
 /**
  * 
@@ -168,9 +171,9 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 	private HashMap<TokenType, TokenPlayerIHM> playerTokens;
 	
 	//Poker tokens (Big blind, small blnd, dealer)
-	private DealerToken dealerToken;
-	private BigBlindToken bigBlindToken;
-	private SmallBlindToken smallBlindToken;
+	private DealerTokenIHM dealerToken;
+	private BigBlindTokenIHM bigBlindToken;
+	private SmallBlindTokenIHM smallBlindToken;
 	
 	// scaling:
 	private double scaleRatio = 1;
@@ -180,6 +183,8 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 
 	private Stage primaryStage;
 
+	private PotIHM pot;
+	
 	public void setHumanPlayerAgent(HumanPlayerAgent agent)
 	{
 		this.human_player_agent = agent;
@@ -435,9 +440,9 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 		/**************************************
 		 * Poker Tokens
 		 */
-		this.dealerToken = new DealerToken();
-		this.bigBlindToken = new BigBlindToken();
-		this.smallBlindToken = new SmallBlindToken();
+		this.dealerToken = new DealerTokenIHM();
+		this.bigBlindToken = new BigBlindTokenIHM();
+		this.smallBlindToken = new SmallBlindTokenIHM();
 		
 		/**************************************
 		 *  Table
@@ -473,6 +478,26 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 		root.getChildren().add(dealerToken);
 		root.getChildren().add(bigBlindToken);
 		root.getChildren().add(smallBlindToken);
+		
+		/***************************************
+		 * Pot
+		 */
+		
+		//Remove that after debug
+		/*	
+		TokenSet tokenSet = new TokenSet();
+		try {
+			tokenSet.setAmountForTokenType(TokenType.WHITE, 10);
+			tokenSet.setAmountForTokenType(TokenType.BLUE, 15);
+			tokenSet.setAmountForTokenType(TokenType.RED, 40);
+			tokenSet.setAmountForTokenType(TokenType.BLACK, 20);
+		} catch (InvalidTokenAmountException e) {
+			e.printStackTrace();
+		}
+		*/
+		this.pot = new PotIHM(new Point2D(355, 245)/*, tokenSet*/);
+		root.getChildren().add(this.pot);
+		
 		
 		final Pane background = new Pane();
 		background.setId("background");
