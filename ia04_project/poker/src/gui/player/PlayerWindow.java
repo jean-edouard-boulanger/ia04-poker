@@ -3,7 +3,7 @@ package gui.player;
 import gui.player.PersoIHM.Sens;
 import gui.player.TokenPlayerIHM.ColorToken;
 import gui.player.event.model.PlayRequestEventData;
-import gui.player.event.model.PlayerReceivedTokenSetEventData;
+import gui.player.event.model.PlayerTokenSetChangedEventData;
 import gui.player.poker.token.BigBlindToken;
 import gui.player.poker.token.DealerToken;
 import gui.player.poker.token.SmallBlindToken;
@@ -62,6 +62,8 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 		PLAYER_RECEIVED_TOKENSET_ME,
 		PLAYER_RECEIVED_TOKENSET_OTHER,
 		PLAYER_BET,
+		PLAYER_BET_ME,
+		PLAYER_BET_OTHER,
 		PLAYER_CHECK,
 		BLIND_VALUE,
 		DEALER_PLAYER_CHANGED,
@@ -635,11 +637,11 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 		PlatformHelper.run(new Runnable() {
 			@Override public void run() {
 				Map<TokenType, Integer> token_map = player.getTokens().getTokensAmount();
-				token_white.setMise(token_map.get(TokenType.WHITE));
-				token_green.setMise(token_map.get(TokenType.GREEN));
-				token_blue.setMise(token_map.get(TokenType.BLUE));
-				token_black.setMise(token_map.get(TokenType.BLACK));
-				token_red.setMise(token_map.get(TokenType.RED));
+				token_white.setTokenCount(token_map.get(TokenType.WHITE));
+				token_green.setTokenCount(token_map.get(TokenType.GREEN));
+				token_blue.setTokenCount(token_map.get(TokenType.BLUE));
+				token_black.setTokenCount(token_map.get(TokenType.BLACK));
+				token_red.setTokenCount(token_map.get(TokenType.RED));
 
 				PlayerWindow.this.list_perso.get(player.getTablePositionIndex()).setScore(PersoIHM.calculateScore(player.getTokens()));
 				PlayerWindow.this.slider_bet.setMax(PersoIHM.calculateScore(player.getTokens()));
@@ -647,6 +649,28 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 		});
 	}
 
+	public void tokenSetChanged(final PlayerTokenSetChangedEventData eventData) {
+		PlatformHelper.run(new Runnable() {
+			@Override public void run() {
+				list_perso.get(eventData.getPlayerIndex()).setScore(eventData.getTokenSetValuation());
+			}
+		});
+	}
+	
+	public void tokenSetChangedMe(final PlayerTokenSetChangedEventData eventData) {
+		PlatformHelper.run(new Runnable() {
+			@Override public void run() {
+				list_perso.get(eventData.getPlayerIndex()).setScore(eventData.getTokenSetValuation());
+				
+				for(Map.Entry<TokenType, Integer> entry : eventData.getTokenSet().getTokensAmount().entrySet()){
+					playerTokens.get(entry.getKey()).setTokenCount(entry.getValue());
+				}
+				
+				PlayerWindow.this.slider_bet.setMax(eventData.getTokenSetValuation());
+			}
+		});
+	}
+	
 	public void receivedTokensOther(final Player player) {
 		PlayerWindow.this.list_perso.get(player.getTablePositionIndex()).setScore(PersoIHM.calculateScore(player.getTokens()));
 	}
@@ -841,23 +865,15 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 				 */
 				else if(evt.getPropertyName().equals(PlayerGuiEvent.PLAYER_RECEIVED_TOKENSET_ME.toString()))
 				{
-					PlayerReceivedTokenSetEventData eventData = (PlayerReceivedTokenSetEventData) evt.getNewValue();
-					list_perso.get(eventData.getPlayerIndex()).setScore(eventData.getTokenSetValuation());
-					
-					for(Map.Entry<TokenType, Integer> entry : eventData.getTokenSet().getTokensAmount().entrySet()){
-						playerTokens.get(entry.getKey()).setMise(entry.getValue());
-					}
-					
-					PlayerWindow.this.slider_bet.setMax(eventData.getTokenSetValuation());
+					tokenSetChangedMe((PlayerTokenSetChangedEventData)evt.getNewValue());
 				}
-
+				
 				/**
 				 *  -----  PLAYER RECEIVED TOKENSET OTHER -----
 				 */
 				else if(evt.getPropertyName().equals(PlayerGuiEvent.PLAYER_RECEIVED_TOKENSET_OTHER.toString()))
 				{
-					PlayerReceivedTokenSetEventData eventData = (PlayerReceivedTokenSetEventData) evt.getNewValue();
-					list_perso.get(eventData.getPlayerIndex()).setScore(eventData.getTokenSetValuation());
+					tokenSetChanged((PlayerTokenSetChangedEventData)evt.getNewValue());
 				}
 
 				/**

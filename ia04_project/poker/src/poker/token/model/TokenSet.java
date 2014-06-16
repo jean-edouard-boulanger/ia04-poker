@@ -69,10 +69,6 @@ public class TokenSet {
 	
 	public TokenSet addTokenSet(TokenSet addedTokenSet){
 		int newValue = 0;
-		/**for(Map.Entry<TokenType, Integer> entry : this.tokensAmount.entrySet()){
-			newValue = this.getAmountForTokenType(entry.getKey()) + entry.getValue();
-			this.tokensAmount.put(entry.getKey(), newValue);
-		}*/
 		
 		for(Map.Entry<TokenType, Integer> entry : addedTokenSet.getTokensAmount().entrySet()) {
 			if(!this.tokensAmount.containsKey(entry.getKey())) {
@@ -83,8 +79,6 @@ public class TokenSet {
 				this.tokensAmount.put(entry.getKey(), newValue);
 			}
 		}
-	
-		System.out.print(this);
 		
 		return this;
 	}	
@@ -103,8 +97,6 @@ public class TokenSet {
 		}
 		
 		this.tokensAmount = tmpTokensAmount;
-		
-		System.out.println(this);
 		
 		return this;
 	}

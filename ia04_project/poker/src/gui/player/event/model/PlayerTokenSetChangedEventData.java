@@ -2,19 +2,19 @@ package gui.player.event.model;
 
 import poker.token.model.TokenSet;
 
-public class PlayerReceivedTokenSetEventData {
+public class PlayerTokenSetChangedEventData {
 	
 	private TokenSet tokenSet;
 	private int tokenSetValuation;
 	private int playerIndex;
 	
-	public PlayerReceivedTokenSetEventData(TokenSet tokenSet, int tokenSetValuation, int playerIndex){
+	public PlayerTokenSetChangedEventData(TokenSet tokenSet, int tokenSetValuation, int playerIndex){
 		this.tokenSet = tokenSet;
 		this.tokenSetValuation = tokenSetValuation;
 		this.playerIndex = playerIndex;
 	}
 	
-	public PlayerReceivedTokenSetEventData(){}
+	public PlayerTokenSetChangedEventData(){}
 
 	public TokenSet getTokenSet() {
 		return tokenSet;

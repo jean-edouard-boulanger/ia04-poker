@@ -4,6 +4,7 @@ import jade.core.AID;
 import jade.core.behaviours.Behaviour;
 import jade.lang.acl.ACLMessage;
 import sma.agent.SimulationAgent;
+import sma.agent.helper.DFServiceHelper;
 import sma.agent.helper.SimpleVisitor;
 import sma.agent.helper.TransactionBhv;
 import sma.agent.helper.experimental.Task;
@@ -23,10 +24,12 @@ import sma.message.simulation.request.PlayRequest;
 public class PlayBhv extends TaskRunnerBhv {
 	
 	private SimulationAgent simAgent;
-
+	private AID betManager;
+	
 	public PlayBhv(SimulationAgent simAgent) {
 		super(simAgent);
 		this.simAgent = simAgent;
+		this.betManager = DFServiceHelper.searchService(simAgent, "BetManagerAgent", "BetManager");
 	}
 
 	@Override
@@ -47,7 +50,14 @@ public class PlayBhv extends TaskRunnerBhv {
 			
 			@Override
 			public boolean onBetRequest(BetRequest request, ACLMessage aclMsg) {
-				// TODO: check action withBetManager
+				
+				TransactionBhv transactionBetRequestBehaviour = new TransactionBhv(simAgent, request, betManager, ACLMessage.REQUEST);
+				
+				transactionBetRequestBehaviour.setResponseVisitor(new SimpleVisitor(myAgent,
+						"[Simulation] Player " + request.getPlayerAID() + " bet.",
+						"[Simulation] Player " + request.getPlayerAID() + " could not bet."));
+
+				simAgent.addBehaviour(transactionBetRequestBehaviour);
 				return true;
 			}
 			

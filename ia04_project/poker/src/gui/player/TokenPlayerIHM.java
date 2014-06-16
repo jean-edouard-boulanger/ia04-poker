@@ -16,16 +16,16 @@ public class TokenPlayerIHM extends Group {
 	private static final String img_token_green = "images/chip_green.png";
 	private static final String img_token_red = "images/chip_red.png";
 	
-	private Label label_mise;
+	private Label label_token_count;
 	
 	public enum ColorToken { WHITE, BLACK, BLUE, GREEN, RED }
 	public TokenPlayerIHM(int x, int y, int mise, ColorToken color_token)
 	{
 		
-		label_mise = new Label(String.valueOf(mise));
-		label_mise.setLayoutX(x);
-		label_mise.setLayoutY(y);
-		label_mise.getStyleClass().add("label-token");
+		label_token_count = new Label(String.valueOf(mise));
+		label_token_count.setLayoutX(x);
+		label_token_count.setLayoutY(y);
+		label_token_count.getStyleClass().add("label-token");
 		
 		String image = "";
 		switch(color_token)
@@ -56,12 +56,11 @@ public class TokenPlayerIHM extends Group {
         jeton.setFitHeight(20);
 	    
         this.getChildren().add(jeton);
-		this.getChildren().add(label_mise);
+		this.getChildren().add(label_token_count);
 	}
 	
-	public void setMise(int mise)
+	public void setTokenCount(int tokenCount)
 	{
-		int new_bet = Integer.valueOf(label_mise.getText()).intValue() + mise;
-		label_mise.setText(String.valueOf(new_bet));
+		label_token_count.setText(String.valueOf(tokenCount));
 	}
 }

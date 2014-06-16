@@ -5,7 +5,7 @@ import gui.player.PlayerWindow.PlayerGuiEvent;
 import gui.player.WaitGameWindow;
 import gui.player.WaitGameWindow.WaitGameGuiEvent;
 import gui.player.event.model.PlayRequestEventData;
-import gui.player.event.model.PlayerReceivedTokenSetEventData;
+import gui.player.event.model.PlayerTokenSetChangedEventData;
 import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.CyclicBehaviour;
@@ -27,22 +27,25 @@ import poker.game.exception.PlayerAlreadyRegisteredException;
 import poker.game.model.BetType;
 import poker.game.model.Game;
 import poker.game.player.model.Player;
+import poker.token.exception.InvalidTokenAmountException;
 import poker.token.helpers.TokenSetValueEvaluator;
+import poker.token.model.TokenSet;
 import poker.token.model.TokenType;
 import sma.agent.helper.AgentHelper;
 import sma.agent.helper.DFServiceHelper;
+import sma.agent.helper.SimpleVisitor;
 import sma.agent.helper.TransactionBhv;
 import sma.message.FailureMessage;
 import sma.message.MessageVisitor;
 import sma.message.PlayerSubscriptionRequest;
 import sma.message.SubscriptionOKMessage;
 import sma.message.bet.request.BetRequest;
+import sma.message.environment.notification.BetNotification;
 import sma.message.environment.notification.BlindValueDefinitionChangedNotification;
 import sma.message.environment.notification.CardAddedToCommunityCardsNotification;
 import sma.message.environment.notification.CommunityCardsEmptiedNotification;
 import sma.message.environment.notification.CurrentPlayerChangedNotification;
 import sma.message.environment.notification.DealerChangedNotification;
-import sma.message.environment.notification.BetNotification;
 import sma.message.environment.notification.PlayerCheckNotification;
 import sma.message.environment.notification.PlayerFoldedNotification;
 import sma.message.environment.notification.PlayerReceivedCardNotification;
@@ -65,6 +68,8 @@ public class HumanPlayerAgent extends GuiAgent {
 	private WaitGameWindow wait_game_window;
 	private PlayerWindow player_window;
 
+	private ACLMessage playRequestMessage;
+	
 	public void setup()
 	{
 		//super.setup();
@@ -223,12 +228,12 @@ public class HumanPlayerAgent extends GuiAgent {
 			Player player = game.getPlayersContainer().getPlayerByAID(notification.getPlayerAID());
 			player.setTokens(player.getTokens().addTokenSet(notification.getReceivedTokenSet()));
 
-			PlayerReceivedTokenSetEventData eventData = new PlayerReceivedTokenSetEventData();
+			PlayerTokenSetChangedEventData eventData = new PlayerTokenSetChangedEventData();
 			eventData.setPlayerIndex(game.getPlayersContainer().getPlayerByAID(notification.getPlayerAID()).getTablePositionIndex());
 			eventData.setTokenSetValuation(TokenSetValueEvaluator.evaluateTokenSetValue(game.getBetContainer().getTokenValueDefinition(), player.getTokens()));
 
 			if(notification.getPlayerAID().equals(HumanPlayerAgent.this.getAID())){
-				eventData.setTokenSet(notification.getReceivedTokenSet());
+				eventData.setTokenSet(player.getTokens());
 				changes_game.firePropertyChange(PlayerGuiEvent.PLAYER_RECEIVED_TOKENSET_ME.toString(), null, eventData);
 			}
 			else{
@@ -241,10 +246,32 @@ public class HumanPlayerAgent extends GuiAgent {
 		@Override
 		public boolean onBetNotification(BetNotification notification, ACLMessage aclMsg){
 
-
 			// Update la mise minimum pour relancer apr�s
-			changes_game.firePropertyChange(PlayerGuiEvent.PLAYER_BET.toString(), null, notification);
+			TokenSet betTokenSet = notification.getBetTokenSet();
+			
+			game.getBetContainer().setPlayerCurrentBet(notification.getPlayerAID(), betTokenSet);
+			
+			Player player = game.getPlayersContainer().getPlayerByAID(notification.getPlayerAID());
+			
+			try {
+				player.setTokens(player.getTokens().substractTokenSet(betTokenSet));
+			} catch (InvalidTokenAmountException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			PlayerTokenSetChangedEventData eventData = new PlayerTokenSetChangedEventData();
+			eventData.setPlayerIndex(game.getPlayersContainer().getPlayerByAID(notification.getPlayerAID()).getTablePositionIndex());
+			eventData.setTokenSetValuation(TokenSetValueEvaluator.evaluateTokenSetValue(game.getBetContainer().getTokenValueDefinition(), player.getTokens()));
 
+			if(notification.getPlayerAID().equals(HumanPlayerAgent.this.getAID())){
+				eventData.setTokenSet(player.getTokens());
+				changes_game.firePropertyChange(PlayerGuiEvent.PLAYER_RECEIVED_TOKENSET_ME.toString(), null, eventData);
+			}
+			else{
+				changes_game.firePropertyChange(PlayerGuiEvent.PLAYER_RECEIVED_TOKENSET_OTHER.toString(), null, eventData);
+			}
+			
 			return true;
 		}
 
@@ -337,6 +364,8 @@ public class HumanPlayerAgent extends GuiAgent {
 		@Override
 		public boolean onPlayRequest(PlayRequest request, ACLMessage aclMessage){
 
+			playRequestMessage = aclMessage;
+			
 			Player me = game.getPlayersContainer().getPlayerByAID(getAID());
 
 			PlayRequestEventData eventData = new PlayRequestEventData();
@@ -437,13 +466,26 @@ public class HumanPlayerAgent extends GuiAgent {
 		
 		if(arg0.getType() == PlayerGuiEvent.PLAYER_BET.ordinal()) {
 			
-			int betAmount = (int)((double)arg0.getParameter(0));
-			
-			System.out.println("Player " + game.getPlayersContainer().getPlayerByAID(getAID()).getNickname() + " bet: " + betAmount);
-			
-			AID betManager = DFServiceHelper.searchService(this, "BetManagerAgent","BetManager");
-			
-			this.addBehaviour(new TransactionBhv(this, new BetRequest(betAmount, getAID()), betManager, ACLMessage.REQUEST));
+			//if(playRequestMessage != null) {
+				int betAmount = (int)((double)arg0.getParameter(0));
+				
+				System.out.println("Player " + game.getPlayersContainer().getPlayerByAID(getAID()).getNickname() + " bet: " + betAmount);
+				
+				AID betManager = DFServiceHelper.searchService(this, "BetManagerAgent","BetManager");
+				
+				playRequestMessage = null;
+				
+				//this.addBehaviour(new TransactionBhv(this, new BetRequest(betAmount, getAID()), betManager, ACLMessage.REQUEST));
+				//AgentHelper.sendReply(this, playRequestMessage, ACLMessage.REQUEST, new BetRequest(betAmount, getAID()));
+				
+				TransactionBhv transaction = new TransactionBhv(this, new BetRequest(betAmount, getAID()), betManager, ACLMessage.REQUEST);
+				
+				transaction.setResponseVisitor(new SimpleVisitor(this,
+						"Player " + game.getPlayersContainer().getPlayerByAID(getAID()).getNickname() + " bet.",
+						"Player " + game.getPlayersContainer().getPlayerByAID(getAID()).getNickname() + " could not bet."));
+				
+				this.addBehaviour(transaction);
+			//}			
 		}
 	}
 
