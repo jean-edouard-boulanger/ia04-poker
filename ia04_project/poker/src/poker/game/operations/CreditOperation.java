@@ -23,6 +23,6 @@ public class CreditOperation extends Operation{
 
 	@Override
 	public void applyOperationToTokenSet(TokenSet tokenSet) {
-		tokenSet.AddTokenSet(this.creditedTokenSet);
+		tokenSet.addTokenSet(this.creditedTokenSet);
 	}
 }

@@ -25,7 +25,7 @@ public class DebitOperation extends BankRollOperation {
 	@Override
 	public void ApplyOperationToTokenSet(TokenSet tokenSet) throws OperationFailureException {
 		try{
-			tokenSet.SubstractTokenSet(this.debittedTokenSet);
+			tokenSet.substractTokenSet(this.debittedTokenSet);
 		}
 		catch(Exception e){
 			throw new OperationFailureException();

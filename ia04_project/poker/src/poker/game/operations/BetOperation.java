@@ -34,7 +34,7 @@ public class BetOperation extends Operation {
 	@Override
 	public void applyOperationToTokenSet(TokenSet tokenSet) throws OperationFailureException {
 		try {
-			tokenSet.SubstractTokenSet(this.betTokenSet);
+			tokenSet.substractTokenSet(this.betTokenSet);
 		} catch (InvalidTokenAmountException e) {
 			throw new OperationFailureException();
 		}

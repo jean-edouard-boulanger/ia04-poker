@@ -211,7 +211,7 @@ public class EnvironmentAgent extends Agent {
 
 		@Override
 		public boolean onGiveTokenSetToPlayerRequest(GiveTokenSetToPlayerRequest request, ACLMessage aclMsg) {
-			game.getPlayersContainer().getPlayerByAID(request.getPlayerAID()).getTokens().AddTokenSet(request.getTokenSet());
+			game.getPlayersContainer().getPlayerByAID(request.getPlayerAID()).getTokens().addTokenSet(request.getTokenSet());
 			AgentHelper.sendSimpleMessage(EnvironmentAgent.this, subscribers, ACLMessage.PROPAGATE, new PlayerReceivedTokenSetNotification(request.getPlayerAID(), request.getTokenSet()));
 			AgentHelper.sendReply(EnvironmentAgent.this, aclMsg, ACLMessage.INFORM, new OKMessage());
 			return true;
@@ -249,7 +249,7 @@ public class EnvironmentAgent extends Agent {
 		public boolean onPlayerBetRequest(PlayerBetRequest request, ACLMessage aclMsg) {
 			try {
 				Player player = game.getPlayersContainer().getPlayerByAID(request.getPlayerAID());
-				player.setTokens(player.getTokens().SubstractTokenSet(request.getBet()));				
+				player.setTokens(player.getTokens().substractTokenSet(request.getBet()));				
 				game.getBetContainer().addTokenToPlayerBet(request.getPlayerAID(), request.getBet());
 				AgentHelper.sendSimpleMessage(EnvironmentAgent.this, subscribers, ACLMessage.PROPAGATE, new BetNotification(request.getPlayerAID(), request.getBet()));
 				AgentHelper.sendReply(EnvironmentAgent.this, aclMsg, ACLMessage.INFORM, new OKMessage());

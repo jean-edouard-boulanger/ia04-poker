@@ -167,14 +167,18 @@ public class BetManagerAgent extends Agent {
 		@Override
 		public boolean onPlayerReceivedTokenSetNotification(PlayerReceivedTokenSetNotification notification, ACLMessage aclMsg){
 			
+			System.out.println("[" + getLocalName() + "]" + "PlayerReceivedTokenSetNotification of amount(" + TokenSetValueEvaluator.evaluateTokenSetValue(game.getBetContainer().getTokenValueDefinition(), notification.getReceivedTokenSet()) + "), for player (" + notification.getPlayerAID() + ").");
+			
 			Player player = game.getPlayersContainer().getPlayerByAID(notification.getPlayerAID());
-			player.setTokens(player.getTokens().AddTokenSet(notification.getReceivedTokenSet()));
+			player.setTokens(player.getTokens().addTokenSet(notification.getReceivedTokenSet()));
 			
 			return true;
 		}
 		
 		@Override
 		public boolean onBetRequest(BetRequest request, ACLMessage aclMsg) {
+			
+			System.out.println("[" + getLocalName() + "]" + "BetRequest of amount(" + request.getBet() + "), for player (" + request.getPlayerAID() + ").");
 			
 			Player player = game.getPlayersContainer().getPlayerByAID(request.getPlayerAID());
 			
@@ -184,7 +188,7 @@ public class BetManagerAgent extends Agent {
 				try {
 					//Removing tokens of the used if allowed to
 					TokenSet tokenSetToSubstract = TokenSetValueEvaluator.tokenSetForBet(request.getBet(), game.getBetContainer().getTokenValueDefinition(), player.getTokens());
-					player.getTokens().SubstractTokenSet(tokenSetToSubstract);
+					player.getTokens().substractTokenSet(tokenSetToSubstract);
 					
 					//Creating extra token set user paid (Ex: Used paid 50 instead of 40)
 					int amountToGenerate = TokenSetValueEvaluator.evaluateTokenSetValue(game.getBetContainer().getTokenValueDefinition(), tokenSetToSubstract) - request.getBet();

@@ -24,6 +24,6 @@ public class RefundOperation extends Operation {
 
 	@Override
 	public void applyOperationToTokenSet(TokenSet tokenSet) {
-		tokenSet.AddTokenSet(this.refundedTokenSet);
+		tokenSet.addTokenSet(this.refundedTokenSet);
 	}
 }

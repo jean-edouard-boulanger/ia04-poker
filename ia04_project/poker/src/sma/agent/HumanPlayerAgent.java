@@ -36,6 +36,7 @@ import sma.message.FailureMessage;
 import sma.message.MessageVisitor;
 import sma.message.PlayerSubscriptionRequest;
 import sma.message.SubscriptionOKMessage;
+import sma.message.bet.request.BetRequest;
 import sma.message.environment.notification.BlindValueDefinitionChangedNotification;
 import sma.message.environment.notification.CardAddedToCommunityCardsNotification;
 import sma.message.environment.notification.CommunityCardsEmptiedNotification;
@@ -220,11 +221,11 @@ public class HumanPlayerAgent extends GuiAgent {
 		public boolean onPlayerReceivedTokenSetNotification(PlayerReceivedTokenSetNotification notification, ACLMessage aclMsg){
 
 			Player player = game.getPlayersContainer().getPlayerByAID(notification.getPlayerAID());
-			player.setTokens(notification.getReceivedTokenSet());
+			player.setTokens(player.getTokens().addTokenSet(notification.getReceivedTokenSet()));
 
 			PlayerReceivedTokenSetEventData eventData = new PlayerReceivedTokenSetEventData();
 			eventData.setPlayerIndex(game.getPlayersContainer().getPlayerByAID(notification.getPlayerAID()).getTablePositionIndex());
-			eventData.setTokenSetValuation(TokenSetValueEvaluator.evaluateTokenSetValue(game.getBetContainer().getTokenValueDefinition(), notification.getReceivedTokenSet()));
+			eventData.setTokenSetValuation(TokenSetValueEvaluator.evaluateTokenSetValue(game.getBetContainer().getTokenValueDefinition(), player.getTokens()));
 
 			if(notification.getPlayerAID().equals(HumanPlayerAgent.this.getAID())){
 				eventData.setTokenSet(notification.getReceivedTokenSet());
@@ -432,6 +433,17 @@ public class HumanPlayerAgent extends GuiAgent {
 			System.out.println("IHM Ready");
 			wait_game_window.setVisible(true);
 			changes_game.firePropertyChange(PlayerGuiEvent.SHOW_IHM.toString(), null, null);
+		}
+		
+		if(arg0.getType() == PlayerGuiEvent.PLAYER_BET.ordinal()) {
+			
+			int betAmount = (int)((double)arg0.getParameter(0));
+			
+			System.out.println("Player " + game.getPlayersContainer().getPlayerByAID(getAID()).getNickname() + " bet: " + betAmount);
+			
+			AID betManager = DFServiceHelper.searchService(this, "BetManagerAgent","BetManager");
+			
+			this.addBehaviour(new TransactionBhv(this, new BetRequest(betAmount, getAID()), betManager, ACLMessage.REQUEST));
 		}
 	}
 
