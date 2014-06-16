@@ -1,5 +1,7 @@
 package poker.token.helpers;
 
+import java.util.Map;
+
 import poker.game.exception.ExcessiveBetException;
 import poker.token.exception.InvalidTokenAmountException;
 import poker.token.exception.InvalidTokenValueException;
@@ -23,7 +25,7 @@ public class TokenSetValueEvaluator {
 		return totalValue;
 	}
 	
-	public static TokenSet tokenSetForBet(int amount, TokenValueDefinition tokenValueDefinition, TokenSet playerTokenSet) throws ExcessiveBetException, InvalidTokenAmountException {
+	public static TokenSet tokenSetForBet2(int amount, TokenValueDefinition tokenValueDefinition, TokenSet playerTokenSet) throws ExcessiveBetException, InvalidTokenAmountException {
 		
 		if(amount > evaluateTokenSetValue(tokenValueDefinition, playerTokenSet)){
 			throw new ExcessiveBetException();
@@ -37,22 +39,31 @@ public class TokenSetValueEvaluator {
 		int totalAmount = 0;
 		
 		TokenType tokenTypeList[] = TokenType.values();
+		
 		for(int i = tokenTypeList.length - 1; i >= 0 && remaining > 0; i--){
 			
-			int playerOwnedAmount = playerTokenSet.getAmountForTokenType(tokenTypeList[i]);
-			optAmount = remaining / tokenValueDefinition.getValueForTokenType(tokenTypeList[i]);
+			TokenType tokenType = tokenTypeList[i];
+			
+			if(!playerTokenSet.getTokensAmount().containsKey(tokenType))
+				continue;
+			
+			int playerOwnedAmount = playerTokenSet.getAmountForTokenType(tokenType);
+			optAmount = remaining / tokenValueDefinition.getValueForTokenType(tokenType);
 			
 			effectiveAmount = (optAmount > playerOwnedAmount) ? playerOwnedAmount : optAmount;
 
-			remaining -= effectiveAmount * tokenValueDefinition.getValueForTokenType(tokenTypeList[i]);
+			remaining -= effectiveAmount * tokenValueDefinition.getValueForTokenType(tokenType);
 			
-			totalAmount = betTokenSet.getAmountForTokenType(tokenTypeList[i]) + effectiveAmount;
-			betTokenSet.setAmountForTokenType(tokenTypeList[i], totalAmount);
+			totalAmount = betTokenSet.getAmountForTokenType(tokenType) + effectiveAmount;
+			betTokenSet.setAmountForTokenType(tokenType, totalAmount);
 		}
 		
 		if(remaining > 0){
 			for(TokenType tt : TokenType.values()){
 
+				if(!playerTokenSet.getTokensAmount().containsKey(tt))
+					continue;
+				
 				int playerOwnedAmount = playerTokenSet.getAmountForTokenType(tt);
 				
 				optAmount = (int) Math.ceil(remaining / (float)tokenValueDefinition.getValueForTokenType(tt));
@@ -63,6 +74,44 @@ public class TokenSetValueEvaluator {
 				betTokenSet.increaseAmountForTokenType(tt, effectiveAmount);
 			}
 		}
+		
+		return betTokenSet;
+	}
+	
+	private static TokenSet subTokenSetForBet(int amount, TokenValueDefinition tokenValueDefinition, TokenSet playerTokenSet, TokenSet betTokenSet) throws ExcessiveBetException, InvalidTokenAmountException {
+		
+		if(amount <= 0)
+			return betTokenSet;
+		
+		Map<TokenType, Integer> tokenAmounts = playerTokenSet.getTokensAmount();
+		
+		for(TokenType tt : TokenType.values()) {
+			if(tokenAmounts.containsKey(tt) && tokenAmounts.get(tt) > 0) {
+				//Removing one token
+				
+				Integer tokenCount = tokenAmounts.get(tt);
+				
+				amount -= tokenValueDefinition.getValueForTokenType(tt);
+				tokenAmounts.put(tt, tokenCount - 1);
+				
+				betTokenSet.setAmountForTokenType(tt, betTokenSet.getAmountForTokenType(tt) +1);
+				
+				return subTokenSetForBet(amount, tokenValueDefinition, playerTokenSet, betTokenSet);
+			}		
+		}
+		return playerTokenSet;
+	}
+	
+	public static TokenSet tokenSetForBet(int amount, TokenValueDefinition tokenValueDefinition, TokenSet playerTokenSet) throws ExcessiveBetException, InvalidTokenAmountException {
+		if(amount > evaluateTokenSetValue(tokenValueDefinition, playerTokenSet)){
+			throw new ExcessiveBetException();
+		}
+		
+		TokenSet betTokenSet = new TokenSet();
+		
+		int amountCopy = amount;
+		
+		subTokenSetForBet(amountCopy, tokenValueDefinition, playerTokenSet.clone(), betTokenSet);
 		
 		return betTokenSet;
 	}

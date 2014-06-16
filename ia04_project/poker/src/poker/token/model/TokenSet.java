@@ -118,4 +118,20 @@ public class TokenSet {
 		
 		return tokenSet;
 	}
+	
+	public TokenSet clone() {
+		
+		TokenSet newTokenSet = new TokenSet();
+		
+		for(Map.Entry<TokenType, Integer> entry : tokensAmount.entrySet()) {
+			try {
+				newTokenSet.setAmountForTokenType(entry.getKey(), entry.getValue());
+			} catch (InvalidTokenAmountException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
+		return newTokenSet;
+	}
 }
