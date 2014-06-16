@@ -112,6 +112,7 @@ public class InitHandBhv extends TaskRunnerBhv {
 		return transaction;
 	}
 
+
 	private Behaviour setDealerBhv(AID dealer) {
 		Message msg = new SetDealerRequest(dealer);
 		TransactionBhv transaction = new TransactionBhv(myAgent, msg, environment);
