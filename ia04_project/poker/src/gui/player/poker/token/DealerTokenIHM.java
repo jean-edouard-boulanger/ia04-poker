@@ -7,16 +7,16 @@ import com.sun.javafx.geom.Point2D;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
-public class DealerToken extends PokerToken {
+public class DealerTokenIHM extends PokerTokenIHM {
 
 	private static final String PICTURE_PATH = "images/token_dealer.png";
 	
-	public DealerToken(){
+	public DealerTokenIHM(){
 		super();
 		this.tokenImageView.setImage(new Image(PICTURE_PATH));
 	}
 	
-	public DealerToken(Point2D center){
+	public DealerTokenIHM(Point2D center){
 		super(center);
 		this.tokenImageView = new ImageView(PICTURE_PATH);
 	}

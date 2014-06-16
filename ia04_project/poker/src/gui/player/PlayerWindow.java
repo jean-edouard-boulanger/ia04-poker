@@ -4,9 +4,11 @@ import gui.player.PersoIHM.Sens;
 import gui.player.TokenPlayerIHM.ColorToken;
 import gui.player.event.model.PlayRequestEventData;
 import gui.player.event.model.PlayerReceivedTokenSetEventData;
-import gui.player.poker.token.BigBlindToken;
-import gui.player.poker.token.DealerToken;
-import gui.player.poker.token.SmallBlindToken;
+import gui.player.poker.token.BigBlindTokenIHM;
+import gui.player.poker.token.DealerTokenIHM;
+import gui.player.poker.token.PotIHM;
+import gui.player.poker.token.SmallBlindTokenIHM;
+import gui.player.poker.token.TokenStackIHM;
 import jade.gui.GuiEvent;
 
 import java.beans.PropertyChangeEvent;
@@ -16,6 +18,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import com.sun.javafx.geom.Point2D;
 
 import javafx.application.Application;
 import javafx.beans.value.ChangeListener;
@@ -40,6 +44,8 @@ import poker.card.model.Card;
 import poker.game.model.BetType;
 import poker.game.model.BlindValueDefinition;
 import poker.game.player.model.Player;
+import poker.token.exception.InvalidTokenAmountException;
+import poker.token.model.TokenSet;
 import poker.token.model.TokenType;
 import sma.agent.HumanPlayerAgent;
 
@@ -166,9 +172,9 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 	private HashMap<TokenType, TokenPlayerIHM> playerTokens;
 	
 	//Poker tokens (Big blind, small blnd, dealer)
-	private DealerToken dealerToken;
-	private BigBlindToken bigBlindToken;
-	private SmallBlindToken smallBlindToken;
+	private DealerTokenIHM dealerToken;
+	private BigBlindTokenIHM bigBlindToken;
+	private SmallBlindTokenIHM smallBlindToken;
 	
 	// scaling:
 	private double scaleRatio = 1;
@@ -178,6 +184,8 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 
 	private Stage primaryStage;
 
+	private PotIHM pot;
+	
 	public void setHumanPlayerAgent(HumanPlayerAgent agent)
 	{
 		this.human_player_agent = agent;
@@ -433,9 +441,25 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 		/**************************************
 		 * Poker Tokens
 		 */
-		this.dealerToken = new DealerToken();
-		this.bigBlindToken = new BigBlindToken();
-		this.smallBlindToken = new SmallBlindToken();
+		this.dealerToken = new DealerTokenIHM();
+		this.bigBlindToken = new BigBlindTokenIHM();
+		this.smallBlindToken = new SmallBlindTokenIHM();
+		
+		/***************************************
+		 * Pot
+		 */
+		
+		//Remove that after debug
+				
+		TokenSet tokenSet = new TokenSet();
+		try {
+			tokenSet.setAmountForTokenType(TokenType.WHITE, 10);
+		} catch (InvalidTokenAmountException e) {
+			e.printStackTrace();
+		}
+		//_________________
+		this.pot = new PotIHM(new Point2D(400,300), tokenSet);
+		root.getChildren().add(this.pot);
 		
 		/**************************************
 		 *  Table

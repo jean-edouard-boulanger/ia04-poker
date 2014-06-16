@@ -9,11 +9,11 @@ import javafx.scene.Group;
 import javafx.scene.image.ImageView;
 import javafx.util.Duration;
 
-public abstract class PokerToken extends Group {
+public abstract class PokerTokenIHM extends Group {
 
 	protected ImageView tokenImageView;
 	
-	public PokerToken(){
+	public PokerTokenIHM(){
 		this.tokenImageView = new ImageView();
 		this.tokenImageView.setFitWidth(20);
 		this.tokenImageView.setPreserveRatio(true);
@@ -27,7 +27,7 @@ public abstract class PokerToken extends Group {
 		this.getChildren().add(tokenImageView);
 	}
 	
-	public PokerToken(Point2D center){
+	public PokerTokenIHM(Point2D center){
 		this();
 		
 		this.tokenImageView.setLayoutX(center.x - this.tokenImageView.getFitWidth() / 2);
