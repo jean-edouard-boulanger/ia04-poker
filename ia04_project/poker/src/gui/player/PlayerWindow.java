@@ -719,6 +719,15 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 				communauty_card.emptyCommunautyCard();
 			}
 		});
+		
+		button_raise.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent event) {
+				GuiEvent ev = new GuiEvent(this, PlayerGuiEvent.PLAYER_BET.ordinal());
+				ev.addParameter(slider_bet.getValue());
+				human_player_agent.postGuiEvent(ev);
+			}
+		});
 	}
 
 	/**************************************

@@ -75,7 +75,7 @@ public class BetContainer {
 	
 	public void addTokenToPlayerBet(AID playerAID, TokenSet betToAdd){
 		if(this.playersBets.containsKey(playerAID))
-			this.playersBets.put(playerAID, this.playersBets.get(playerAID).AddTokenSet(betToAdd));
+			this.playersBets.put(playerAID, this.playersBets.get(playerAID).addTokenSet(betToAdd));
 		else
 			this.playersBets.put(playerAID, betToAdd);
 	}
@@ -96,7 +96,7 @@ public class BetContainer {
 	public TokenSet getGlobalCurrentBet(){
 		TokenSet gSet = new TokenSet();
 		for(TokenSet t : this.playersBets.values()){
-			gSet.AddTokenSet(t);
+			gSet.addTokenSet(t);
 		}
 		return gSet;
 	}
@@ -108,7 +108,7 @@ public class BetContainer {
 
 	public TokenSet transferCurrentBetsToPot(){
 		for(TokenSet tokenSet : this.playersBets.values()){
-			this.pot.AddTokenSet(tokenSet);
+			this.pot.addTokenSet(tokenSet);
 		}
 		this.playersBets.clear();
 

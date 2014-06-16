@@ -67,30 +67,44 @@ public class TokenSet {
 		this.setAmountForTokenType(tokenType, newAmount);
 	}
 	
-	public TokenSet AddTokenSet(TokenSet addedTokenSet){
+	public TokenSet addTokenSet(TokenSet addedTokenSet){
 		int newValue = 0;
-		for(Map.Entry<TokenType, Integer> entry : this.tokensAmount.entrySet()){
+		/**for(Map.Entry<TokenType, Integer> entry : this.tokensAmount.entrySet()){
 			newValue = this.getAmountForTokenType(entry.getKey()) + entry.getValue();
 			this.tokensAmount.put(entry.getKey(), newValue);
+		}*/
+		
+		for(Map.Entry<TokenType, Integer> entry : addedTokenSet.getTokensAmount().entrySet()) {
+			if(!this.tokensAmount.containsKey(entry.getKey())) {
+				this.tokensAmount.put(entry.getKey(), entry.getValue());
+			}
+			else {
+				newValue = this.getAmountForTokenType(entry.getKey()) + entry.getValue();
+				this.tokensAmount.put(entry.getKey(), newValue);
+			}
 		}
+	
+		System.out.print(this);
+		
 		return this;
 	}	
 	
-	public TokenSet SubstractTokenSet(TokenSet substractedTokenSet) throws InvalidTokenAmountException{
+	public TokenSet substractTokenSet(TokenSet substractedTokenSet) throws InvalidTokenAmountException{
 		Map<TokenType, Integer> tmpTokensAmount = new HashMap<TokenType, Integer>(this.tokensAmount);
 		
 		int newValue = 0;
-		for(Map.Entry<TokenType, Integer> entry : this.tokensAmount.entrySet()){
+		for(Map.Entry<TokenType, Integer> entry : substractedTokenSet.getTokensAmount().entrySet()){
 			newValue = this.getAmountForTokenType(entry.getKey()) - entry.getValue();
 			tmpTokensAmount.put(entry.getKey(), newValue);
 			
 			if(newValue < 0){
 				throw new InvalidTokenAmountException();
 			}
-			
 		}
 		
 		this.tokensAmount = tmpTokensAmount;
+		
+		System.out.println(this);
 		
 		return this;
 	}
