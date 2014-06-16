@@ -172,7 +172,7 @@ public class HumanPlayerAgent extends GuiAgent {
 
 		@Override
 		public boolean onCardAddedToCommunityCardsNotification(CardAddedToCommunityCardsNotification notification, ACLMessage aclMsg) {
-System.out.println("ii");
+
 			try {
 
 				game.getCommunityCards().pushCard(notification.getNewCommunityCard());
