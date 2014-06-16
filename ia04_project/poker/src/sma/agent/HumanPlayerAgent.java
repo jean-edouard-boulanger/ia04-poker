@@ -172,7 +172,7 @@ public class HumanPlayerAgent extends GuiAgent {
 
 		@Override
 		public boolean onCardAddedToCommunityCardsNotification(CardAddedToCommunityCardsNotification notification, ACLMessage aclMsg) {
-
+System.out.println("ii");
 			try {
 
 				game.getCommunityCards().pushCard(notification.getNewCommunityCard());
@@ -297,13 +297,6 @@ public class HumanPlayerAgent extends GuiAgent {
 		@Override
 		public boolean onCurrentPlayerChangedNotification(CurrentPlayerChangedNotification notification, ACLMessage aclMsg){
 
-			/*try{
-				game.getPlayersContainer().getPlayerAtIndex(0).getStatus()HumanPlayerAgent
-			}
-			catch(NotRegisteredPlayerException ex){
-				AgentHelper.sendReply(EnvironmentAgent.this, aclMsg, ACLMessage.INFORM, new FailureMessage(ex.getMessage()));
-				return true;
-			}*/
 			int playerIndex = game.getPlayersContainer().getPlayerByAID(notification.getPlayerAID()).getTablePositionIndex();
 			changes_game.firePropertyChange(PlayerGuiEvent.CURRENT_PLAYER_CHANGED.toString(), null, game.getPlayersContainer().getPlayerByAID(notification.getPlayerAID()));
 

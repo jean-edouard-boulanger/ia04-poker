@@ -20,6 +20,7 @@ import sma.agent.helper.experimental.TaskRunnerBhv;
 import sma.message.Message;
 import sma.message.bet.request.BetRequest;
 import sma.message.dealer.request.DealRequest;
+import sma.message.environment.request.AddCommunityCardRequest;
 import sma.message.environment.request.CurrentPlayerChangeRequest;
 import sma.message.environment.request.EmptyCommunityCardsRequest;
 import sma.message.environment.request.SetDealerRequest;
@@ -57,6 +58,9 @@ public class InitHandBhv extends TaskRunnerBhv {
 		Task mainTask = Task.New(setDealerBhv(dealer.getAID())) // first we set the dealer token
 				.whenAll(communityCardResetBhv(), // then we remove community cards
 						dealCardBhv())  // & deal cards to player (in parallel)
+				.then(communityCardAddBhv())
+				.then(communityCardAddBhv())
+				.then(communityCardAddBhv())
 				.then(payBlindBhv(game.getPlayersContainer().getSmallBlind().getAID(), game.getBlindValueDefinition().getBlindAmountDefinition())) // we pay the small blind
 				.then(payBlindBhv(game.getPlayersContainer().getBigBlind().getAID(),  game.getBlindValueDefinition().getBigBlindAmountDefinition())) // and the big blind
 				.then(setCurrentPlayerBhv(game.getPlayersContainer())); // finally we set the current player (player next to the big blind, but not out
@@ -100,6 +104,15 @@ public class InitHandBhv extends TaskRunnerBhv {
 		transaction.setResponseVisitor(new SimpleVisitor(myAgent,
 				"community cards emptied successfully.",
 				"error while cleaning community cards"));
+		return transaction;
+	}
+	
+	private Behaviour communityCardAddBhv() {
+		Message msg = new AddCommunityCardRequest();
+		TransactionBhv transaction = new TransactionBhv(myAgent, msg, environment);
+		transaction.setResponseVisitor(new SimpleVisitor(myAgent,
+				"community cards adding successfully.",
+				"error while adding community cards"));
 		return transaction;
 	}
 

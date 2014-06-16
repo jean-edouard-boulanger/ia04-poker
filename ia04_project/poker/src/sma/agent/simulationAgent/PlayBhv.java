@@ -61,6 +61,19 @@ public class PlayBhv extends TaskRunnerBhv {
 				return true;
 			}
 			
+			/*@Override
+			public boolean onBetRequest(BetRequest request, ACLMessage aclMsg) {
+				
+				TransactionBhv transactionBetRequestBehaviour = new TransactionBhv(simAgent, request, betManager, ACLMessage.REQUEST);
+				
+				transactionBetRequestBehaviour.setResponseVisitor(new SimpleVisitor(myAgent,
+						"[Simulation] Player " + request.getPlayerAID() + " bet.",
+						"[Simulation] Player " + request.getPlayerAID() + " could not bet."));
+
+				simAgent.addBehaviour(transactionBetRequestBehaviour);
+				return true;
+			}*/
+			
 			//TODO: fold
 			//TODO: all-in		
 			

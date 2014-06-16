@@ -41,6 +41,8 @@ import poker.card.model.Card;
 import poker.game.model.BetType;
 import poker.game.model.BlindValueDefinition;
 import poker.game.player.model.Player;
+import poker.token.exception.InvalidTokenAmountException;
+import poker.token.model.TokenSet;
 import poker.token.model.TokenType;
 import sma.agent.HumanPlayerAgent;
 
@@ -484,7 +486,7 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 		 */
 		
 		//Remove that after debug
-		/*	
+			
 		TokenSet tokenSet = new TokenSet();
 		try {
 			tokenSet.setAmountForTokenType(TokenType.WHITE, 10);
@@ -494,7 +496,7 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 		} catch (InvalidTokenAmountException e) {
 			e.printStackTrace();
 		}
-		*/
+		
 		this.pot = new PotIHM(new Point2D(355, 245)/*, tokenSet*/);
 		root.getChildren().add(this.pot);
 		
