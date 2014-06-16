@@ -43,13 +43,18 @@ public class PlayBhv extends TaskRunnerBhv {
 	}
 	
 	private Behaviour playBhv(){
-		Message msg = new PlayRequest();
-		AID currPlayer = simAgent.getGame().getPlayersContainer().getCurrentPlayer().getAID();
+		System.out.println("[Simulation:PlayBhv] waiting for player to bet.");
+		PlayRequest msg = new PlayRequest();
+		final AID currPlayer = simAgent.getGame().getPlayersContainer().getCurrentPlayer().getAID();
 		TransactionBhv transaction = new TransactionBhv(myAgent, msg, currPlayer);
 		transaction.setResponseVisitor(new MessageVisitor(){
 			
 			@Override
 			public boolean onBetRequest(BetRequest request, ACLMessage aclMsg) {
+				
+				if(aclMsg.getSender() != currPlayer) {
+					System.out.println("[Simulation:PlayBhv] A player tried to play but it's not his turn.");
+				}
 				
 				TransactionBhv transactionBetRequestBehaviour = new TransactionBhv(simAgent, request, betManager, ACLMessage.REQUEST);
 				
@@ -64,7 +69,8 @@ public class PlayBhv extends TaskRunnerBhv {
 			//TODO: fold
 			//TODO: all-in		
 			
-		});		
+		});	
+				
 		return transaction;
 	}
 	

@@ -101,8 +101,29 @@ public class HumanPlayerAgent extends GuiAgent {
 		});
 
 		addBehaviour(new HumanPlayerReceiveRequestBehaviour(this));
+		addBehaviour(new HumanPlayerReceiveNotificationBehaviour(this));
 		addBehaviour(new HumanPlayerReceiveFailureBehaviour(this));
 
+	}
+
+	/**************************************
+	 *  Listening notifications
+	 */
+	private class HumanPlayerReceiveNotificationBehaviour extends CyclicBehaviour{
+
+		MessageTemplate receiveNotificationMessageTemplate;
+
+		public HumanPlayerReceiveNotificationBehaviour(Agent agent){
+			super(agent);
+			this.receiveNotificationMessageTemplate = MessageTemplate.MatchPerformative(ACLMessage.PROPAGATE);
+		}
+
+		@Override
+		public void action() {
+			if(!AgentHelper.receiveMessage(this.myAgent, receiveNotificationMessageTemplate, msgVisitor_request)){
+				block();
+			}
+		}
 	}
 
 	/**************************************
@@ -114,7 +135,7 @@ public class HumanPlayerAgent extends GuiAgent {
 
 		public HumanPlayerReceiveRequestBehaviour(Agent agent){
 			super(agent);
-			this.receiveRequestMessageTemplate = MessageTemplate.MatchPerformative(ACLMessage.PROPAGATE);
+			this.receiveRequestMessageTemplate = MessageTemplate.MatchPerformative(ACLMessage.REQUEST);
 		}
 
 		@Override
@@ -124,7 +145,7 @@ public class HumanPlayerAgent extends GuiAgent {
 			}
 		}
 	}
-
+	
 	/**************************************
 	 *  Listening failure
 	 */
@@ -359,6 +380,8 @@ public class HumanPlayerAgent extends GuiAgent {
 
 			playRequestMessage = aclMessage;
 			
+			System.out.println("[HPA] Player " + game.getPlayersContainer().getPlayerByAID(getAID()).getNickname() + " was asked to play.");
+			
 			Player me = game.getPlayersContainer().getPlayerByAID(getAID());
 
 			PlayRequestEventData eventData = new PlayRequestEventData();
@@ -459,26 +482,26 @@ public class HumanPlayerAgent extends GuiAgent {
 		
 		if(arg0.getType() == PlayerGuiEvent.PLAYER_BET.ordinal()) {
 			
-			//if(playRequestMessage != null) {
+			if(playRequestMessage != null) {
 				int betAmount = (int)((double)arg0.getParameter(0));
 				
-				System.out.println("Player " + game.getPlayersContainer().getPlayerByAID(getAID()).getNickname() + " bet: " + betAmount);
+				System.out.println("[HPA] Player " + game.getPlayersContainer().getPlayerByAID(getAID()).getNickname() + " wants to bet: " + betAmount);
 				
 				AID betManager = DFServiceHelper.searchService(this, "BetManagerAgent","BetManager");
-				
+								
+				//this.addBehaviour(new TransactionBhv(this, new BetRequest(betAmount, getAID()), betManager, ACLMessage.REQUEST));
+				AgentHelper.sendReply(this, playRequestMessage, ACLMessage.REQUEST, new BetRequest(betAmount, getAID()));
 				playRequestMessage = null;
 				
-				//this.addBehaviour(new TransactionBhv(this, new BetRequest(betAmount, getAID()), betManager, ACLMessage.REQUEST));
-				//AgentHelper.sendReply(this, playRequestMessage, ACLMessage.REQUEST, new BetRequest(betAmount, getAID()));
-				
-				TransactionBhv transaction = new TransactionBhv(this, new BetRequest(betAmount, getAID()), betManager, ACLMessage.REQUEST);
+				/**TransactionBhv transaction = new TransactionBhv(this, new BetRequest(betAmount, getAID()), betManager, ACLMessage.REQUEST);
 				
 				transaction.setResponseVisitor(new SimpleVisitor(this,
 						"Player " + game.getPlayersContainer().getPlayerByAID(getAID()).getNickname() + " bet.",
 						"Player " + game.getPlayersContainer().getPlayerByAID(getAID()).getNickname() + " could not bet."));
 				
 				this.addBehaviour(transaction);
-			//}			
+				*/
+			}			
 		}
 	}
 
