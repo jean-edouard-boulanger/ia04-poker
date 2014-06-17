@@ -251,7 +251,7 @@ public class BetManagerAgent extends Agent {
 					TokenSet tokenSetToSubstract = TokenSetValueEvaluator.tokenSetForBet(request.getBet(), game.getBetContainer().getTokenValueDefinition(), player.getTokens());
 					player.getTokens().substractTokenSet(tokenSetToSubstract);
 
-					//Creating extra token set user paid (Ex: Used paid 50 instead of 40)
+					//Creating extra token set user paid (Ex: User paid 50 instead of 40)
 					int amountToGenerate = TokenSetValueEvaluator.evaluateTokenSetValue(game.getBetContainer().getTokenValueDefinition(), tokenSetToSubstract) - request.getBet();
 
 					TokenSet tokenSetToAddToPlayer = TokenSetValueEvaluator.tokenSetFromAmount(amountToGenerate, game.getBetContainer().getTokenValueDefinition());

@@ -78,6 +78,7 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 		PLAYER_BET,
 		PLAYER_BET_ME,
 		PLAYER_BET_OTHER,
+		PLAYER_CALLED,
 		PLAYER_CHECK,
 		BLIND_VALUE,
 		DEALER_PLAYER_CHANGED,
@@ -801,15 +802,17 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 		button_check.setOnAction(new EventHandler<ActionEvent>() {
 
 			public void handle(ActionEvent event) {
-				//communauty_card.addCommunautyCard(new Card(CardRank.ACE, CardSuit.CLUBS));
-				
+				GuiEvent ev = new GuiEvent(this, PlayerGuiEvent.PLAYER_BET.ordinal());
+				ev.addParameter(0);
+				human_player_agent.postGuiEvent(ev);
 			}
 		});
 
 		button_fold.setOnAction(new EventHandler<ActionEvent>() {
 
 			public void handle(ActionEvent event) {
-				communauty_card.emptyCommunautyCard();
+				GuiEvent ev = new GuiEvent(this, PlayerGuiEvent.PLAYER_FOLDED.ordinal());
+				human_player_agent.postGuiEvent(ev);
 			}
 		});
 		
@@ -822,9 +825,13 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 			}
 		});
 		
-		for(Button bt : betButtons.values()){
-			//bt.setDisable(true);
-		}
+		button_call.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent event) {
+				GuiEvent ev = new GuiEvent(this, PlayerGuiEvent.PLAYER_CALLED.ordinal());
+				human_player_agent.postGuiEvent(ev);
+			}
+		});
 		
 		primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
 		   @Override

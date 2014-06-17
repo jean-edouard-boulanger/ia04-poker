@@ -41,6 +41,7 @@ import sma.message.MessageVisitor;
 import sma.message.PlayerSubscriptionRequest;
 import sma.message.SubscriptionOKMessage;
 import sma.message.bet.request.BetRequest;
+import sma.message.bet.request.FoldRequest;
 import sma.message.environment.notification.BetNotification;
 import sma.message.environment.notification.BlindValueDefinitionChangedNotification;
 import sma.message.environment.notification.CardAddedToCommunityCardsNotification;
@@ -516,27 +517,48 @@ public class HumanPlayerAgent extends GuiAgent {
 				
 				System.out.println("[HPA] Player " + game.getPlayersContainer().getPlayerByAID(getAID()).getNickname() + " wants to bet: " + betAmount);
 				
-				AID betManager = DFServiceHelper.searchService(this, "BetManagerAgent","BetManager");
-								
-				//this.addBehaviour(new TransactionBhv(this, new BetRequest(betAmount, getAID()), betManager, ACLMessage.REQUEST));
-				AgentHelper.sendReply(this, playRequestMessage, ACLMessage.REQUEST, new BetRequest(betAmount, getAID()));
-				playRequestMessage = null;
-				
-				/**TransactionBhv transaction = new TransactionBhv(this, new BetRequest(betAmount, getAID()), betManager, ACLMessage.REQUEST);
-				
-				transaction.setResponseVisitor(new SimpleVisitor(this,
-						"Player " + game.getPlayersContainer().getPlayerByAID(getAID()).getNickname() + " bet.",
-						"Player " + game.getPlayersContainer().getPlayerByAID(getAID()).getNickname() + " could not bet."));
-				
-				this.addBehaviour(transaction);
-				*/
+				replyToSimulationPlayRequest(betAmount);
 			}			
 		}
+		
+		else if(arg0.getType() == PlayerGuiEvent.PLAYER_CALLED.ordinal()) {
+			
+			if(playRequestMessage != null) {
+				
+				int betAmount = game.getBetContainer().getCurrentBetAmount();
+				
+				System.out.println("[HPA] Player " + game.getPlayersContainer().getPlayerByAID(getAID()).getNickname() + " wants to call (call amount: " + betAmount + ").");
+				
+				replyToSimulationPlayRequest(betAmount);
+			}
+		}
+
+		else if(arg0.getType() == PlayerGuiEvent.PLAYER_FOLDED.ordinal()) {
+			
+			if(playRequestMessage != null) {
+				System.out.println("[HPA] Player " + game.getPlayersContainer().getPlayerByAID(getAID()).getNickname() + " wants to fold.");	
+				
+				//Answering to simulation play request
+				AgentHelper.sendReply(this, playRequestMessage, ACLMessage.REQUEST, new FoldRequest());
+				
+				//Setting play request to null, waiting for a new request from simulation
+				playRequestMessage = null;
+			}
+		}
+
 	}
 
+	/**************************************
+	 *  Private functions related to IHM events
+	 */
 
-	private static String generateNickName(){
-		//TODO: To be improved...
-		return Long.toHexString(Double.doubleToLongBits(Math.random()));
+	private void replyToSimulationPlayRequest(int betAmount) {
+		if(playRequestMessage != null) {							
+			//Answering to simulation play request
+			AgentHelper.sendReply(this, playRequestMessage, ACLMessage.REQUEST, new BetRequest(betAmount, getAID()));
+			
+			//Setting play request to null, waiting for a new request from simulation
+			playRequestMessage = null;
+		}
 	}
 }

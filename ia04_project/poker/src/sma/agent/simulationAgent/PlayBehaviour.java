@@ -239,7 +239,7 @@ public class PlayBehaviour extends Behaviour {
 			
 			System.out.println("DEBUG [PlayBehaviour:" + step + "] Bet message received FROM " + playerAID.getLocalName());
 			
-			//After the player played, it can't play any longer
+			//After the player played, he can't play any longer
 			simulationAgent.setPlayerAllowedToBetAID(null);
 			
 			// Create a request to check if the bet is OK
@@ -256,7 +256,7 @@ public class PlayBehaviour extends Behaviour {
 
 			System.out.println("DEBUG [PlayBehaviour:" + step + "] Fold message received FROM " + playerAID.getLocalName());
 			
-			//After the player played, it can't play any longer
+			//After the player played, he can't play any longer
 			simulationAgent.setPlayerAllowedToBetAID(null);
 			
 			step = PlayBehaviour.PLAYER_FOLDED_STATE;
