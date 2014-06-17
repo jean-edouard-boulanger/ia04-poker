@@ -7,7 +7,7 @@ import poker.game.player.model.Player;
 import sma.agent.SimulationAgent;
 import sma.agent.helper.AgentHelper;
 import sma.agent.helper.DFServiceHelper;
-import sma.agent.helper.TransactionBhv;
+import sma.agent.helper.TransactionBehaviour;
 import sma.message.FailureMessage;
 import sma.message.MessageVisitor;
 import sma.message.OKMessage;
@@ -18,11 +18,11 @@ import sma.message.environment.request.AddPlayerTableRequest;
  * This behavior wait player subscriptions.
  * The behavior stop when the user click 'Start the game' in the server gui.
  */
-public class PlayerSubscriptionBhv extends CyclicBehaviour
+public class PlayerSubscriptionBehaviour extends CyclicBehaviour
 {
     private SimulationAgent simAgent;
 
-    public PlayerSubscriptionBhv(SimulationAgent agent){
+    public PlayerSubscriptionBehaviour(SimulationAgent agent){
 	super(agent);
 	this.simAgent = agent;
     }
@@ -53,7 +53,7 @@ public class PlayerSubscriptionBhv extends CyclicBehaviour
 		    // we subscribe the player to the environment (async).
 		    Player player = new Player(aclMsg.getSender(), request.getPlayerName());
 		    AID environment = DFServiceHelper.searchService(simAgent, "PokerEnvironment", "Environment");
-		    simAgent.addBehaviour(new TransactionBhv(simAgent, new AddPlayerTableRequest(player), environment));
+		    simAgent.addBehaviour(new TransactionBehaviour(simAgent, new AddPlayerTableRequest(player), environment));
 		    AgentHelper.sendReply(simAgent, aclMsg, ACLMessage.INFORM, new OKMessage());
 		}
 		return true;

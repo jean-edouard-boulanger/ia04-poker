@@ -63,7 +63,7 @@ public class RequestTransaction {
 		try {
 			this.request.setContent(data.toJson());
 		} catch (IOException e) {
-			System.out.println("[" + agent.getLocalName() + "] Error while serializing request data, the message was not sent (" + e.getMessage() + ").");
+			System.out.println("[" + agent.getLocalName() + " : "+ bhv.getBehaviourName() +"] Error while serializing request data, the message was not sent (" + e.getMessage() + ").");
 		}
 	}
 
@@ -99,7 +99,7 @@ public class RequestTransaction {
 
 		if(visitor != null){
 			if(!msg.accept(visitor, ACLmsg)) // transaction messages are discarded even if the visitor does not handle it.
-				System.out.println("[" + agent.getLocalName() + "] Warning response to request not handled by visitor, the message was discarded (" + ACLmsg.getContent() + ").");
+				System.out.println("[" + agent.getLocalName() + " : "+ bhv.getBehaviourName() +"] Warning response to request not handled by visitor, the message was discarded (" + ACLmsg.getContent() + ").");
 		}
 		return true;
 	}

@@ -34,7 +34,7 @@ import poker.token.model.TokenType;
 import sma.agent.helper.AgentHelper;
 import sma.agent.helper.DFServiceHelper;
 import sma.agent.helper.SimpleVisitor;
-import sma.agent.helper.TransactionBhv;
+import sma.agent.helper.TransactionBehaviour;
 import sma.message.FailureMessage;
 import sma.message.MessageVisitor;
 import sma.message.PlayerSubscriptionRequest;
@@ -47,11 +47,11 @@ import sma.message.environment.notification.CommunityCardsEmptiedNotification;
 import sma.message.environment.notification.CurrentPlayerChangedNotification;
 import sma.message.environment.notification.DealerChangedNotification;
 import sma.message.environment.notification.PlayerCheckNotification;
-import sma.message.environment.notification.PlayerFoldedNotification;
 import sma.message.environment.notification.PlayerReceivedCardNotification;
 import sma.message.environment.notification.PlayerReceivedTokenSetNotification;
 import sma.message.environment.notification.PlayerReceivedUnknownCardNotification;
 import sma.message.environment.notification.PlayerSitOnTableNotification;
+import sma.message.environment.notification.PlayerStatusChangedNotification;
 import sma.message.environment.notification.TokenValueDefinitionChangedNotification;
 import sma.message.simulation.request.PlayRequest;
 
@@ -197,6 +197,7 @@ public class HumanPlayerAgent extends GuiAgent {
 			return true;
 		}
 
+		/*
 		@Override
 		public boolean onPlayerFoldedNotification(PlayerFoldedNotification notification, ACLMessage aclMsg){
 
@@ -205,7 +206,22 @@ public class HumanPlayerAgent extends GuiAgent {
 
 			return true;
 		}
+		*/
 
+		@Override
+		public boolean onPlayerStatusChangedNotification(PlayerStatusChangedNotification notification, ACLMessage aclMsg) {
+			
+			switch(notification.getNewStatus()){
+			case FOLDED:
+				changes_game.firePropertyChange(PlayerGuiEvent.PLAYER_FOLDED.toString(), null, 5);
+			default:
+				break;
+			}
+			
+			return true;
+		}
+
+		
 		@Override
 		public boolean onPlayerSitOnTableNotification(PlayerSitOnTableNotification notification, ACLMessage aclMsg){
 
@@ -446,7 +462,7 @@ public class HumanPlayerAgent extends GuiAgent {
 
 			String pseudo = (String) arg0.getParameter(0);
 			AID simulation = DFServiceHelper.searchService(this, "PokerSimulation","Simulation");
-			this.addBehaviour(new TransactionBhv(this, new PlayerSubscriptionRequest(pseudo), simulation, ACLMessage.SUBSCRIBE));
+			this.addBehaviour(new TransactionBehaviour(this, new PlayerSubscriptionRequest(pseudo), simulation, ACLMessage.SUBSCRIBE));
 		}
 		// Faire un behaviour comme dans la simulation
 		else if(arg0.getType() == WaitGameGuiEvent.GAME_START.ordinal())
@@ -478,7 +494,7 @@ public class HumanPlayerAgent extends GuiAgent {
 				//this.addBehaviour(new TransactionBhv(this, new BetRequest(betAmount, getAID()), betManager, ACLMessage.REQUEST));
 				//AgentHelper.sendReply(this, playRequestMessage, ACLMessage.REQUEST, new BetRequest(betAmount, getAID()));
 				
-				TransactionBhv transaction = new TransactionBhv(this, new BetRequest(betAmount, getAID()), simulation, ACLMessage.REQUEST);
+				TransactionBehaviour transaction = new TransactionBehaviour(this, new BetRequest(betAmount, getAID()), simulation, ACLMessage.REQUEST);
 				
 				transaction.setResponseVisitor(new SimpleVisitor(this,
 						"Player " + game.getPlayersContainer().getPlayerByAID(getAID()).getNickname() + " bet.",

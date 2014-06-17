@@ -16,11 +16,11 @@ import jade.util.leap.Iterator;
  * one sub-behavior. The behavior try to overcome the WrapperBehaviour which is
  * very similar but doesn't allows to set the sub-behavior after the constructor.
  **/
-public class TaskRunnerBhv extends SequentialBehaviour {
+public class TaskRunnerBehaviour extends SequentialBehaviour {
 
 	private boolean isStarted;
 
-	public TaskRunnerBhv(Agent agent){
+	public TaskRunnerBehaviour(Agent agent){
 		super(agent);
 		isStarted = false;
 	};

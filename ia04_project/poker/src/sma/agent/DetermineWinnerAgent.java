@@ -21,7 +21,7 @@ import poker.game.player.model.Player;
 import poker.game.player.model.PlayerStatus;
 import sma.agent.helper.AgentHelper;
 import sma.agent.helper.DFServiceHelper;
-import sma.agent.helper.TransactionBhv;
+import sma.agent.helper.TransactionBehaviour;
 import sma.message.FailureMessage;
 import sma.message.MessageVisitor;
 import sma.message.SubscriptionOKMessage;
@@ -156,7 +156,7 @@ public class DetermineWinnerAgent extends Agent {
 		
 		private void subscribeToEnvironment(){
 			
-			TransactionBhv envSubscriptionBhv = new TransactionBhv(myAgent, null, environment, ACLMessage.SUBSCRIBE);
+			TransactionBehaviour envSubscriptionBhv = new TransactionBehaviour(myAgent, null, environment, ACLMessage.SUBSCRIBE);
 			envSubscriptionBhv.setResponseVisitor(new MessageVisitor(){
 				
 				@Override

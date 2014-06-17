@@ -9,13 +9,13 @@ import jade.core.behaviours.Behaviour;
 import sma.agent.SimulationAgent;
 import sma.agent.helper.DFServiceHelper;
 import sma.agent.helper.SimpleVisitor;
-import sma.agent.helper.TransactionBhv;
+import sma.agent.helper.TransactionBehaviour;
 import sma.agent.helper.experimental.Task;
-import sma.agent.helper.experimental.TaskRunnerBhv;
+import sma.agent.helper.experimental.TaskRunnerBehaviour;
 import sma.message.Message;
 import sma.message.bet.request.BetRequest;
 
-public class InitPreFlopBehaviour extends TaskRunnerBhv {
+public class InitPreFlopBehaviour extends TaskRunnerBehaviour {
 
 	SimulationAgent simulationAgent;
 	AID betManagerAID;
@@ -54,7 +54,7 @@ public class InitPreFlopBehaviour extends TaskRunnerBhv {
 	
 	private Behaviour getBlindPaiementBehaviour(AID playerAID, int amount) {
 		Message msg = new BetRequest(amount, playerAID);
-		TransactionBhv transaction = new TransactionBhv(myAgent, msg, betManagerAID);
+		TransactionBehaviour transaction = new TransactionBehaviour(myAgent, msg, betManagerAID);
 		transaction.setResponseVisitor(new SimpleVisitor(myAgent,
 				"player " + playerAID.getLocalName() + "paid blind.",
 				"player " + playerAID.getLocalName() + " cant pay the blind."));		

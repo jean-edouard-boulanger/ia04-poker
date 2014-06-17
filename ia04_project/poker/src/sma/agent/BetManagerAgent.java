@@ -1,15 +1,14 @@
 package sma.agent;
 
-import java.util.Map.Entry;
-
-import com.sun.javafx.collections.MappingChange.Map;
-
 import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.CyclicBehaviour;
 import jade.core.behaviours.OneShotBehaviour;
 import jade.core.behaviours.SequentialBehaviour;
 import jade.lang.acl.ACLMessage;
+
+import java.util.Map.Entry;
+
 import poker.game.exception.ExcessiveBetException;
 import poker.game.exception.NoPlaceAvailableException;
 import poker.game.exception.PlayerAlreadyRegisteredException;
@@ -23,7 +22,7 @@ import poker.token.model.TokenSet;
 import poker.token.model.TokenValueDefinition;
 import sma.agent.helper.AgentHelper;
 import sma.agent.helper.DFServiceHelper;
-import sma.agent.helper.TransactionBhv;
+import sma.agent.helper.TransactionBehaviour;
 import sma.message.BooleanMessage;
 import sma.message.FailureMessage;
 import sma.message.Message;
@@ -34,11 +33,12 @@ import sma.message.bet.notification.BetsMergedNotification;
 import sma.message.bet.notification.PotAmountNotification;
 import sma.message.bet.request.AreBetsClosedRequest;
 import sma.message.bet.request.BetRequest;
+import sma.message.bet.request.DoesPlayerHaveToBetRequest;
 import sma.message.bet.request.GetPotAmountRequest;
 import sma.message.bet.request.MergeBetsRequest;
-import sma.message.environment.notification.PlayerFoldedNotification;
 import sma.message.environment.notification.PlayerReceivedTokenSetNotification;
 import sma.message.environment.notification.PlayerSitOnTableNotification;
+import sma.message.environment.notification.PlayerStatusChangedNotification;
 import sma.message.environment.notification.TokenValueDefinitionChangedNotification;
 import sma.message.environment.notification.WinnerDeterminedNotification;
 import sma.message.environment.request.GiveTokenSetToPlayerRequest;
@@ -49,25 +49,25 @@ public class BetManagerAgent extends Agent {
 	BetManagerMessageVisitor msgVisitor;
 	Game game;
 	AID environment;
-	
+
 	public BetManagerAgent(){
 		super();
 		game = new Game();
 		this.msgVisitor = new BetManagerMessageVisitor();
 	}
-	
+
 	public void setup(){
 		super.setup();
 		DFServiceHelper.registerService(this, "BetManagerAgent","BetManager");
-	    this.environment = DFServiceHelper.searchService(this,"PokerEnvironment", "Environment");
+		this.environment = DFServiceHelper.searchService(this,"PokerEnvironment", "Environment");
 		this.addBehaviour(new ReceiveRequestBehaviour(this));
 		this.addBehaviour(new ReceiveNotificationBehaviour(this));
 	}
-	
+
 	private boolean areBetsClosed(){
 		BetContainer betContainer = game.getBetContainer();
 		TokenValueDefinition valueDefinition = betContainer.getTokenValueDefinition();
-		
+
 		int currentBet = betContainer.getCurrentBetAmount();
 		for(Entry<AID, TokenSet> bet : betContainer.getPlayersBets().entrySet()){
 			if(game.getPlayersContainer().getPlayerByAID(bet.getKey()).getStatus() != PlayerStatus.FOLDED){
@@ -78,92 +78,108 @@ public class BetManagerAgent extends Agent {
 		}
 		return true;
 	}
-	
+
+	private boolean doesPlayerHaveToBet(AID playerAID){
+		
+		BetContainer betContainer = this.game.getBetContainer();
+		Player player = this.game.getPlayersContainer().getPlayerByAID(playerAID);
+		
+		if(betContainer.getCurrentBetAmount() == 0){
+			return true;
+		}
+		
+		if(betContainer.getPlayerCurrentBetAmount(player) < betContainer.getCurrentBetAmount()){
+			return true;
+		}
+		
+		return false;
+	}
+
 	private class ReceiveRequestBehaviour extends CyclicBehaviour {
-		
+
 		private AID environment;
-		
+
 		public ReceiveRequestBehaviour(Agent agent) {
 			this.myAgent = agent;
 			this.environment = DFServiceHelper.searchService(myAgent, "PokerEnvironment", "Environment");
 			subscribeToEnvironment();
 		}
-		
+
 		@Override
 		public void action() {
 
 			boolean msgReceived = AgentHelper.receiveMessage(this.myAgent, ACLMessage.REQUEST, ((BetManagerAgent)myAgent).getMsgVisitor());
-			
+
 			if(!msgReceived)
 				block();
 		}
-		
+
 		private void subscribeToEnvironment(){
-			
-			TransactionBhv envSubscriptionBhv = new TransactionBhv(myAgent, null, environment, ACLMessage.SUBSCRIBE);
+
+			TransactionBehaviour envSubscriptionBhv = new TransactionBehaviour(myAgent, null, environment, ACLMessage.SUBSCRIBE);
 			envSubscriptionBhv.setResponseVisitor(new MessageVisitor(){
-				
+
 				@Override
 				public boolean onSubscriptionOK(SubscriptionOKMessage msg, ACLMessage aclMsg) {
 					System.out.println("[" + myAgent.getLocalName() + "] subscription to environment succeded.");
 					((BetManagerAgent)myAgent).game = msg.getGame();
 					return true;
 				}
-				
+
 				@Override
 				public boolean onFailureMessage(FailureMessage msg, ACLMessage aclMsg) {
 					System.out.println("[" + myAgent.getLocalName() + "] subscription to environment failed: " + msg.getMessage());
 					return true;
 				}
-				
+
 			});
 			myAgent.addBehaviour(envSubscriptionBhv);
 		}
 	}
-	
+
 	private class ReceiveNotificationBehaviour extends CyclicBehaviour {
 		public ReceiveNotificationBehaviour(Agent agent) {
 			myAgent = agent;
 		}
-		
+
 		@Override
 		public void action() {
 			boolean msgReceived = AgentHelper.receiveMessage(this.myAgent, ACLMessage.PROPAGATE, ((BetManagerAgent)myAgent).getMsgVisitor());
-			
+
 			if(!msgReceived)
 				block();
 		}	
 	}
 
 	private void notifyBetToEnvironment(PlayerBetRequest playerBetRequest, GiveTokenSetToPlayerRequest giveTokenSetToPlayerRequest, final ACLMessage messageToAnswer) {
-		
+
 		SequentialBehaviour sequentialBehaviour = new SequentialBehaviour(BetManagerAgent.this);
-		
-		TransactionBhv playerBetTransaction = new TransactionBhv(this, playerBetRequest, environment, ACLMessage.REQUEST);
+
+		TransactionBehaviour playerBetTransaction = new TransactionBehaviour(this, playerBetRequest, environment, ACLMessage.REQUEST);
 		playerBetTransaction.setResponseVisitor(new MessageVisitor(){
-			
+
 			@Override
 			public boolean onOKMessage(OKMessage msg, ACLMessage aclMsg) {
 				System.out.println("[" + BetManagerAgent.this.getLocalName() + "] player bet succeded.");
 				return true;
 			}
-			
+
 			@Override
 			public boolean onFailureMessage(FailureMessage msg, ACLMessage aclMsg) {
 				System.out.println("[" + BetManagerAgent.this.getLocalName() + "] player bet failed: " + msg.getMessage());
 				return true;
 			}
 		});
-		
-		TransactionBhv giveTokenSetToPlayerTransaction = new TransactionBhv(this, giveTokenSetToPlayerRequest, environment, ACLMessage.REQUEST);
+
+		TransactionBehaviour giveTokenSetToPlayerTransaction = new TransactionBehaviour(this, giveTokenSetToPlayerRequest, environment, ACLMessage.REQUEST);
 		giveTokenSetToPlayerTransaction.setResponseVisitor(new MessageVisitor(){
-			
+
 			@Override
 			public boolean onOKMessage(OKMessage msg, ACLMessage aclMsg) {
 				System.out.println("[" + BetManagerAgent.this.getLocalName() + "] added token set to player.");
 				return true;
 			}
-			
+
 			@Override
 			public boolean onFailureMessage(FailureMessage msg, ACLMessage aclMsg) {
 				System.out.println("[" + BetManagerAgent.this.getLocalName() + "] added token set to player: " + msg.getMessage());
@@ -174,94 +190,115 @@ public class BetManagerAgent extends Agent {
 		sequentialBehaviour.addSubBehaviour(playerBetTransaction);
 		sequentialBehaviour.addSubBehaviour(giveTokenSetToPlayerTransaction);
 		sequentialBehaviour.addSubBehaviour(new OneShotBehaviour() {
-			
+
 			@Override
 			public void action() {
 				AgentHelper.sendReply(BetManagerAgent.this, messageToAnswer, ACLMessage.INFORM, new OKMessage());
 			}
 		});
-		
-		
+
+
 		BetManagerAgent.this.addBehaviour(sequentialBehaviour);
 	}
-	
+
 	private class BetManagerMessageVisitor extends MessageVisitor {	
-		
 		@Override
-		public boolean onPlayerReceivedTokenSetNotification(PlayerReceivedTokenSetNotification notification, ACLMessage aclMsg){
+		public boolean onDoesPlayerHaveToBetRequest(DoesPlayerHaveToBetRequest request, ACLMessage aclMessage){
 			
-			System.out.println("[" + getLocalName() + "]" + "PlayerReceivedTokenSetNotification of amount(" + TokenSetValueEvaluator.evaluateTokenSetValue(game.getBetContainer().getTokenValueDefinition(), notification.getReceivedTokenSet()) + "), for player (" + notification.getPlayerAID() + ").");
-			
-			Player player = game.getPlayersContainer().getPlayerByAID(notification.getPlayerAID());
-			player.setTokens(player.getTokens().addTokenSet(notification.getReceivedTokenSet()));
+			BooleanMessage response = new BooleanMessage(doesPlayerHaveToBet(request.getPlayerAID()));
+			AgentHelper.sendReply(BetManagerAgent.this, aclMessage, ACLMessage.INFORM, response);
 			
 			return true;
 		}
 		
 		@Override
+		public boolean onPlayerReceivedTokenSetNotification(PlayerReceivedTokenSetNotification notification, ACLMessage aclMsg){
+
+			System.out.println("[" + getLocalName() + "]" + "PlayerReceivedTokenSetNotification of amount(" + TokenSetValueEvaluator.evaluateTokenSetValue(game.getBetContainer().getTokenValueDefinition(), notification.getReceivedTokenSet()) + "), for player (" + notification.getPlayerAID() + ").");
+
+			Player player = game.getPlayersContainer().getPlayerByAID(notification.getPlayerAID());
+			player.setTokens(player.getTokens().addTokenSet(notification.getReceivedTokenSet()));
+
+			return true;
+		}
+
+		@Override
 		public boolean onBetRequest(BetRequest request, ACLMessage aclMsg) {
-			
+
 			System.out.println("[" + getLocalName() + "]" + "BetRequest of amount(" + request.getBet() + "), for player (" + request.getPlayerAID() + ").");
-			
+
 			Player player = game.getPlayersContainer().getPlayerByAID(request.getPlayerAID());
-			
+
 			int playerPot = TokenSetValueEvaluator.evaluateTokenSetValue(game.getBetContainer().getTokenValueDefinition(), player.getTokens());
-			
-			if(playerPot >= request.getBet() && request.getBet() >= game.getBetContainer().getCurrentBetAmount()) {
+			int currentBetAmount = game.getBetContainer().getCurrentBetAmount();
+
+			if(playerPot < request.getBet())
+			{
+				AgentHelper.sendReply(BetManagerAgent.this, aclMsg, ACLMessage.INFORM, new FailureMessage("Your bankroll is too small to place this bet"));
+			}
+			else if(request.getBet() < currentBetAmount)
+			{
+				AgentHelper.sendReply(BetManagerAgent.this, aclMsg, ACLMessage.INFORM, new FailureMessage("You must bet " + currentBetAmount + " in order to call"));
+			}
+			else if(request.getBet() > currentBetAmount && request.getBet() < 2 * currentBetAmount)
+			{
+				AgentHelper.sendReply(BetManagerAgent.this, aclMsg, ACLMessage.INFORM, new FailureMessage("You must bet at leat " + 2 * currentBetAmount + " in order to raise"));
+			}
+			else 
+			{
 				try {
 					//Removing tokens of the used if allowed to
 					TokenSet tokenSetToSubstract = TokenSetValueEvaluator.tokenSetForBet(request.getBet(), game.getBetContainer().getTokenValueDefinition(), player.getTokens());
 					player.getTokens().substractTokenSet(tokenSetToSubstract);
-					
+
 					//Creating extra token set user paid (Ex: Used paid 50 instead of 40)
 					int amountToGenerate = TokenSetValueEvaluator.evaluateTokenSetValue(game.getBetContainer().getTokenValueDefinition(), tokenSetToSubstract) - request.getBet();
-					
+
 					TokenSet tokenSetToAddToPlayer = TokenSetValueEvaluator.tokenSetFromAmount(amountToGenerate, game.getBetContainer().getTokenValueDefinition());
-					
+
 					//Updating the player's bet amount
 					game.getBetContainer().setPlayerCurrentBet(request.getPlayerAID(), TokenSetValueEvaluator.tokenSetFromAmount(request.getBet(), game.getBetContainer().getTokenValueDefinition()));
 					
 					//Notifying the environment: sequential behaviour					
 					notifyBetToEnvironment(new PlayerBetRequest(tokenSetToSubstract, request.getPlayerAID()), new GiveTokenSetToPlayerRequest(tokenSetToAddToPlayer, request.getPlayerAID()), aclMsg);					
-				} catch (InvalidTokenAmountException | ExcessiveBetException e) {
+				} 
+				catch (InvalidTokenAmountException | ExcessiveBetException e) 
+				{
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
-			else {
-				AgentHelper.sendReply(BetManagerAgent.this, aclMsg, ACLMessage.INFORM, new FailureMessage("Player does not have enough token or tried to place a too small bet."));
-			}
-			
+
 			return true;
 		}
-		
+
 		@Override
 		public boolean onTokenValueDefinitionChangedNotification(TokenValueDefinitionChangedNotification notif, ACLMessage aclMsg) {
-			
+
 			game.getBetContainer().setTokenValueDefinition(notif.getTokenValueDefinition());
-			
+
 			return true;
 		}
-		
+
 		@Override
 		public boolean onWinnerDeterminedNotification(WinnerDeterminedNotification notification, ACLMessage aclMsg) {
-			
+
 			//End of the round, have to reset the bets of the players
 			game.getBetContainer().clearPlayerBets();
-			
+
 			return true;
 		}
-		
+
 		@Override
 		public boolean onMergeBetsRequest(MergeBetsRequest request, ACLMessage aclMsg) {
-			
+
 			game.getBetContainer().transferCurrentBetsToPot();
-			
+
 			AgentHelper.sendReply(BetManagerAgent.this, aclMsg, ACLMessage.INFORM, new BetsMergedNotification());
-			
+
 			return true;
 		}
-		
+
 		@Override
 		public boolean onPlayerSitOnTableNotification(PlayerSitOnTableNotification notification, ACLMessage aclMsg) {
 			try {
@@ -275,42 +312,44 @@ public class BetManagerAgent extends Agent {
 			}
 			return true;
 		}		
-		
+
 		@Override
 		public boolean onGetPotAmountRequest(GetPotAmountRequest request, ACLMessage aclMsg) {
 
 			PotAmountNotification potAmountNotification = new PotAmountNotification(game.getBetContainer().getPot());
-			
+
 			AgentHelper.sendReply(BetManagerAgent.this, aclMsg, ACLMessage.INFORM, potAmountNotification);
-			
+
 			return true;
 		}
-		
+
 		@Override
-		public boolean onPlayerFoldedNotification(PlayerFoldedNotification notification, ACLMessage aclMsg){
-			
-			Player foldedPlayer = game.getPlayersContainer().getPlayerByAID(notification.getPlayerAID());
-			foldedPlayer.setStatus(PlayerStatus.FOLDED);
-					
+		public boolean onPlayerStatusChangedNotification(PlayerStatusChangedNotification notification, ACLMessage aclMsg) {
+
+			Player player = game.getPlayersContainer().getPlayerByAID(notification.getPlayerAID());
+			if(player != null){
+				player.setStatus(notification.getNewStatus());
+			}
+
 			return true;
 		}
-		
+
 		@Override
 		public boolean onAreBetsClosedRequest(AreBetsClosedRequest request, ACLMessage aclMsg) {
-			
+
 			if(areBetsClosed()){
 				AgentHelper.sendReply(BetManagerAgent.this, aclMsg, ACLMessage.INFORM, new BooleanMessage(true));
 			}
 			else {
-				AgentHelper.sendReply(BetManagerAgent.this, aclMsg, ACLMessage.INFORM, new BooleanMessage(true));
+				AgentHelper.sendReply(BetManagerAgent.this, aclMsg, ACLMessage.INFORM, new BooleanMessage(false));
 			}
-			
+
 			return true;
 		}
-		
+
 		// All other environment changes are discarded.
-	    @Override
-	    public boolean onEnvironmentChanged(Message notif, ACLMessage aclMsg) {	return true; }
+		@Override
+		public boolean onEnvironmentChanged(Message notif, ACLMessage aclMsg) {	return true; }
 	}
 
 	public BetManagerMessageVisitor getMsgVisitor() {

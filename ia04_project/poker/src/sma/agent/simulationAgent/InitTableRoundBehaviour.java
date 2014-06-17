@@ -10,8 +10,9 @@ import poker.game.model.PlayersContainer.PlayerSmartIterator;
 import poker.game.player.model.Player;
 import sma.agent.SimulationAgent;
 import sma.agent.SimulationAgent.GameEvent;
+import sma.agent.helper.BlankBehaviour;
 import sma.agent.helper.experimental.Task;
-import sma.agent.helper.experimental.TaskRunnerBhv;
+import sma.agent.helper.experimental.TaskRunnerBehaviour;
 import jade.core.Agent;
 import jade.core.behaviours.Behaviour;
 import jade.core.behaviours.OneShotBehaviour;
@@ -22,11 +23,11 @@ import jade.core.behaviours.SequentialBehaviour;
  * This behaviour prepares a table round
  * It first gets the list of the players who are still playing (i.e. Not folded or out) thanks to the player container
  */
-public class TableRoundBehaviour extends TaskRunnerBhv {
+public class InitTableRoundBehaviour extends TaskRunnerBehaviour {
 	
 	SimulationAgent simulationAgent;
 	
-	public TableRoundBehaviour(SimulationAgent simulationAgent){
+	public InitTableRoundBehaviour(SimulationAgent simulationAgent){
 		super(simulationAgent);
 		this.simulationAgent = simulationAgent;
 	}
@@ -35,7 +36,7 @@ public class TableRoundBehaviour extends TaskRunnerBhv {
 	public void onStart(){
 		System.out.println("@@@ TableRoundBehaviour @@@");
 		
-		Task mainTask = Task.New(new DoNothingBehaviour(simulationAgent));
+		Task mainTask = Task.New(new BlankBehaviour());
 		ArrayList<Player> playersInGame = null;
 		
 		Game game = this.simulationAgent.getGame();
@@ -52,26 +53,21 @@ public class TableRoundBehaviour extends TaskRunnerBhv {
 		}
 		
 		for(Player player : playersInGame){
-			System.out.println("[TableRoundBehaviour] Player index on the table: " + player.getTablePositionIndex());
 			mainTask = mainTask.then(new PlayBehaviour(this.simulationAgent, player.getAID()));
 		}
+		
+		mainTask = mainTask.then(new OneShotBehaviour() {
+			@Override
+			public void action() {
+				simulationAgent.allowNextPlayRequests();
+			}
+		});
 		
 		setBehaviour(mainTask);
 		super.onStart();
 	}
 	
 	public int onEnd(){
-		this.reset();
 		return SimulationAgent.GameEvent.TABLE_ROUND_END.ordinal();
 	}
-	
-	private class DoNothingBehaviour extends OneShotBehaviour{
-		
-		public DoNothingBehaviour(SimulationAgent agent){
-			super(agent);
-		}
-		
-		@Override
-		public void action() {}
-	}	
 }

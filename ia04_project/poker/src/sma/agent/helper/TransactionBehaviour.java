@@ -19,20 +19,20 @@ import sma.message.PlayerSubscriptionRequest;
  * A MessageVisitor object can be set inOrder to handle the request answer.
  * The default visitor print an error message on failure.
  */
-public class TransactionBhv extends Behaviour
+public class TransactionBehaviour extends Behaviour
 {
 	private RequestTransaction transaction;
 	private MessageVisitor visitor;
 	private boolean requestHandled;
 
-	public TransactionBhv(Agent agent, Message requestMessage, AID requestReceiver, int performative){
+	public TransactionBehaviour(Agent agent, Message requestMessage, AID requestReceiver, int performative){
 		super(agent);
 		this.requestHandled = false;
 		this.transaction = new RequestTransaction(this, requestMessage, requestReceiver, performative);
 		this.visitor = new SimpleVisitor(agent, "unhandled transaction failure");
 	}
 
-	public TransactionBhv(Agent agent, Message requestMessage, AID requestReceiver){
+	public TransactionBehaviour(Agent agent, Message requestMessage, AID requestReceiver){
 		this(agent,requestMessage, requestReceiver, ACLMessage.REQUEST);
 	}
 

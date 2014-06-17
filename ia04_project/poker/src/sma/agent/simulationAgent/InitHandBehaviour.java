@@ -14,9 +14,9 @@ import poker.game.player.model.PlayerStatus;
 import sma.agent.SimulationAgent;
 import sma.agent.helper.DFServiceHelper;
 import sma.agent.helper.SimpleVisitor;
-import sma.agent.helper.TransactionBhv;
+import sma.agent.helper.TransactionBehaviour;
 import sma.agent.helper.experimental.Task;
-import sma.agent.helper.experimental.TaskRunnerBhv;
+import sma.agent.helper.experimental.TaskRunnerBehaviour;
 import sma.message.Message;
 import sma.message.bet.request.BetRequest;
 import sma.message.dealer.request.DealRequest;
@@ -31,7 +31,7 @@ import sma.message.environment.request.SetDealerRequest;
  * - we set the dealer
  * - blinds are payed
  */
-public class InitHandBehaviour extends TaskRunnerBhv {
+public class InitHandBehaviour extends TaskRunnerBehaviour {
 
 	private AID environment;
 	private AID dealerAgent;
@@ -58,8 +58,8 @@ public class InitHandBehaviour extends TaskRunnerBhv {
 		
 		Player dealer = this.getDealer();
 
-		Task mainTask = Task.New(getDealerSetterBehaviour(dealer.getAID())) // first we set the dealer token
-				.then(dealCardBhv());
+		// The only thing to do at the beginning of a new hand is to set the dealer
+		Task mainTask = Task.New(getDealerSetterBehaviour(dealer.getAID()));
 		
 		setBehaviour(mainTask);
 		
@@ -78,32 +78,23 @@ public class InitHandBehaviour extends TaskRunnerBhv {
 				e.printStackTrace();
 			}
 		}
+		else {
+			player = playersContainer.getInGamePlayerNextTo(player);
+		}
 		return player;
-	}
-
-	private Behaviour dealCardBhv() {
-		Message msg = new DealRequest(Round.PLAYER_CARDS_DEAL);
-		TransactionBhv transaction = new TransactionBhv(myAgent, msg, dealerAgent);
-		transaction.setResponseVisitor(new SimpleVisitor(myAgent,
-				"cards dealt successfully.",
-				"error while dealing cards."));		
-		return transaction;
 	}
 
 	private Behaviour getDealerSetterBehaviour(AID dealer) {
 		Message msg = new SetDealerRequest(dealer);
-		TransactionBhv transaction = new TransactionBhv(myAgent, msg, environment);
+		TransactionBehaviour transaction = new TransactionBehaviour(myAgent, msg, environment);
 		transaction.setResponseVisitor(new SimpleVisitor(myAgent,
 				"dealer set successfuly successfully to " + dealer.getLocalName() + ".",
 				"error setting dealer to " + dealer.getLocalName() + "."));		
-		
 		return transaction;
 	}
 
-
-	/**  Transition: return the START_PRE_FLOP transition code. */
 	@Override
 	public int onEnd(){
-		return SimulationAgent.GameEvent.START_PRE_FLOP.ordinal();
+		return SimulationAgent.GameEvent.NEW_ROUND.ordinal();
 	}
 }

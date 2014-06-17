@@ -16,16 +16,16 @@ import jade.lang.acl.ACLMessage;
  * - There is only one player remaining => Transition to the behaviour that manages the end of a hand
  * - The bets are closed after a table round => Transition to the behaviour that manages the rounds of a hand 
  */
-public class TableRoundEndBehaviour extends Behaviour {
+public class EndTableRoundBehaviour extends Behaviour {
 
-	GameEvent endTransition = GameEvent.NEW_ROUND;
+	GameEvent endTransition = GameEvent.END_ROUND;
 	SimulationAgent simulationAgent;
 	private int step = 0;
 	
 	AID betManagerAID;
 	RequestTransaction requestTransaction;
 	
-	public TableRoundEndBehaviour(SimulationAgent simulationAgent){
+	public EndTableRoundBehaviour(SimulationAgent simulationAgent){
 		super(simulationAgent);
 		this.simulationAgent = simulationAgent;
 		this.betManagerAID = DFServiceHelper.searchService(this.simulationAgent, "BetManagerAgent","BetManager");
@@ -81,7 +81,6 @@ public class TableRoundEndBehaviour extends Behaviour {
 	
 	@Override
 	public int onEnd(){
-		this.step = 0;
 		return this.endTransition.ordinal();
 	}
 	
@@ -90,8 +89,8 @@ public class TableRoundEndBehaviour extends Behaviour {
 		@Override
 		public boolean onBooleanMessage(BooleanMessage message, ACLMessage aclMsg) {
 			if(message.getValue()){
-				System.out.println("DEBUG [Simulation.TableRoundEndBehaviour:" + step + "] Response received from the BetManagerAgent: TRUE => NEW_ROUND");
-				endTransition = GameEvent.NEW_ROUND;
+				System.out.println("DEBUG [Simulation.TableRoundEndBehaviour:" + step + "] Response received from the BetManagerAgent: TRUE => END_ROUND");
+				endTransition = GameEvent.END_ROUND;
 			}
 			else {
 				System.out.println("DEBUG [Simulation.TableRoundEndBehaviour:" + step + "] Response received from the BetManagerAgent: FALSE => NEW_TABLE_ROUND");

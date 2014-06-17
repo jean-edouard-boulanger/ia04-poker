@@ -7,10 +7,10 @@ import poker.token.model.TokenValueDefinition;
 import sma.agent.SimulationAgent;
 import sma.agent.helper.DFServiceHelper;
 import sma.agent.helper.SimpleVisitor;
-import sma.agent.helper.TransactionBhv;
+import sma.agent.helper.TransactionBehaviour;
 import sma.agent.helper.experimental.Task;
 import sma.agent.helper.experimental.Task.Parallel;
-import sma.agent.helper.experimental.TaskRunnerBhv;
+import sma.agent.helper.experimental.TaskRunnerBehaviour;
 import sma.message.Message;
 import sma.message.blind.request.ResetBlindRequest;
 import sma.message.environment.request.GiveTokenSetToPlayerRequest;
@@ -19,7 +19,7 @@ import sma.message.environment.request.SetTokenValueDefinitionRequest;
 /**
  * Start a new game, give every players a token set, reset blinds.
  */
-public class InitGameBehaviour extends TaskRunnerBhv  
+public class InitGameBehaviour extends TaskRunnerBehaviour  
 {
 	private AID environment;
 	private AID blindManager;
@@ -64,7 +64,7 @@ public class InitGameBehaviour extends TaskRunnerBhv
 
 	private Behaviour giveTokenBehaviour(AID player, TokenSet tokens){
 		Message msg = new GiveTokenSetToPlayerRequest(tokens, player);
-		TransactionBhv transaction = new TransactionBhv(myAgent, msg, environment);
+		TransactionBehaviour transaction = new TransactionBehaviour(myAgent, msg, environment);
 		transaction.setResponseVisitor(new SimpleVisitor(myAgent,
 				"token set given to player " + player.getLocalName() +".",
 				"error while giving token set to player " + player.getLocalName() +"."));
@@ -73,7 +73,7 @@ public class InitGameBehaviour extends TaskRunnerBhv
 
 	private Behaviour resetBlindBehaviour(int time, TokenValueDefinition tokenValueDef){
 		Message msg = new ResetBlindRequest(time, tokenValueDef);
-		TransactionBhv transaction = new TransactionBhv(myAgent, msg, blindManager);
+		TransactionBehaviour transaction = new TransactionBehaviour(myAgent, msg, blindManager);
 		transaction.setResponseVisitor(new SimpleVisitor(myAgent,
 				"blind increase time interval successfully set.",
 				"error while setting blind increase time interval"));
@@ -82,7 +82,7 @@ public class InitGameBehaviour extends TaskRunnerBhv
 
 	private Behaviour setTokenDefinitionBehaviour(TokenValueDefinition tvf){
 		Message msg = new SetTokenValueDefinitionRequest(tvf);
-		TransactionBhv transaction = new TransactionBhv(myAgent, msg, environment);
+		TransactionBehaviour transaction = new TransactionBehaviour(myAgent, msg, environment);
 		transaction.setResponseVisitor(new SimpleVisitor(myAgent,
 				"token value definition successfully set.",
 				"error while setting token value definition"));
