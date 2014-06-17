@@ -10,12 +10,14 @@ public class PlayerBetRequest extends Message {
 
 	private TokenSet bet;
 	private AID playerAID;
+	int betAmount;
 	
 	public PlayerBetRequest(){}
 	
-	public PlayerBetRequest(TokenSet bet,AID player) {
+	public PlayerBetRequest(TokenSet bet,AID player, int betAmount) {
 		this.bet = bet;
 		this.playerAID = player;
+		this.betAmount = betAmount;
 	}
 	
 	@Override
@@ -37,6 +39,14 @@ public class PlayerBetRequest extends Message {
 
 	public void setPlayerAID(AID player) {
 		this.playerAID = player;
+	}
+
+	public int getBetAmount() {
+		return betAmount;
+	}
+
+	public void setBetAmount(int betAmount) {
+		this.betAmount = betAmount;
 	}
 
 }

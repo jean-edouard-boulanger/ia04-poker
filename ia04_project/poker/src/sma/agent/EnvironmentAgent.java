@@ -251,7 +251,7 @@ public class EnvironmentAgent extends Agent {
 				Player player = game.getPlayersContainer().getPlayerByAID(request.getPlayerAID());
 				player.setTokens(player.getTokens().substractTokenSet(request.getBet()));				
 				game.getBetContainer().addTokenToPlayerBet(request.getPlayerAID(), request.getBet());
-				AgentHelper.sendSimpleMessage(EnvironmentAgent.this, subscribers, ACLMessage.PROPAGATE, new BetNotification(request.getPlayerAID(), request.getBet()));
+				AgentHelper.sendSimpleMessage(EnvironmentAgent.this, subscribers, ACLMessage.PROPAGATE, new BetNotification(request.getPlayerAID(), request.getBet(), request.getBetAmount()));
 				AgentHelper.sendReply(EnvironmentAgent.this, aclMsg, ACLMessage.INFORM, new OKMessage());
 			} catch (InvalidTokenAmountException e) {
 				AgentHelper.sendReply(EnvironmentAgent.this, aclMsg, ACLMessage.FAILURE, new FailureMessage(e.getMessage()));

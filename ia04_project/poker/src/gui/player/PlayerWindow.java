@@ -4,6 +4,7 @@ import gui.player.PersoIHM.Sens;
 import gui.player.TokenPlayerIHM.ColorToken;
 import gui.player.animation.AnimateNotification;
 import gui.player.event.model.PlayRequestEventData;
+import gui.player.event.model.PlayerBetEventData;
 import gui.player.event.model.PlayerTokenSetChangedEventData;
 import gui.player.poker.token.BigBlindTokenIHM;
 import gui.player.poker.token.DealerTokenIHM;
@@ -19,12 +20,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javafx.animation.Interpolator;
-import javafx.animation.PauseTransition;
-import javafx.animation.SequentialTransition;
-import javafx.animation.Timeline;
-import javafx.animation.TranslateTransition;
-import javafx.animation.TranslateTransitionBuilder;
 import javafx.application.Application;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -43,14 +38,11 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.transform.Scale;
 import javafx.stage.Stage;
-import javafx.util.Duration;
 import poker.card.helper.CardImageHelper;
 import poker.card.model.Card;
 import poker.game.model.BetType;
 import poker.game.model.BlindValueDefinition;
 import poker.game.player.model.Player;
-import poker.token.exception.InvalidTokenAmountException;
-import poker.token.model.TokenSet;
 import poker.token.model.TokenType;
 import sma.agent.HumanPlayerAgent;
 
@@ -1005,13 +997,13 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 				 */
 				else if(evt.getPropertyName().equals(PlayerGuiEvent.PLAYER_BET.toString()))
 				{
-					if(evt.getNewValue() instanceof PlayerTokenSetChangedEventData)
+					if(evt.getNewValue() instanceof PlayerBetEventData)
 					{
-						PlayerTokenSetChangedEventData evt_data = (PlayerTokenSetChangedEventData)evt.getNewValue();
+						PlayerBetEventData evt_data = (PlayerBetEventData)evt.getNewValue();
 						
-						PlayerWindow.this.pot.AddTokenSet(evt_data.getTokenSet());
-						PlayerWindow.this.pot.addBet(evt_data.getTokenSetValuation());
-						PlayerWindow.this.list_token_bet.get(evt_data.getPlayerIndex()).setBet(evt_data.getTokenSetValuation());
+						PlayerWindow.this.pot.AddTokenSet(evt_data.getTokenSetUsedForBet());
+						PlayerWindow.this.pot.addBet(evt_data.getBetAmount());
+						PlayerWindow.this.list_token_bet.get(evt_data.getPlayerIndex()).setBet(evt_data.getBetAmount());
 						System.out.println("[PlayerWindow] Player bet");
 					}
 				}

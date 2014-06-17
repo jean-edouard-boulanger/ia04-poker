@@ -10,13 +10,22 @@ public class BetNotification extends Message {
 
 	TokenSet betTokenSet;
 	private AID playerAID;
-
+	int betAmount;
 	
+	public int getBetAmount() {
+		return betAmount;
+	}
+
+	public void setBetAmount(int betAmount) {
+		this.betAmount = betAmount;
+	}
+
 	public BetNotification(){}
 	
-	public BetNotification(AID playerAID, TokenSet betTokenSet){
+	public BetNotification(AID playerAID, TokenSet betTokenSet, int betAmount){
 		this.playerAID = playerAID;
 		this.betTokenSet = betTokenSet;
+		this.betAmount = betAmount;
 	}
 
 	public TokenSet getBetTokenSet() {

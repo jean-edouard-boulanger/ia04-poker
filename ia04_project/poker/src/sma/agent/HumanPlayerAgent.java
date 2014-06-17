@@ -5,6 +5,7 @@ import gui.player.PlayerWindow.PlayerGuiEvent;
 import gui.player.WaitGameWindow;
 import gui.player.WaitGameWindow.WaitGameGuiEvent;
 import gui.player.event.model.PlayRequestEventData;
+import gui.player.event.model.PlayerBetEventData;
 import gui.player.event.model.PlayerTokenSetChangedEventData;
 import jade.core.AID;
 import jade.core.Agent;
@@ -281,10 +282,11 @@ public class HumanPlayerAgent extends GuiAgent {
 				e.printStackTrace();
 			}
 			
-			PlayerTokenSetChangedEventData eventData = new PlayerTokenSetChangedEventData();
-			eventData.setTokenSet(betTokenSet);
+			PlayerBetEventData eventData = new PlayerBetEventData();
+			
+			eventData.setTokenSetUsedForBet(betTokenSet);
 			eventData.setPlayerIndex(game.getPlayersContainer().getPlayerByAID(notification.getPlayerAID()).getTablePositionIndex());
-			eventData.setTokenSetValuation(TokenSetValueEvaluator.evaluateTokenSetValue(game.getBetContainer().getTokenValueDefinition(), betTokenSet));
+			eventData.setBetAmount(notification.getBetAmount());
 
 			/*if(notification.getPlayerAID().equals(HumanPlayerAgent.this.getAID())){
 				eventData.setTokenSet(player.getTokens());
