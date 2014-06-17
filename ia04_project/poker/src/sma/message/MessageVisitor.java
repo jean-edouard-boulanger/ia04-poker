@@ -4,6 +4,7 @@ import jade.lang.acl.ACLMessage;
 import sma.message.bet.notification.BetsMergedNotification;
 import sma.message.bet.notification.PotAmountNotification;
 import sma.message.bet.request.BetRequest;
+import sma.message.bet.request.FoldRequest;
 import sma.message.bet.request.GetPotAmountRequest;
 import sma.message.bet.request.MergeBetsRequest;
 import sma.message.blind.request.GetBlindValueDefinitionRequest;
@@ -33,6 +34,7 @@ import sma.message.environment.request.DealCardToPlayerRequest;
 import sma.message.environment.request.EmptyCommunityCardsRequest;
 import sma.message.environment.request.GiveTokenSetToPlayerRequest;
 import sma.message.environment.request.PlayerBetRequest;
+import sma.message.environment.request.PlayerFoldRequest;
 import sma.message.environment.request.SetDealerRequest;
 import sma.message.environment.request.SetTokenValueDefinitionRequest;
 import sma.message.environment.request.ShowPlayerCardsRequest;
@@ -73,6 +75,7 @@ public class MessageVisitor {
 	
 	// Bet
 	public boolean onBetRequest(BetRequest request, ACLMessage aclMsg) {return false;}
+	public boolean onFoldRequest(FoldRequest request, ACLMessage aclMsg){return false;}
 	public boolean onGetPotAmountRequest(GetPotAmountRequest request, ACLMessage aclMsg) {return false;}
 	public boolean onPotAmountNotification(PotAmountNotification notification, ACLMessage aclMsg) {return false;}
 	public boolean onMergeBetsRequest(MergeBetsRequest request, ACLMessage aclMsg) {return false;}
@@ -90,6 +93,7 @@ public class MessageVisitor {
 	public boolean onSetDealerRequest(SetDealerRequest setDealerRequest,ACLMessage aclMsg) {return false;}
 	public boolean onShowPlayerCardsRequest(ShowPlayerCardsRequest showPlayerRequest, ACLMessage aclMsg) {return false;}
 	public boolean onPlayerBetRequest(PlayerBetRequest playerBetRequest, ACLMessage aclMsg) { return false; }
+	public boolean onPlayerFoldRequest(PlayerFoldRequest request, ACLMessage aclMsg) { return false; }
 	
 	// Environment notification 
 	public boolean onEnvironmentChanged(Message notif, ACLMessage aclMsg){return false;}

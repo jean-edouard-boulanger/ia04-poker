@@ -21,46 +21,46 @@ import sma.message.PlayerSubscriptionRequest;
  */
 public class TransactionBhv extends Behaviour
 {
-    private RequestTransaction transaction;
-    private MessageVisitor visitor;
-    private boolean requestHandled;
+	private RequestTransaction transaction;
+	private MessageVisitor visitor;
+	private boolean requestHandled;
 
-    public TransactionBhv(Agent agent, Message requestMessage, AID requestReceiver, int performative){
-	super(agent);
-	this.requestHandled = false;
-	this.transaction = new RequestTransaction(this, requestMessage, requestReceiver, performative);
-	this.visitor = new SimpleVisitor(agent, "unhandled transaction failure");
-    }
+	public TransactionBhv(Agent agent, Message requestMessage, AID requestReceiver, int performative){
+		super(agent);
+		this.requestHandled = false;
+		this.transaction = new RequestTransaction(this, requestMessage, requestReceiver, performative);
+		this.visitor = new SimpleVisitor(agent, "unhandled transaction failure");
+	}
 
-    public TransactionBhv(Agent agent, Message requestMessage, AID requestReceiver){
-	this(agent,requestMessage, requestReceiver, ACLMessage.REQUEST);
-    }
+	public TransactionBhv(Agent agent, Message requestMessage, AID requestReceiver){
+		this(agent,requestMessage, requestReceiver, ACLMessage.REQUEST);
+	}
 
-    public void setResponseVisitor(MessageVisitor visitor){
-	this.visitor = visitor;
-    }
+	public void setResponseVisitor(MessageVisitor visitor){
+		this.visitor = visitor;
+	}
 
-    @Override
-    public void onStart(){
-	transaction.sendRequest();
-    }
+	@Override
+	public void onStart(){
+		transaction.sendRequest();
+	}
 
-    /**
-     * Register players if there is enough room (only if the server is started and the game not running).
-     */
-    @Override
-    public void action() {
+	/**
+	 * Register players if there is enough room (only if the server is started and the game not running).
+	 */
+	@Override
+	public void action() {
 
-	if(!transaction.checkReply(this.visitor))
-	    block();
-	else
-	    this.requestHandled = true;
+		if(!transaction.checkReply(this.visitor))
+			block();
+		else
+			this.requestHandled = true;
 
-    }
+	}
 
-    @Override
-    public boolean done() {
-	return requestHandled;
-    }
+	@Override
+	public boolean done() {
+		return requestHandled;
+	}
 
 }

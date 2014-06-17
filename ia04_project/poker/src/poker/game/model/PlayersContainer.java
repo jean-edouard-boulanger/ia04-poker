@@ -12,6 +12,7 @@ import poker.game.exception.NoPlaceAvailableException;
 import poker.game.exception.NotRegisteredPlayerException;
 import poker.game.exception.PlayerAlreadyRegisteredException;
 import poker.game.player.model.Player;
+import poker.game.player.model.PlayerStatus;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -86,6 +87,12 @@ public class PlayersContainer {
 	}
 
 	@JsonIgnore
+	public Player getRandomPlayer(){
+		Random random = new Random();
+		return this.players.get(random.nextInt(this.players.size()));
+	}
+	
+	@JsonIgnore
 	public ArrayList<Integer> getAvailableTablePlaces(){
 		ArrayList<Integer> freePlacesIndex = new ArrayList<Integer>(Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9));
 		for(Player p : this.players){
@@ -114,8 +121,8 @@ public class PlayersContainer {
 		}
 
 		Random random = new Random();
-		
-		int index = (places.size() > 1) ? random.nextInt(places.size() - 1) : 0;
+
+		int index = random.nextInt(places.size());
 		return places.get(index);		
 	}
 
@@ -171,6 +178,60 @@ public class PlayersContainer {
 		return players.get(playerIndex + 1);
 	}	
 
+	public Player getInGamePlayerNextTo(Player po){
+		int playerIndex = players.indexOf(po);
+		if(playerIndex == -1){
+			return null;
+		}
+		
+		Player tmpPlayer = po;
+		do{
+			tmpPlayer = this.getPlayerNextTo(tmpPlayer);
+		}while((tmpPlayer.getStatus() == PlayerStatus.OUT || tmpPlayer.getStatus() == PlayerStatus.FOLDED) && !tmpPlayer.equals(po));
+		
+		if(tmpPlayer.equals(po)){
+			return null;
+		}
+		else {
+			return tmpPlayer;
+		}
+	}
+	
+	public int countInGamePlayers(){
+		int nb = 0;
+		for(Player player : this.players){
+			if(player.getStatus() == PlayerStatus.IN_GAME){
+				nb++;
+			}
+		}
+		return nb;
+	}
+	
+	@JsonIgnore
+	public ArrayList<Player> getPlayersInGame(Player first){
+		ArrayList<Player> playersInGame = new ArrayList<Player>();
+		
+		int index = 0;
+		if(first != null){
+			index = players.indexOf(first);
+		}
+		
+		if(index == -1){
+			return null;
+		}
+		
+		int nbPlayers = this.players.size();
+		for(int i = 0; i < this.players.size(); i++){
+			int realIndex = (index + i) % this.players.size();
+			Player p = this.players.get(realIndex);
+			if(p.getStatus() != PlayerStatus.FOLDED && p.getStatus() != PlayerStatus.OUT){
+				playersInGame.add(p);
+			}
+		}
+		
+		return players;
+	}
+	
 	public class PlayerIterator implements Iterator<Player>{
 
 		private ArrayList<Player> tmpPlayers; 
@@ -200,7 +261,6 @@ public class PlayersContainer {
 			}
 
 			this.currentPlayerIndex = this.initialIndex;
-
 		}
 
 		@Override
@@ -255,6 +315,84 @@ public class PlayersContainer {
 		return new PlayerCircularIterator(firstPlayer);
 	}
 
+	public class PlayerSmartIterator implements Iterator<Player>{
+
+		private final int initialIndex;
+		private int currentPlayerIndex;
+		
+		public PlayerSmartIterator(){
+			Collections.sort(players, new Player.PlayerTablePositionComparator());
+
+			this.initialIndex = 0;
+			this.currentPlayerIndex = 0;
+		}
+		
+		public PlayerSmartIterator(Player first){
+			players = new ArrayList<Player>(players);
+			Collections.sort(players, new Player.PlayerTablePositionComparator());
+
+			int tmpInitialIndex = players.indexOf(first);
+
+			if(tmpInitialIndex == -1 || first.getStatus() == PlayerStatus.FOLDED || first.getStatus() == PlayerStatus.OUT){
+				this.initialIndex = 0;
+			}
+			else {
+				this.initialIndex = tmpInitialIndex;
+			}
+
+			this.currentPlayerIndex = this.initialIndex;
+		}
+		
+		@Override
+		public boolean hasNext() {
+			return this.getNextPlayerIndex() >= 0;
+		}
+
+		@Override
+		public Player next() {
+			this.currentPlayerIndex = getNextPlayerIndex();
+			return players.get(this.currentPlayerIndex);
+		}
+
+		public Player current(){
+			return players.get(this.currentPlayerIndex);
+		}
+		
+		@Override
+		public void remove() {
+			throw new UnsupportedOperationException();
+		}
+		
+		private int getNextPlayerIndex(){
+			
+			Player tmpPlayer = players.get(currentPlayerIndex);
+			int tmpIndex = this.currentPlayerIndex;
+			do{
+				tmpIndex = this.getNextIndex(tmpIndex);
+			}while((players.get(tmpIndex).getStatus() == PlayerStatus.FOLDED ||
+				    players.get(tmpIndex).getStatus() == PlayerStatus.OUT)   &&
+				    tmpIndex != this.initialIndex);
+			
+			if(tmpIndex == this.initialIndex){
+				return -1;
+			}
+			else {
+				return tmpIndex;
+			}
+			
+		}
+		
+		private int getNextIndex(int index){
+			if(index >= players.size() - 1){
+				return 0;
+			}
+			else{
+				return index + 1;
+			}
+		}
+		
+	}
+	
 	public class PlayerCircularIterator implements Iterator<Player>{
 
 		private final int initialIndex;
@@ -282,7 +420,6 @@ public class PlayersContainer {
 			}
 
 			this.currentPlayerIndex = this.initialIndex;
-
 		}
 
 		@Override
@@ -349,12 +486,12 @@ public class PlayersContainer {
 			throw new NotRegisteredPlayerException(dealer);
 
 		// we clear roles:
-			Player oldDealer = getDealer();
+		Player oldDealer = getDealer();
 		if(oldDealer != null)
 			oldDealer.setDealer(false);
 
 		// we set roles:
-			dealer.setDealer(true);
+		dealer.setDealer(true);
 	}
 
 	@JsonIgnore

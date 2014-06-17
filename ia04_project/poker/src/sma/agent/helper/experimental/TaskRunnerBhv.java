@@ -16,23 +16,23 @@ import jade.core.behaviours.SequentialBehaviour;
  **/
 public class TaskRunnerBhv extends SequentialBehaviour {
 
-    private boolean isStarted;
+	private boolean isStarted;
 
-    public TaskRunnerBhv(Agent agent){
-	super(agent);
-	isStarted = false;
-    };
-    
-    @Override
-    public void onStart() {
-       this.isStarted = true;
-        super.onStart();
-    }
-    
-    public void setBehaviour(Behaviour bhv){
-	if(this.isStarted)
-	    System.out.println("Error: can't set the sub-behaviour of an already started TaskRunnerBhv.");
-	else
-	    this.addSubBehaviour(bhv);	
-    }
+	public TaskRunnerBhv(Agent agent){
+		super(agent);
+		isStarted = false;
+	};
+
+	@Override
+	public void onStart() {
+		this.isStarted = true;
+		super.onStart();
+	}
+
+	public void setBehaviour(Behaviour bhv){
+		if(this.isStarted)
+			System.out.println("Error: can't set the sub-behaviour of an already started TaskRunnerBhv.");
+		else
+			this.addSubBehaviour(bhv);	
+	}
 }

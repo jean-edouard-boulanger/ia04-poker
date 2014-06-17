@@ -19,11 +19,11 @@ import sma.message.environment.request.SetTokenValueDefinitionRequest;
 /**
  * Start a new game, give every players a token set, reset blinds.
  */
-public class InitGameBhv extends TaskRunnerBhv  
+public class InitGameBehaviour extends TaskRunnerBhv  
 {
 	private AID environment;
 	private AID blindManager;
-	private SimulationAgent simAgent;
+	private SimulationAgent simulationAgent;
 
 	/**
 	 * Build an new instance of game initialization behavior.
@@ -31,31 +31,33 @@ public class InitGameBhv extends TaskRunnerBhv
 	 *  - set token value definition
 	 *  - chip distribution to players
 	 *  - blind definition
-	 * @param simAgent	Agent owning the behavior
+	 * @param simulationAgent	Agent owning the behavior
 	 */
-	public InitGameBhv(SimulationAgent simAgent) {
-		super(simAgent);
+	public InitGameBehaviour(SimulationAgent simulationAgent) {
+		super(simulationAgent);
 
-		this.environment = DFServiceHelper.searchService(simAgent, "PokerEnvironment", "Environment");
-		this.blindManager = DFServiceHelper.searchService(simAgent, "BlindManagementAgent","BlindManager");
-		this.simAgent = simAgent;
+		this.environment = DFServiceHelper.searchService(simulationAgent, "PokerEnvironment", "Environment");
+		this.blindManager = DFServiceHelper.searchService(simulationAgent, "BlindManagementAgent","BlindManager");
+		this.simulationAgent = simulationAgent;
 	}
 
 	@Override
 	public void onStart() {
-		
-		Behaviour setTokenValue = setTokenDefinitionBehaviour(simAgent.getDefaultTokenValueDefinition());
-		Behaviour resetBlind = resetBlindBehaviour(simAgent.getBlindIncreaseDelayS(), simAgent.getDefaultTokenValueDefinition());
+
+		Behaviour setTokenValue = setTokenDefinitionBehaviour(simulationAgent.getDefaultTokenValueDefinition());
+		Behaviour resetBlind = resetBlindBehaviour(simulationAgent.getBlindIncreaseDelayS(), simulationAgent.getDefaultTokenValueDefinition());
 
 		// we start the task by setting the token value definition:
 		Parallel par = Task.New(setTokenValue).parallel();
 
 		// then we give each player their initial token set (in parallel)
-		for (AID p : simAgent.getGame().getPlayersContainer().getPlayersAIDs())
-			par.add(giveTokenBehaviour(p, simAgent.getDefaultTokenSet()));
+		for (AID p : simulationAgent.getGame().getPlayersContainer().getPlayersAIDs())
+			par.add(giveTokenBehaviour(p, simulationAgent.getDefaultTokenSet()));
 
 		// again in parallel, we reset the blind agent.
 		this.setBehaviour(par.add(resetBlind).whenAll());
+
+		simulationAgent.addBehaviour(new CheckPlayersActionsBehaviour(simulationAgent));
 		
 		super.onStart();
 	}
@@ -86,7 +88,7 @@ public class InitGameBhv extends TaskRunnerBhv
 				"error while setting token value definition"));
 		return transaction;
 	}
-
+	
 	/** Transition: Return the NEW_HAND transition code.*/
 	@Override
 	public int onEnd(){

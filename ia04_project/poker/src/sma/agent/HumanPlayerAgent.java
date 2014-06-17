@@ -471,14 +471,14 @@ public class HumanPlayerAgent extends GuiAgent {
 				
 				System.out.println("Player " + game.getPlayersContainer().getPlayerByAID(getAID()).getNickname() + " bet: " + betAmount);
 				
-				AID betManager = DFServiceHelper.searchService(this, "BetManagerAgent","BetManager");
+				AID simulation = DFServiceHelper.searchService(this, "PokerSimulation","Simulation");
 				
 				playRequestMessage = null;
 				
 				//this.addBehaviour(new TransactionBhv(this, new BetRequest(betAmount, getAID()), betManager, ACLMessage.REQUEST));
 				//AgentHelper.sendReply(this, playRequestMessage, ACLMessage.REQUEST, new BetRequest(betAmount, getAID()));
 				
-				TransactionBhv transaction = new TransactionBhv(this, new BetRequest(betAmount, getAID()), betManager, ACLMessage.REQUEST);
+				TransactionBhv transaction = new TransactionBhv(this, new BetRequest(betAmount, getAID()), simulation, ACLMessage.REQUEST);
 				
 				transaction.setResponseVisitor(new SimpleVisitor(this,
 						"Player " + game.getPlayersContainer().getPlayerByAID(getAID()).getNickname() + " bet.",
