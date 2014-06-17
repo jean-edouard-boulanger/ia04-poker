@@ -568,6 +568,31 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 	public void disableBetButtons() {
 		for(Button betButton : betButtons.values()) {
 			betButton.setDisable(true);
+			slider_bet.setDisable(true);
+			button_add_bet.setDisable(true);
+			button_sub_bet.setDisable(true);
+		}
+	}
+	
+	public void enableBetButtons(ArrayList<BetType> availableActions, int raiseAmount, int sliderMin, int sliderMax) {
+		
+			for(Button betButton : betButtons.values()) {
+				for(BetType t : availableActions){
+					if(betButtons.containsKey(t)) {
+						if(t != BetType.CHECK)
+							betButtons.get(t).setDisable(false);
+						else if(raiseAmount == 0) {
+							betButtons.get(t).setDisable(false);
+						}
+					}
+				}
+				
+			slider_bet.setMin(sliderMin);
+			slider_bet.setMax(sliderMax);
+
+			slider_bet.setDisable(false);
+			button_add_bet.setDisable(false);
+			button_sub_bet.setDisable(false);
 		}
 	}
 	
@@ -1023,20 +1048,8 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 						betButtons.get(BetType.CALL).setText("Call ("+ eventData.getMinimumBetAmount() +")");
 						//betButtons.get(BetType.ALL_IN).setText("All in (" + eventData.getMaximumBetAmount() + ")");
 						betButtons.get(BetType.RAISE).setText("Raise (" + eventData.getRaiseAmount() + ")");
-						
-						slider_bet.setMin(eventData.getMinimumBetAmount());
-						slider_bet.setMax(eventData.getMaximumBetAmount());
-						
-						for(BetType t : eventData.getAvailableActions()){
-							if(betButtons.containsKey(t)) {
-								if(t != BetType.CHECK)
-									betButtons.get(t).setDisable(false);
-								else if(eventData.getRaiseAmount() == 0) {
-									betButtons.get(t).setDisable(false);
-								}
-							}
-						}
-						
+												
+						enableBetButtons(eventData.getAvailableActions(), eventData.getRaiseAmount(), eventData.getMinimumBetAmount(), eventData.getMaximumBetAmount());
 					}
 				}
 				
