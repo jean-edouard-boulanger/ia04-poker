@@ -769,6 +769,10 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 				human_player_agent.postGuiEvent(ev);
 			}
 		});
+		
+		for(Button bt : betButtons.values()){
+			bt.setDisable(true);
+		}
 	}
 
 	/**************************************

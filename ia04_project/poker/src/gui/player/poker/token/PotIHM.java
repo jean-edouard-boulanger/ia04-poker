@@ -25,6 +25,8 @@ public class PotIHM extends Group {
 		this.tokenStacks = new HashMap<TokenType, TokenStackIHM>();
 		this.score = 0;
 		this.label_score = new Label();
+		this.label_score.getStyleClass().add("label-bet");
+		this.label_score.setVisible(false);
 		this.getChildren().add(this.label_score);
 	}
 	
@@ -33,8 +35,10 @@ public class PotIHM extends Group {
 		this.center = center;
 		this.score = 0;
 		this.label_score = new Label();
-		this.label_score.setLayoutX(25);
-		this.label_score.setLayoutY(25);
+		this.label_score.setLayoutX(center.x);
+		this.label_score.setLayoutY(center.y + 25);
+		this.label_score.getStyleClass().add("label-bet");
+		this.label_score.setVisible(false);
 		this.getChildren().add(this.label_score);
 	}
 	
@@ -43,6 +47,10 @@ public class PotIHM extends Group {
 		this.tokenSet = t;
 		this.score = score;
 		this.label_score = new Label(String.valueOf(score));
+		this.label_score.setLayoutX(center.x);
+		this.label_score.setLayoutY(center.y + 25);
+		this.label_score.getStyleClass().add("label-bet");
+		this.label_score.setVisible(false);
 		this.getChildren().add(this.label_score);
 		this.refresh();
 	}
@@ -114,6 +122,9 @@ public class PotIHM extends Group {
 	
 	public void addBet(int bet){
 		this.score += bet;
+		this.label_score.setText("Pot : " + String.valueOf(this.score));
+		if(!this.label_score.isVisible())
+			this.label_score.setVisible(true);
 	}
 	
 	public void clear(){
