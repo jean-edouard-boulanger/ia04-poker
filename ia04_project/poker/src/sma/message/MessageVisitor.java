@@ -33,6 +33,7 @@ import sma.message.environment.request.DealCardToPlayerRequest;
 import sma.message.environment.request.EmptyCommunityCardsRequest;
 import sma.message.environment.request.GiveTokenSetToPlayerRequest;
 import sma.message.environment.request.PlayerBetRequest;
+import sma.message.environment.request.PlayerFoldedRequest;
 import sma.message.environment.request.SetDealerRequest;
 import sma.message.environment.request.SetTokenValueDefinitionRequest;
 import sma.message.environment.request.ShowPlayerCardsRequest;
@@ -90,6 +91,7 @@ public class MessageVisitor {
 	public boolean onSetDealerRequest(SetDealerRequest setDealerRequest,ACLMessage aclMsg) {return false;}
 	public boolean onShowPlayerCardsRequest(ShowPlayerCardsRequest showPlayerRequest, ACLMessage aclMsg) {return false;}
 	public boolean onPlayerBetRequest(PlayerBetRequest playerBetRequest, ACLMessage aclMsg) { return false; }
+	public boolean onPlayerFoldedRequest(PlayerFoldedRequest playerFoldedRequest, ACLMessage aclMsg) { return false; }
 	
 	// Environment notification 
 	public boolean onEnvironmentChanged(Message notif, ACLMessage aclMsg){return false;}

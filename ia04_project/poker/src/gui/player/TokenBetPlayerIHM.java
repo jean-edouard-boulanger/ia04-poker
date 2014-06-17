@@ -1,5 +1,7 @@
 package gui.player;
 
+import com.sun.javafx.geom.Point2D;
+
 import javafx.scene.Group;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
@@ -12,11 +14,11 @@ public class TokenBetPlayerIHM extends Group {
 	
 	private Label label_bet;
 	
-	public TokenBetPlayerIHM(int x, int y, int bet)
+	public TokenBetPlayerIHM(Point2D point)
 	{
-		label_bet = new Label(String.valueOf(Integer.valueOf(bet)));
-		label_bet.setLayoutX(x);
-		label_bet.setLayoutY(y);
+		label_bet = new Label("0");
+		label_bet.setLayoutX(point.x);
+		label_bet.setLayoutY(point.y);
 
 		label_bet.getStyleClass().add("label-bet");
 		

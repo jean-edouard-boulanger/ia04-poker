@@ -363,16 +363,16 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 		/**************************************
 		 *  Players's bets
 		 */
-		bet_player_1 = new TokenBetPlayerIHM(150, 205, 0);
-		bet_player_2 = new TokenBetPlayerIHM(170, 145, 0);
-		bet_player_3 = new TokenBetPlayerIHM(250, 115, 0);
-		bet_player_4 = new TokenBetPlayerIHM(440, 115, 0);
-		bet_player_5 = new TokenBetPlayerIHM(530, 145, 0);
-		bet_player_6 = new TokenBetPlayerIHM(550, 205, 0);
-		bet_player_7 = new TokenBetPlayerIHM(530, 260, 0);
-		bet_player_8 = new TokenBetPlayerIHM(440, 270, 0);
-		bet_player_9 = new TokenBetPlayerIHM(250, 270, 0);
-		bet_player_10 = new TokenBetPlayerIHM(170, 260, 0);
+		bet_player_1 = new TokenBetPlayerIHM(new Point2D(150,205));
+		bet_player_2 = new TokenBetPlayerIHM(new Point2D(170, 145));
+		bet_player_3 = new TokenBetPlayerIHM(new Point2D(250, 115));
+		bet_player_4 = new TokenBetPlayerIHM(new Point2D(440, 115));
+		bet_player_5 = new TokenBetPlayerIHM(new Point2D(530, 145));
+		bet_player_6 = new TokenBetPlayerIHM(new Point2D(550, 205));
+		bet_player_7 = new TokenBetPlayerIHM(new Point2D(530, 260));
+		bet_player_8 = new TokenBetPlayerIHM(new Point2D(440, 270));
+		bet_player_9 = new TokenBetPlayerIHM(new Point2D(250, 270));
+		bet_player_10 = new TokenBetPlayerIHM(new Point2D(170, 260));
 
 		this.list_token_bet = new ArrayList<TokenBetPlayerIHM>();
 
@@ -486,18 +486,8 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 		 */
 		
 		//Remove that after debug
-			
-		TokenSet tokenSet = new TokenSet();
-		try {
-			tokenSet.setAmountForTokenType(TokenType.WHITE, 10);
-			tokenSet.setAmountForTokenType(TokenType.BLUE, 15);
-			tokenSet.setAmountForTokenType(TokenType.RED, 40);
-			tokenSet.setAmountForTokenType(TokenType.BLACK, 20);
-		} catch (InvalidTokenAmountException e) {
-			e.printStackTrace();
-		}
 		
-		this.pot = new PotIHM(new Point2D(355, 245)/*, tokenSet*/);
+		this.pot = new PotIHM(new Point2D(355, 245));
 		root.getChildren().add(this.pot);
 		
 		
@@ -988,8 +978,13 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 				 */
 				else if(evt.getPropertyName().equals(PlayerGuiEvent.PLAYER_BET.toString()))
 				{
-					if(evt.getNewValue() instanceof Integer)
+					if(evt.getNewValue() instanceof PlayerTokenSetChangedEventData)
 					{
+						PlayerTokenSetChangedEventData evt_data = (PlayerTokenSetChangedEventData)evt.getNewValue();
+						
+						PlayerWindow.this.pot.AddTokenSet(evt_data.getTokenSet());
+						PlayerWindow.this.pot.addBet(evt_data.getTokenSetValuation());
+						PlayerWindow.this.list_token_bet.get(evt_data.getPlayerIndex()).setBet(evt_data.getTokenSetValuation());
 						System.out.println("[PlayerWindow] Player bet");
 					}
 				}

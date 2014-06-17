@@ -53,6 +53,7 @@ import sma.message.environment.notification.PlayerReceivedTokenSetNotification;
 import sma.message.environment.notification.PlayerReceivedUnknownCardNotification;
 import sma.message.environment.notification.PlayerSitOnTableNotification;
 import sma.message.environment.notification.TokenValueDefinitionChangedNotification;
+import sma.message.environment.request.PlayerFoldedRequest;
 import sma.message.simulation.request.PlayRequest;
 
 public class HumanPlayerAgent extends GuiAgent {
@@ -261,16 +262,19 @@ public class HumanPlayerAgent extends GuiAgent {
 			}
 			
 			PlayerTokenSetChangedEventData eventData = new PlayerTokenSetChangedEventData();
+			eventData.setTokenSet(betTokenSet);
 			eventData.setPlayerIndex(game.getPlayersContainer().getPlayerByAID(notification.getPlayerAID()).getTablePositionIndex());
 			eventData.setTokenSetValuation(TokenSetValueEvaluator.evaluateTokenSetValue(game.getBetContainer().getTokenValueDefinition(), player.getTokens()));
 
-			if(notification.getPlayerAID().equals(HumanPlayerAgent.this.getAID())){
+			/*if(notification.getPlayerAID().equals(HumanPlayerAgent.this.getAID())){
 				eventData.setTokenSet(player.getTokens());
 				changes_game.firePropertyChange(PlayerGuiEvent.PLAYER_RECEIVED_TOKENSET_ME.toString(), null, eventData);
 			}
 			else{
 				changes_game.firePropertyChange(PlayerGuiEvent.PLAYER_RECEIVED_TOKENSET_OTHER.toString(), null, eventData);
-			}
+			}*/
+			
+			changes_game.firePropertyChange(PlayerGuiEvent.PLAYER_BET.toString(), null, eventData);
 			
 			return true;
 		}
@@ -404,6 +408,12 @@ public class HumanPlayerAgent extends GuiAgent {
 			eventData.setRequestResentFollowedToError(request.isRequestResentFollowedToError());
 
 			changes_game.firePropertyChange(PlayerGuiEvent.PLAY_REQUEST.toString(), null, eventData);
+			
+			return true;
+		}
+		
+		@Override
+		public boolean onPlayerFoldedRequest(PlayerFoldedRequest playerFoldedRequest, ACLMessage aclMsg) {
 			
 			return true;
 		}
