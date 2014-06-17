@@ -6,12 +6,15 @@ public class PlayerBetEventData {
 	
 	private TokenSet tokenSetUsedForBet;
 	private int betAmount;
+	private int amountAddedForBet;
+
 	private int playerIndex;
 	
-	public PlayerBetEventData(TokenSet tokenSetUsedForBet, int betAmount, int playerIndex){
+	public PlayerBetEventData(TokenSet tokenSetUsedForBet, int betAmount, int playerIndex, int amountAddedForBet){
 		this.betAmount = betAmount;
 		this.tokenSetUsedForBet = tokenSetUsedForBet;
 		this.playerIndex = playerIndex;
+		this.amountAddedForBet = amountAddedForBet;
 	}
 	
 	public int getBetAmount() {
@@ -39,6 +42,14 @@ public class PlayerBetEventData {
 	public void setTokenSetUsedForBet(TokenSet betTokenSet) {
 		this.tokenSetUsedForBet = betTokenSet;
 		
+	}
+	
+	public int getAmountAddedForBet() {
+		return amountAddedForBet;
+	}
+
+	public void setAmountAddedForBet(int amountAddedForBet) {
+		this.amountAddedForBet = amountAddedForBet;
 	}
 
 }

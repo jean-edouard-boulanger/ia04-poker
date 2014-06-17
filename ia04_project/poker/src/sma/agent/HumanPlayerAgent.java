@@ -28,6 +28,7 @@ import poker.game.exception.PlayerAlreadyRegisteredException;
 import poker.game.model.BetType;
 import poker.game.model.Game;
 import poker.game.player.model.Player;
+import poker.game.player.model.PlayerStatus;
 import poker.token.exception.InvalidTokenAmountException;
 import poker.token.helpers.TokenSetValueEvaluator;
 import poker.token.model.TokenSet;
@@ -40,6 +41,7 @@ import sma.message.FailureMessage;
 import sma.message.MessageVisitor;
 import sma.message.PlayerSubscriptionRequest;
 import sma.message.SubscriptionOKMessage;
+import sma.message.bet.notification.BetsMergedNotification;
 import sma.message.bet.request.BetRequest;
 import sma.message.bet.request.FoldRequest;
 import sma.message.environment.notification.BetNotification;
@@ -288,10 +290,12 @@ public class HumanPlayerAgent extends GuiAgent {
 
 			// Update la mise minimum pour relancer apr�s
 			TokenSet betTokenSet = notification.getBetTokenSet();
-			
-			game.getBetContainer().setPlayerCurrentBet(notification.getPlayerAID(), betTokenSet);
-			
+						
 			Player player = game.getPlayersContainer().getPlayerByAID(notification.getPlayerAID());
+			
+			int playerPreviousBet = game.getBetContainer().getPlayerCurrentBetAmount(player);
+			
+			game.getBetContainer().setPlayerCurrentBet(player.getAID(), TokenSetValueEvaluator.tokenSetFromAmount(notification.getBetAmount(), game.getBetContainer().getTokenValueDefinition()));
 			
 			try {
 				player.setTokens(player.getTokens().substractTokenSet(betTokenSet));
@@ -305,7 +309,7 @@ public class HumanPlayerAgent extends GuiAgent {
 			eventData.setTokenSetUsedForBet(betTokenSet);
 			eventData.setPlayerIndex(game.getPlayersContainer().getPlayerByAID(notification.getPlayerAID()).getTablePositionIndex());
 			eventData.setBetAmount(notification.getBetAmount());
-
+			eventData.setAmountAddedForBet(notification.getBetAmount() - playerPreviousBet);
 			/*if(notification.getPlayerAID().equals(HumanPlayerAgent.this.getAID())){
 				eventData.setTokenSet(player.getTokens());
 				changes_game.firePropertyChange(PlayerGuiEvent.PLAYER_RECEIVED_TOKENSET_ME.toString(), null, eventData);
@@ -411,11 +415,16 @@ public class HumanPlayerAgent extends GuiAgent {
 			PlayRequestEventData eventData = new PlayRequestEventData();
 			eventData.addAllAvailableActions();
 
-			if(game.getBetContainer().getCurrentBetAmount() > 0){
+			//Bet amount for the current round
+			int globalCurrentBetAmount = game.getBetContainer().getCurrentBetAmount();
+			
+			if(globalCurrentBetAmount > 0){
+				//Can't check if someone has already bet
 				eventData.removeAvailableAction(BetType.CHECK);
 			}
 
-			int currentBetAmount = TokenSetValueEvaluator.evaluateTokenSetValue(game.getBetContainer().getTokenValueDefinition(), me.getTokens());
+			//Calculating player's current amount for the current round
+			int playerCurrentBetAmount = TokenSetValueEvaluator.evaluateTokenSetValue(game.getBetContainer().getTokenValueDefinition(), game.getBetContainer().getPlayerCurrentBet(me));
 
 			int minimumTokenValue = game.getBetContainer().getTokenValueDefinition().getValueForTokenType(TokenType.WHITE);
 			
@@ -423,27 +432,34 @@ public class HumanPlayerAgent extends GuiAgent {
 			// or to the smallest token value if the current bet is equal to 0, 
 			// or to the player bankroll if the the current bet is >= to the player's bankroll
 			int minimumBetAmount = 0;
-			if(currentBetAmount <= game.getBetContainer().getCurrentBetAmount()){
-				minimumBetAmount = currentBetAmount;
+			
+			if(playerCurrentBetAmount <= globalCurrentBetAmount){
+				minimumBetAmount = globalCurrentBetAmount;
 
 				// Force the player to go all in if the current bet is >= to its bankroll (Can also fold)
+				//eventData.clearAvailableActions();
+				//eventData.addAvailableAction(BetType.ALL_IN);
+				eventData.addAvailableAction(BetType.FOLD);
+			}
+			else if(globalCurrentBetAmount == 0){
+				minimumBetAmount = minimumTokenValue;
+				
+				eventData.removeAvailableAction(BetType.CALL);
+				eventData.removeAvailableAction(BetType.FOLD);
+			}
+
+			int playerBankroll = me.getBankroll(game.getBetContainer().getTokenValueDefinition());
+			
+			if(playerBankroll < globalCurrentBetAmount) {
 				eventData.clearAvailableActions();
 				eventData.addAvailableAction(BetType.ALL_IN);
 				eventData.addAvailableAction(BetType.FOLD);
 			}
-			else if(game.getBetContainer().getCurrentBetAmount() == 0){
-				minimumBetAmount = minimumTokenValue;
-				
-				eventData.removeAvailableAction(BetType.CALL);
-				eventData.removeAvailableAction(BetType.RAISE);
-			}
-			else {
-				minimumBetAmount = game.getBetContainer().getCurrentBetAmount();
-			}
+			
 			eventData.setMinimumBetAmount(minimumBetAmount);
 
 			// The maximum bet amount is equal to the bankroll of the player
-			eventData.setMaximumBetAmount(game.getPlayersContainer().getPlayerByAID(getAID()).getBankroll(game.getBetContainer().getTokenValueDefinition()));
+			eventData.setMaximumBetAmount(playerBankroll);
 
 			eventData.setRaiseAmount(minimumBetAmount * 2);
 			
@@ -458,6 +474,23 @@ public class HumanPlayerAgent extends GuiAgent {
 		@Override
 		public boolean onPlayerFoldedRequest(PlayerFoldedRequest playerFoldedRequest, ACLMessage aclMsg) {
 			
+			Player player = game.getPlayersContainer().getPlayerByAID(playerFoldedRequest.getPlayerAID());
+			
+			player.setStatus(PlayerStatus.FOLDED);
+			
+			System.out.println("[HPA] Player " + player.getNickname() + " folded.");
+			
+			return true;
+		}
+		
+		@Override
+		public boolean onBetsMergedNotification(BetsMergedNotification notification, ACLMessage aclMsg) {
+			
+			System.out.println("[" + getLocalName() + "] Transferred current bets to pot.");
+			
+			game.getBetContainer().transferCurrentBetsToPot();
+			changes_game.firePropertyChange(PlayerGuiEvent.RESET_PLAYER_BETS.toString(), null, null);
+
 			return true;
 		}
 	}

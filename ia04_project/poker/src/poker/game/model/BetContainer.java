@@ -85,11 +85,11 @@ public class BetContainer {
 	}
 
 	public TokenSet getPlayerCurrentBet(Player p){
-		return this.playersBets.get(p);
+		return this.playersBets.get(p.getAID());
 	}
 
 	public int getPlayerCurrentBetAmount(Player p){
-		return TokenSetValueEvaluator.evaluateTokenSetValue(this.tokenValueDefinition, this.playersBets.get(p));
+		return TokenSetValueEvaluator.evaluateTokenSetValue(this.tokenValueDefinition, this.playersBets.get(p.getAID()));
 	}
 
 	@JsonIgnore
