@@ -865,9 +865,9 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 						appendToGameLog("You joined the table.\n");
 						disableBetButtons();
 						
-						initializePlayerReceivedUnknownCard(player.getTablePositionIndex());	
+						/*initializePlayerReceivedUnknownCard(player.getTablePositionIndex());	
 						
-						initializePlayerReceivedUnknownCard(player.getTablePositionIndex());	
+						initializePlayerReceivedUnknownCard(player.getTablePositionIndex());	*/
 						
 					}
 
@@ -885,9 +885,9 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 						Player player = (Player)evt.getNewValue();
 						initializeOther(player);
 						
-						initializePlayerReceivedUnknownCard(player.getTablePositionIndex());	
+						/*initializePlayerReceivedUnknownCard(player.getTablePositionIndex());	
 						
-						initializePlayerReceivedUnknownCard(player.getTablePositionIndex());	
+						initializePlayerReceivedUnknownCard(player.getTablePositionIndex());	*/
 						
 						appendToGameLog("The player '" + player.getNickname() + "' joined the table.\n");
 					}
@@ -982,7 +982,7 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 						changeCurrentPlayer(player.getTablePositionIndex());
 						System.out.println("[PlayerWindow] Player current changed");
 						
-						revealCard(player, new Card(CardRank.ACE, CardSuit.CLUBS), new Card(CardRank.ACE, CardSuit.SPADES));
+						//revealCard(player, new Card(CardRank.ACE, CardSuit.CLUBS), new Card(CardRank.ACE, CardSuit.SPADES));
 					}
 				}
 				
