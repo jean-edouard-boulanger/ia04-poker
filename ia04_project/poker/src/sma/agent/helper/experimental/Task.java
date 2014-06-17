@@ -47,158 +47,158 @@ import java.util.List;
 public class Task extends WrapperBehaviour {
 
 
-    /** Main factory method **/
-    static public Task New(Behaviour bhv){
-	return new Task(bhv);
-    }
-
-    /**
-     * Chain a task sequentially.
-     *   /!\ this method modify the original task.
-     */
-    public Task then(Behaviour bhv){
-	SequentialBehaviour seq = null;
-	if(this.getWrappedBehaviour() instanceof SequentialBehaviour) {
-	    seq = (SequentialBehaviour) this.getWrappedBehaviour();
-	}
-	else {
-	    seq = new SequentialBehaviour(bhv.getAgent());
-	    seq.addSubBehaviour(this.getWrappedBehaviour());
-	}
-	seq.addSubBehaviour(bhv);
-	return Task.New(seq);
-    }
-
-    /**
-     * Chain given tasks in parallel, following tasks are executed when all parallel 
-     * tasks are done.
-     */
-    public Task whenAll(Behaviour...bhvs){
-	return this.then(doAny(bhvs));
-    }
-
-    /**
-     * Chain given tasks in parallel, following tasks are executed when any parallel 
-     * tasks is done.
-     */
-    public Task whenAny(Behaviour...bhvs){
-	return this.then(doAll(bhvs));
-    }
-
-
-    /**
-     * Create a new task starting with parallel tasks, following tasks are executed 
-     * when all parallel tasks are done.
-     */
-    public static Task doAny(Behaviour...bhvs){
-	if (bhvs.length == 0)
-	    return Task.Empty();
-	Agent agent = bhvs[0].getAgent();
-	ParallelBehaviour parallel = new ParallelBehaviour(agent, ParallelBehaviour.WHEN_ALL);
-	for (Behaviour bhv : bhvs){
-	    parallel.addSubBehaviour(bhv);
-	}
-	return Task.New(parallel);
-    }
-
-    /**
-     * Create a new task starting with parallel tasks, following tasks are executed 
-     * when any parallel tasks is done.
-     */
-    public static Task doAll(Behaviour...bhvs){
-	if (bhvs.length == 0)
-	    return Task.Empty();
-	Agent agent = bhvs[0].getAgent();
-	ParallelBehaviour parallel = new ParallelBehaviour(agent, ParallelBehaviour.WHEN_ANY);
-	for (Behaviour bhv : bhvs){
-	    parallel.addSubBehaviour(bhv);
-	}
-	return Task.New(parallel);
-    }
-
-    /**
-     * Obtain a Parallel object.
-     */
-    public Parallel parallel(){
-	return new Parallel(this);
-    }
-
-    /**
-     * Run the task in the given agent.
-     */
-    public Task run(Agent agent){
-	this.setAgent(agent);
-	agent.addBehaviour(this);
-	return this;
-    }
-
-
-    // direct construction disabled
-    private Task(Behaviour bhv){
-	super(bhv);
-    }
-
-    // Create an empty task doing nothing (used internally)
-    private static Task Empty(){
-	return new Task(new OneShotBehaviour() {@Override public void action() {}});
-    }
-
-    /**
-     * Represent a set of behaviors to be started in parallel with .whenAny() 
-     * or .whenAll() methods.
-     */
-    public static class Parallel{
-	private Task previousTask = null;
-	private List<Behaviour> parallelBhvs;
-
-	private Parallel(Task previousTask){
-	    this.previousTask = previousTask;
-	    this.parallelBhvs = new ArrayList<Behaviour>();
+	/** Main factory method **/
+	static public Task New(Behaviour bhv){
+		return new Task(bhv);
 	}
 
-	private Parallel(){
-	    this(null);
+	/**
+	 * Chain a task sequentially.
+	 *   /!\ this method modify the original task.
+	 */
+	public Task then(Behaviour bhv){
+		SequentialBehaviour seq = null;
+		if(this.getWrappedBehaviour() instanceof SequentialBehaviour) {
+			seq = (SequentialBehaviour) this.getWrappedBehaviour();
+		}
+		else {
+			seq = new SequentialBehaviour(bhv.getAgent());
+			seq.addSubBehaviour(this.getWrappedBehaviour());
+		}
+		seq.addSubBehaviour(bhv);
+		return Task.New(seq);
 	}
 
-	public Parallel add(Behaviour bhv){
-	    parallelBhvs.add(bhv);
-	    return this;
+	/**
+	 * Chain given tasks in parallel, following tasks are executed when all parallel 
+	 * tasks are done.
+	 */
+	public Task whenAll(Behaviour...bhvs){
+		return this.then(doAny(bhvs));
 	}
 
-	public Task whenAll(){
-	    if (parallelBhvs.size() == 0)
-		return Task.Empty();
-	    Agent agent = parallelBhvs.get(0).getAgent();
-	    ParallelBehaviour parallel = new ParallelBehaviour(agent, ParallelBehaviour.WHEN_ALL);
-	    for (Behaviour bhv : parallelBhvs){
-		parallel.addSubBehaviour(bhv);
-	    }
-	    if(previousTask != null)
-		return previousTask.then(parallel);
-	    else
-		return Task.New(parallel);
+	/**
+	 * Chain given tasks in parallel, following tasks are executed when any parallel 
+	 * tasks is done.
+	 */
+	public Task whenAny(Behaviour...bhvs){
+		return this.then(doAll(bhvs));
 	}
-	
-	public Task whenAny(){
-	    if (parallelBhvs.size() == 0)
-		return Task.Empty();
-	    Agent agent = parallelBhvs.get(0).getAgent();
-	    ParallelBehaviour parallel = new ParallelBehaviour(agent, ParallelBehaviour.WHEN_ANY);
-	    for (Behaviour bhv : parallelBhvs){
-		parallel.addSubBehaviour(bhv);
-	    }
-	    if(previousTask != null)
-		return previousTask.then(parallel);
-	    else
+
+
+	/**
+	 * Create a new task starting with parallel tasks, following tasks are executed 
+	 * when all parallel tasks are done.
+	 */
+	public static Task doAny(Behaviour...bhvs){
+		if (bhvs.length == 0)
+			return Task.Empty();
+		Agent agent = bhvs[0].getAgent();
+		ParallelBehaviour parallel = new ParallelBehaviour(agent, ParallelBehaviour.WHEN_ALL);
+		for (Behaviour bhv : bhvs){
+			parallel.addSubBehaviour(bhv);
+		}
 		return Task.New(parallel);
 	}
 
 	/**
-	 * Create a new Parralel used to create parallel tasks.
+	 * Create a new task starting with parallel tasks, following tasks are executed 
+	 * when any parallel tasks is done.
 	 */
-	public static Parallel New(){
-	    return new Parallel();
+	public static Task doAll(Behaviour...bhvs){
+		if (bhvs.length == 0)
+			return Task.Empty();
+		Agent agent = bhvs[0].getAgent();
+		ParallelBehaviour parallel = new ParallelBehaviour(agent, ParallelBehaviour.WHEN_ANY);
+		for (Behaviour bhv : bhvs){
+			parallel.addSubBehaviour(bhv);
+		}
+		return Task.New(parallel);
 	}
 
-    }
+	/**
+	 * Obtain a Parallel object.
+	 */
+	public Parallel parallel(){
+		return new Parallel(this);
+	}
+
+	/**
+	 * Run the task in the given agent.
+	 */
+	public Task run(Agent agent){
+		this.setAgent(agent);
+		agent.addBehaviour(this);
+		return this;
+	}
+
+
+	// direct construction disabled
+	private Task(Behaviour bhv){
+		super(bhv);
+	}
+
+	// Create an empty task doing nothing (used internally)
+	private static Task Empty(){
+		return new Task(new OneShotBehaviour() {@Override public void action() {}});
+	}
+
+	/**
+	 * Represent a set of behaviors to be started in parallel with .whenAny() 
+	 * or .whenAll() methods.
+	 */
+	public static class Parallel{
+		private Task previousTask = null;
+		private List<Behaviour> parallelBhvs;
+
+		private Parallel(Task previousTask){
+			this.previousTask = previousTask;
+			this.parallelBhvs = new ArrayList<Behaviour>();
+		}
+
+		private Parallel(){
+			this(null);
+		}
+
+		public Parallel add(Behaviour bhv){
+			parallelBhvs.add(bhv);
+			return this;
+		}
+
+		public Task whenAll(){
+			if (parallelBhvs.size() == 0)
+				return Task.Empty();
+			Agent agent = parallelBhvs.get(0).getAgent();
+			ParallelBehaviour parallel = new ParallelBehaviour(agent, ParallelBehaviour.WHEN_ALL);
+			for (Behaviour bhv : parallelBhvs){
+				parallel.addSubBehaviour(bhv);
+			}
+			if(previousTask != null)
+				return previousTask.then(parallel);
+			else
+				return Task.New(parallel);
+		}
+
+		public Task whenAny(){
+			if (parallelBhvs.size() == 0)
+				return Task.Empty();
+			Agent agent = parallelBhvs.get(0).getAgent();
+			ParallelBehaviour parallel = new ParallelBehaviour(agent, ParallelBehaviour.WHEN_ANY);
+			for (Behaviour bhv : parallelBhvs){
+				parallel.addSubBehaviour(bhv);
+			}
+			if(previousTask != null)
+				return previousTask.then(parallel);
+			else
+				return Task.New(parallel);
+		}
+
+		/**
+		 * Create a new Parralel used to create parallel tasks.
+		 */
+		public static Parallel New(){
+			return new Parallel();
+		}
+
+	}
 }

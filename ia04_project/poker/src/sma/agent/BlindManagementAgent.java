@@ -8,7 +8,7 @@ import jade.lang.acl.ACLMessage;
 import poker.game.model.BlindValueDefinition;
 import sma.agent.helper.AgentHelper;
 import sma.agent.helper.DFServiceHelper;
-import sma.agent.helper.TransactionBhv;
+import sma.agent.helper.TransactionBehaviour;
 import sma.message.FailureMessage;
 import sma.message.MessageVisitor;
 import sma.message.OKMessage;
@@ -76,7 +76,7 @@ public class BlindManagementAgent extends Agent {
 		
 		private void setBlindAndReply(final ACLMessage requestAclMsg){
 			//Transaction with environment
-			TransactionBhv transaction = new TransactionBhv(myAgent, new BlindValueDefinitionChangeRequest(blindValueDefinition), environment);
+			TransactionBehaviour transaction = new TransactionBehaviour(myAgent, new BlindValueDefinitionChangeRequest(blindValueDefinition), environment);
 			transaction.setResponseVisitor(new MessageVisitor(){
 				@Override
 				public boolean onOKMessage(OKMessage okMessage, ACLMessage aclMsg){ 

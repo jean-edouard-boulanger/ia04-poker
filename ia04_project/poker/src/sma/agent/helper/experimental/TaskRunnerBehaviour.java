@@ -3,6 +3,8 @@ package sma.agent.helper.experimental;
 import jade.core.Agent;
 import jade.core.behaviours.Behaviour;
 import jade.core.behaviours.SequentialBehaviour;
+import jade.util.leap.Collection;
+import jade.util.leap.Iterator;
 
 /**
  * This behavior wrap a task and will stop when the wrapped task is done.
@@ -14,25 +16,28 @@ import jade.core.behaviours.SequentialBehaviour;
  * one sub-behavior. The behavior try to overcome the WrapperBehaviour which is
  * very similar but doesn't allows to set the sub-behavior after the constructor.
  **/
-public class TaskRunnerBhv extends SequentialBehaviour {
+public class TaskRunnerBehaviour extends SequentialBehaviour {
 
-    private boolean isStarted;
+	private boolean isStarted;
 
-    public TaskRunnerBhv(Agent agent){
-	super(agent);
-	isStarted = false;
-    };
-    
-    @Override
-    public void onStart() {
-       this.isStarted = true;
-        super.onStart();
-    }
-    
-    public void setBehaviour(Behaviour bhv){
-	if(this.isStarted)
-	    System.out.println("Error: can't set the sub-behaviour of an already started TaskRunnerBhv.");
-	else
-	    this.addSubBehaviour(bhv);	
-    }
+	public TaskRunnerBehaviour(Agent agent){
+		super(agent);
+		isStarted = false;
+	};
+
+	@Override
+	public void onStart() {
+		this.isStarted = true;
+		super.onStart();
+	}
+	
+	public void setBehaviour(Behaviour bhv){
+		/*if(this.isStarted){
+			System.err.println("Error: can't set the sub-behaviour of an already started TaskRunnerBhv.");
+		}
+		else{
+			this.addSubBehaviour(bhv);	
+		}*/
+		this.addSubBehaviour(bhv);
+	}
 }

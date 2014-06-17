@@ -7,10 +7,10 @@ import poker.token.model.TokenValueDefinition;
 import sma.agent.SimulationAgent;
 import sma.agent.helper.DFServiceHelper;
 import sma.agent.helper.SimpleVisitor;
-import sma.agent.helper.TransactionBhv;
+import sma.agent.helper.TransactionBehaviour;
 import sma.agent.helper.experimental.Task;
 import sma.agent.helper.experimental.Task.Parallel;
-import sma.agent.helper.experimental.TaskRunnerBhv;
+import sma.agent.helper.experimental.TaskRunnerBehaviour;
 import sma.message.Message;
 import sma.message.blind.request.ResetBlindRequest;
 import sma.message.environment.request.GiveTokenSetToPlayerRequest;
@@ -19,50 +19,52 @@ import sma.message.environment.request.SetTokenValueDefinitionRequest;
 /**
  * Start a new game, give every players a token set, reset blinds.
  */
-public class InitGameBhv extends TaskRunnerBhv  
+public class InitGameBehaviour extends TaskRunnerBehaviour  
 {
 	private AID environment;
 	private AID blindManager;
-	private SimulationAgent simAgent;
-
+	private SimulationAgent simulationAgent;
+	
 	/**
 	 * Build an new instance of game initialization behavior.
 	 * This behavior do several tasks:
 	 *  - set token value definition
 	 *  - chip distribution to players
 	 *  - blind definition
-	 * @param simAgent	Agent owning the behavior
+	 * @param simulationAgent	Agent owning the behavior
 	 */
-	public InitGameBhv(SimulationAgent simAgent) {
-		super(simAgent);
+	public InitGameBehaviour(SimulationAgent simulationAgent) {
+		super(simulationAgent);
 
-		this.environment = DFServiceHelper.searchService(simAgent, "PokerEnvironment", "Environment");
-		this.blindManager = DFServiceHelper.searchService(simAgent, "BlindManagementAgent","BlindManager");
-		this.simAgent = simAgent;
+		this.environment = DFServiceHelper.searchService(simulationAgent, "PokerEnvironment", "Environment");
+		this.blindManager = DFServiceHelper.searchService(simulationAgent, "BlindManagementAgent","BlindManager");
+		this.simulationAgent = simulationAgent;
 	}
 
 	@Override
 	public void onStart() {
-		
-		Behaviour setTokenValue = setTokenDefinitionBehaviour(simAgent.getDefaultTokenValueDefinition());
-		Behaviour resetBlind = resetBlindBehaviour(simAgent.getBlindIncreaseDelayS(), simAgent.getDefaultTokenValueDefinition());
+
+		Behaviour setTokenValue = setTokenDefinitionBehaviour(simulationAgent.getDefaultTokenValueDefinition());
+		Behaviour resetBlind = resetBlindBehaviour(simulationAgent.getBlindIncreaseDelayS(), simulationAgent.getDefaultTokenValueDefinition());
 
 		// we start the task by setting the token value definition:
 		Parallel par = Task.New(setTokenValue).parallel();
 
 		// then we give each player their initial token set (in parallel)
-		for (AID p : simAgent.getGame().getPlayersContainer().getPlayersAIDs())
-			par.add(giveTokenBehaviour(p, simAgent.getDefaultTokenSet()));
+		for (AID p : simulationAgent.getGame().getPlayersContainer().getPlayersAIDs())
+			par.add(giveTokenBehaviour(p, simulationAgent.getDefaultTokenSet()));
 
 		// again in parallel, we reset the blind agent.
 		this.setBehaviour(par.add(resetBlind).whenAll());
+
+		simulationAgent.addBehaviour(new CheckPlayersActionsBehaviour(simulationAgent));
 		
 		super.onStart();
 	}
 
 	private Behaviour giveTokenBehaviour(AID player, TokenSet tokens){
 		Message msg = new GiveTokenSetToPlayerRequest(tokens, player);
-		TransactionBhv transaction = new TransactionBhv(myAgent, msg, environment);
+		TransactionBehaviour transaction = new TransactionBehaviour(myAgent, msg, environment);
 		transaction.setResponseVisitor(new SimpleVisitor(myAgent,
 				"token set given to player " + player.getLocalName() +".",
 				"error while giving token set to player " + player.getLocalName() +"."));
@@ -71,7 +73,7 @@ public class InitGameBhv extends TaskRunnerBhv
 
 	private Behaviour resetBlindBehaviour(int time, TokenValueDefinition tokenValueDef){
 		Message msg = new ResetBlindRequest(time, tokenValueDef);
-		TransactionBhv transaction = new TransactionBhv(myAgent, msg, blindManager);
+		TransactionBehaviour transaction = new TransactionBehaviour(myAgent, msg, blindManager);
 		transaction.setResponseVisitor(new SimpleVisitor(myAgent,
 				"blind increase time interval successfully set.",
 				"error while setting blind increase time interval"));
@@ -80,13 +82,13 @@ public class InitGameBhv extends TaskRunnerBhv
 
 	private Behaviour setTokenDefinitionBehaviour(TokenValueDefinition tvf){
 		Message msg = new SetTokenValueDefinitionRequest(tvf);
-		TransactionBhv transaction = new TransactionBhv(myAgent, msg, environment);
+		TransactionBehaviour transaction = new TransactionBehaviour(myAgent, msg, environment);
 		transaction.setResponseVisitor(new SimpleVisitor(myAgent,
 				"token value definition successfully set.",
 				"error while setting token value definition"));
 		return transaction;
 	}
-
+	
 	/** Transition: Return the NEW_HAND transition code.*/
 	@Override
 	public int onEnd(){

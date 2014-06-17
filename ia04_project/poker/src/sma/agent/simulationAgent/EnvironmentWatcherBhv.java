@@ -13,7 +13,7 @@ import poker.game.player.model.Player;
 import sma.agent.SimulationAgent;
 import sma.agent.helper.AgentHelper;
 import sma.agent.helper.DFServiceHelper;
-import sma.agent.helper.TransactionBhv;
+import sma.agent.helper.TransactionBehaviour;
 import sma.message.FailureMessage;
 import sma.message.Message;
 import sma.message.MessageVisitor;
@@ -43,7 +43,7 @@ public class EnvironmentWatcherBhv extends CyclicBehaviour
 
     private void subscribeToEnvironment(){
 
-	TransactionBhv envSubscriptionBhv = new TransactionBhv(simAgent, null, environment, ACLMessage.SUBSCRIBE);
+	TransactionBehaviour envSubscriptionBhv = new TransactionBehaviour(simAgent, null, environment, ACLMessage.SUBSCRIBE);
 	envSubscriptionBhv.setResponseVisitor(new MessageVisitor(){
 
 	    @Override
