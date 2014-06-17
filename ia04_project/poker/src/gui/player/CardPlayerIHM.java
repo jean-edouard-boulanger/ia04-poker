@@ -4,8 +4,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import poker.card.model.Card;
+import javafx.animation.FadeTransition;
+import javafx.animation.FadeTransitionBuilder;
+import javafx.animation.Interpolator;
 import javafx.animation.ParallelTransition;
+import javafx.animation.PauseTransition;
 import javafx.animation.ScaleTransition;
+import javafx.animation.SequentialTransition;
+import javafx.animation.TranslateTransition;
+import javafx.animation.TranslateTransitionBuilder;
 import javafx.scene.Group;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
@@ -55,33 +62,104 @@ public class CardPlayerIHM extends Group {
 		}
 	}
 	
-	public void revealCard(Card card1, Card card2)
+	public void revealCard(Card card1, Card card2, boolean winner)
 	{
 		if(this.number_cards == 2)
 		{
+			SequentialTransition sequence = new SequentialTransition();
 			ParallelTransition parallel_transition = new ParallelTransition();
 		     
 			this.list_card.get(0).setImage(new Image("images/"+card1.getRank()+"_"+card1.getSuit()+".png"));
 			this.list_card.get(1).setImage(new Image("images/"+card2.getRank()+"_"+card2.getSuit()+".png"));
 			
 			ScaleTransition st_card1 = new ScaleTransition(Duration.millis(2000), this.list_card.get(0));
-			st_card1.setByX(1.5f);
-			st_card1.setByY(1.5f);
+			st_card1.setByX(1f);
+			st_card1.setByY(1f);
 			st_card1.setCycleCount(1);
 			st_card1.setAutoReverse(true);
 		     
-		     ScaleTransition st_card2 = new ScaleTransition(Duration.millis(2000), this.list_card.get(0));
-		     st_card2.setByX(1.5f);
-		     st_card2.setByY(1.5f);
+		     ScaleTransition st_card2 = new ScaleTransition(Duration.millis(2000), this.list_card.get(1));
+		     st_card2.setByX(1f);
+		     st_card2.setByY(1f);
 		     st_card2.setCycleCount(1);
 		     st_card2.setAutoReverse(true);
 		     
+		     TranslateTransition translate_card1 = TranslateTransitionBuilder
+		                .create()
+		                .duration(new Duration(1000))
+		                .node(this.list_card.get(0))
+		                .toX(-25)
+		                .cycleCount(1)
+		                .interpolator(Interpolator.EASE_BOTH)
+		                .build();
+		     
+		     TranslateTransition translate_card2 = TranslateTransitionBuilder
+		                .create()
+		                .duration(new Duration(1000))
+		                .node(this.list_card.get(1))
+		                .toX(25)
+		                .cycleCount(1)
+		                .interpolator(Interpolator.EASE_BOTH)
+		                .build();
+		     
+		     
+		     
+		     FadeTransition ft_card1 = FadeTransitionBuilder
+		    		 .create()
+		    		 .duration(new Duration(1000))
+		    		 .node(this.list_card.get(0))
+		    		 .toValue(0)
+		    		 .build();
+		     
+		     FadeTransition ft_card2 = FadeTransitionBuilder
+		    		 .create()
+		    		 .duration(new Duration(1000))
+		    		 .node(this.list_card.get(0))
+		    		 .toValue(0)
+		    		 .build();
+		     
+		     TranslateTransition winner_card1 = TranslateTransitionBuilder
+		                .create()
+		                .duration(new Duration(1000))
+		                .node(this.list_card.get(0))
+		                .toX(500 - this.list_card.get(0).getX())
+		                .toY(250 - this.list_card.get(0).getY())
+		                .cycleCount(1)
+		                .interpolator(Interpolator.EASE_BOTH)
+		                .build();
+		     
+		     TranslateTransition winner_card2 = TranslateTransitionBuilder
+		                .create()
+		                .duration(new Duration(1000))
+		                .node(this.list_card.get(1))
+		                .toX(550 - this.list_card.get(1).getX())
+		                .toY(250 - this.list_card.get(1).getY())
+		                .cycleCount(1)
+		                .interpolator(Interpolator.EASE_BOTH)
+		                .build();
+		     
 		     parallel_transition.getChildren().addAll(
 		    		 st_card1,
-		    		 st_card2
-    		 );
+		    		 st_card2,
+		    		 translate_card1,
+		    		 translate_card2
+			 );
+
+		     sequence.getChildren().addAll(
+	    			 parallel_transition,
+	    			 new PauseTransition(new Duration(1000))
+	    	 );
 		     
-		     parallel_transition.play();
+		     if(winner)
+		     {
+		    	 sequence.getChildren().add(winner_card1);
+		    	 sequence.getChildren().add(winner_card2);
+		     }
+		     
+	    	 sequence.getChildren().add(ft_card1);
+	    	 sequence.getChildren().add(ft_card2);
+	    	 
+		     sequence.play();
 		}
 	}
 	

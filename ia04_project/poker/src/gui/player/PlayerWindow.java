@@ -3,6 +3,7 @@ package gui.player;
 import gui.player.PersoIHM.Sens;
 import gui.player.TokenPlayerIHM.ColorToken;
 import gui.player.animation.AnimateNotification;
+import gui.player.animation.SoundFx;
 import gui.player.event.model.PlayRequestEventData;
 import gui.player.event.model.PlayerTokenSetChangedEventData;
 import gui.player.poker.token.BigBlindTokenIHM;
@@ -14,6 +15,7 @@ import jade.gui.GuiEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -40,6 +42,8 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.transform.Scale;
@@ -662,6 +666,7 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 
 	public void initializePlayerReceivedUnknownCard(final Integer index) {
 		list_card_player.get(index).addUnknownCard();	
+		SoundFx.launchSound(PlayerWindow.this, "/sons/card_received.wav");
 	}
 
 	public void addCommunityCard(final Card card) {
@@ -732,7 +737,7 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 	}
 	
 	public void revealCard(Player player, Card card1, Card card2) {
-		this.list_card_player.get(player.getTablePositionIndex()).revealCard(card1, card2);
+		this.list_card_player.get(player.getTablePositionIndex()).revealCard(card1, card2, true);
 	}
 	
 	public void initializeAction()
@@ -841,6 +846,11 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 						
 						appendToGameLog("You joined the table.\n");
 						disableBetButtons();
+						
+						initializePlayerReceivedUnknownCard(player.getTablePositionIndex());	
+						
+						initializePlayerReceivedUnknownCard(player.getTablePositionIndex());	
+						
 					}
 
 					System.out.println("[PlayerWindow] Initialiazing me");
@@ -856,6 +866,10 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 						
 						Player player = (Player)evt.getNewValue();
 						initializeOther(player);
+						
+						initializePlayerReceivedUnknownCard(player.getTablePositionIndex());	
+						
+						initializePlayerReceivedUnknownCard(player.getTablePositionIndex());	
 						
 						appendToGameLog("The player '" + player.getNickname() + "' joined the table.\n");
 					}
@@ -1031,6 +1045,9 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 						PlayerWindow.this.pot.AddTokenSet(evt_data.getTokenSet());
 						PlayerWindow.this.pot.addBet(evt_data.getTokenSetValuation());
 						PlayerWindow.this.list_token_bet.get(evt_data.getPlayerIndex()).setBet(evt_data.getTokenSetValuation());
+						
+						SoundFx.launchSound(PlayerWindow.this, "/sons/chips.wav");
+						
 						System.out.println("[PlayerWindow] Player bet");
 					}
 				}

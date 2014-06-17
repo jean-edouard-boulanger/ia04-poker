@@ -35,7 +35,7 @@ public class PotIHM extends Group {
 		this.center = center;
 		this.score = 0;
 		this.label_score = new Label();
-		this.label_score.setLayoutX(center.x);
+		this.label_score.setLayoutX(center.x - 25);
 		this.label_score.setLayoutY(center.y + 25);
 		this.label_score.getStyleClass().add("label-bet");
 		this.label_score.setVisible(false);
@@ -47,7 +47,7 @@ public class PotIHM extends Group {
 		this.tokenSet = t;
 		this.score = score;
 		this.label_score = new Label(String.valueOf(score));
-		this.label_score.setLayoutX(center.x);
+		this.label_score.setLayoutX(center.x - 25);
 		this.label_score.setLayoutY(center.y + 25);
 		this.label_score.getStyleClass().add("label-bet");
 		this.label_score.setVisible(false);
