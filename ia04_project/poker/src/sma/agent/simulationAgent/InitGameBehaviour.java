@@ -24,7 +24,7 @@ public class InitGameBehaviour extends TaskRunnerBhv
 	private AID environment;
 	private AID blindManager;
 	private SimulationAgent simulationAgent;
-
+	
 	/**
 	 * Build an new instance of game initialization behavior.
 	 * This behavior do several tasks:

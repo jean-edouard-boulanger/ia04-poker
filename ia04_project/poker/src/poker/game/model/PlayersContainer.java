@@ -197,7 +197,7 @@ public class PlayersContainer {
 		}
 	}
 	
-	public int countInGamePlayers(){
+	public int countPlayersInGame(){
 		int nb = 0;
 		for(Player player : this.players){
 			if(player.getStatus() == PlayerStatus.IN_GAME){

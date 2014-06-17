@@ -2,12 +2,14 @@ package sma.agent;
 
 import gui.server.ServerWindow;
 import jade.core.AID;
+import jade.core.Agent;
 import jade.core.behaviours.Behaviour;
 import jade.core.behaviours.FSMBehaviour;
 import jade.gui.GuiAgent;
 import jade.gui.GuiEvent;
 
 import java.beans.PropertyChangeSupport;
+import java.lang.reflect.InvocationTargetException;
 
 import poker.game.model.Game;
 import poker.game.model.Round;
@@ -20,16 +22,13 @@ import poker.token.model.TokenSet;
 import poker.token.model.TokenType;
 import poker.token.model.TokenValueDefinition;
 import sma.agent.helper.DFServiceHelper;
-import sma.agent.simulationAgent.CheckWinnerBhv;
 import sma.agent.simulationAgent.EnvironmentWatcherBhv;
-import sma.agent.simulationAgent.GameEndedBhv;
 import sma.agent.simulationAgent.InitGameBehaviour;
 import sma.agent.simulationAgent.InitHandBehaviour;
 import sma.agent.simulationAgent.InitPreFlopBehaviour;
-import sma.agent.simulationAgent.InitRoundBhv;
-import sma.agent.simulationAgent.PlayBhv;
 import sma.agent.simulationAgent.PlayerSubscriptionBhv;
 import sma.agent.simulationAgent.TableRoundBehaviour;
+import sma.agent.simulationAgent.TableRoundEndBehaviour;
 
 /**
  * Simulation agent.
@@ -38,7 +37,15 @@ import sma.agent.simulationAgent.TableRoundBehaviour;
  */
 public class SimulationAgent extends GuiAgent {
 
-	public enum GameEvent{NEW_HAND, START_PRE_FLOP, START_TABLE_ROUND, NEW_ROUND, ROUND_ENDED, GAME_FINISHED, PLAY}
+	public enum GameEvent{
+		NEW_HAND, 
+		START_PRE_FLOP, 
+		NEW_TABLE_ROUND,
+		TABLE_ROUND_END,
+		NEW_ROUND, 
+		GAME_FINISHED, 
+		PLAY
+	}
 
 
 	private PropertyChangeSupport changes = new PropertyChangeSupport(this);
@@ -136,10 +143,41 @@ public class SimulationAgent extends GuiAgent {
 			// we had this handler for debugging purpose.
 			@Override
 			protected void handleStateEntered(Behaviour state){
-				super.handleStateEntered(state);
+				
+				try {
+					String name = this.getName(state);
+					System.out.println(name);
+					
+					state = state.getClass().getConstructor(SimulationAgent.class).newInstance(SimulationAgent.this);
+					System.out.println("DEBUG [SimulationAgent.gameBehaviour@handleStateEntered] New instance of behaviour" + state.getClass().getName() + " created");
+					
+					this.registerState(state, name);
+				} catch (InstantiationException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IllegalAccessException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IllegalArgumentException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (InvocationTargetException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (NoSuchMethodException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (SecurityException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+
+				
 				System.out.println("-------------------------------------------------------");
 				System.out.println("[" + this.myAgent.getLocalName() + "] Current state: " + this.getName(state));
 				System.out.println("-------------------------------------------------------");
+				
+				super.handleStateEntered(state);
 			}
 		};
 
@@ -147,6 +185,8 @@ public class SimulationAgent extends GuiAgent {
 		gameBehaviour.registerState(new InitHandBehaviour(this), "Hand init");
 		gameBehaviour.registerState(new InitPreFlopBehaviour(this), "Pre flop init");
 		gameBehaviour.registerState(new TableRoundBehaviour(this), "Table round");
+		gameBehaviour.registerState(new TableRoundEndBehaviour(this), "Table round end");
+
 		
 		/*gameBehaviour.registerState(new InitRoundBhv(this), "Round init");
 		gameBehaviour.registerState(new PlayBhv(this), "Play");
@@ -155,10 +195,12 @@ public class SimulationAgent extends GuiAgent {
 
 		gameBehaviour.registerTransition("Game init", "Hand init", GameEvent.NEW_HAND.ordinal());
 		gameBehaviour.registerTransition("Hand init", "Pre flop init", GameEvent.START_PRE_FLOP.ordinal());
-		gameBehaviour.registerTransition("Pre flop init", "Table round", GameEvent.START_TABLE_ROUND.ordinal());
+		gameBehaviour.registerTransition("Pre flop init", "Table round", GameEvent.NEW_TABLE_ROUND.ordinal());
+		gameBehaviour.registerTransition("Table round", "Table round end", GameEvent.TABLE_ROUND_END.ordinal());
+		gameBehaviour.registerTransition("Table round end", "Table round", GameEvent.NEW_TABLE_ROUND.ordinal());
 		
 		//DEBUG
-		gameBehaviour.registerTransition("Table round", "Table round", GameEvent.START_TABLE_ROUND.ordinal());
+		gameBehaviour.registerTransition("Table round end", "Table round", GameEvent.NEW_ROUND.ordinal());
 		
 		/*gameBehaviour.registerTransition("Round init", "Play", GameEvent.PLAY.ordinal());
 		gameBehaviour.registerTransition("Play", "Play", GameEvent.PLAY.ordinal());

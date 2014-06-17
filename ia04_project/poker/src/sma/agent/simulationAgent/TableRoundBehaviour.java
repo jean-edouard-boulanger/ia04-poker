@@ -61,7 +61,8 @@ public class TableRoundBehaviour extends TaskRunnerBhv {
 	}
 	
 	public int onEnd(){
-		return SimulationAgent.GameEvent.START_TABLE_ROUND.ordinal();
+		this.reset();
+		return SimulationAgent.GameEvent.TABLE_ROUND_END.ordinal();
 	}
 	
 	private class DoNothingBehaviour extends OneShotBehaviour{

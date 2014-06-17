@@ -1,5 +1,9 @@
 package sma.agent;
 
+import java.util.Map.Entry;
+
+import com.sun.javafx.collections.MappingChange.Map;
+
 import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.CyclicBehaviour;
@@ -12,12 +16,15 @@ import poker.game.exception.PlayerAlreadyRegisteredException;
 import poker.game.model.BetContainer;
 import poker.game.model.Game;
 import poker.game.player.model.Player;
+import poker.game.player.model.PlayerStatus;
 import poker.token.exception.InvalidTokenAmountException;
 import poker.token.helpers.TokenSetValueEvaluator;
 import poker.token.model.TokenSet;
+import poker.token.model.TokenValueDefinition;
 import sma.agent.helper.AgentHelper;
 import sma.agent.helper.DFServiceHelper;
 import sma.agent.helper.TransactionBhv;
+import sma.message.BooleanMessage;
 import sma.message.FailureMessage;
 import sma.message.Message;
 import sma.message.MessageVisitor;
@@ -25,9 +32,11 @@ import sma.message.OKMessage;
 import sma.message.SubscriptionOKMessage;
 import sma.message.bet.notification.BetsMergedNotification;
 import sma.message.bet.notification.PotAmountNotification;
+import sma.message.bet.request.AreBetsClosedRequest;
 import sma.message.bet.request.BetRequest;
 import sma.message.bet.request.GetPotAmountRequest;
 import sma.message.bet.request.MergeBetsRequest;
+import sma.message.environment.notification.PlayerFoldedNotification;
 import sma.message.environment.notification.PlayerReceivedTokenSetNotification;
 import sma.message.environment.notification.PlayerSitOnTableNotification;
 import sma.message.environment.notification.TokenValueDefinitionChangedNotification;
@@ -37,7 +46,6 @@ import sma.message.environment.request.PlayerBetRequest;
 
 public class BetManagerAgent extends Agent {
 
-	BetContainer betContainer;
 	BetManagerMessageVisitor msgVisitor;
 	Game game;
 	AID environment;
@@ -54,6 +62,21 @@ public class BetManagerAgent extends Agent {
 	    this.environment = DFServiceHelper.searchService(this,"PokerEnvironment", "Environment");
 		this.addBehaviour(new ReceiveRequestBehaviour(this));
 		this.addBehaviour(new ReceiveNotificationBehaviour(this));
+	}
+	
+	private boolean areBetsClosed(){
+		BetContainer betContainer = game.getBetContainer();
+		TokenValueDefinition valueDefinition = betContainer.getTokenValueDefinition();
+		
+		int currentBet = betContainer.getCurrentBetAmount();
+		for(Entry<AID, TokenSet> bet : betContainer.getPlayersBets().entrySet()){
+			if(game.getPlayersContainer().getPlayerByAID(bet.getKey()).getStatus() != PlayerStatus.FOLDED){
+				if(TokenSetValueEvaluator.evaluateTokenSetValue(valueDefinition, bet.getValue()) < currentBet){
+					return false;
+				}
+			}
+		}
+		return true;
 	}
 	
 	private class ReceiveRequestBehaviour extends CyclicBehaviour {
@@ -259,6 +282,28 @@ public class BetManagerAgent extends Agent {
 			PotAmountNotification potAmountNotification = new PotAmountNotification(game.getBetContainer().getPot());
 			
 			AgentHelper.sendReply(BetManagerAgent.this, aclMsg, ACLMessage.INFORM, potAmountNotification);
+			
+			return true;
+		}
+		
+		@Override
+		public boolean onPlayerFoldedNotification(PlayerFoldedNotification notification, ACLMessage aclMsg){
+			
+			Player foldedPlayer = game.getPlayersContainer().getPlayerByAID(notification.getPlayerAID());
+			foldedPlayer.setStatus(PlayerStatus.FOLDED);
+					
+			return true;
+		}
+		
+		@Override
+		public boolean onAreBetsClosedRequest(AreBetsClosedRequest request, ACLMessage aclMsg) {
+			
+			if(areBetsClosed()){
+				AgentHelper.sendReply(BetManagerAgent.this, aclMsg, ACLMessage.INFORM, new BooleanMessage(true));
+			}
+			else {
+				AgentHelper.sendReply(BetManagerAgent.this, aclMsg, ACLMessage.INFORM, new BooleanMessage(true));
+			}
 			
 			return true;
 		}

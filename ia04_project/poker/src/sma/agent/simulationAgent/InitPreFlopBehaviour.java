@@ -49,7 +49,7 @@ public class InitPreFlopBehaviour extends TaskRunnerBhv {
 
 	@Override
 	public int onEnd(){
-		return SimulationAgent.GameEvent.START_TABLE_ROUND.ordinal();
+		return SimulationAgent.GameEvent.NEW_TABLE_ROUND.ordinal();
 	}
 	
 	private Behaviour getBlindPaiementBehaviour(AID playerAID, int amount) {

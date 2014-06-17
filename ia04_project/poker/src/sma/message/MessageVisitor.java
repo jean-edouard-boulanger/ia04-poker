@@ -3,6 +3,7 @@ package sma.message;
 import jade.lang.acl.ACLMessage;
 import sma.message.bet.notification.BetsMergedNotification;
 import sma.message.bet.notification.PotAmountNotification;
+import sma.message.bet.request.AreBetsClosedRequest;
 import sma.message.bet.request.BetRequest;
 import sma.message.bet.request.FoldRequest;
 import sma.message.bet.request.GetPotAmountRequest;
@@ -58,6 +59,7 @@ public class MessageVisitor {
 	
 	public boolean onFailureMessage(FailureMessage msg, ACLMessage aclMsg) {return false;}
 	public boolean onOKMessage(OKMessage okMessage, ACLMessage aclMsg) {return false;}
+	public boolean onBooleanMessage(BooleanMessage message, ACLMessage aclMsg) {return false;}
 	
 	// Simulation
 	public boolean onPlayerSubscriptionRequest(PlayerSubscriptionRequest request, ACLMessage aclMsg){return false;}
@@ -75,6 +77,7 @@ public class MessageVisitor {
 	
 	// Bet
 	public boolean onBetRequest(BetRequest request, ACLMessage aclMsg) {return false;}
+	public boolean onAreBetsClosedRequest(AreBetsClosedRequest request, ACLMessage aclMsg) {return false;}
 	public boolean onFoldRequest(FoldRequest request, ACLMessage aclMsg){return false;}
 	public boolean onGetPotAmountRequest(GetPotAmountRequest request, ACLMessage aclMsg) {return false;}
 	public boolean onPotAmountNotification(PotAmountNotification notification, ACLMessage aclMsg) {return false;}

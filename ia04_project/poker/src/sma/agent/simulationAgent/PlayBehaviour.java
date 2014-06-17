@@ -1,5 +1,6 @@
 package sma.agent.simulationAgent;
 
+import poker.game.player.model.PlayerStatus;
 import sma.agent.SimulationAgent;
 import sma.agent.helper.AgentHelper;
 import sma.agent.helper.DFServiceHelper;
@@ -57,7 +58,6 @@ public class PlayBehaviour extends Behaviour {
 		boolean received = false;
 		
 		if(step == 0){
-			System.err.println("DEBUG [PlayBehaviour:" + step + "] Current player " + playerAID.getLocalName());
 			// We request the environment to notify the player AID plays
 			this.envTransaction = new RequestTransaction(this, new CurrentPlayerChangeRequest(this.playerAID), environmentAID);
 			this.envTransaction.sendRequest();
@@ -65,7 +65,6 @@ public class PlayBehaviour extends Behaviour {
 			this.step++;
 		}
 		else if(step == 1){
-			System.err.println("DEBUG [PlayBehaviour:" + step + "] Current player " + playerAID.getLocalName());
 
 			// We wait for the environment confirmation
 			received = this.envTransaction.checkReply(new EnvironmentMessageVisitor());
@@ -77,7 +76,6 @@ public class PlayBehaviour extends Behaviour {
 			}
 		}
 		else if(step == 2){
-			System.err.println("DEBUG [PlayBehaviour:" + step + "] Current player " + playerAID.getLocalName());
 
 			// We notify that the player AID (and only the player AID) can play (Handled by CheckPlayerActionsBehaviour)
 			this.simulationAgent.setPlayerAllowedToBetAID(this.playerAID);
@@ -96,7 +94,6 @@ public class PlayBehaviour extends Behaviour {
 			this.step++;
 		}
 		else if(step == 3){
-			System.err.println("DEBUG [PlayBehaviour:" + step + "] Current player " + playerAID.getLocalName());
 
 			/* The player action is received
 			 * - Fold will lead to step 32
@@ -114,7 +111,6 @@ public class PlayBehaviour extends Behaviour {
 			}
 		}
 		else if(step == 31){
-			System.err.println("DEBUG [PlayBehaviour:" + step + "] Current player " + playerAID.getLocalName());
 
 			/* Check the betManager response
 			 * - A failure message will lead to step 2 (Bet request)
@@ -126,7 +122,6 @@ public class PlayBehaviour extends Behaviour {
 			}
 		}
 		else if(step == 32){
-			System.err.println("DEBUG [PlayBehaviour:" + step + "] Current player " + playerAID.getLocalName());
 
 			/*
 			 * Notifies the environment that the player folded
@@ -135,7 +130,6 @@ public class PlayBehaviour extends Behaviour {
 			step = 33;
 		}
 		else if(step == 33){
-			System.err.println("DEBUG [PlayBehaviour:" + step + "] Current player " + playerAID.getLocalName());
 
 			/*
 			 * Received the environment answer
@@ -146,13 +140,13 @@ public class PlayBehaviour extends Behaviour {
 			}
 			else {
 				/*
-				 * Once received, go to the end state
+				 * Once received, update local model, and go to the end state
 				 */
+				this.simulationAgent.getGame().getPlayersContainer().getPlayerByAID(this.playerAID).setStatus(PlayerStatus.FOLDED);
 				this.step = PlayBehaviour.END_STATE;
 			}
 		}
 		else {
-			System.err.println("DEBUG [PlayBehaviour:" + step + "] Current player" + playerAID);
 
 			/*
 			 * We are done, the behaviour will terminate
@@ -170,9 +164,7 @@ public class PlayBehaviour extends Behaviour {
 		@Override
 		public boolean onFailureMessage(FailureMessage msg, ACLMessage aclMsg) {
 			isError = true;
-			
-			System.err.println("ERROR [Simulation.PlayBehaviour:"+ step +"] " + msg.getMessage());
-			
+						
 			return true;
 		}
 		@Override
@@ -185,7 +177,7 @@ public class PlayBehaviour extends Behaviour {
 		@Override
 		public boolean onBetRequest(BetRequest request, ACLMessage aclMsg) {
 			
-			System.err.println("DEBUG [PlayBehaviour:" + step + "] Bet message received FROM " + playerAID.getLocalName());
+			System.out.println("DEBUG [PlayBehaviour:" + step + "] Bet message received FROM " + playerAID.getLocalName());
 			
 			//After the player played, it can't play any longer
 			simulationAgent.setPlayerAllowedToBetAID(null);
@@ -202,7 +194,7 @@ public class PlayBehaviour extends Behaviour {
 		@Override
 		public boolean onFoldRequest(FoldRequest request, ACLMessage aclMsg){
 
-			System.err.println("DEBUG [PlayBehaviour:" + step + "] Fold message received FROM " + playerAID.getLocalName());
+			System.out.println("DEBUG [PlayBehaviour:" + step + "] Fold message received FROM " + playerAID.getLocalName());
 			
 			//After the player played, it can't play any longer
 			simulationAgent.setPlayerAllowedToBetAID(null);
