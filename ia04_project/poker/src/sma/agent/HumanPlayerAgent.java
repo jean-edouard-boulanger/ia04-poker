@@ -33,7 +33,6 @@ import poker.token.model.TokenSet;
 import poker.token.model.TokenType;
 import sma.agent.helper.AgentHelper;
 import sma.agent.helper.DFServiceHelper;
-import sma.agent.helper.SimpleVisitor;
 import sma.agent.helper.TransactionBhv;
 import sma.message.FailureMessage;
 import sma.message.MessageVisitor;
@@ -296,6 +295,7 @@ public class HumanPlayerAgent extends GuiAgent {
 			}*/
 			
 			changes_game.firePropertyChange(PlayerGuiEvent.PLAYER_BET.toString(), null, eventData);
+			changes_game.firePropertyChange(PlayerGuiEvent.PLAYER_CANT_PLAY.toString(), null, eventData);
 			
 			return true;
 		}

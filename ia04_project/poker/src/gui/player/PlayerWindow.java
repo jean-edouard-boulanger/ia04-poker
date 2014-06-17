@@ -90,7 +90,8 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 
 		IHM_READY,
 		SHOW_IHM,
-		PLAY_REQUEST
+		PLAY_REQUEST,
+		PLAYER_CANT_PLAY;
 	}
 
 	private final Pane root = new Pane();
@@ -576,6 +577,12 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 		}
 	}
 
+	public void disableBetButtons() {
+		for(Button betButton : betButtons.values()) {
+			betButton.setDisable(true);
+		}
+	}
+	
 	public void launchWindow(String[] args) {
 		launch(args);
 
@@ -833,6 +840,7 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 						System.out.println("[PlayerWindow] Initialiazing me");
 						
 						appendToGameLog("You joined the table.\n");
+						disableBetButtons();
 					}
 
 					System.out.println("[PlayerWindow] Initialiazing me");
@@ -1057,6 +1065,10 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 						}
 						
 					}
+				}
+				
+				else if(evt.getPropertyName().equals(PlayerGuiEvent.PLAYER_CANT_PLAY.toString())){
+					disableBetButtons();
 				}
 			}
 		});
