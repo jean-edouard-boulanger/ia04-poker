@@ -52,6 +52,7 @@ public class TableRoundBehaviour extends TaskRunnerBhv {
 		}
 		
 		for(Player player : playersInGame){
+			System.out.println("[TableRoundBehaviour] Player index on the table: " + player.getTablePositionIndex());
 			mainTask = mainTask.then(new PlayBehaviour(this.simulationAgent, player.getAID()));
 		}
 		
@@ -70,8 +71,6 @@ public class TableRoundBehaviour extends TaskRunnerBhv {
 		}
 		
 		@Override
-		public void action() {
-			System.err.println("ACTION");
-		}
+		public void action() {}
 	}	
 }

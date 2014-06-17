@@ -57,6 +57,7 @@ public class PlayBehaviour extends Behaviour {
 		boolean received = false;
 		
 		if(step == 0){
+			System.err.println("DEBUG [PlayBehaviour:" + step + "] Current player " + playerAID.getLocalName());
 			// We request the environment to notify the player AID plays
 			this.envTransaction = new RequestTransaction(this, new CurrentPlayerChangeRequest(this.playerAID), environmentAID);
 			this.envTransaction.sendRequest();
@@ -64,6 +65,8 @@ public class PlayBehaviour extends Behaviour {
 			this.step++;
 		}
 		else if(step == 1){
+			System.err.println("DEBUG [PlayBehaviour:" + step + "] Current player " + playerAID.getLocalName());
+
 			// We wait for the environment confirmation
 			received = this.envTransaction.checkReply(new EnvironmentMessageVisitor());
 			if(received){
@@ -74,6 +77,8 @@ public class PlayBehaviour extends Behaviour {
 			}
 		}
 		else if(step == 2){
+			System.err.println("DEBUG [PlayBehaviour:" + step + "] Current player " + playerAID.getLocalName());
+
 			// We notify that the player AID (and only the player AID) can play (Handled by CheckPlayerActionsBehaviour)
 			this.simulationAgent.setPlayerAllowedToBetAID(this.playerAID);
 			
@@ -91,16 +96,26 @@ public class PlayBehaviour extends Behaviour {
 			this.step++;
 		}
 		else if(step == 3){
+			System.err.println("DEBUG [PlayBehaviour:" + step + "] Current player " + playerAID.getLocalName());
+
 			/* The player action is received
 			 * - Fold will lead to step 32
 			 * - Bet will lead to step 31 (The request to the betManager is created by the messageVisitor)
 			 */
-			received = this.envTransaction.checkReply(new PlayerMessageVisitor());
+		
+			// Not an answer, but simulation receives a new bet request from the player
+			//received = this.envTransaction.checkReply(new PlayerMessageVisitor());
+			
+			MessageTemplate mt = MessageTemplate.and(MessageTemplate.MatchSender(this.playerAID), MessageTemplate.MatchPerformative(ACLMessage.REQUEST));
+			received = AgentHelper.receiveMessage(simulationAgent, mt, new PlayerMessageVisitor());
+			
 			if(!received){
 				block();
 			}
 		}
 		else if(step == 31){
+			System.err.println("DEBUG [PlayBehaviour:" + step + "] Current player " + playerAID.getLocalName());
+
 			/* Check the betManager response
 			 * - A failure message will lead to step 2 (Bet request)
 			 * - A OK message will lead to step 4 (End process)
@@ -111,6 +126,8 @@ public class PlayBehaviour extends Behaviour {
 			}
 		}
 		else if(step == 32){
+			System.err.println("DEBUG [PlayBehaviour:" + step + "] Current player " + playerAID.getLocalName());
+
 			/*
 			 * Notifies the environment that the player folded
 			 */
@@ -118,6 +135,8 @@ public class PlayBehaviour extends Behaviour {
 			step = 33;
 		}
 		else if(step == 33){
+			System.err.println("DEBUG [PlayBehaviour:" + step + "] Current player " + playerAID.getLocalName());
+
 			/*
 			 * Received the environment answer
 			 */
@@ -133,6 +152,8 @@ public class PlayBehaviour extends Behaviour {
 			}
 		}
 		else {
+			System.err.println("DEBUG [PlayBehaviour:" + step + "] Current player" + playerAID);
+
 			/*
 			 * We are done, the behaviour will terminate
 			 */
@@ -164,6 +185,8 @@ public class PlayBehaviour extends Behaviour {
 		@Override
 		public boolean onBetRequest(BetRequest request, ACLMessage aclMsg) {
 			
+			System.err.println("DEBUG [PlayBehaviour:" + step + "] Bet message received FROM " + playerAID.getLocalName());
+			
 			//After the player played, it can't play any longer
 			simulationAgent.setPlayerAllowedToBetAID(null);
 			
@@ -178,6 +201,8 @@ public class PlayBehaviour extends Behaviour {
 		
 		@Override
 		public boolean onFoldRequest(FoldRequest request, ACLMessage aclMsg){
+
+			System.err.println("DEBUG [PlayBehaviour:" + step + "] Fold message received FROM " + playerAID.getLocalName());
 			
 			//After the player played, it can't play any longer
 			simulationAgent.setPlayerAllowedToBetAID(null);

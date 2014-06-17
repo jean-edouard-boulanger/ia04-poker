@@ -28,10 +28,10 @@ public class CheckPlayersActionsBehaviour extends CyclicBehaviour {
 		AID playerAllowedToBet = simulationAgent.getPlayerAllowedToBetAID();
 		
 		if(playerAllowedToBet == null){
-			this.messageTemplate = MessageTemplate.and(MessageTemplate.MatchPerformative(ACLMessage.REQUEST), MessageTemplate.not(MessageTemplate.MatchSender(playerAllowedToBet)));
+			this.messageTemplate = MessageTemplate.MatchPerformative(ACLMessage.REQUEST);
 		}
 		else {
-			this.messageTemplate = MessageTemplate.MatchPerformative(ACLMessage.REQUEST);
+			this.messageTemplate = MessageTemplate.and(MessageTemplate.MatchPerformative(ACLMessage.REQUEST), MessageTemplate.not(MessageTemplate.MatchSender(playerAllowedToBet)));
 		}
 		
 		boolean received = AgentHelper.receiveMessage(simulationAgent, this.messageTemplate, messageVisitor);
