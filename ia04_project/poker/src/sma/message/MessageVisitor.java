@@ -99,11 +99,8 @@ public class MessageVisitor {
 	public boolean onSetDealerRequest(SetDealerRequest setDealerRequest,ACLMessage aclMsg) {return false;}
 	public boolean onShowPlayerCardsRequest(ShowPlayerCardsRequest showPlayerRequest, ACLMessage aclMsg) {return false;}
 	public boolean onPlayerBetRequest(PlayerBetRequest playerBetRequest, ACLMessage aclMsg) { return false; }
-<<<<<<< HEAD
 	public boolean onPlayerFoldedRequest(PlayerFoldedRequest playerFoldedRequest, ACLMessage aclMsg) { return false; }
-=======
 	public boolean onChangePlayerStatusRequest(ChangePlayerStatusRequest request, ACLMessage aclMsg){ return false; }
->>>>>>> simulation_new
 	
 	// Environment notification 
 	public boolean onEnvironmentChanged(Message notif, ACLMessage aclMsg){return false;}
