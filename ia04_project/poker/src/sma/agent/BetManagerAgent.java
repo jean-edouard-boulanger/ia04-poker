@@ -199,7 +199,7 @@ public class BetManagerAgent extends Agent {
 					game.getBetContainer().setPlayerCurrentBet(request.getPlayerAID(), TokenSetValueEvaluator.tokenSetFromAmount(request.getBet(), game.getBetContainer().getTokenValueDefinition()));
 					
 					//Notifying the environment: sequential behaviour					
-					notifyBetToEnvironment(new PlayerBetRequest(tokenSetToSubstract, request.getPlayerAID()), new GiveTokenSetToPlayerRequest(tokenSetToAddToPlayer, request.getPlayerAID()), aclMsg);					
+					notifyBetToEnvironment(new PlayerBetRequest(tokenSetToSubstract, request.getPlayerAID(), request.getBet()), new GiveTokenSetToPlayerRequest(tokenSetToAddToPlayer, request.getPlayerAID()), aclMsg);					
 				} catch (InvalidTokenAmountException | ExcessiveBetException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();

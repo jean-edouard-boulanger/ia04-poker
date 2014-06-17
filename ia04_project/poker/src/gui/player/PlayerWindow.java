@@ -5,6 +5,7 @@ import gui.player.TokenPlayerIHM.ColorToken;
 import gui.player.animation.AnimateNotification;
 import gui.player.animation.SoundFx;
 import gui.player.event.model.PlayRequestEventData;
+import gui.player.event.model.PlayerBetEventData;
 import gui.player.event.model.PlayerTokenSetChangedEventData;
 import gui.player.poker.token.BigBlindTokenIHM;
 import gui.player.poker.token.DealerTokenIHM;
@@ -21,12 +22,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javafx.animation.Interpolator;
-import javafx.animation.PauseTransition;
-import javafx.animation.SequentialTransition;
-import javafx.animation.Timeline;
-import javafx.animation.TranslateTransition;
-import javafx.animation.TranslateTransitionBuilder;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
@@ -48,8 +43,11 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.transform.Scale;
 import javafx.stage.Stage;
+<<<<<<< HEAD
 import javafx.stage.WindowEvent;
 import javafx.util.Duration;
+=======
+>>>>>>> d4d9df450f34fc3111a09fa29c1ff6c9bd0f05e9
 import poker.card.helper.CardImageHelper;
 import poker.card.model.Card;
 import poker.card.model.CardRank;
@@ -57,8 +55,6 @@ import poker.card.model.CardSuit;
 import poker.game.model.BetType;
 import poker.game.model.BlindValueDefinition;
 import poker.game.player.model.Player;
-import poker.token.exception.InvalidTokenAmountException;
-import poker.token.model.TokenSet;
 import poker.token.model.TokenType;
 import sma.agent.HumanPlayerAgent;
 
@@ -584,6 +580,31 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 	public void disableBetButtons() {
 		for(Button betButton : betButtons.values()) {
 			betButton.setDisable(true);
+			slider_bet.setDisable(true);
+			button_add_bet.setDisable(true);
+			button_sub_bet.setDisable(true);
+		}
+	}
+	
+	public void enableBetButtons(ArrayList<BetType> availableActions, int raiseAmount, int sliderMin, int sliderMax) {
+		
+			for(Button betButton : betButtons.values()) {
+				for(BetType t : availableActions){
+					if(betButtons.containsKey(t)) {
+						if(t != BetType.CHECK)
+							betButtons.get(t).setDisable(false);
+						else if(raiseAmount == 0) {
+							betButtons.get(t).setDisable(false);
+						}
+					}
+				}
+				
+			slider_bet.setMin(sliderMin);
+			slider_bet.setMax(sliderMax);
+
+			slider_bet.setDisable(false);
+			button_add_bet.setDisable(false);
+			button_sub_bet.setDisable(false);
 		}
 	}
 	
@@ -1038,16 +1059,16 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 				 */
 				else if(evt.getPropertyName().equals(PlayerGuiEvent.PLAYER_BET.toString()))
 				{
-					if(evt.getNewValue() instanceof PlayerTokenSetChangedEventData)
+					if(evt.getNewValue() instanceof PlayerBetEventData)
 					{
-						PlayerTokenSetChangedEventData evt_data = (PlayerTokenSetChangedEventData)evt.getNewValue();
+						PlayerBetEventData evt_data = (PlayerBetEventData)evt.getNewValue();
 						
-						PlayerWindow.this.pot.AddTokenSet(evt_data.getTokenSet());
-						PlayerWindow.this.pot.addBet(evt_data.getTokenSetValuation());
-						PlayerWindow.this.list_token_bet.get(evt_data.getPlayerIndex()).setBet(evt_data.getTokenSetValuation());
+						PlayerWindow.this.pot.AddTokenSet(evt_data.getTokenSetUsedForBet());
+						PlayerWindow.this.pot.addBet(evt_data.getBetAmount());
+						PlayerWindow.this.list_token_bet.get(evt_data.getPlayerIndex()).setBet(evt_data.getBetAmount());
 						
 						SoundFx.launchSound(PlayerWindow.this, "/sons/chips.wav");
-						
+
 						System.out.println("[PlayerWindow] Player bet");
 					}
 				}
@@ -1067,20 +1088,8 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 						betButtons.get(BetType.CALL).setText("Call ("+ eventData.getMinimumBetAmount() +")");
 						//betButtons.get(BetType.ALL_IN).setText("All in (" + eventData.getMaximumBetAmount() + ")");
 						betButtons.get(BetType.RAISE).setText("Raise (" + eventData.getRaiseAmount() + ")");
-						
-						slider_bet.setMin(eventData.getMinimumBetAmount());
-						slider_bet.setMax(eventData.getMaximumBetAmount());
-						
-						for(BetType t : eventData.getAvailableActions()){
-							if(betButtons.containsKey(t)) {
-								if(t != BetType.CHECK)
-									betButtons.get(t).setDisable(false);
-								else if(eventData.getRaiseAmount() == 0) {
-									betButtons.get(t).setDisable(false);
-								}
-							}
-						}
-						
+												
+						enableBetButtons(eventData.getAvailableActions(), eventData.getRaiseAmount(), eventData.getMinimumBetAmount(), eventData.getMaximumBetAmount());
 					}
 				}
 				
