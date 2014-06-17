@@ -285,7 +285,7 @@ public class HumanPlayerAgent extends GuiAgent {
 			PlayerTokenSetChangedEventData eventData = new PlayerTokenSetChangedEventData();
 			eventData.setTokenSet(betTokenSet);
 			eventData.setPlayerIndex(game.getPlayersContainer().getPlayerByAID(notification.getPlayerAID()).getTablePositionIndex());
-			eventData.setTokenSetValuation(TokenSetValueEvaluator.evaluateTokenSetValue(game.getBetContainer().getTokenValueDefinition(), player.getTokens()));
+			eventData.setTokenSetValuation(TokenSetValueEvaluator.evaluateTokenSetValue(game.getBetContainer().getTokenValueDefinition(), betTokenSet));
 
 			/*if(notification.getPlayerAID().equals(HumanPlayerAgent.this.getAID())){
 				eventData.setTokenSet(player.getTokens());
