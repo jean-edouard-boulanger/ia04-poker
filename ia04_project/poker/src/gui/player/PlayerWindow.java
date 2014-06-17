@@ -43,11 +43,8 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.transform.Scale;
 import javafx.stage.Stage;
-<<<<<<< HEAD
 import javafx.stage.WindowEvent;
 import javafx.util.Duration;
-=======
->>>>>>> d4d9df450f34fc3111a09fa29c1ff6c9bd0f05e9
 import poker.card.helper.CardImageHelper;
 import poker.card.model.Card;
 import poker.card.model.CardRank;
