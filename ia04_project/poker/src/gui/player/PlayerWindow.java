@@ -1002,14 +1002,20 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 						}
 						
 						betButtons.get(BetType.CALL).setText("Call ("+ eventData.getMinimumBetAmount() +")");
-						betButtons.get(BetType.ALL_IN).setText("All in (" + eventData.getMaximumBetAmount() + ")");
+						//betButtons.get(BetType.ALL_IN).setText("All in (" + eventData.getMaximumBetAmount() + ")");
 						betButtons.get(BetType.RAISE).setText("Raise (" + eventData.getRaiseAmount() + ")");
 						
 						slider_bet.setMin(eventData.getMinimumBetAmount());
 						slider_bet.setMax(eventData.getMaximumBetAmount());
 						
 						for(BetType t : eventData.getAvailableActions()){
-							betButtons.get(t).setDisable(false);
+							if(betButtons.containsKey(t)) {
+								if(t != BetType.CHECK)
+									betButtons.get(t).setDisable(false);
+								else if(eventData.getRaiseAmount() == 0) {
+									betButtons.get(t).setDisable(false);
+								}
+							}
 						}
 						
 					}
