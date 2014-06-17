@@ -229,7 +229,7 @@ public class PlayersContainer {
 			}
 		}
 		
-		return players;
+		return playersInGame;
 	}
 	
 	public class PlayerIterator implements Iterator<Player>{
