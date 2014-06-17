@@ -38,6 +38,23 @@
 	-fx-background-color: rgba(255, 255, 255, 0.2);
 }
 
+/* Animation notification */
+
+.background-notification {
+	-fx-background-color: transparent;
+	-fx-opacity: 0.2;
+	-fx-effect: dropshadow( three-pass-box , rgba(0,0,0,0.6) , 5, 0.0 , 0 , 1 );
+	-fx-alignment: center; 
+}
+
+.label-notification {
+	-fx-font-size: 25px;
+	-fx-text-fill: white;	
+	-fx-font-weight: bold;
+	-fx-smooth: true;
+	-fx-effect: dropshadow( gaussian , rgba(255,255,255,0.5) , 0,0,0,1 );
+}
+
 /* BUTTON */
 
 .button_play {

@@ -2,6 +2,7 @@ package gui.player;
 
 import gui.player.PersoIHM.Sens;
 import gui.player.TokenPlayerIHM.ColorToken;
+import gui.player.animation.AnimateNotification;
 import gui.player.event.model.PlayRequestEventData;
 import gui.player.event.model.PlayerTokenSetChangedEventData;
 import gui.player.poker.token.BigBlindTokenIHM;
@@ -18,6 +19,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javafx.animation.Interpolator;
+import javafx.animation.PauseTransition;
+import javafx.animation.SequentialTransition;
+import javafx.animation.Timeline;
+import javafx.animation.TranslateTransition;
+import javafx.animation.TranslateTransitionBuilder;
 import javafx.application.Application;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -36,6 +43,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.transform.Scale;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 import poker.card.helper.CardImageHelper;
 import poker.card.model.Card;
 import poker.game.model.BetType;
@@ -82,6 +90,8 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 	}
 
 	private final Pane root = new Pane();
+	
+	private AnimateNotification animate_notification;
 
 	/** Interaction button */
 	private Button button_fold;
@@ -203,6 +213,8 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 		primaryStage.setTitle("Poker");
 
 		root.setId("root");
+		
+		animate_notification = new AnimateNotification();
 
 		label_hand = new Label("Main n°1");
 
@@ -481,6 +493,8 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 		root.getChildren().add(bigBlindToken);
 		root.getChildren().add(smallBlindToken);
 		
+		root.getChildren().add(animate_notification);
+		
 		/***************************************
 		 * Pot
 		 */
@@ -750,7 +764,6 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 
 			public void handle(ActionEvent event) {
 				//communauty_card.addCommunautyCard(new Card(CardRank.ACE, CardSuit.CLUBS));
-
 			}
 		});
 
@@ -771,7 +784,7 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 		});
 		
 		for(Button bt : betButtons.values()){
-			bt.setDisable(true);
+			//bt.setDisable(true);
 		}
 	}
 
@@ -905,6 +918,8 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 					if(evt.getNewValue() instanceof Player)
 					{
 						Player player = (Player)evt.getNewValue();
+						
+						animate_notification.launchAnimation(player.getNickname() + " turn");
 						
 						appendToGameLog("The player '" + player.getNickname() + "' is now playing\n");
 						changeCurrentPlayer(player.getTablePositionIndex());
