@@ -26,6 +26,7 @@ import javafx.animation.Timeline;
 import javafx.animation.TranslateTransition;
 import javafx.animation.TranslateTransitionBuilder;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -43,9 +44,12 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.transform.Scale;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 import javafx.util.Duration;
 import poker.card.helper.CardImageHelper;
 import poker.card.model.Card;
+import poker.card.model.CardRank;
+import poker.card.model.CardSuit;
 import poker.game.model.BetType;
 import poker.game.model.BlindValueDefinition;
 import poker.game.player.model.Player;
@@ -720,6 +724,10 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 		this.label_big_blind.setText("Big blind : " + String.valueOf(blind_definition.getBigBlindAmountDefinition()));
 	}
 	
+	public void revealCard(Player player, Card card1, Card card2) {
+		this.list_card_player.get(player.getTablePositionIndex()).revealCard(card1, card2);
+	}
+	
 	public void initializeAction()
 	{
 		/**************************************
@@ -764,6 +772,7 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 
 			public void handle(ActionEvent event) {
 				//communauty_card.addCommunautyCard(new Card(CardRank.ACE, CardSuit.CLUBS));
+				
 			}
 		});
 
@@ -786,6 +795,14 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 		for(Button bt : betButtons.values()){
 			//bt.setDisable(true);
 		}
+		
+		primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+		   @Override
+		   public void handle(WindowEvent t) {
+		      Platform.exit();
+		      System.exit(0);
+		   }
+		});
 	}
 
 	/**************************************
@@ -924,6 +941,8 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 						appendToGameLog("The player '" + player.getNickname() + "' is now playing\n");
 						changeCurrentPlayer(player.getTablePositionIndex());
 						System.out.println("[PlayerWindow] Player current changed");
+						
+						revealCard(player, new Card(CardRank.ACE, CardSuit.CLUBS), new Card(CardRank.ACE, CardSuit.SPADES));
 					}
 				}
 				

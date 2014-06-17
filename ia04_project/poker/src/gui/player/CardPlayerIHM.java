@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import poker.card.model.Card;
+import javafx.animation.ParallelTransition;
+import javafx.animation.ScaleTransition;
 import javafx.scene.Group;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
@@ -11,6 +13,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
+import javafx.util.Duration;
 
 public class CardPlayerIHM extends Group {
 	
@@ -49,6 +52,36 @@ public class CardPlayerIHM extends Group {
 		}
 		else {
 			System.err.println("ERROR [IHM] Tried to add add unkown card, while the player already had two.");
+		}
+	}
+	
+	public void revealCard(Card card1, Card card2)
+	{
+		if(this.number_cards == 2)
+		{
+			ParallelTransition parallel_transition = new ParallelTransition();
+		     
+			this.list_card.get(0).setImage(new Image("images/"+card1.getRank()+"_"+card1.getSuit()+".png"));
+			this.list_card.get(1).setImage(new Image("images/"+card2.getRank()+"_"+card2.getSuit()+".png"));
+			
+			ScaleTransition st_card1 = new ScaleTransition(Duration.millis(2000), this.list_card.get(0));
+			st_card1.setByX(1.5f);
+			st_card1.setByY(1.5f);
+			st_card1.setCycleCount(1);
+			st_card1.setAutoReverse(true);
+		     
+		     ScaleTransition st_card2 = new ScaleTransition(Duration.millis(2000), this.list_card.get(0));
+		     st_card2.setByX(1.5f);
+		     st_card2.setByY(1.5f);
+		     st_card2.setCycleCount(1);
+		     st_card2.setAutoReverse(true);
+		     
+		     parallel_transition.getChildren().addAll(
+		    		 st_card1,
+		    		 st_card2
+    		 );
+		     
+		     parallel_transition.play();
 		}
 	}
 	

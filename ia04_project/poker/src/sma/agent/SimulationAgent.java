@@ -103,7 +103,6 @@ public class SimulationAgent extends GuiAgent {
 	    //TODO: handle properly parameters.
 	    this.maxPlayers = (Integer)evt.getParameter(0);
 	    this.blindIncreaseDelayS = (Integer)evt.getParameter(1)*60;
-	    int distribNb = (Integer)evt.getParameter(2);
 	    StartServer();
 	    break;
 	case LAUNCH_GAME:
