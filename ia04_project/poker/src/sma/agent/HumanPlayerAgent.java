@@ -235,12 +235,15 @@ public class HumanPlayerAgent extends GuiAgent {
 		@Override
 		public boolean onPlayerStatusChangedNotification(PlayerStatusChangedNotification notification, ACLMessage aclMsg) {
 			
+			Player player = game.getPlayersContainer().getPlayerByAID(notification.getPlayerAID());
 			switch(notification.getNewStatus()){
-			case FOLDED:
-				changes_game.firePropertyChange(PlayerGuiEvent.PLAYER_FOLDED.toString(), null, 5);
-			default:
-				break;
+				case FOLDED:
+					changes_game.firePropertyChange(PlayerGuiEvent.PLAYER_FOLDED.toString(), null, player.getTablePositionIndex());
+				default:
+					break;
 			}
+			
+			System.out.println("[HPA] Player " + game.getPlayersContainer().getPlayerByAID(getAID()).getNickname() + " with " + notification.getNewStatus() + " status changed.");
 			
 			return true;
 		}
@@ -345,6 +348,9 @@ public class HumanPlayerAgent extends GuiAgent {
 			int playerIndex = game.getPlayersContainer().getPlayerByAID(notification.getPlayerAID()).getTablePositionIndex();
 			changes_game.firePropertyChange(PlayerGuiEvent.CURRENT_PLAYER_CHANGED.toString(), null, game.getPlayersContainer().getPlayerByAID(notification.getPlayerAID()));
 
+			if(notification.getPlayerAID().equals(HumanPlayerAgent.this.getAID()))
+				changes_game.firePropertyChange(PlayerGuiEvent.YOUR_TURN.toString(), null, null);
+			
 			return true;
 		}
 

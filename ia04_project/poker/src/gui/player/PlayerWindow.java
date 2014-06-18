@@ -85,6 +85,7 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 		SMALL_BLIND_PLAYER,
 		BIG_BLIND_PLAYER,
 		CURRENT_PLAYER_CHANGED,
+		YOUR_TURN,
 
 		IHM_READY,
 		SHOW_IHM,
@@ -323,7 +324,7 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 		textfield_bet.setPrefWidth(150);
 		textfield_bet.setEditable(false);
 
-		communauty_card = new CommunautyCardIHM(250, 185);
+		communauty_card = new CommunautyCardIHM(250, 175);
 
 		zone_carte.setX(0);
 		zone_carte.setY(455);
@@ -824,7 +825,7 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 				human_player_agent.postGuiEvent(ev);
 			}
 		});
-		
+
 		button_call.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
@@ -983,14 +984,20 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 					{
 						Player player = (Player)evt.getNewValue();
 						
-						animate_notification.launchAnimation(player.getNickname() + " turn");
-						
 						appendToGameLog("The player '" + player.getNickname() + "' is now playing\n");
 						changeCurrentPlayer(player.getTablePositionIndex());
 						System.out.println("[PlayerWindow] Player current changed");
 						
 						//revealCard(player, new Card(CardRank.ACE, CardSuit.CLUBS), new Card(CardRank.ACE, CardSuit.SPADES));
 					}
+				}
+				
+				/**
+				 *  -----  YOUR TURN -----
+				 */
+				else if(evt.getPropertyName().equals(PlayerGuiEvent.YOUR_TURN.toString()))
+				{
+						animate_notification.launchAnimation("Your turn");
 				}
 				
 				/**
@@ -1069,7 +1076,7 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 						
 						PlayerWindow.this.pot.AddTokenSet(evt_data.getTokenSetUsedForBet());
 						PlayerWindow.this.pot.addBet(evt_data.getBetAmount());
-						PlayerWindow.this.list_token_bet.get(evt_data.getPlayerIndex()).setBet(evt_data.getBetAmount());
+						PlayerWindow.this.list_token_bet.get(evt_data.getPlayerIndex()).addBet(evt_data.getBetAmount());
 						
 						SoundFx.launchSound(PlayerWindow.this, "/sons/chips.wav");
 
@@ -1093,12 +1100,25 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 						//betButtons.get(BetType.ALL_IN).setText("All in (" + eventData.getMaximumBetAmount() + ")");
 						betButtons.get(BetType.RAISE).setText("Raise (" + eventData.getRaiseAmount() + ")");
 												
-						enableBetButtons(eventData.getAvailableActions(), eventData.getRaiseAmount(), eventData.getMinimumBetAmount(), eventData.getMaximumBetAmount());
+						enableBetButtons(eventData.getAvailableActions(), eventData.getRaiseAmount(), eventData.getRaiseAmount(), eventData.getMaximumBetAmount());
 					}
 				}
 				
 				else if(evt.getPropertyName().equals(PlayerGuiEvent.PLAYER_CANT_PLAY.toString())){
 					disableBetButtons();
+				}
+				
+				/**
+				 * ------ PLAYER FOLDED ----
+				 */
+				else if(evt.getPropertyName().equals(PlayerGuiEvent.PLAYER_FOLDED.toString())){
+					if(evt.getNewValue() instanceof Integer){
+						
+						int player_index = ((Integer)evt.getNewValue()).intValue();
+						PlayerWindow.this.list_card_player.get(player_index).emptyCard();
+						
+						System.out.println("[PlayerWindow] Player folded");
+					}
 				}
 			}
 		});

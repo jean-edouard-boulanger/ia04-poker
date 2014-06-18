@@ -100,6 +100,8 @@ public class AnimateNotification extends Group {
 	public void launchAnimation(String text_to_display)
 	{
 		label_notification.setText(text_to_display);
+		background_notification.toFront();
+		label_notification.toFront();
 		sequence.play();
 	}
 }

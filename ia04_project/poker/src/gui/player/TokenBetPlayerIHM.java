@@ -13,6 +13,7 @@ import javafx.scene.shape.Rectangle;
 public class TokenBetPlayerIHM extends Group {
 	
 	private Label label_bet;
+	private int bet;
 	
 	public TokenBetPlayerIHM(Point2D point)
 	{
@@ -22,12 +23,20 @@ public class TokenBetPlayerIHM extends Group {
 
 		label_bet.getStyleClass().add("label-bet");
 		
+		this.bet = 0;
 		
 		this.getChildren().add(label_bet);
 	}
 	
-	public void setBet(int bet)
+	public void addBet(int bet)
 	{
-		label_bet.setText(String.valueOf(Integer.valueOf(bet)));
+		this.bet += bet;
+		label_bet.setText(String.valueOf(Integer.valueOf(this.bet)));
+	}
+	
+	public void resetBet()
+	{
+		this.bet = 0;
+		label_bet.setText("0");
 	}
 }

@@ -28,12 +28,12 @@ public class CommunautyCardIHM extends Group {
 		this.x = x;
 		this.y = y;
 
-		this.current_position_x = x + 35;
+		this.current_position_x = x + 45;
 
 		ImageView image_card = new ImageView(new Image("images/background_card.png"));
 		image_card.setLayoutX(x);
 		image_card.setLayoutY(y);
-		image_card.setFitWidth(30);
+		image_card.setFitWidth(40);
 		image_card.setFitHeight(52);
 
 	}
@@ -44,10 +44,10 @@ public class CommunautyCardIHM extends Group {
 		ImageView image_card = new ImageView(new Image("images/"+card.getRank()+"_"+card.getSuit()+".png"));
 		image_card.setLayoutX(current_position_x);
 		image_card.setLayoutY(y);
-		image_card.setFitWidth(30);
+		image_card.setFitWidth(40);
 		image_card.setFitHeight(52);
 
-		this.current_position_x += 35;
+		this.current_position_x += 45;
 		this.list_card.add(image_card);
 		this.getChildren().add(image_card);
 	}
@@ -58,6 +58,6 @@ public class CommunautyCardIHM extends Group {
 			this.getChildren().remove(im);
 
 		this.list_card.clear();
-		this.current_position_x = x + 35;
+		this.current_position_x = x + 45;
 	}
 }
