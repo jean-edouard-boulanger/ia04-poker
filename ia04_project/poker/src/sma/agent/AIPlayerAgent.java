@@ -28,7 +28,7 @@ public class AIPlayerAgent extends Agent {
 	
 	public void setup()
 	{
-		//super.setup();
+		super.setup();
 
 		game = new Game();
 
