@@ -8,7 +8,6 @@ import jade.gui.GuiAgent;
 import jade.gui.GuiEvent;
 
 import java.beans.PropertyChangeSupport;
-import java.util.ArrayList;
 import java.util.HashMap;
 
 import poker.card.heuristics.combination.model.Hand;

@@ -44,7 +44,6 @@ public class DetermineWinnerAgent extends Agent {
 		this.msgVisitor = new DetermineWinnerMessageVisitor();
 		this.communityCards = new CommunityCards();
 		players = new ArrayList<Player>();
-		this.environment = DFServiceHelper.searchService(this, "PokerEnvironment", "Environment");
 	}
 	
 	@Override
@@ -52,6 +51,7 @@ public class DetermineWinnerAgent extends Agent {
 	{
 		super.setup();
 		DFServiceHelper.registerService(this, "DetermineWinnerAgent","DetermineWinner");
+		this.environment = DFServiceHelper.searchService(this, "PokerEnvironment", "Environment");
 		
 		this.addBehaviour(new ReceiveRequestBehaviour(this));
 		this.addBehaviour(new ReceiveNotificationBehaviour(this));
