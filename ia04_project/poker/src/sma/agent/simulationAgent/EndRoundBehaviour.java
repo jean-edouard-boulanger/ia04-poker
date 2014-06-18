@@ -57,13 +57,12 @@ public class EndRoundBehaviour extends TaskRunnerBehaviour {
 				 */
 				
 				Round currentRound = simulationAgent.getCurrentRound();
+				
+				this.transition = GameEvent.NEW_ROUND;
 				if(currentRound == Round.RIVER){
-					
+					this.transition = GameEvent.FIND_HAND_WINNERS;
 				}
-				else 
-				{
-					
-				}
+
 				simulationAgent.setCurrentRound(currentRound.getNext());
 			}
 			else 
@@ -71,7 +70,9 @@ public class EndRoundBehaviour extends TaskRunnerBehaviour {
 				/*
 				 * Otherwise, the remaining player is the hand winner
 				 */
+				this.simulationAgent.setCurrentRound(Round.SHOWDOWN);
 				this.simulationAgent.addHandWinner(remainingPlayers.get(0));
+				this.transition = GameEvent.END_HAND;
 			}
 		}
 		this.setBehaviour(mainTask);

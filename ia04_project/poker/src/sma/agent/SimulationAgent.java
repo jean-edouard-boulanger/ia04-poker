@@ -25,7 +25,7 @@ import poker.token.model.TokenValueDefinition;
 import sma.agent.helper.DFServiceHelper;
 import sma.agent.simulationAgent.EndRoundBehaviour;
 import sma.agent.simulationAgent.EndTableRoundBehaviour;
-import sma.agent.simulationAgent.EnvironmentWatcherBhv;
+import sma.agent.simulationAgent.EnvironmentWatcherBehaviour;
 import sma.agent.simulationAgent.InitGameBehaviour;
 import sma.agent.simulationAgent.InitHandBehaviour;
 import sma.agent.simulationAgent.InitRoundBehaviour;
@@ -46,7 +46,7 @@ public class SimulationAgent extends GuiAgent {
 		NEW_ROUND, 
 		END_ROUND,
 		GAME_FINISHED,
-		FIND_HAND_WINNER,
+		FIND_HAND_WINNERS,
 		END_HAND
 	}
 
@@ -56,7 +56,7 @@ public class SimulationAgent extends GuiAgent {
 	private static final String TABLE_ROUND = "TABLE_ROUND";
 	private static final String END_TABLE_ROUND = "TABLE_ROUND_END";
 	private static final String END_ROUND = "END_ROUND";
-	private static final String FIND_HAND_WINNER = "FIND_HAND_WINNER";
+	private static final String FIND_HAND_WINNERS = "FIND_HAND_WINNERS";
 
 	private PropertyChangeSupport changes = new PropertyChangeSupport(this);
 	private Game game;
@@ -122,7 +122,7 @@ public class SimulationAgent extends GuiAgent {
 		}
 
 		addBehaviour(new PlayerSubscriptionBehaviour(this));
-		addBehaviour(new EnvironmentWatcherBhv(this));
+		addBehaviour(new EnvironmentWatcherBehaviour(this));
 	}
 
 	/**
