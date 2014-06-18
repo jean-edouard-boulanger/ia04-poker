@@ -160,7 +160,7 @@ public class DetermineWinnerAgent extends Agent {
 		
 		
 		private void subscribeToEnvironment(){
-			
+						
 			TransactionBehaviour envSubscriptionBhv = new TransactionBehaviour(myAgent, null, environment, ACLMessage.SUBSCRIBE);
 			envSubscriptionBhv.setResponseVisitor(new MessageVisitor(){
 				
