@@ -22,6 +22,7 @@ import javafx.embed.swing.JFXPanel;
 import javax.swing.SwingUtilities;
 
 import poker.card.exception.CommunityCardsFullException;
+import poker.card.exception.UserDeckFullException;
 import poker.game.exception.NoPlaceAvailableException;
 import poker.game.exception.NotRegisteredPlayerException;
 import poker.game.exception.PlayerAlreadyRegisteredException;
@@ -190,7 +191,15 @@ public class HumanPlayerAgent extends GuiAgent {
 		@Override
 		public boolean onPlayerReceivedCardNotification(PlayerReceivedCardNotification notification, ACLMessage aclMsg){
 
-			// if(notification.getPlayerAID().equals(HumanPlayerAgent.this.getAID()))
+			Player player = game.getPlayersContainer().getPlayerByAID(notification.getPlayerAID());
+			
+			try {
+				player.getDeck().addCard(notification.getReceivedCard());
+			} catch (UserDeckFullException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
 			changes_game.firePropertyChange(PlayerGuiEvent.PLAYER_RECEIVED_CARD.toString(), null, notification.getReceivedCard());
 
 			return true;
