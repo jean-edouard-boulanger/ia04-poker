@@ -18,13 +18,12 @@ public class InitShowDownBehaviour extends TaskRunnerBehaviour {
 	SimulationAgent simulationAgent;
 	
 	AID environmentAID;
-	AID betManagerAID;
 		
 	public InitShowDownBehaviour(SimulationAgent simulationAgent) {
 		super(simulationAgent);
 		this.simulationAgent = simulationAgent;
 		
-		this.betManagerAID = DFServiceHelper.searchService(simulationAgent, "BetManagerAgent","BetManager");		
+		this.environmentAID = DFServiceHelper.searchService(simulationAgent, "PokerEnvironment", "Environment");
 	}
 	
 	@Override
@@ -47,7 +46,7 @@ public class InitShowDownBehaviour extends TaskRunnerBehaviour {
 	
 	private TransactionBehaviour getRequestPlayerRevealCardsBehaviour(AID playerAID){
 		RevealPlayerCardsRequest revealPlayerCardsRequest = new RevealPlayerCardsRequest(playerAID);
-		TransactionBehaviour transactionBehaviour = new TransactionBehaviour(simulationAgent, revealPlayerCardsRequest, this.betManagerAID);
+		TransactionBehaviour transactionBehaviour = new TransactionBehaviour(simulationAgent, revealPlayerCardsRequest, this.environmentAID);
 		transactionBehaviour.setResponseVisitor(new SimpleVisitor(simulationAgent, 
 				"Cards from player " + playerAID.getLocalName() + " revealed successfully", 
 				"Could not reveal " + playerAID.getLocalName() + " player's cards"));

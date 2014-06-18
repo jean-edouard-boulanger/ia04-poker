@@ -61,7 +61,7 @@ public class EndRoundBehaviour extends TaskRunnerBehaviour {
 				
 				this.transition = GameEvent.NEW_ROUND;
 				if(currentRound == Round.RIVER){
-					this.transition = GameEvent.FIND_HAND_WINNERS;
+					this.transition = GameEvent.SHOW_DOWN;
 				}
 
 				simulationAgent.setCurrentRound(currentRound.getNext());
