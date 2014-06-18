@@ -5,6 +5,7 @@ import sma.message.bet.notification.BetsMergedNotification;
 import sma.message.bet.notification.PotAmountNotification;
 import sma.message.bet.request.AreBetsClosedRequest;
 import sma.message.bet.request.BetRequest;
+import sma.message.bet.request.DistributePotToWinnersRequest;
 import sma.message.bet.request.DoesPlayerHaveToBetRequest;
 import sma.message.bet.request.FoldRequest;
 import sma.message.bet.request.GetPotAmountRequest;
@@ -86,6 +87,7 @@ public class MessageVisitor {
 	public boolean onMergeBetsRequest(MergeBetsRequest request, ACLMessage aclMsg) {return false;}
 	public boolean onBetsMergedNotification(BetsMergedNotification notification, ACLMessage aclMsg) {return false;}
 	public boolean onDoesPlayerHaveToBetRequest(DoesPlayerHaveToBetRequest request, ACLMessage aclMessage){return false;}
+	public boolean onDistributePotToWinnersRequest(DistributePotToWinnersRequest request, ACLMessage aclMsg) {return false;}
 	
 	// Environment
 	public boolean onAddPlayerTableRequest(AddPlayerTableRequest notif, ACLMessage aclMsg){return false;}
