@@ -22,5 +22,5 @@ public enum Round {
 		if(modelRank == values().length)
 			return null;
 		return values()[(ordinal()+1)];
-	}	
+	}
 }

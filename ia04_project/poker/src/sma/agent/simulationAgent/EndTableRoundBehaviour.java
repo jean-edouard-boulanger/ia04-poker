@@ -20,7 +20,7 @@ public class EndTableRoundBehaviour extends Behaviour {
 
 	GameEvent endTransition = GameEvent.END_ROUND;
 	SimulationAgent simulationAgent;
-	private int step = 0;
+	private int step = 1;
 	
 	AID betManagerAID;
 	RequestTransaction requestTransaction;
@@ -36,7 +36,6 @@ public class EndTableRoundBehaviour extends Behaviour {
 		if(this.step == 1)
 		{			
 			System.out.println("DEBUG [Simulation.TableRoundEndBehaviour:" + step + "] Asking the betManager whether the bets are closed");
-			// If there is more than one player remaining
 			AreBetsClosedRequest request = new AreBetsClosedRequest();
 			this.requestTransaction = new RequestTransaction(this, request, this.betManagerAID);
 			this.requestTransaction.sendRequest();
