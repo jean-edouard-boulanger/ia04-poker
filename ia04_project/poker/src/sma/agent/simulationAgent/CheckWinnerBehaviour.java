@@ -2,10 +2,16 @@ package sma.agent.simulationAgent;
 
 import jade.core.AID;
 import jade.core.behaviours.Behaviour;
+import jade.lang.acl.ACLMessage;
+
+import java.util.HashMap;
+
 import sma.agent.SimulationAgent;
 import sma.agent.helper.DFServiceHelper;
-import sma.agent.helper.SimpleVisitor;
 import sma.agent.helper.TransactionBehaviour;
+import sma.message.MessageVisitor;
+import sma.message.determine_winner.DetermineWinnerRequest;
+import sma.message.environment.notification.WinnerDeterminedNotification;
 
 public class CheckWinnerBehaviour extends Behaviour {
 	
@@ -24,10 +30,17 @@ public class CheckWinnerBehaviour extends Behaviour {
 		 * this.simulationAgent.addHandWinner(player);
 		 */
 		
-		TransactionBehaviour transaction = new TransactionBehaviour(myAgent, msg, environment);
-		transaction.setResponseVisitor(new SimpleVisitor(myAgent,
-				"token set given to player " + player.getLocalName() +".",
-				"error while giving token set to player " + player.getLocalName() +"."));
+		DetermineWinnerRequest determineWinnerRequest = new DetermineWinnerRequest();
+		
+		TransactionBehaviour transaction = new TransactionBehaviour(myAgent, determineWinnerRequest, determineWinnerAgent);
+		transaction.setResponseVisitor(new MessageVisitor(){
+			public boolean onWinnerDeterminedNotification(WinnerDeterminedNotification notification, ACLMessage aclMsg) {
+				
+				simulationAgent.setWinners((HashMap)notification.getWinners());
+				
+				return true;
+			}
+		});
 
 	}
 

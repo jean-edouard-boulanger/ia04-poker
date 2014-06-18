@@ -11,6 +11,7 @@ import javafx.animation.ParallelTransition;
 import javafx.animation.PauseTransition;
 import javafx.animation.ScaleTransition;
 import javafx.animation.SequentialTransition;
+import javafx.animation.Transition;
 import javafx.animation.TranslateTransition;
 import javafx.animation.TranslateTransitionBuilder;
 import javafx.scene.Group;
@@ -165,8 +166,33 @@ public class CardPlayerIHM extends Group {
 	
 	public void emptyCard()
 	{
+		final SequentialTransition sequence = new SequentialTransition();
+		
 		for(ImageView im : list_card)
-			this.getChildren().remove(im);
+		{
+			TranslateTransition translate_card = TranslateTransitionBuilder
+	                .create()
+	                .duration(new Duration(500))
+	                .node(im)
+	                .toX(200 - im.getLayoutX())
+	                .toY(175 - im.getLayoutY())
+	                .cycleCount(1)
+	                .interpolator(Interpolator.EASE_BOTH)
+	                .build();
+			
+			FadeTransition ft_card = FadeTransitionBuilder
+		    		 .create()
+		    		 .duration(new Duration(200))
+		    		 .node(im)
+		    		 .toValue(0)
+		    		 .build();
+			
+			sequence.getChildren().add(translate_card);
+			sequence.getChildren().add(ft_card);
+		}
+		
+		sequence.play();
+		
 		
 		this.list_card.clear();
 		this.current_position_x = x + 35;
