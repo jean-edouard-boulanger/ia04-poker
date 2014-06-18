@@ -590,12 +590,7 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 		
 			for(Button betButton : betButtons.values()) {
 				for(BetType t : availableActions){
-					if(betButtons.containsKey(t)) {
-						if(t != BetType.CHECK)
-							betButtons.get(t).setDisable(false);
-						else if(raiseAmount == 0) {
-							betButtons.get(t).setDisable(false);
-						}
+						betButtons.get(t).setDisable(false);
 					}
 				}
 				
@@ -607,7 +602,6 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 			button_sub_bet.setDisable(false);
 			
 			slider_bet.setValue(sliderMin);
-		}
 	}
 	
 	public void launchWindow(String[] args) {

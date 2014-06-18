@@ -4,6 +4,5 @@ public enum BetType {
 	CHECK,
 	FOLD,
 	CALL, //Bet as much as the (current) highest bet
-	ALL_IN,
 	RAISE;
 }

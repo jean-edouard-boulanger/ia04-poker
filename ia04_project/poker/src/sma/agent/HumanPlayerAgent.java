@@ -450,8 +450,9 @@ public class HumanPlayerAgent extends GuiAgent {
 			
 			if(playerCurrentBetAmount <= globalCurrentBetAmount){
 				
-				if(globalCurrentBetAmount == 0)
+				if(globalCurrentBetAmount == 0) {
 					minimumBetAmount = 2 * minimumTokenValue;
+				}
 				else
 					minimumBetAmount = 2 * globalCurrentBetAmount;
 					

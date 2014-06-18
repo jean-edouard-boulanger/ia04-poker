@@ -9,8 +9,10 @@ import poker.card.exception.UserDeckFullException;
 import poker.game.exception.NoPlaceAvailableException;
 import poker.game.exception.NotRegisteredPlayerException;
 import poker.game.exception.PlayerAlreadyRegisteredException;
+import poker.game.helper.DecisionMakerHelper;
 import poker.game.model.BetType;
 import poker.game.model.Game;
+import poker.game.model.Round;
 import poker.game.player.model.Player;
 import poker.game.player.model.PlayerStatus;
 import poker.token.exception.InvalidTokenAmountException;
@@ -218,8 +220,10 @@ public class AIPlayerAgentMessageVisitor extends MessageVisitor {
 		
 		if(playerCurrentBetAmount <= globalCurrentBetAmount){
 			
-			if(globalCurrentBetAmount == 0)
+			if(globalCurrentBetAmount == 0) {
 				minimumBetAmount = 2 * minimumTokenValue;
+				eventData.addAvailableAction(BetType.CHECK);
+			}
 			else
 				minimumBetAmount = 2 * globalCurrentBetAmount;
 				
@@ -249,6 +253,8 @@ public class AIPlayerAgentMessageVisitor extends MessageVisitor {
 		
 		eventData.setErrorMessage(request.getErrorMessage());
 		eventData.setRequestResentFollowedToError(request.isRequestResentFollowedToError());
+		
+		DecisionMakerHelper.makeDecision(eventData, Round.FLOP);
 		
 		return true;
 	}
