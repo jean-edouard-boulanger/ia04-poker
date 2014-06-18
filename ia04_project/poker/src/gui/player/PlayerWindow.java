@@ -1112,7 +1112,7 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 						//betButtons.get(BetType.ALL_IN).setText("All in (" + eventData.getMaximumBetAmount() + ")");
 						betButtons.get(BetType.RAISE).setText("Raise (" + eventData.getRaiseAmount() + ")");
 												
-						enableBetButtons(eventData.getAvailableActions(), eventData.getRaiseAmount(), eventData.getRaiseAmount(), eventData.getMaximumBetAmount());
+						enableBetButtons(eventData.getAvailableActions(), eventData.getRaiseAmount(), eventData.getMinimumBetAmount(), eventData.getMaximumBetAmount());
 					}
 				}
 				
