@@ -55,13 +55,16 @@ public class EndRoundBehaviour extends TaskRunnerBehaviour {
 				/*
 				 * If there is more than one player remaining, we jump to the next round (Except if we are on the turn)
 				 */
+				
 				Round currentRound = simulationAgent.getCurrentRound();
-				if(currentRound == Round.TURN){
-					simulationAgent.setCurrentRound(Round.SHOWDOWN);
+				if(currentRound == Round.RIVER){
+					
 				}
-				else {
-					simulationAgent.setCurrentRound(currentRound.getNext());
+				else 
+				{
+					
 				}
+				simulationAgent.setCurrentRound(currentRound.getNext());
 			}
 			else 
 			{
