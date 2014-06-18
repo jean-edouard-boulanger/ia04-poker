@@ -32,6 +32,7 @@ import sma.message.environment.notification.CardAddedToCommunityCardsNotificatio
 import sma.message.environment.notification.CommunityCardsEmptiedNotification;
 import sma.message.environment.notification.CurrentPlayerChangedNotification;
 import sma.message.environment.notification.DealerChangedNotification;
+import sma.message.environment.notification.PlayerCardsRevealedNotification;
 import sma.message.environment.notification.PlayerReceivedCardNotification;
 import sma.message.environment.notification.PlayerReceivedTokenSetNotification;
 import sma.message.environment.notification.PlayerReceivedUnknownCardNotification;
@@ -47,6 +48,7 @@ import sma.message.environment.request.DealCardToPlayerRequest;
 import sma.message.environment.request.EmptyCommunityCardsRequest;
 import sma.message.environment.request.GiveTokenSetToPlayerRequest;
 import sma.message.environment.request.PlayerBetRequest;
+import sma.message.environment.request.RevealPlayerCardsRequest;
 import sma.message.environment.request.SetDealerRequest;
 import sma.message.environment.request.SetTokenValueDefinitionRequest;
 
@@ -302,6 +304,14 @@ public class EnvironmentAgent extends Agent {
 			} catch (InvalidTokenAmountException e) {
 				AgentHelper.sendReply(EnvironmentAgent.this, aclMsg, ACLMessage.FAILURE, new FailureMessage(e.getMessage()));
 			}			
+			return true;
+		}
+		
+		@Override
+		public boolean onRevealPlayerCardsRequest(RevealPlayerCardsRequest request, ACLMessage aclMsg) {
+			
+			AgentHelper.sendSimpleMessage(EnvironmentAgent.this, subscribers, ACLMessage.PROPAGATE, new PlayerCardsRevealedNotification(game.getPlayersContainer().getPlayerByAID(request.getPlayerAID())));
+			
 			return true;
 		}
 	}
