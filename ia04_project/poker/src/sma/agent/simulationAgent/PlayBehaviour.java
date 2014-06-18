@@ -57,10 +57,10 @@ public class PlayBehaviour extends Behaviour {
 		
 		boolean received = false;
 		
-		if(simulationAgent.arePlayRequestsCancelled()){
+		/*if(simulationAgent.arePlayRequestsCancelled()){
 			this.step = PlayBehaviour.END_STATE;
 		}
-		else if(step == 0){
+		else */if(step == 0){
 			
 			System.err.println("DEBUG ["+ simulationAgent.getLocalName() +":PlayBehaviour] " + step);
 			
@@ -84,7 +84,7 @@ public class PlayBehaviour extends Behaviour {
 					}
 					else {
 						//Otherwise, we leave the behaviour, and notify that the following players won't play as well
-						simulationAgent.cancelNextPlayRequests();
+						//simulationAgent.cancelNextPlayRequests();
 						step = PlayBehaviour.END_STATE;
 					}
 					return true;
