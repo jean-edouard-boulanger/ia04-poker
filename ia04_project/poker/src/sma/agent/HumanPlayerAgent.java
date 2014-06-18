@@ -16,6 +16,7 @@ import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 
 import java.beans.PropertyChangeSupport;
+import java.util.HashMap;
 
 import javafx.embed.swing.JFXPanel;
 
@@ -23,6 +24,7 @@ import javax.swing.SwingUtilities;
 
 import poker.card.exception.CommunityCardsFullException;
 import poker.card.exception.UserDeckFullException;
+import poker.card.heuristics.combination.model.Hand;
 import poker.game.exception.NoPlaceAvailableException;
 import poker.game.exception.NotRegisteredPlayerException;
 import poker.game.exception.PlayerAlreadyRegisteredException;
@@ -36,7 +38,6 @@ import poker.token.model.TokenSet;
 import poker.token.model.TokenType;
 import sma.agent.helper.AgentHelper;
 import sma.agent.helper.DFServiceHelper;
-import sma.agent.helper.SimpleVisitor;
 import sma.agent.helper.TransactionBehaviour;
 import sma.message.FailureMessage;
 import sma.message.MessageVisitor;
@@ -51,13 +52,13 @@ import sma.message.environment.notification.CardAddedToCommunityCardsNotificatio
 import sma.message.environment.notification.CommunityCardsEmptiedNotification;
 import sma.message.environment.notification.CurrentPlayerChangedNotification;
 import sma.message.environment.notification.DealerChangedNotification;
-import sma.message.environment.notification.PlayerCheckNotification;
 import sma.message.environment.notification.PlayerReceivedCardNotification;
 import sma.message.environment.notification.PlayerReceivedTokenSetNotification;
 import sma.message.environment.notification.PlayerReceivedUnknownCardNotification;
 import sma.message.environment.notification.PlayerSitOnTableNotification;
 import sma.message.environment.notification.PlayerStatusChangedNotification;
 import sma.message.environment.notification.TokenValueDefinitionChangedNotification;
+import sma.message.environment.notification.WinnerDeterminedNotification;
 import sma.message.environment.request.PlayerFoldedRequest;
 import sma.message.simulation.request.PlayRequest;
 
@@ -488,6 +489,14 @@ public class HumanPlayerAgent extends GuiAgent {
 			game.getBetContainer().transferCurrentBetsToPot();
 			changes_game.firePropertyChange(PlayerGuiEvent.RESET_PLAYER_BETS.toString(), null, null);
 
+			return true;
+		}
+		
+		@Override
+		public boolean onWinnerDeterminedNotification(WinnerDeterminedNotification notification, ACLMessage aclMsg) {
+			
+			HashMap<Player, Hand> handWinners = (HashMap<Player, Hand>) notification.getWinners();
+			
 			return true;
 		}
 	}
