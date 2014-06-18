@@ -39,8 +39,8 @@ public class DecisionMakerHelper {
 		if(playerType == AIPlayerType.STATS) {
 			return statsMakeDecision(eventData, combinationCount);
 		}
-		else if(playerType == AIPlayerType.STATS) {
-			return null;
+		else if(playerType == AIPlayerType.CALLER) {
+			return callerMakeDecision(eventData, combinationCount);
 		}
 		
 		return null;
@@ -61,8 +61,14 @@ public class DecisionMakerHelper {
 				return new Decision(BetType.CHECK, 0);
 			}
 			else if(betActions.contains(BetType.CALL)) {
-				System.out.println("[AIPlayer] Decided to call.");
-				return new Decision(BetType.CALL, callAmount);
+				if(callAmount < ((7 * maximumBetAmount) / 10)) {
+					System.out.println("[AIPlayer] Decided to call.");
+					return new Decision(BetType.CALL, callAmount);
+				}
+				else {
+					System.out.println("[AIPlayer] Decided to fold.");
+					return new Decision(BetType.FOLD, 0);
+				}
 			}
 			else {
 				System.out.println("[AIPlayer] Decided to fold.");
@@ -91,5 +97,16 @@ public class DecisionMakerHelper {
 		}
 		
 		return null;
+	}
+	
+	private static Decision callerMakeDecision(AIPlayRequestEventData eventData, int combinationCount) {
+		
+		ArrayList<BetType> betActions = eventData.getAvailableActions();
+
+		int minimumBetAmount = eventData.getMinimumBetAmount();
+		int maximumBetAmount = eventData.getMinimumBetAmount();
+		int callAmount = eventData.getCallAmount();
+
+		return new Decision(BetType.RAISE, minimumBetAmount);
 	}
 }
