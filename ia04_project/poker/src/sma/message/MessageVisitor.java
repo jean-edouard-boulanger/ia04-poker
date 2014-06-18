@@ -27,6 +27,7 @@ import sma.message.environment.notification.PlayerReceivedTokenSetNotification;
 import sma.message.environment.notification.PlayerReceivedUnknownCardNotification;
 import sma.message.environment.notification.PlayerSitOnTableNotification;
 import sma.message.environment.notification.PlayerStatusChangedNotification;
+import sma.message.environment.notification.TokenSetSentFromPotToPlayerNotification;
 import sma.message.environment.notification.TokenValueDefinitionChangedNotification;
 import sma.message.environment.notification.WinnerDeterminedNotification;
 import sma.message.environment.request.AddCommunityCardRequest;
@@ -39,6 +40,7 @@ import sma.message.environment.request.EmptyCommunityCardsRequest;
 import sma.message.environment.request.GiveTokenSetToPlayerRequest;
 import sma.message.environment.request.PlayerBetRequest;
 import sma.message.environment.request.PlayerFoldedRequest;
+import sma.message.environment.request.SendTokenSetToPlayerFromPotRequest;
 import sma.message.environment.request.SetDealerRequest;
 import sma.message.environment.request.SetTokenValueDefinitionRequest;
 import sma.message.environment.request.ShowPlayerCardsRequest;
@@ -103,6 +105,8 @@ public class MessageVisitor {
 	public boolean onPlayerBetRequest(PlayerBetRequest playerBetRequest, ACLMessage aclMsg) { return false; }
 	public boolean onPlayerFoldedRequest(PlayerFoldedRequest playerFoldedRequest, ACLMessage aclMsg) { return false; }
 	public boolean onChangePlayerStatusRequest(ChangePlayerStatusRequest request, ACLMessage aclMsg){ return false; }
+	public boolean onSendTokenSetToPlayerFromPotRequest(SendTokenSetToPlayerFromPotRequest request, ACLMessage aclMsg){ return false; }
+
 	
 	// Environment notification 
 	public boolean onEnvironmentChanged(Message notif, ACLMessage aclMsg){return false;}
@@ -121,7 +125,8 @@ public class MessageVisitor {
 	public boolean onDealerChangedNotification(DealerChangedNotification dealerChangedNotification, ACLMessage aclMsg) {return false;}
 	public boolean onPlayerCardsRevealedNotification(PlayerCardsRevealedNotification playerCardsRevealed, ACLMessage aclMsg) {return false;}
 	public boolean onPlayerStatusChangedNotification(PlayerStatusChangedNotification notification, ACLMessage aclMsg) {return false;}
-	
+	public boolean onTokenSetSentFromPotToPlayerNotification(TokenSetSentFromPotToPlayerNotification request, ACLMessage aclMsg){ return false; }
+
 	//Simulation
 	public boolean onPlayRequest(PlayRequest request, ACLMessage aclMessage){return false;}
 	
