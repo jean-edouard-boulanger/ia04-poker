@@ -9,10 +9,13 @@ import java.beans.PropertyChangeListener;
 import java.text.NumberFormat;
 
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.RadioButton;
 import javafx.scene.shape.Rectangle;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
@@ -40,6 +43,8 @@ public class ServerWindow extends JFrame implements PropertyChangeListener {
 	
 	private JComboBox<Integer> list_nb_player;
 	private JFormattedTextField nb_tour_increase;
+	private JCheckBox radio_complete_by_ia;
+	
 	private JButton button_launch;
 	private JButton button_begin;
 	
@@ -56,11 +61,15 @@ public class ServerWindow extends JFrame implements PropertyChangeListener {
 	    
 	    this.sim_agent = simAgent;
 		
-		JLabel label_nb_max = new JLabel("Nombre maximum de joueurs : ");
+		JLabel label_nb_max = new JLabel("Nombre maximum de joueurs humain : ");
 		Integer[] nb_player = new Integer[]{2,3,4,5,6,7,8,9,10};
 		list_nb_player = new JComboBox<Integer>(nb_player);
 		list_nb_player.setPreferredSize(new Dimension(300,25));
 		list_nb_player.setSelectedIndex(2);
+		
+		radio_complete_by_ia = new JCheckBox("Compléter les joueurs manquants par des IA");
+		radio_complete_by_ia.setSelected(true);
+		
 		
 		JLabel label_time_increase = new JLabel("Nombre de minutes avant augmentation : ");
 		nb_tour_increase = new JFormattedTextField(NumberFormat.getIntegerInstance());
@@ -75,6 +84,8 @@ public class ServerWindow extends JFrame implements PropertyChangeListener {
 		
 		panel.add(label_nb_max);
 		panel.add(list_nb_player);
+		
+		panel.add(radio_complete_by_ia);
 		
 		panel.add(label_time_increase);
 		panel.add(nb_tour_increase);
@@ -113,6 +124,7 @@ public class ServerWindow extends JFrame implements PropertyChangeListener {
 
 		ev.addParameter(nb_player);
 		ev.addParameter(Integer.parseInt(nb_tour_increase.getText()));
+		ev.addParameter(radio_complete_by_ia.isSelected());
 		
 		sim_agent.postGuiEvent(ev);
 		
