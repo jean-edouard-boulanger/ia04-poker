@@ -2,17 +2,18 @@ package sma.agent;
 
 import gui.server.ServerWindow;
 import jade.core.AID;
-import jade.core.Agent;
 import jade.core.behaviours.Behaviour;
 import jade.core.behaviours.FSMBehaviour;
 import jade.gui.GuiAgent;
 import jade.gui.GuiEvent;
 
 import java.beans.PropertyChangeSupport;
-import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.List;
 
 import poker.game.model.Game;
 import poker.game.model.Round;
+import poker.game.player.model.Player;
 import poker.token.exception.InvalidRepartitionException;
 import poker.token.exception.InvalidTokenAmountException;
 import poker.token.exception.InvalidTokenValueException;
@@ -23,14 +24,13 @@ import poker.token.model.TokenType;
 import poker.token.model.TokenValueDefinition;
 import sma.agent.helper.DFServiceHelper;
 import sma.agent.simulationAgent.EndRoundBehaviour;
+import sma.agent.simulationAgent.EndTableRoundBehaviour;
 import sma.agent.simulationAgent.EnvironmentWatcherBhv;
 import sma.agent.simulationAgent.InitGameBehaviour;
 import sma.agent.simulationAgent.InitHandBehaviour;
-import sma.agent.simulationAgent.InitPreFlopBehaviour;
 import sma.agent.simulationAgent.InitRoundBehaviour;
-import sma.agent.simulationAgent.PlayerSubscriptionBehaviour;
 import sma.agent.simulationAgent.InitTableRoundBehaviour;
-import sma.agent.simulationAgent.EndTableRoundBehaviour;
+import sma.agent.simulationAgent.PlayerSubscriptionBehaviour;
 
 /**
  * Simulation agent.
@@ -41,13 +41,13 @@ public class SimulationAgent extends GuiAgent {
 
 	public enum GameEvent{
 		NEW_HAND, 
-		START_PRE_FLOP, 
 		NEW_TABLE_ROUND,
 		TABLE_ROUND_END,
 		NEW_ROUND, 
 		END_ROUND,
-		GAME_FINISHED, 
-		PLAY
+		GAME_FINISHED,
+		FIND_HAND_WINNER,
+		END_HAND
 	}
 
 	private static final String INIT_GAME = "INIT_GAME";
@@ -56,6 +56,7 @@ public class SimulationAgent extends GuiAgent {
 	private static final String TABLE_ROUND = "TABLE_ROUND";
 	private static final String END_TABLE_ROUND = "TABLE_ROUND_END";
 	private static final String END_ROUND = "END_ROUND";
+	private static final String FIND_HAND_WINNER = "FIND_HAND_WINNER";
 
 	private PropertyChangeSupport changes = new PropertyChangeSupport(this);
 	private Game game;
@@ -66,11 +67,18 @@ public class SimulationAgent extends GuiAgent {
 	private int blindIncreaseDelayS;
 	private TokenValueDefinition defaultTokenValueDefinition;
 
+	private ArrayList<Player> handWinners;
+
 	private boolean cancelNextPlayRequests = false;
 	private Round currentRound;
 	private int roundTableNumber = 0;
 
 	private AID playerAllowedToBetAID;
+
+	public SimulationAgent(){
+		super();
+		this.handWinners = new ArrayList<Player>();
+	}
 
 	@Override
 	public void setup()
@@ -153,21 +161,21 @@ public class SimulationAgent extends GuiAgent {
 			// we had this handler for debugging purpose.
 			@Override
 			protected void handleStateEntered(Behaviour state){
-				
+
 				// Creates a new instance of the current state behaviour dynamically
 				try {
 					String name = this.getName(state);
 					state = state.getClass().getConstructor(SimulationAgent.class).newInstance(SimulationAgent.this);
 					this.registerState(state, name);
-				} catch (Exception e) {
+				} catch (Exception e) 
+				{
 					e.printStackTrace();
 				}
 
-				
 				System.out.println("-------------------------------------------------------");
 				System.out.println("[" + this.myAgent.getLocalName() + "] Current state: " + this.getName(state));
 				System.out.println("-------------------------------------------------------");
-				
+
 				super.handleStateEntered(state);
 			}
 		};
@@ -188,17 +196,8 @@ public class SimulationAgent extends GuiAgent {
 		gameBehaviour.registerTransition(END_TABLE_ROUND, TABLE_ROUND, GameEvent.NEW_TABLE_ROUND.ordinal());
 		gameBehaviour.registerTransition(END_TABLE_ROUND, END_ROUND, GameEvent.END_ROUND.ordinal());
 		gameBehaviour.registerTransition(END_ROUND, INIT_ROUND, GameEvent.NEW_ROUND.ordinal());
-		
-		
-		/*gameBehaviour.registerTransition("Round init", "Play", GameEvent.PLAY.ordinal());
-		gameBehaviour.registerTransition("Play", "Play", GameEvent.PLAY.ordinal());
-		gameBehaviour.registerTransition("Play", "Check winner", GameEvent.ROUND_ENDED.ordinal());
-		gameBehaviour.registerTransition("Check winner", "Round init", GameEvent.NEW_ROUND.ordinal());
-		gameBehaviour.registerTransition("Check winner", "Hand init", GameEvent.NEW_HAND.ordinal());
-		gameBehaviour.registerTransition("Check winner", "Game ended", GameEvent.GAME_FINISHED.ordinal());*/
 
 		addBehaviour(gameBehaviour);
-
 	}
 
 	public Game getGame() {
@@ -237,9 +236,6 @@ public class SimulationAgent extends GuiAgent {
 		return defaultTokenSet;
 	}
 
-	/**
-	 * @return	the blind increase delay in seconds
-	 */
 	public int getBlindIncreaseDelayS() {
 		return this.blindIncreaseDelayS;
 	}
@@ -272,7 +268,6 @@ public class SimulationAgent extends GuiAgent {
 		this.roundTableNumber = 1;
 	}
 
-
 	public void setPlayerAllowedToBetAID(AID playerAID){
 		this.playerAllowedToBetAID = playerAID;
 	}
@@ -280,17 +275,30 @@ public class SimulationAgent extends GuiAgent {
 	public AID getPlayerAllowedToBetAID(){
 		return this.playerAllowedToBetAID;
 	}
-	
+
 	public void cancelNextPlayRequests(){
 		this.cancelNextPlayRequests = true;
 	}
-	
+
 	public void allowNextPlayRequests(){
 		this.cancelNextPlayRequests = false;
 	}
-	
+
 	public boolean arePlayRequestsCancelled(){
 		return this.cancelNextPlayRequests;
 	}
-	
+
+	public void resetHandWinners(){
+		this.handWinners.clear();
+	}
+
+	public void addHandWinner(Player player){
+		if(!this.handWinners.contains(player)){
+			this.handWinners.add(player);
+		}
+	}
+
+	public ArrayList<Player> getHandWinners(){
+		return this.handWinners;
+	}
 }

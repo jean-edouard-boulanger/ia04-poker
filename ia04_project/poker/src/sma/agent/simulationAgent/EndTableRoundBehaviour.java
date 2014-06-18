@@ -32,32 +32,16 @@ public class EndTableRoundBehaviour extends Behaviour {
 	}
 	
 	@Override
-	public void action() {
-		
-		if(step == 0){
-			// First check if there is more than one player remaining in the game (i.e. not folded or out)
+	public void action() {		
+		if(this.step == 1)
+		{			
+			System.out.println("DEBUG [Simulation.TableRoundEndBehaviour:" + step + "] Asking the betManager whether the bets are closed");
+			// If there is more than one player remaining
+			AreBetsClosedRequest request = new AreBetsClosedRequest();
+			this.requestTransaction = new RequestTransaction(this, request, this.betManagerAID);
+			this.requestTransaction.sendRequest();
 			
-			int nbPlayersRemaining = this.simulationAgent.getGame().getPlayersContainer().countPlayersInGame();
-			if(nbPlayersRemaining > 1){
-				
-				System.out.println("DEBUG [Simulation.TableRoundEndBehaviour:" + step + "] " + nbPlayersRemaining + " players remaining, no winner yet");
-				
-				System.out.println("DEBUG [Simulation.TableRoundEndBehaviour:" + step + "] Asking the betManager whether the bets are closed");
-				// If there is more than one player remaining
-				AreBetsClosedRequest request = new AreBetsClosedRequest();
-				this.requestTransaction = new RequestTransaction(this, request, this.betManagerAID);
-				this.requestTransaction.sendRequest();
-				
-				this.step = 2;
-			}
-			else
-			{
-				System.out.println("DEBUG [Simulation.TableRoundEndBehaviour:" + step + "] Only one player remaining, we have a winner");
-				System.err.println("DEBUG [Simulation.TableRoundEndBehaviour:" + step + "] WARNING NOT IMPLEMENTED YET");
-				// If there is only one, the hand is finished and the winner is determined directly
-				// TODO Handle the case when there is only one player remaning
-				this.step = 3;
-			}
+			this.step = 2;
 		}
 		else if(step == 2)
 		{
@@ -98,7 +82,6 @@ public class EndTableRoundBehaviour extends Behaviour {
 			}
 			
 			step = 3;
-			
 			return true;
 		}
 		

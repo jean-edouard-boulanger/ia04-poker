@@ -232,6 +232,11 @@ public class PlayersContainer {
 		return playersInGame;
 	}
 	
+	@JsonIgnore
+	public ArrayList<Player> getPlayersInGame(){
+		return this.getPlayersInGame(null);
+	}
+	
 	public class PlayerIterator implements Iterator<Player>{
 
 		private ArrayList<Player> tmpPlayers; 

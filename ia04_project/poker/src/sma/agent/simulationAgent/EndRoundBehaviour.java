@@ -1,10 +1,12 @@
 package sma.agent.simulationAgent;
 
-import poker.game.model.Round;
 import jade.core.AID;
-import jade.core.Agent;
 import jade.core.behaviours.Behaviour;
-import jade.core.behaviours.OneShotBehaviour;
+
+import java.util.ArrayList;
+
+import poker.game.model.Round;
+import poker.game.player.model.Player;
 import sma.agent.SimulationAgent;
 import sma.agent.SimulationAgent.GameEvent;
 import sma.agent.helper.BlankBehaviour;
@@ -15,7 +17,6 @@ import sma.agent.helper.experimental.Task;
 import sma.agent.helper.experimental.TaskRunnerBehaviour;
 import sma.message.Message;
 import sma.message.bet.request.MergeBetsRequest;
-import sma.message.environment.request.SetDealerRequest;
 
 public class EndRoundBehaviour extends TaskRunnerBehaviour {
 
@@ -46,12 +47,30 @@ public class EndRoundBehaviour extends TaskRunnerBehaviour {
 		else
 		{
 			/*
-			 * Otherwise, we need to check if there is a dealer
+			 * Otherwise, we check if there is more than one player remaining in the table
 			 */
-			//TODO Check if there is a winner
-			simulationAgent.setCurrentRound(Round.FLOP);
+			//int nbRemainingPlayers = this.simulationAgent.getGame().getPlayersContainer().getPlayersInGame(first)
+			ArrayList<Player> remainingPlayers = this.simulationAgent.getGame().getPlayersContainer().getPlayersInGame();
+			if(remainingPlayers.size() > 1){
+				/*
+				 * If there is more than one player remaining, we jump to the next round (Except if we are on the turn)
+				 */
+				Round currentRound = simulationAgent.getCurrentRound();
+				if(currentRound == Round.TURN){
+					simulationAgent.setCurrentRound(Round.SHOWDOWN);
+				}
+				else {
+					simulationAgent.setCurrentRound(currentRound.getNext());
+				}
+			}
+			else 
+			{
+				/*
+				 * Otherwise, the remaining player is the hand winner
+				 */
+				this.simulationAgent.addHandWinner(remainingPlayers.get(0));
+			}
 		}
-		
 		this.setBehaviour(mainTask);
 		super.onStart();
 	}
