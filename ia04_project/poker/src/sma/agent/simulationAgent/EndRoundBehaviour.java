@@ -5,6 +5,7 @@ import jade.core.behaviours.Behaviour;
 
 import java.util.ArrayList;
 
+import poker.card.heuristics.combination.model.Hand;
 import poker.game.model.Round;
 import poker.game.player.model.Player;
 import sma.agent.SimulationAgent;
@@ -71,7 +72,7 @@ public class EndRoundBehaviour extends TaskRunnerBehaviour {
 				 * Otherwise, the remaining player is the hand winner
 				 */
 				this.simulationAgent.setCurrentRound(Round.SHOWDOWN);
-				this.simulationAgent.addHandWinner(remainingPlayers.get(0));
+				this.simulationAgent.addWinner(remainingPlayers.get(0), null);
 				this.transition = GameEvent.END_HAND;
 			}
 		}

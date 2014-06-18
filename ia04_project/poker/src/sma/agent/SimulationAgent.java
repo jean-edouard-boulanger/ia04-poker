@@ -9,8 +9,9 @@ import jade.gui.GuiEvent;
 
 import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
 
+import poker.card.heuristics.combination.model.Hand;
 import poker.game.model.Game;
 import poker.game.model.Round;
 import poker.game.player.model.Player;
@@ -67,7 +68,7 @@ public class SimulationAgent extends GuiAgent {
 	private int blindIncreaseDelayS;
 	private TokenValueDefinition defaultTokenValueDefinition;
 
-	private ArrayList<Player> handWinners;
+	private HashMap<Player, Hand> winners;
 
 	private boolean cancelNextPlayRequests = false;
 	private Round currentRound;
@@ -77,14 +78,14 @@ public class SimulationAgent extends GuiAgent {
 
 	public SimulationAgent(){
 		super();
-		this.handWinners = new ArrayList<Player>();
+		this.winners = new HashMap<Player, Hand>();
 	}
 
 	@Override
 	public void setup()
 	{
 		super.setup();
-		DFServiceHelper.registerService(this, "PokerSimulation","Simulation");
+		DFServiceHelper.registerService(this, "PokerSimulation", "Simulation");
 
 		ServerWindow server_window = new ServerWindow(this);
 		changes.addPropertyChangeListener(server_window);
@@ -288,21 +289,19 @@ public class SimulationAgent extends GuiAgent {
 		return this.cancelNextPlayRequests;
 	}
 
-	public void resetHandWinners(){
-		this.handWinners.clear();
-	}
-
-	public void addHandWinner(Player player){
-		if(!this.handWinners.contains(player)){
-			this.handWinners.add(player);
-		}
-	}
-
-	public void setHandWinnersList(ArrayList<Player> winners){
-		this.handWinners = winners;
+	public void resetWinners(){
+		this.winners.clear();
 	}
 	
-	public ArrayList<Player> getHandWinners(){
-		return this.handWinners;
+	public HashMap<Player, Hand> getWinners() {
+		return winners;
+	}
+
+	public void setWinners(HashMap<Player, Hand> winners) {
+		this.winners = winners;
+	}
+	
+	public void addWinner(Player p, Hand h) {
+		this.winners.put(p, h);
 	}
 }

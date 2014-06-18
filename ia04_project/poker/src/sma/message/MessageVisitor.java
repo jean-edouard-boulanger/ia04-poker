@@ -39,6 +39,7 @@ import sma.message.environment.request.EmptyCommunityCardsRequest;
 import sma.message.environment.request.GiveTokenSetToPlayerRequest;
 import sma.message.environment.request.PlayerBetRequest;
 import sma.message.environment.request.PlayerFoldedRequest;
+import sma.message.environment.request.RevealPlayerCardsRequest;
 import sma.message.environment.request.SetDealerRequest;
 import sma.message.environment.request.SetTokenValueDefinitionRequest;
 import sma.message.environment.request.ShowPlayerCardsRequest;
@@ -103,6 +104,7 @@ public class MessageVisitor {
 	public boolean onPlayerBetRequest(PlayerBetRequest playerBetRequest, ACLMessage aclMsg) { return false; }
 	public boolean onPlayerFoldedRequest(PlayerFoldedRequest playerFoldedRequest, ACLMessage aclMsg) { return false; }
 	public boolean onChangePlayerStatusRequest(ChangePlayerStatusRequest request, ACLMessage aclMsg){ return false; }
+	public boolean onRevealPlayerCardsRequest(RevealPlayerCardsRequest request, ACLMessage aclMsg){ return false; }
 	
 	// Environment notification 
 	public boolean onEnvironmentChanged(Message notif, ACLMessage aclMsg){return false;}
