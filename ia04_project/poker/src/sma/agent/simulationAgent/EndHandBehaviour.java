@@ -12,5 +12,4 @@ public class EndHandBehaviour extends TaskRunnerBehaviour {
 		super(agent);
 		this.simulationAgent = simulationAgent;
 	}
-	
 }

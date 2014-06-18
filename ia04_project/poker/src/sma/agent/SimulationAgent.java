@@ -23,6 +23,8 @@ import poker.token.model.TokenSet;
 import poker.token.model.TokenType;
 import poker.token.model.TokenValueDefinition;
 import sma.agent.helper.DFServiceHelper;
+import sma.agent.simulationAgent.CheckWinnerBehaviour;
+import sma.agent.simulationAgent.EndHandBehaviour;
 import sma.agent.simulationAgent.EndRoundBehaviour;
 import sma.agent.simulationAgent.EndTableRoundBehaviour;
 import sma.agent.simulationAgent.EnvironmentWatcherBehaviour;
@@ -57,6 +59,7 @@ public class SimulationAgent extends GuiAgent {
 	private static final String END_TABLE_ROUND = "TABLE_ROUND_END";
 	private static final String END_ROUND = "END_ROUND";
 	private static final String FIND_HAND_WINNERS = "FIND_HAND_WINNERS";
+	private static final String END_HAND = "END_HAND";
 
 	private PropertyChangeSupport changes = new PropertyChangeSupport(this);
 	private Game game;
@@ -186,7 +189,8 @@ public class SimulationAgent extends GuiAgent {
 		gameBehaviour.registerState(new InitTableRoundBehaviour(this), TABLE_ROUND);
 		gameBehaviour.registerState(new EndTableRoundBehaviour(this), END_TABLE_ROUND);
 		gameBehaviour.registerState(new EndRoundBehaviour(this), END_ROUND);
-
+		gameBehaviour.registerState(new CheckWinnerBehaviour(this), FIND_HAND_WINNERS);
+		gameBehaviour.registerState(new EndHandBehaviour(this), END_HAND);
 
 		gameBehaviour.registerTransition(INIT_GAME, INIT_HAND, GameEvent.NEW_HAND.ordinal());
 		gameBehaviour.registerTransition(INIT_HAND, INIT_ROUND, GameEvent.NEW_ROUND.ordinal());
@@ -196,6 +200,8 @@ public class SimulationAgent extends GuiAgent {
 		gameBehaviour.registerTransition(END_TABLE_ROUND, TABLE_ROUND, GameEvent.NEW_TABLE_ROUND.ordinal());
 		gameBehaviour.registerTransition(END_TABLE_ROUND, END_ROUND, GameEvent.END_ROUND.ordinal());
 		gameBehaviour.registerTransition(END_ROUND, INIT_ROUND, GameEvent.NEW_ROUND.ordinal());
+		gameBehaviour.registerTransition(END_ROUND, END_HAND, GameEvent.END_HAND.ordinal());
+		gameBehaviour.registerTransition(END_ROUND, FIND_HAND_WINNERS, GameEvent.FIND_HAND_WINNERS.ordinal());
 
 		addBehaviour(gameBehaviour);
 	}
