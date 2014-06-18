@@ -30,6 +30,7 @@ import sma.message.environment.notification.CardAddedToCommunityCardsNotificatio
 import sma.message.environment.notification.CommunityCardsEmptiedNotification;
 import sma.message.environment.notification.DealerChangedNotification;
 import sma.message.environment.notification.PlayerCardsRevealedNotification;
+import sma.message.environment.notification.PlayerSitOnTableNotification;
 import sma.message.environment.notification.WinnerDeterminedNotification;
 
 public class DetermineWinnerAgent extends Agent {
@@ -89,7 +90,7 @@ public class DetermineWinnerAgent extends Agent {
 		@Override
 		public boolean onDetermineWinnerRequest(DetermineWinnerRequest request, ACLMessage aclMsg) {
 			
-			Map<Player, Hand> winners = determineRoundWinners();
+			Map<AID, Hand> winners = determineRoundWinners();
 			
 			AgentHelper.sendSimpleMessage(DetermineWinnerAgent.this, environment, ACLMessage.INFORM, new WinnerDeterminedNotification(winners));
 			
@@ -101,11 +102,19 @@ public class DetermineWinnerAgent extends Agent {
 			
 			return true;
 		}
+		
+		@Override
+		public boolean onPlayerSitOnTableNotification(PlayerSitOnTableNotification notification, ACLMessage aclMsg) {
+			
+			players.add(notification.getNewPlayer());
+			
+			return true;
+		}
 	}
 	
-	private Map<Player, Hand> determineRoundWinners() {
+	private Map<AID, Hand> determineRoundWinners() {
 
-		Map<Player, Hand> playerHandMap = new HashMap<Player, Hand>();
+		Map<AID, Hand> playerHandMap = new HashMap<AID, Hand>();
 
 		ArrayList<Hand> winningHands = new ArrayList<Hand>();
 		
@@ -116,7 +125,7 @@ public class DetermineWinnerAgent extends Agent {
 			try {
 				//Determine the best hand of the current player and the player and its hand to the map. Adding the hand to a list of hands to compare them easily.
 				Hand h = CardCombinations.bestHandFromCards(playerHandCards);
-				playerHandMap.put(p, h);
+				playerHandMap.put(p.getAID(), h);
 				winningHands.add(h);
 			} catch (EmptyCardListException e) {
 				e.printStackTrace();
@@ -126,11 +135,11 @@ public class DetermineWinnerAgent extends Agent {
 		//Getting the best/winning hands (more than one in case of equality)
 		winningHands = HandComparator.bestHand(winningHands);
 		
-		Map<Player, Hand> winners = new HashMap<Player, Hand>();
+		Map<AID, Hand> winners = new HashMap<AID, Hand>();
 		
 		//Only keeping players with a winning hand
 		for(Hand h : winningHands) {
-			for(Entry<Player, Hand> entry : playerHandMap.entrySet()) {
+			for(Entry<AID, Hand> entry : playerHandMap.entrySet()) {
 				if(h == entry.getValue()) {
 					winners.put(entry.getKey(), entry.getValue());
 				}
@@ -146,8 +155,8 @@ public class DetermineWinnerAgent extends Agent {
 		
 		public ReceiveRequestBehaviour(Agent agent) {
 			myAgent = agent;
-			subscribeToEnvironment();
 			this.environment = DFServiceHelper.searchService(myAgent,"PokerEnvironment", "Environment");
+			subscribeToEnvironment();
 		}
 		
 		@Override

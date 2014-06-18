@@ -35,6 +35,7 @@ import sma.agent.simulationAgent.InitRoundBehaviour;
 import sma.agent.simulationAgent.InitShowDownBehaviour;
 import sma.agent.simulationAgent.InitTableRoundBehaviour;
 import sma.agent.simulationAgent.PlayerSubscriptionBehaviour;
+import sma.agent.simulationAgent.WaitAIBehaviour;
 
 /**
  * Simulation agent.
@@ -55,6 +56,7 @@ public class SimulationAgent extends GuiAgent {
 		END_HAND
 	}
 
+	private static final String WAIT_AI_AGENTS = "WAIT_AI_AGENTS";
 	private static final String INIT_GAME = "INIT_GAME";
 	private static final String INIT_HAND = "INIT_HAND";
 	private static final String INIT_ROUND = "INIT_ROUND";
@@ -81,6 +83,7 @@ public class SimulationAgent extends GuiAgent {
 	private int roundTableNumber = 0;
 
 	private AID playerAllowedToBetAID;
+	private Boolean addAIBeforeStarting = false;
 
 	public SimulationAgent(){
 		super();
@@ -91,8 +94,9 @@ public class SimulationAgent extends GuiAgent {
 	public void setup()
 	{
 		super.setup();
+		
 		DFServiceHelper.registerService(this, "PokerSimulation", "Simulation");
-
+		
 		ServerWindow server_window = new ServerWindow(this);
 		changes.addPropertyChangeListener(server_window);
 
@@ -142,7 +146,7 @@ public class SimulationAgent extends GuiAgent {
 			//TODO: handle properly parameters.
 			this.maxPlayers = (Integer)evt.getParameter(0);
 			this.blindIncreaseDelayS = (Integer)evt.getParameter(1)*60;
-			//int distribNb = (Integer)evt.getParameter(2);
+			this.addAIBeforeStarting = (Boolean) evt.getParameter(2);
 			StartServer();
 			break;
 		case LAUNCH_GAME:
@@ -187,7 +191,8 @@ public class SimulationAgent extends GuiAgent {
 			}
 		};
 
-		gameBehaviour.registerFirstState(new InitGameBehaviour(this), INIT_GAME);
+		gameBehaviour.registerFirstState(new WaitAIBehaviour(this), WAIT_AI_AGENTS);
+		gameBehaviour.registerState(new InitGameBehaviour(this), INIT_GAME);
 		gameBehaviour.registerState(new InitHandBehaviour(this), INIT_HAND);
 		gameBehaviour.registerState(new InitRoundBehaviour(this), INIT_ROUND);
 		gameBehaviour.registerState(new InitTableRoundBehaviour(this), TABLE_ROUND);
@@ -196,7 +201,8 @@ public class SimulationAgent extends GuiAgent {
 		gameBehaviour.registerState(new CheckWinnerBehaviour(this), FIND_HAND_WINNERS);
 		gameBehaviour.registerState(new InitShowDownBehaviour(this), INIT_SHOW_DOWN);
 		gameBehaviour.registerState(new EndHandBehaviour(this), END_HAND);
-
+		
+		gameBehaviour.registerDefaultTransition(WAIT_AI_AGENTS, INIT_GAME);
 		gameBehaviour.registerTransition(INIT_GAME, INIT_HAND, GameEvent.NEW_HAND.ordinal());
 		gameBehaviour.registerTransition(INIT_HAND, INIT_ROUND, GameEvent.NEW_ROUND.ordinal());
 		gameBehaviour.registerTransition(INIT_ROUND, TABLE_ROUND, GameEvent.NEW_TABLE_ROUND.ordinal());
@@ -212,6 +218,7 @@ public class SimulationAgent extends GuiAgent {
 		gameBehaviour.registerTransition(END_HAND, INIT_HAND, GameEvent.NEW_HAND.ordinal());
 
 		addBehaviour(gameBehaviour);
+		
 	}
 
 	public Game getGame() {
@@ -316,5 +323,9 @@ public class SimulationAgent extends GuiAgent {
 	
 	public void addWinner(Player p, Hand h) {
 		this.winners.put(p, h);
+	}
+
+	public boolean getAddAIBeforeStarting() {
+		return addAIBeforeStarting;
 	}
 }

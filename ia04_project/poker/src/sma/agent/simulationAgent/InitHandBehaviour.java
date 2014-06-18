@@ -34,24 +34,18 @@ import sma.message.environment.request.SetDealerRequest;
 public class InitHandBehaviour extends TaskRunnerBehaviour {
 
 	private AID environment;
-	private AID dealerAgent;
-	private AID betManager;
 	private SimulationAgent simulationAgent;
 
 	public InitHandBehaviour(SimulationAgent simulationAgent) {
 		super(simulationAgent);
 		this.simulationAgent = simulationAgent;
 		this.environment = DFServiceHelper.searchService(simulationAgent, "PokerEnvironment", "Environment");
-		this.dealerAgent = DFServiceHelper.searchService(simulationAgent, "DealerAgent","Dealer");
-		this.betManager = DFServiceHelper.searchService(simulationAgent, "BetManagerAgent", "BetManager");
 	}
 	
 	@Override
 	public void onStart() {
 		
 		System.out.println("@@@ InitHandBehaviour @@@");
-		
-		Game game = simulationAgent.getGame();
 		
 		simulationAgent.setCurrentRound(Round.PLAYER_CARDS_DEAL);
 		simulationAgent.resetRoundTableNumber();

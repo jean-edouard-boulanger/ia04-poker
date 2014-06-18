@@ -4,8 +4,8 @@ import jade.lang.acl.ACLMessage;
 import sma.message.Message;
 import sma.message.MessageVisitor;
 
-public class GetBlindValueDefinitionRequest extends Message {
-	public GetBlindValueDefinitionRequest() {
+public class RefreshBlindValueDefinitionRequest extends Message {
+	public RefreshBlindValueDefinitionRequest() {
 		
 	}
 
