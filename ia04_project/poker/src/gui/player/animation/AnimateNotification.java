@@ -25,7 +25,7 @@ public class AnimateNotification extends Group {
 		background_notification.setLayoutY(150);
 		label_notification.setLayoutX(-950);
 		label_notification.setLayoutY(200);
-		label_notification.setText("Tour ├а Kilop");
+		label_notification.setText("Tour ра Kilop");
 		label_notification.setText(label_notification.getText().toUpperCase());
 		label_notification.getStyleClass().add("label-notification");
 		
