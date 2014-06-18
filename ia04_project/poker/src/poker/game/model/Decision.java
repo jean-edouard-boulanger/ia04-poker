@@ -7,9 +7,14 @@ public class Decision {
 	
 	public Decision(){}
 	
-	public Decision(BetType betType) {
+	public Decision(BetType betType, int betAmount) {
 		this.betType = betType;
 		this.betAmount = betAmount;
+	}
+
+	public Decision(BetType betType) {
+		this.betType = betType;
+		this.betAmount = 0;
 	}
 
 	public BetType getBetType() {
@@ -26,5 +31,9 @@ public class Decision {
 
 	public void setBetAmount(int betAmount) {
 		this.betAmount = betAmount;
+	}
+	
+	public String toString() {
+		return new String("Decided to " + betType + " with amount: " + betAmount);
 	}
 }

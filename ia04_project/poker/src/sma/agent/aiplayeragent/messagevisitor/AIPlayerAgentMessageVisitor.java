@@ -1,18 +1,20 @@
 package sma.agent.aiplayeragent.messagevisitor;
 
-import gui.player.PlayerWindow.PlayerGuiEvent;
-import gui.player.event.model.PlayRequestEventData;
-import jade.core.AID;
+import gui.player.event.model.AIPlayRequestEventData;
 import jade.lang.acl.ACLMessage;
+import jade.tools.logging.ontology.GetAllLoggers;
+
+import java.util.ArrayList;
+
 import poker.card.exception.CommunityCardsFullException;
 import poker.card.exception.UserDeckFullException;
+import poker.card.model.Card;
 import poker.game.exception.NoPlaceAvailableException;
 import poker.game.exception.NotRegisteredPlayerException;
 import poker.game.exception.PlayerAlreadyRegisteredException;
 import poker.game.helper.DecisionMakerHelper;
 import poker.game.model.BetType;
 import poker.game.model.Game;
-import poker.game.model.Round;
 import poker.game.player.model.Player;
 import poker.game.player.model.PlayerStatus;
 import poker.token.exception.InvalidTokenAmountException;
@@ -197,7 +199,7 @@ public class AIPlayerAgentMessageVisitor extends MessageVisitor {
 		
 		Player me = game.getPlayersContainer().getPlayerByAID(myAgent.getAID());
 
-		PlayRequestEventData eventData = new PlayRequestEventData();
+		AIPlayRequestEventData eventData = new AIPlayRequestEventData();
 		eventData.addAllAvailableActions();
 
 		//Bet amount for the current round
@@ -222,7 +224,6 @@ public class AIPlayerAgentMessageVisitor extends MessageVisitor {
 			
 			if(globalCurrentBetAmount == 0) {
 				minimumBetAmount = 2 * minimumTokenValue;
-				eventData.addAvailableAction(BetType.CHECK);
 			}
 			else
 				minimumBetAmount = 2 * globalCurrentBetAmount;
@@ -239,7 +240,7 @@ public class AIPlayerAgentMessageVisitor extends MessageVisitor {
 
 		int playerBankroll = me.getBankroll(game.getBetContainer().getTokenValueDefinition());
 		
-		if(playerBankroll < minimumBetAmount) {
+		if(playerBankroll < globalCurrentBetAmount) {
 			minimumBetAmount = playerBankroll;
 			eventData.clearAvailableActions();
 			eventData.addAvailableAction(BetType.FOLD);
@@ -254,7 +255,13 @@ public class AIPlayerAgentMessageVisitor extends MessageVisitor {
 		eventData.setErrorMessage(request.getErrorMessage());
 		eventData.setRequestResentFollowedToError(request.isRequestResentFollowedToError());
 		
-		DecisionMakerHelper.makeDecision(eventData, Round.FLOP);
+		ArrayList<Card> cards = new ArrayList<Card>(game.getCommunityCards().getCommunityCards());
+		
+		cards.addAll(game.getPlayersContainer().getPlayerByAID(myAgent.getAID()).getDeck().getCards());
+		
+		eventData.setCards(cards);
+		
+		DecisionMakerHelper.makeDecision(eventData);
 		
 		return true;
 	}
