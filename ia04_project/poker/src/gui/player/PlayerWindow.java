@@ -107,8 +107,8 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 	private Button button_sub_bet;
 	private HashMap<BetType, Button> betButtons;
 	
-	/** Hand number & small blind displaying */
-	private Label label_hand;
+	/** Pot & small blind displaying */
+	private Label label_pot;
 	private Label label_small_blind;
 	private Label label_big_blind;
 
@@ -221,11 +221,11 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 		
 		animate_notification = new AnimateNotification();
 
-		label_hand = new Label("Main n°1");
+		label_pot = new Label("Pot : 0");
 
-		label_hand.setLayoutX(15);
-		label_hand.setLayoutY(15);
-		label_hand.getStyleClass().add("hand");
+		label_pot.setLayoutX(15);
+		label_pot.setLayoutY(15);
+		label_pot.getStyleClass().add("pot");
 
 		label_small_blind = new Label("Small blind : 1");
 		label_small_blind.setLayoutX(15);
@@ -470,7 +470,7 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 		table.setX(75);
 		table.setY(75);
 
-		root.getChildren().add(label_hand);
+		root.getChildren().add(label_pot);
 		root.getChildren().add(label_small_blind);
 		root.getChildren().add(label_big_blind);
 		root.getChildren().add(table);
@@ -1091,6 +1091,7 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 						
 						PlayerWindow.this.pot.AddTokenSet(evt_data.getTokenSetUsedForBet());
 						PlayerWindow.this.pot.addBet(evt_data.getAmountAddedForBet());
+						PlayerWindow.this.label_pot.setText("Pot : " + PlayerWindow.this.pot.getBet());
 						PlayerWindow.this.list_token_bet.get(evt_data.getPlayerIndex()).addBet(evt_data.getAmountAddedForBet());
 						
 						SoundFx.launchSound(PlayerWindow.this, "/sons/chips.wav");
