@@ -32,6 +32,7 @@ import sma.agent.simulationAgent.EnvironmentWatcherBehaviour;
 import sma.agent.simulationAgent.InitGameBehaviour;
 import sma.agent.simulationAgent.InitHandBehaviour;
 import sma.agent.simulationAgent.InitRoundBehaviour;
+import sma.agent.simulationAgent.InitShowDownBehaviour;
 import sma.agent.simulationAgent.InitTableRoundBehaviour;
 import sma.agent.simulationAgent.PlayerSubscriptionBehaviour;
 
@@ -50,6 +51,7 @@ public class SimulationAgent extends GuiAgent {
 		END_ROUND,
 		GAME_FINISHED,
 		FIND_HAND_WINNERS,
+		SHOW_DOWN,
 		END_HAND
 	}
 
@@ -61,6 +63,7 @@ public class SimulationAgent extends GuiAgent {
 	private static final String END_ROUND = "END_ROUND";
 	private static final String FIND_HAND_WINNERS = "FIND_HAND_WINNERS";
 	private static final String END_HAND = "END_HAND";
+	private static final String INIT_SHOW_DOWN = "INIT_SHOW_DOWN";
 
 	private PropertyChangeSupport changes = new PropertyChangeSupport(this);
 	private Game game;
@@ -191,6 +194,7 @@ public class SimulationAgent extends GuiAgent {
 		gameBehaviour.registerState(new EndTableRoundBehaviour(this), END_TABLE_ROUND);
 		gameBehaviour.registerState(new EndRoundBehaviour(this), END_ROUND);
 		gameBehaviour.registerState(new CheckWinnerBehaviour(this), FIND_HAND_WINNERS);
+		gameBehaviour.registerState(new InitShowDownBehaviour(this), INIT_SHOW_DOWN);
 		gameBehaviour.registerState(new EndHandBehaviour(this), END_HAND);
 
 		gameBehaviour.registerTransition(INIT_GAME, INIT_HAND, GameEvent.NEW_HAND.ordinal());
@@ -202,7 +206,10 @@ public class SimulationAgent extends GuiAgent {
 		gameBehaviour.registerTransition(END_TABLE_ROUND, END_ROUND, GameEvent.END_ROUND.ordinal());
 		gameBehaviour.registerTransition(END_ROUND, INIT_ROUND, GameEvent.NEW_ROUND.ordinal());
 		gameBehaviour.registerTransition(END_ROUND, END_HAND, GameEvent.END_HAND.ordinal());
-		gameBehaviour.registerTransition(END_ROUND, FIND_HAND_WINNERS, GameEvent.FIND_HAND_WINNERS.ordinal());
+		gameBehaviour.registerTransition(END_ROUND, INIT_SHOW_DOWN, GameEvent.SHOW_DOWN.ordinal());
+		gameBehaviour.registerTransition(INIT_SHOW_DOWN, FIND_HAND_WINNERS, GameEvent.FIND_HAND_WINNERS.ordinal());
+		gameBehaviour.registerTransition(FIND_HAND_WINNERS, END_HAND, GameEvent.END_HAND.ordinal());
+		gameBehaviour.registerTransition(END_HAND, INIT_HAND, GameEvent.NEW_HAND.ordinal());
 
 		addBehaviour(gameBehaviour);
 	}
