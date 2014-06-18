@@ -1088,7 +1088,10 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 						PlayerWindow.this.label_pot.setText("Pot : " + PlayerWindow.this.pot.getBet());
 						PlayerWindow.this.list_token_bet.get(evt_data.getPlayerIndex()).addBet(evt_data.getAmountAddedForBet());
 						
-						SoundFx.launchSound(PlayerWindow.this, "/sons/chips.wav");
+						if(evt_data.getAmountAddedForBet() > 0)
+							SoundFx.launchSound(PlayerWindow.this, "/sons/chips.wav");
+						else
+							SoundFx.launchSound(PlayerWindow.this, "/sons/check.mp3");
 
 						System.out.println("[PlayerWindow] Player bet");
 					}
@@ -1126,9 +1129,19 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 						
 						int player_index = ((Integer)evt.getNewValue()).intValue();
 						PlayerWindow.this.list_card_player.get(player_index).emptyCard();
+						PlayerWindow.this.list_perso.get(player_index).setFolded();
 						
 						System.out.println("[PlayerWindow] Player folded");
 					}
+				}
+				
+				/**
+				 * ------ PLAYER CHECK ----
+				 */
+				else if(evt.getPropertyName().equals(PlayerGuiEvent.PLAYER_CHECK.toString())){
+					
+					SoundFx.launchSound(PlayerWindow.this, "/sons/check.mp3");
+					System.out.println("[PlayerWindow] Player check");
 				}
 			}
 		});

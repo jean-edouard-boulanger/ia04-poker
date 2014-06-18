@@ -67,7 +67,7 @@ public class ServerWindow extends JFrame implements PropertyChangeListener {
 		list_nb_player.setPreferredSize(new Dimension(300,25));
 		list_nb_player.setSelectedIndex(2);
 		
-		radio_complete_by_ia = new JCheckBox("Compléter les joueurs manquants par des IA");
+		radio_complete_by_ia = new JCheckBox("ComplÃ©ter les joueurs manquants par des IA");
 		radio_complete_by_ia.setSelected(true);
 		
 		

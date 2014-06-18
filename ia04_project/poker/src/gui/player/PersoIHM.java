@@ -29,6 +29,8 @@ public class PersoIHM extends Group {
 	private ImageView image_player;
 
 	FadeTransition t_current_player;
+	FadeTransition t_folded_player_display;
+	FadeTransition t_folded_player_hide;
 
 	public enum Sens { GAUCHE, DROITE, HAUT, BAS, HAUT_GAUCHE, HAUT_DROITE, BAS_GAUCHE, BAS_DROITE }
 	public PersoIHM(int x, int y, String pseudo, Sens position)
@@ -86,6 +88,16 @@ public class PersoIHM extends Group {
 		t_current_player.setToValue(0.3);
 		t_current_player.setCycleCount(Timeline.INDEFINITE);
 		t_current_player.setAutoReverse(true);
+		
+		t_folded_player_display = new FadeTransition(Duration.millis(800), image_player);
+		t_folded_player_display.setFromValue(0.2);
+		t_folded_player_display.setToValue(1.0);
+		t_folded_player_display.setCycleCount(1);
+		
+		t_folded_player_hide = new FadeTransition(Duration.millis(800), image_player);
+		t_folded_player_hide.setFromValue(1.0);
+		t_folded_player_hide.setToValue(0.2);
+		t_folded_player_hide.setCycleCount(1);
 	}
 
 	public void setPseudo(String pseudo)
@@ -192,6 +204,16 @@ public class PersoIHM extends Group {
 		}
 		
 		return pos;	
+	}
+	
+	public void setFolded()
+	{
+		t_folded_player_hide.play();
+	}
+	
+	public void setVisible()
+	{
+		t_folded_player_display.play();
 	}
 	
 	

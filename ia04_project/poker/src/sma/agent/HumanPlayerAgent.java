@@ -232,17 +232,6 @@ public class HumanPlayerAgent extends GuiAgent {
 			return true;
 		}
 
-		/*
-		@Override
-		public boolean onPlayerFoldedNotification(PlayerFoldedNotification notification, ACLMessage aclMsg){
-
-			// FIND THE PLAYER NUMBER AND SEND IT WITH CONTENT
-			changes_game.firePropertyChange(PlayerGuiEvent.PLAYER_FOLDED.toString(), null, 5);
-
-			return true;
-		}
-		*/
-
 		@Override
 		public boolean onPlayerStatusChangedNotification(PlayerStatusChangedNotification notification, ACLMessage aclMsg) {
 			
@@ -333,15 +322,6 @@ public class HumanPlayerAgent extends GuiAgent {
 			changes_game.firePropertyChange(PlayerGuiEvent.PLAYER_BET.toString(), null, eventData);
 			changes_game.firePropertyChange(PlayerGuiEvent.PLAYER_CANT_PLAY.toString(), null, eventData);
 			
-			return true;
-		}
-
-		@Override
-		public boolean onPlayerCheckNotification(PlayerCheckNotification notification, ACLMessage aclMsg){
-
-			// FIND THE PLAYER NUMBER AND SEND IT WITH CONTENT
-			changes_game.firePropertyChange(PlayerGuiEvent.PLAYER_CHECK.toString(), null, 5);
-
 			return true;
 		}
 

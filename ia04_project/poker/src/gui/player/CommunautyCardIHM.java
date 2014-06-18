@@ -28,7 +28,7 @@ public class CommunautyCardIHM extends Group {
 		this.x = x;
 		this.y = y;
 
-		this.current_position_x = x + 45;
+		this.current_position_x = x + 55;
 
 		ImageView image_card = new ImageView(new Image("images/background_card.png"));
 		image_card.setLayoutX(x);
@@ -36,6 +36,7 @@ public class CommunautyCardIHM extends Group {
 		image_card.setFitWidth(40);
 		image_card.setFitHeight(52);
 
+		this.getChildren().add(image_card);
 	}
 
 	public void addCommunautyCard(Card card)
