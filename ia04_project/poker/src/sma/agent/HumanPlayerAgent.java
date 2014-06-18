@@ -428,23 +428,21 @@ public class HumanPlayerAgent extends GuiAgent {
 				//Can't check if someone has already bet
 				eventData.removeAvailableAction(BetType.CHECK);
 			}
-
+			else {
+				eventData.setCallAmount(0);
+			}
+			
 			//Calculating player's current amount for the current round
 			int playerCurrentBetAmount = TokenSetValueEvaluator.evaluateTokenSetValue(game.getBetContainer().getTokenValueDefinition(), game.getBetContainer().getPlayerCurrentBet(me));
 
 			int minimumTokenValue = game.getBetContainer().getTokenValueDefinition().getValueForTokenType(TokenType.WHITE);
 			
-			// The minimum bet amount is either equal to current bet, 
-			// or to the smallest token value if the current bet is equal to 0, 
-			// or to the player bankroll if the the current bet is >= to the player's bankroll
 			int minimumBetAmount = 0;
 			
 			if(playerCurrentBetAmount <= globalCurrentBetAmount){
-				minimumBetAmount = globalCurrentBetAmount;
-
-				// Force the player to go all in if the current bet is >= to its bankroll (Can also fold)
-				//eventData.clearAvailableActions();
-				//eventData.addAvailableAction(BetType.ALL_IN);
+				
+				minimumBetAmount = 2 * globalCurrentBetAmount;
+				eventData.setCallAmount(globalCurrentBetAmount);
 				eventData.addAvailableAction(BetType.FOLD);
 			}
 			else if(globalCurrentBetAmount == 0){
@@ -456,18 +454,17 @@ public class HumanPlayerAgent extends GuiAgent {
 
 			int playerBankroll = me.getBankroll(game.getBetContainer().getTokenValueDefinition());
 			
-			if(playerBankroll < globalCurrentBetAmount) {
+			if(playerBankroll < minimumBetAmount) {
+				minimumBetAmount = playerBankroll;
 				eventData.clearAvailableActions();
-				eventData.addAvailableAction(BetType.ALL_IN);
 				eventData.addAvailableAction(BetType.FOLD);
+				eventData.addAvailableAction(BetType.RAISE);
 			}
 			
 			eventData.setMinimumBetAmount(minimumBetAmount);
 
 			// The maximum bet amount is equal to the bankroll of the player
 			eventData.setMaximumBetAmount(playerBankroll);
-
-			eventData.setRaiseAmount(minimumBetAmount * 2);
 			
 			eventData.setErrorMessage(request.getErrorMessage());
 			eventData.setRequestResentFollowedToError(request.isRequestResentFollowedToError());

@@ -236,9 +236,12 @@ public class BetManagerAgent extends Agent {
 			{
 				AgentHelper.sendReply(BetManagerAgent.this, aclMsg, ACLMessage.INFORM, new FailureMessage("Your bankroll is too small to place this bet"));
 			}
-			else if(request.getBet() < currentBetAmount)
+			else if(request.getBet() < currentBetAmount && playerPot != request.getBet())
 			{
-				AgentHelper.sendReply(BetManagerAgent.this, aclMsg, ACLMessage.INFORM, new FailureMessage("You must bet " + currentBetAmount + " in order to call"));
+				if(playerPot >= currentBetAmount)
+					AgentHelper.sendReply(BetManagerAgent.this, aclMsg, ACLMessage.INFORM, new FailureMessage("You must bet " + currentBetAmount + " in order to call"));
+				else
+					AgentHelper.sendReply(BetManagerAgent.this, aclMsg, ACLMessage.INFORM, new FailureMessage("You must go all in."));
 			}
 			else if(request.getBet() > currentBetAmount && request.getBet() < 2 * currentBetAmount)
 			{

@@ -806,7 +806,8 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 
 			public void handle(ActionEvent event) {
 				GuiEvent ev = new GuiEvent(this, PlayerGuiEvent.PLAYER_BET.ordinal());
-				ev.addParameter(0);
+				double d = 0;
+				ev.addParameter(d);
 				human_player_agent.postGuiEvent(ev);
 			}
 		});
@@ -1087,8 +1088,8 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 						PlayerBetEventData evt_data = (PlayerBetEventData)evt.getNewValue();
 						
 						PlayerWindow.this.pot.AddTokenSet(evt_data.getTokenSetUsedForBet());
-						PlayerWindow.this.pot.addBet(evt_data.getBetAmount());
-						PlayerWindow.this.list_token_bet.get(evt_data.getPlayerIndex()).addBet(evt_data.getBetAmount());
+						PlayerWindow.this.pot.addBet(evt_data.getAmountAddedForBet());
+						PlayerWindow.this.list_token_bet.get(evt_data.getPlayerIndex()).addBet(evt_data.getAmountAddedForBet());
 						
 						SoundFx.launchSound(PlayerWindow.this, "/sons/chips.wav");
 
@@ -1108,11 +1109,11 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 							bt.setDisable(true);
 						}
 						
-						betButtons.get(BetType.CALL).setText("Call ("+ eventData.getMinimumBetAmount() +")");
+						betButtons.get(BetType.CALL).setText("Call ("+ eventData.getCallAmount() +")");
 						//betButtons.get(BetType.ALL_IN).setText("All in (" + eventData.getMaximumBetAmount() + ")");
-						betButtons.get(BetType.RAISE).setText("Raise (" + eventData.getRaiseAmount() + ")");
+						betButtons.get(BetType.RAISE).setText("Raise (" + eventData.getMinimumBetAmount() + ")");
 												
-						enableBetButtons(eventData.getAvailableActions(), eventData.getRaiseAmount(), eventData.getMinimumBetAmount(), eventData.getMaximumBetAmount());
+						enableBetButtons(eventData.getAvailableActions(), eventData.getMinimumBetAmount(), eventData.getMinimumBetAmount(), eventData.getMaximumBetAmount());
 					}
 				}
 				

@@ -10,7 +10,7 @@ public class PlayRequestEventData {
 	
 	int minimumBetAmount = 0;
 	int maximumBetAmount = 0;
-	int raiseAmount = 0;
+	int callAmount = 0;
 		
 	boolean requestResentFollowedToError = false;
 	String errorMessage;
@@ -81,11 +81,11 @@ public class PlayRequestEventData {
 		this.maximumBetAmount = maximumBetAmount;
 	}
 
-	public int getRaiseAmount() {
-		return raiseAmount;
+	public int getCallAmount() {
+		return callAmount;
 	}
 
-	public void setRaiseAmount(int raiseAmount) {
-		this.raiseAmount = raiseAmount;
-	}	
+	public void setCallAmount(int callAmount) {
+		this.callAmount = callAmount;
+	}
 }
