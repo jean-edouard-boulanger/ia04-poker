@@ -497,17 +497,10 @@ public class HumanPlayerAgent extends GuiAgent {
 		@Override
 		public boolean onWinnerDeterminedNotification(WinnerDeterminedNotification notification, ACLMessage aclMsg) {
 			
-			Map<Player, Hand> handWinners = (HashMap<Player, Hand>) notification.getWinners();
+			HashMap<AID, Hand> handWinners = (HashMap<AID, Hand>) notification.getWinners();
 			
-			for (Entry<Player, Hand> entry : handWinners.entrySet())
-			{
-				entry.getValue();
-				entry.getKey();
-				
-			}
-			
-			
-			
+			changes_game.firePropertyChange(PlayerGuiEvent.PLAYER_WINNER.toString(), null, handWinners);
+
 			return true;
 		}
 	}

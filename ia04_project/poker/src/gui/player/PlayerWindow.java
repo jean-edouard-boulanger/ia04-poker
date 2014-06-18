@@ -46,6 +46,7 @@ import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import javafx.util.Duration;
 import poker.card.helper.CardImageHelper;
+import poker.card.heuristics.combination.model.Hand;
 import poker.card.model.Card;
 import poker.card.model.CardRank;
 import poker.card.model.CardSuit;
@@ -1150,6 +1151,10 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 				 */
 				else if(evt.getPropertyName().equals(PlayerGuiEvent.PLAYER_WINNER.toString())){
 					
+					if(evt.getNewValue() instanceof Hand)
+					{
+						
+					}
 					
 					System.out.println("[PlayerWindow] Player winner");
 				}

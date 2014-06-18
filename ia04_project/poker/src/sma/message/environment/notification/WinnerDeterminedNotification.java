@@ -1,24 +1,23 @@
 package sma.message.environment.notification;
 
+import jade.core.AID;
 import jade.lang.acl.ACLMessage;
 
-import java.util.ArrayList;
 import java.util.Map;
 
 import poker.card.heuristics.combination.model.Hand;
-import poker.game.player.model.Player;
 import sma.message.Message;
 import sma.message.MessageVisitor;
 
 public class WinnerDeterminedNotification extends Message {
 
-	Map<Player, Hand> winners;
+	Map<AID, Hand> winners;
 	
 	public WinnerDeterminedNotification() {
 		
 	}
 	
-	public WinnerDeterminedNotification(Map<Player, Hand> winners) {
+	public WinnerDeterminedNotification(Map<AID, Hand> winners) {
 		this.winners = winners;
 	}
 	
@@ -27,12 +26,11 @@ public class WinnerDeterminedNotification extends Message {
 		return false;
 	}
 
-	public Map<Player, Hand> getWinners() {
+	public Map<AID, Hand> getWinners() {
 		return winners;
 	}
 
-	public void setWinners(Map<Player, Hand> winners) {
+	public void setWinners(Map<AID, Hand> winners) {
 		this.winners = winners;
 	}
-
 }
