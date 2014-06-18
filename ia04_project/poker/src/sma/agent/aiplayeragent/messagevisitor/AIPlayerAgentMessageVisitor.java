@@ -2,7 +2,6 @@ package sma.agent.aiplayeragent.messagevisitor;
 
 import gui.player.event.model.AIPlayRequestEventData;
 import jade.lang.acl.ACLMessage;
-import jade.tools.logging.ontology.GetAllLoggers;
 
 import java.util.ArrayList;
 
@@ -14,6 +13,7 @@ import poker.game.exception.NotRegisteredPlayerException;
 import poker.game.exception.PlayerAlreadyRegisteredException;
 import poker.game.helper.DecisionMakerHelper;
 import poker.game.model.BetType;
+import poker.game.model.Decision;
 import poker.game.model.Game;
 import poker.game.player.model.Player;
 import poker.game.player.model.PlayerStatus;
@@ -261,7 +261,14 @@ public class AIPlayerAgentMessageVisitor extends MessageVisitor {
 		
 		eventData.setCards(cards);
 		
-		DecisionMakerHelper.makeDecision(eventData);
+		Decision decision = DecisionMakerHelper.makeDecision(eventData);
+		
+		if(decision.getBetType() == BetType.FOLD) {
+			myAgent.replyFoldToSimulationPlayRequest();
+		}
+		else {
+			myAgent.replyBetToSimulationPlayRequest(decision.getBetAmount());
+		}
 		
 		return true;
 	}

@@ -161,10 +161,24 @@ public class AIPlayerAgent extends Agent {
 	 *  Private functions related to IHM events
 	 */
 
-	private void replyToSimulationPlayRequest(int betAmount) {
-		if(playRequestMessage != null) {							
+	public void replyBetToSimulationPlayRequest(int betAmount) {
+		if(playRequestMessage != null) {
+			System.out.println("[AIPlayer] Player " + game.getPlayersContainer().getPlayerByAID(getAID()).getNickname() + " wants to bet: " + betAmount);
+			
 			//Answering to simulation play request
 			AgentHelper.sendReply(this, playRequestMessage, ACLMessage.REQUEST, new BetRequest(betAmount, getAID()));
+			
+			//Setting play request to null, waiting for a new request from simulation
+			playRequestMessage = null;
+		}
+	}
+	
+	public void replyFoldToSimulationPlayRequest() {
+		if(playRequestMessage != null) {
+			System.out.println("[AIPlayer] Player " + game.getPlayersContainer().getPlayerByAID(getAID()).getNickname() + " wants to fold.");	
+			
+			//Answering to simulation play request
+			AgentHelper.sendReply(this, playRequestMessage, ACLMessage.REQUEST, new FoldRequest());
 			
 			//Setting play request to null, waiting for a new request from simulation
 			playRequestMessage = null;
