@@ -12,6 +12,7 @@ import poker.game.exception.NoPlaceAvailableException;
 import poker.game.exception.NotRegisteredPlayerException;
 import poker.game.exception.PlayerAlreadyRegisteredException;
 import poker.game.helper.DecisionMakerHelper;
+import poker.game.model.AIPlayerType;
 import poker.game.model.BetType;
 import poker.game.model.Decision;
 import poker.game.model.Game;
@@ -42,9 +43,11 @@ import sma.message.simulation.request.PlayRequest;
 public class AIPlayerAgentMessageVisitor extends MessageVisitor {
 	
 	AIPlayerAgent myAgent;
+	AIPlayerType playerType;
 	
-	public AIPlayerAgentMessageVisitor(AIPlayerAgent agent) {
+	public AIPlayerAgentMessageVisitor(AIPlayerAgent agent,  AIPlayerType playerType) {
 		this.myAgent = agent;
+		this.playerType = playerType;
 	}
 	
 	@Override
@@ -259,7 +262,7 @@ public class AIPlayerAgentMessageVisitor extends MessageVisitor {
 		
 		eventData.setCards(cards);
 		
-		Decision decision = DecisionMakerHelper.makeDecision(eventData);
+		Decision decision = DecisionMakerHelper.makeDecision(eventData, playerType);
 		
 		if(decision.getBetType() == BetType.FOLD) {
 			myAgent.replyFoldToSimulationPlayRequest();
