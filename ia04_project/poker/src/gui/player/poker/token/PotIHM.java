@@ -17,41 +17,24 @@ public class PotIHM extends Group {
 	private HashMap<TokenType, TokenStackIHM> tokenStacks;
 	private TokenSet tokenSet;
 	private Point2D center;
-	private Label label_score;
 	private int score;
 	
 	public PotIHM(){
 		this.tokenSet = new TokenSet();
 		this.tokenStacks = new HashMap<TokenType, TokenStackIHM>();
 		this.score = 0;
-		this.label_score = new Label();
-		this.label_score.getStyleClass().add("label-bet");
-		this.label_score.setVisible(false);
-		this.getChildren().add(this.label_score);
 	}
 	
 	public PotIHM(Point2D center){
 		this();
 		this.center = center;
 		this.score = 0;
-		this.label_score = new Label();
-		this.label_score.setLayoutX(center.x - 25);
-		this.label_score.setLayoutY(center.y + 25);
-		this.label_score.getStyleClass().add("label-bet");
-		this.label_score.setVisible(false);
-		this.getChildren().add(this.label_score);
 	}
 	
 	public PotIHM(Point2D center, TokenSet t, int score){
 		this(center);
 		this.tokenSet = t;
 		this.score = score;
-		this.label_score = new Label(String.valueOf(score));
-		this.label_score.setLayoutX(center.x - 25);
-		this.label_score.setLayoutY(center.y + 25);
-		this.label_score.getStyleClass().add("label-bet");
-		this.label_score.setVisible(false);
-		this.getChildren().add(this.label_score);
 		this.refresh();
 	}
 	
@@ -122,14 +105,14 @@ public class PotIHM extends Group {
 	
 	public void addBet(int bet){
 		this.score += bet;
-		this.label_score.setText("Pot : " + String.valueOf(this.score));
-		if(!this.label_score.isVisible())
-			this.label_score.setVisible(true);
+	}
+	
+	public int getBet() {
+		return this.score;
 	}
 	
 	public void clear(){
 		this.score = 0;
-		this.label_score.setVisible(false);
 		this.tokenSet.clear();
 		for(TokenStackIHM ts : this.tokenStacks.values()){
 			this.getChildren().remove(ts);
