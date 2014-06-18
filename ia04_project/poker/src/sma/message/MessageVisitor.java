@@ -40,11 +40,8 @@ import sma.message.environment.request.EmptyCommunityCardsRequest;
 import sma.message.environment.request.GiveTokenSetToPlayerRequest;
 import sma.message.environment.request.PlayerBetRequest;
 import sma.message.environment.request.PlayerFoldedRequest;
-<<<<<<< HEAD
 import sma.message.environment.request.RevealPlayerCardsRequest;
-=======
 import sma.message.environment.request.SendTokenSetToPlayerFromPotRequest;
->>>>>>> 295a9ef3b89d9a51add812253ec49ca5746f8495
 import sma.message.environment.request.SetDealerRequest;
 import sma.message.environment.request.SetTokenValueDefinitionRequest;
 import sma.message.environment.request.ShowPlayerCardsRequest;
