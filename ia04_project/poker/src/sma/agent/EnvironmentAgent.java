@@ -23,6 +23,7 @@ import sma.message.FailureMessage;
 import sma.message.MessageVisitor;
 import sma.message.OKMessage;
 import sma.message.SubscriptionOKMessage;
+import sma.message.bet.notification.BetsMergedNotification;
 import sma.message.environment.notification.BetNotification;
 import sma.message.environment.notification.BlindValueDefinitionChangedNotification;
 import sma.message.environment.notification.CardAddedToCommunityCardsNotification;
@@ -65,8 +66,26 @@ public class EnvironmentAgent extends Agent {
 		DFServiceHelper.registerService(this, "PokerEnvironment","Environment");
 		this.addBehaviour(new AddSubscriberBehaviour(this));
 		this.addBehaviour(new EnvironmentReceiveRequestBehaviour(this));
+		this.addBehaviour(new EnvironmentReceiveNotificationBehaviour(this));
 	}
 
+	private class EnvironmentReceiveNotificationBehaviour extends CyclicBehaviour{
+
+		MessageTemplate receiveNotificationMessageTemplate;
+
+		public EnvironmentReceiveNotificationBehaviour(Agent agent){
+			super(agent);
+			this.receiveNotificationMessageTemplate = MessageTemplate.MatchPerformative(ACLMessage.INFORM);
+		}
+
+		@Override
+		public void action() {
+			if(!AgentHelper.receiveMessage(this.myAgent, receiveNotificationMessageTemplate, msgVisitor)){
+				block();
+			}
+		}
+	}
+	
 	private class EnvironmentReceiveRequestBehaviour extends CyclicBehaviour{
 
 		MessageTemplate receiveRequestMessageTemplate;
@@ -143,6 +162,14 @@ public class EnvironmentAgent extends Agent {
 			return true;
 		}
 
+		@Override
+		public boolean onBetsMergedNotification(BetsMergedNotification notification, ACLMessage aclMsg) {
+
+			AgentHelper.sendSimpleMessage(EnvironmentAgent.this, subscribers, ACLMessage.PROPAGATE, new BetsMergedNotification());
+			
+			return true;
+		}
+		
 		@Override
 		public boolean onAddCommunityCardRequest(AddCommunityCardRequest request, ACLMessage aclMsg) {
 			Card newCommunityCard = request.getNewCard();

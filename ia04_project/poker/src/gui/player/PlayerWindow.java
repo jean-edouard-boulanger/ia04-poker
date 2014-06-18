@@ -90,7 +90,8 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 		IHM_READY,
 		SHOW_IHM,
 		PLAY_REQUEST,
-		PLAYER_CANT_PLAY;
+		PLAYER_CANT_PLAY,
+		RESET_PLAYER_BETS;
 	}
 
 	private final Pane root = new Pane();
@@ -797,6 +798,7 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 			@Override
 			public void changed(ObservableValue<? extends Number> ov, Number oldValue, Number newValue) {
 				PlayerWindow.this.textfield_bet.setText(String.valueOf(newValue.intValue()));
+				PlayerWindow.this.button_raise.setText("Raise (" + String.valueOf(newValue.intValue()) + ")");
 			}
 		});
 
@@ -975,6 +977,16 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 					tokenSetChanged((PlayerTokenSetChangedEventData)evt.getNewValue());
 				}
 
+				/**
+				 *  -----  PLAYER RECEIVED TOKENSET OTHER -----
+				 */
+				else if(evt.getPropertyName().equals(PlayerGuiEvent.RESET_PLAYER_BETS.toString()))
+				{
+					for(TokenBetPlayerIHM tokenBet : PlayerWindow.this.list_token_bet) {
+						tokenBet.resetBet();
+					}
+				}
+				
 				/**
 				 *  -----  CURRENT PLAYER -----
 				 */

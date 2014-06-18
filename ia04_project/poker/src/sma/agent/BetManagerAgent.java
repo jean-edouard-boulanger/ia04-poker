@@ -294,8 +294,10 @@ public class BetManagerAgent extends Agent {
 
 			game.getBetContainer().transferCurrentBetsToPot();
 
-			AgentHelper.sendReply(BetManagerAgent.this, aclMsg, ACLMessage.INFORM, new BetsMergedNotification());
+			AgentHelper.sendReply(BetManagerAgent.this, aclMsg, ACLMessage.INFORM, new OKMessage());
 
+			AgentHelper.sendSimpleMessage(BetManagerAgent.this, environment, ACLMessage.INFORM, new BetsMergedNotification());
+			
 			return true;
 		}
 
