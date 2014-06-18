@@ -495,7 +495,7 @@ public class HumanPlayerAgent extends GuiAgent {
 		@Override
 		public boolean onWinnerDeterminedNotification(WinnerDeterminedNotification notification, ACLMessage aclMsg) {
 			
-			HashMap<Player, Hand> handWinners = (HashMap<Player, Hand>) notification.getWinners();
+			HashMap<AID, Hand> handWinners = (HashMap<AID, Hand>) notification.getWinners();
 			
 			return true;
 		}
