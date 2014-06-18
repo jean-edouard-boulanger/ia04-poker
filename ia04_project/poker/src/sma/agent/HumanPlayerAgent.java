@@ -17,6 +17,8 @@ import jade.lang.acl.MessageTemplate;
 
 import java.beans.PropertyChangeSupport;
 import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import javafx.embed.swing.JFXPanel;
 
@@ -495,8 +497,18 @@ public class HumanPlayerAgent extends GuiAgent {
 		@Override
 		public boolean onWinnerDeterminedNotification(WinnerDeterminedNotification notification, ACLMessage aclMsg) {
 			
-			HashMap<AID, Hand> handWinners = (HashMap<AID, Hand>) notification.getWinners();
+			Map<AID, Hand> handWinners = (HashMap<AID, Hand>) notification.getWinners();
+			Map<Player, Hand> handPlayerWinners = new HashMap<Player, Hand>();
 			
+			for(Entry<AID, Hand> entry : handWinners.entrySet())
+			{
+				handPlayerWinners.put(game.getPlayersContainer().getPlayerByAID(entry.getKey()), entry.getValue());
+			}
+			
+			changes_game.firePropertyChange(PlayerGuiEvent.PLAYER_WINNER.toString(), null, handPlayerWinners);
+			
+			System.out.println("[HPA] Player winner");
+
 			return true;
 		}
 	}

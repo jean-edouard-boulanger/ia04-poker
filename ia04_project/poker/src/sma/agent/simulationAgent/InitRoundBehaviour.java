@@ -2,7 +2,6 @@ package sma.agent.simulationAgent;
 
 import jade.core.AID;
 import jade.core.behaviours.Behaviour;
-import jade.core.behaviours.OneShotBehaviour;
 import poker.game.model.Game;
 import poker.game.model.Round;
 import sma.agent.SimulationAgent;
@@ -15,22 +14,25 @@ import sma.agent.helper.experimental.Task;
 import sma.agent.helper.experimental.TaskRunnerBehaviour;
 import sma.message.Message;
 import sma.message.bet.request.BetRequest;
+import sma.message.blind.request.RefreshBlindValueDefinitionRequest;
 import sma.message.dealer.request.DealRequest;
 
 public class InitRoundBehaviour extends TaskRunnerBehaviour {
 
 	private AID dealerAID;
 	private AID betManagerAID;
+	private AID blindManager;
 	
 	private SimulationAgent simulationAgent;
 	private GameEvent transition = GameEvent.NEW_TABLE_ROUND;
+
 	
 	public InitRoundBehaviour(SimulationAgent simulationAgent) {
 		super(simulationAgent);
 		
 		this.dealerAID = DFServiceHelper.searchService(simulationAgent, "DealerAgent","Dealer");
 		this.betManagerAID = DFServiceHelper.searchService(simulationAgent, "BetManagerAgent", "BetManager");
-
+		this.blindManager = DFServiceHelper.searchService(simulationAgent, "BlindManagementAgent","BlindManager");
 		this.simulationAgent = simulationAgent;
 	}
 
@@ -61,10 +63,10 @@ public class InitRoundBehaviour extends TaskRunnerBehaviour {
 			int smallBlindAmount = game.getBlindValueDefinition().getBlindAmountDefinition();
 			int bigBlindAmount = game.getBlindValueDefinition().getBigBlindAmountDefinition();
 			
-			mainTask = mainTask.then(getBlindPaiementBehaviour(game.getPlayersContainer().getSmallBlind().getAID(), smallBlindAmount));
-			mainTask = mainTask.then(getBlindPaiementBehaviour(game.getPlayersContainer().getBigBlind().getAID(), bigBlindAmount));
-			
-			mainTask = mainTask.then(getDealPlayersCardsBehaviour());
+			mainTask = mainTask.then(getUpdateBlindBehaviour())
+					.then(getBlindPaiementBehaviour(game.getPlayersContainer().getSmallBlind().getAID(), smallBlindAmount))
+					.then(getBlindPaiementBehaviour(game.getPlayersContainer().getBigBlind().getAID(), bigBlindAmount))
+					.then(getDealPlayersCardsBehaviour());
 		}
 		else if(round == Round.RIVER || round == Round.TURN || round == round.FLOP){
 			/*
@@ -81,6 +83,15 @@ public class InitRoundBehaviour extends TaskRunnerBehaviour {
 		
 		this.setBehaviour(mainTask);
 		super.onStart();
+	}
+	
+	private Behaviour getUpdateBlindBehaviour() {
+		Message msg = new RefreshBlindValueDefinitionRequest();
+		TransactionBehaviour transaction = new TransactionBehaviour(myAgent, msg, blindManager);
+		transaction.setResponseVisitor(new SimpleVisitor(myAgent,
+				"blinds updated successfully.",
+				"error while updating blinds."));		
+		return transaction;
 	}
 
 	private Behaviour getDealPlayersCardsBehaviour() {

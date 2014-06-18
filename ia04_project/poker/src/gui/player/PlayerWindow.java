@@ -3,6 +3,7 @@ package gui.player;
 import gui.player.PersoIHM.Sens;
 import gui.player.TokenPlayerIHM.ColorToken;
 import gui.player.animation.AnimateNotification;
+import gui.player.animation.AnimateWinner;
 import gui.player.animation.SoundFx;
 import gui.player.event.model.PlayRequestEventData;
 import gui.player.event.model.PlayerBetEventData;
@@ -21,7 +22,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
+import javafx.animation.SequentialTransition;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
@@ -46,6 +49,7 @@ import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import javafx.util.Duration;
 import poker.card.helper.CardImageHelper;
+import poker.card.heuristics.combination.model.Hand;
 import poker.card.model.Card;
 import poker.card.model.CardRank;
 import poker.card.model.CardSuit;
@@ -86,6 +90,7 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 		BIG_BLIND_PLAYER,
 		CURRENT_PLAYER_CHANGED,
 		YOUR_TURN,
+		PLAYER_WINNER,
 
 		IHM_READY,
 		SHOW_IHM,
@@ -97,6 +102,7 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 	private final Pane root = new Pane();
 	
 	private AnimateNotification animate_notification;
+	private AnimateWinner animate_winner;
 
 	/** Interaction button */
 	private Button button_fold;
@@ -220,6 +226,7 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 		root.setId("root");
 		
 		animate_notification = new AnimateNotification();
+		animate_winner = new AnimateWinner();
 
 		label_pot = new Label("Pot : 0");
 
@@ -1142,6 +1149,32 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 					
 					SoundFx.launchSound(PlayerWindow.this, "/sons/check.mp3");
 					System.out.println("[PlayerWindow] Player check");
+				}
+				
+				/**
+				 * ------ WINNER ----
+				 */
+				else if(evt.getPropertyName().equals(PlayerGuiEvent.PLAYER_WINNER.toString())){
+					
+					if(evt.getNewValue() instanceof Map)
+					{
+						try {
+							Map<Player, Hand> handPlayerWinners = (Map<Player, Hand>)evt.getNewValue();
+							SequentialTransition sequence = new SequentialTransition();
+							
+							for(Entry<Player, Hand> entry : handPlayerWinners.entrySet())
+							{
+								sequence.getChildren().add(PlayerWindow.this.animate_winner.launchAnimation("Player " + entry.getKey().getNickname() + " has won", entry.getValue()));
+							}
+							
+							sequence.play();
+						}
+						catch(Exception e) {
+							System.out.println("[PlayerWindow] Player winner error " + e.getMessage());
+						}
+						System.out.println("[PlayerWindow] Player winner");
+					}
+
 				}
 			}
 		});

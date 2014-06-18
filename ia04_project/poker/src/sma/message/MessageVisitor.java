@@ -10,7 +10,7 @@ import sma.message.bet.request.DoesPlayerHaveToBetRequest;
 import sma.message.bet.request.FoldRequest;
 import sma.message.bet.request.GetPotAmountRequest;
 import sma.message.bet.request.MergeBetsRequest;
-import sma.message.blind.request.GetBlindValueDefinitionRequest;
+import sma.message.blind.request.RefreshBlindValueDefinitionRequest;
 import sma.message.blind.request.ResetBlindRequest;
 import sma.message.dealer.request.DealRequest;
 import sma.message.determine_winner.DetermineWinnerRequest;
@@ -75,7 +75,7 @@ public class MessageVisitor {
 	
 	// Blind Management
 	public boolean onResetBlindRequest(ResetBlindRequest request, ACLMessage aclMsg) {return false;}
-	public boolean onRefreshBlindValueDefinitionRequest(GetBlindValueDefinitionRequest request, ACLMessage aclMsg) {return false;}
+	public boolean onRefreshBlindValueDefinitionRequest(RefreshBlindValueDefinitionRequest request, ACLMessage aclMsg) {return false;}
 	
 	// Determine winner
 	public boolean onDetermineWinnerRequest(DetermineWinnerRequest request, ACLMessage aclMsg) {return false;}
