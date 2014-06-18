@@ -28,6 +28,7 @@ import sma.message.SubscriptionOKMessage;
 import sma.message.determine_winner.DetermineWinnerRequest;
 import sma.message.environment.notification.CardAddedToCommunityCardsNotification;
 import sma.message.environment.notification.CommunityCardsEmptiedNotification;
+import sma.message.environment.notification.DealerChangedNotification;
 import sma.message.environment.notification.PlayerCardsRevealedNotification;
 import sma.message.environment.notification.WinnerDeterminedNotification;
 
@@ -36,11 +37,13 @@ public class DetermineWinnerAgent extends Agent {
 	private CommunityCards communityCards;
 	private DetermineWinnerMessageVisitor msgVisitor;
 	private ArrayList<Player> players;
+	private AID environment;
 	
 	public DetermineWinnerAgent() {
 		this.msgVisitor = new DetermineWinnerMessageVisitor();
 		this.communityCards = new CommunityCards();
 		players = new ArrayList<Player>();
+		this.environment = DFServiceHelper.searchService(this, "PokerEnvironment", "Environment");
 	}
 	
 	@Override
@@ -87,6 +90,8 @@ public class DetermineWinnerAgent extends Agent {
 		public boolean onDetermineWinnerRequest(DetermineWinnerRequest request, ACLMessage aclMsg) {
 			
 			Map<Player, Hand> winners = determineRoundWinners();
+			
+			AgentHelper.sendSimpleMessage(DetermineWinnerAgent.this, environment, ACLMessage.INFORM, new WinnerDeterminedNotification(winners));
 			
 			//Sending the list of winners (could be more than one winner)
 			AgentHelper.sendReply(DetermineWinnerAgent.this, aclMsg, ACLMessage.INFORM, new WinnerDeterminedNotification(winners));

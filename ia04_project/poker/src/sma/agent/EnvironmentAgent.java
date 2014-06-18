@@ -39,6 +39,7 @@ import sma.message.environment.notification.PlayerReceivedUnknownCardNotificatio
 import sma.message.environment.notification.PlayerSitOnTableNotification;
 import sma.message.environment.notification.PlayerStatusChangedNotification;
 import sma.message.environment.notification.TokenValueDefinitionChangedNotification;
+import sma.message.environment.notification.WinnerDeterminedNotification;
 import sma.message.environment.request.AddCommunityCardRequest;
 import sma.message.environment.request.AddPlayerTableRequest;
 import sma.message.environment.request.BlindValueDefinitionChangeRequest;
@@ -311,6 +312,15 @@ public class EnvironmentAgent extends Agent {
 		public boolean onRevealPlayerCardsRequest(RevealPlayerCardsRequest request, ACLMessage aclMsg) {
 			
 			AgentHelper.sendSimpleMessage(EnvironmentAgent.this, subscribers, ACLMessage.PROPAGATE, new PlayerCardsRevealedNotification(game.getPlayersContainer().getPlayerByAID(request.getPlayerAID())));
+			AgentHelper.sendReply(EnvironmentAgent.this, aclMsg, ACLMessage.INFORM, new OKMessage());
+			
+			return true;
+		}
+		
+		@Override
+		public boolean onWinnerDeterminedNotification(WinnerDeterminedNotification notification, ACLMessage aclMsg) {
+			
+			AgentHelper.sendSimpleMessage(EnvironmentAgent.this, subscribers, ACLMessage.PROPAGATE, notification);
 			
 			return true;
 		}
