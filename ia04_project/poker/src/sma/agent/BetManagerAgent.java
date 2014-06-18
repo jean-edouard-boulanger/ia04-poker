@@ -290,7 +290,7 @@ public class BetManagerAgent extends Agent {
 				else
 					AgentHelper.sendReply(BetManagerAgent.this, aclMsg, ACLMessage.INFORM, new FailureMessage("You must go all in."));
 			}
-			else if(request.getBet() > currentBetAmount && request.getBet() < 2 * currentBetAmount)
+			else if(request.getBet() > currentBetAmount && request.getBet() < 2 * currentBetAmount && playerPot != request.getBet())
 			{
 				AgentHelper.sendReply(BetManagerAgent.this, aclMsg, ACLMessage.INFORM, new FailureMessage("You must bet at leat " + 2 * currentBetAmount + " in order to raise"));
 			}

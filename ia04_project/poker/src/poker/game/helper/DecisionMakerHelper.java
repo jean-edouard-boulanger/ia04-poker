@@ -1,11 +1,11 @@
 package poker.game.helper;
 
 import gui.player.event.model.AIPlayRequestEventData;
-import jade.util.leap.Collection;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Random;
 
 import poker.card.helper.CustomPickSequence;
 import poker.card.heuristics.combination.model.Combination;
@@ -54,6 +54,13 @@ public class DecisionMakerHelper {
 		int maximumBetAmount = eventData.getMinimumBetAmount();
 		int callAmount = eventData.getCallAmount();
 
+		Random random = new Random();
+		
+		int raiseDecision = random.nextInt(90);
+		
+		if(raiseDecision < 10) {
+			return new Decision(BetType.FOLD, 0);
+		}
 		
 		if(combinationCount == 0) {
 			if(betActions.contains(BetType.CHECK)) {
@@ -61,7 +68,7 @@ public class DecisionMakerHelper {
 				return new Decision(BetType.CHECK, 0);
 			}
 			else if(betActions.contains(BetType.CALL)) {
-				if(callAmount < ((7 * maximumBetAmount) / 10)) {
+				if(callAmount < ((7 * maximumBetAmount) / 10) && raiseDecision > 35) {
 					System.out.println("[AIPlayer] Decided to call.");
 					return new Decision(BetType.CALL, callAmount);
 				}
@@ -81,7 +88,7 @@ public class DecisionMakerHelper {
 				System.out.println("[AIPlayer] Decided to raise at " + minimumBetAmount + " because I have a combination.");
 				return new Decision(BetType.RAISE, minimumBetAmount);
 			}
-			else if(betActions.contains(BetType.CALL)) {
+			else if(betActions.contains(BetType.CALL) && raiseDecision > 25) {
 				System.out.println("[AIPlayer] Decided to call.");
 				return new Decision(BetType.CALL, callAmount);
 			}
