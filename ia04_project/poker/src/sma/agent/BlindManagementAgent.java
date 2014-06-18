@@ -12,7 +12,7 @@ import sma.agent.helper.TransactionBehaviour;
 import sma.message.FailureMessage;
 import sma.message.MessageVisitor;
 import sma.message.OKMessage;
-import sma.message.blind.request.GetBlindValueDefinitionRequest;
+import sma.message.blind.request.RefreshBlindValueDefinitionRequest;
 import sma.message.blind.request.ResetBlindRequest;
 import sma.message.environment.request.BlindValueDefinitionChangeRequest;
 
@@ -48,7 +48,7 @@ public class BlindManagementAgent extends Agent {
 			boolean msgReceived = AgentHelper.receiveMessage(this.myAgent, ACLMessage.REQUEST, new MessageVisitor(){
 				
 				@Override
-				public boolean onRefreshBlindValueDefinitionRequest(GetBlindValueDefinitionRequest request, ACLMessage aclMsg) {
+				public boolean onRefreshBlindValueDefinitionRequest(RefreshBlindValueDefinitionRequest request, ACLMessage aclMsg) {
 					setBlindAndReply(aclMsg); // we refresh the environment and reply to simulation
 					return true;
 				}

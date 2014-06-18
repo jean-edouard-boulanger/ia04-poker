@@ -40,9 +40,9 @@ public class PlayerSubscriptionBehaviour extends CyclicBehaviour
 		if(!simAgent.isServerStarted()){
 		    AgentHelper.sendReply(myAgent, aclMsg, ACLMessage.FAILURE, new FailureMessage("Server not ready."));
 		}
-		else if (simAgent.isGameStarted()){
+		/*else if (simAgent.isGameStarted()){
 		    AgentHelper.sendReply(myAgent, aclMsg, ACLMessage.FAILURE, new FailureMessage("Game already started."));
-		}
+		}*/
 		else if (simAgent.getGame().getPlayersContainer().getPlayers().size() >= simAgent.getMaxPlayers()){
 		    AgentHelper.sendReply(myAgent, aclMsg, ACLMessage.FAILURE, new FailureMessage("Game full."));
 		}
