@@ -1,5 +1,7 @@
 package sma.agent.simulationAgent;
 
+import com.sun.media.jfxmedia.events.PlayerStateEvent.PlayerState;
+
 import jade.core.AID;
 import jade.core.behaviours.Behaviour;
 import jade.lang.acl.ACLMessage;
@@ -62,7 +64,7 @@ public class PlayBehaviour extends Behaviour {
 		}
 		else */if(step == 0){
 			
-			System.err.println("DEBUG ["+ simulationAgent.getLocalName() +":PlayBehaviour] " + step);
+			//System.err.println("DEBUG ["+ simulationAgent.getLocalName() +":PlayBehaviour] " + step);
 			
 			// We first ask the betManager if the player actually have to play
 			this.betManagerTransaction = new RequestTransaction(this, new DoesPlayerHaveToBetRequest(this.playerAID), betManagerAID);
@@ -71,7 +73,7 @@ public class PlayBehaviour extends Behaviour {
 		}
 		else if(step == 1){
 			
-			System.err.println("DEBUG ["+ simulationAgent.getLocalName() +":PlayBehaviour] " + step);
+			//System.err.println("DEBUG ["+ simulationAgent.getLocalName() +":PlayBehaviour] " + step);
 
 			
 			received = this.betManagerTransaction.checkReply(new MessageVisitor(){
@@ -98,7 +100,7 @@ public class PlayBehaviour extends Behaviour {
 		}
 		else if(step == 2){
 			
-			System.err.println("DEBUG ["+ simulationAgent.getLocalName() +":PlayBehaviour] " + step);
+			//System.err.println("DEBUG ["+ simulationAgent.getLocalName() +":PlayBehaviour] " + step);
 
 			
 			// We request the environment to notify that the player AID plays
@@ -109,7 +111,7 @@ public class PlayBehaviour extends Behaviour {
 		}
 		else if(step == 3){
 			
-			System.err.println("DEBUG ["+ simulationAgent.getLocalName() +":PlayBehaviour] " + step);
+			//System.err.println("DEBUG ["+ simulationAgent.getLocalName() +":PlayBehaviour] " + step);
 
 			// We wait for the environment confirmation
 			received = this.envTransaction.checkReply(new EnvironmentMessageVisitor());
@@ -122,7 +124,7 @@ public class PlayBehaviour extends Behaviour {
 		}
 		else if(step == 4){
 			
-			System.err.println("DEBUG ["+ simulationAgent.getLocalName() +":PlayBehaviour] " + step);
+			//System.err.println("DEBUG ["+ simulationAgent.getLocalName() +":PlayBehaviour] " + step);
 			
 			// We notify that the player AID (and only the player AID) can play (Handled by CheckPlayerActionsBehaviour)
 			this.simulationAgent.setPlayerAllowedToBetAID(this.playerAID);
@@ -142,7 +144,7 @@ public class PlayBehaviour extends Behaviour {
 		}
 		else if(step == 5){
 
-			System.err.println("DEBUG ["+ simulationAgent.getLocalName() +":PlayBehaviour] " + step);
+			//System.err.println("DEBUG ["+ simulationAgent.getLocalName() +":PlayBehaviour] " + step);
 			
 			/* The player action is received
 			 * - Fold will lead to step 32
@@ -161,7 +163,7 @@ public class PlayBehaviour extends Behaviour {
 		}
 		else if(step == 51){
 
-			System.err.println("DEBUG ["+ simulationAgent.getLocalName() +":PlayBehaviour] " + step);
+			//System.err.println("DEBUG ["+ simulationAgent.getLocalName() +":PlayBehaviour] " + step);
 			
 			/* Check the betManager response
 			 * - A failure message will lead to step 2 (Bet request)
@@ -174,7 +176,7 @@ public class PlayBehaviour extends Behaviour {
 		}
 		else if(step == 52){
 
-			System.err.println("DEBUG ["+ simulationAgent.getLocalName() +":PlayBehaviour] " + step);
+			//System.err.println("DEBUG ["+ simulationAgent.getLocalName() +":PlayBehaviour] " + step);
 			
 			/*
 			 * Notifies the environment that the player folded
@@ -182,12 +184,16 @@ public class PlayBehaviour extends Behaviour {
 			
 			// Now use ChangePlayerStatusRequest instead of PlayerFoldRequest
 			// envTransaction = new RequestTransaction(this, new PlayerFoldRequest(playerAID), environmentAID);
-			envTransaction = new RequestTransaction(this, new ChangePlayerStatusRequest(playerAID, PlayerStatus.FOLDED), environmentAID);
-			step = 33;
+			
+			this.simulationAgent.getGame().getPlayersContainer().getPlayerByAID(this.playerAID);
+			this.envTransaction = new RequestTransaction(this, new ChangePlayerStatusRequest(this.playerAID, PlayerStatus.FOLDED), this.environmentAID);
+			this.envTransaction.sendRequest();
+			
+			step = 53;
 		}
 		else if(step == 53){
 
-			System.err.println("DEBUG ["+ simulationAgent.getLocalName() +":PlayBehaviour] " + step);
+			//System.err.println("DEBUG ["+ simulationAgent.getLocalName() +":PlayBehaviour] " + step);
 			
 			/*
 			 * Received the environment answer
@@ -196,7 +202,8 @@ public class PlayBehaviour extends Behaviour {
 			if(!received){
 				block();
 			}
-			else {
+			else 
+			{
 				/*
 				 * Once received, update local model, and jump to the end state
 				 */
@@ -206,7 +213,7 @@ public class PlayBehaviour extends Behaviour {
 		}
 		else {
 
-			System.err.println("DEBUG ["+ simulationAgent.getLocalName() +":PlayBehaviour] " + step);
+			//System.err.println("DEBUG ["+ simulationAgent.getLocalName() +":PlayBehaviour] " + step);
 			
 			/*
 			 * We are done, the behaviour will terminate

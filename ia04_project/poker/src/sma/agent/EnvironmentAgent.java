@@ -6,6 +6,7 @@ import jade.core.behaviours.CyclicBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 
+import java.net.Authenticator.RequestorType;
 import java.util.ArrayList;
 
 import poker.card.exception.CommunityCardsFullException;
@@ -16,6 +17,7 @@ import poker.game.exception.NotRegisteredPlayerException;
 import poker.game.exception.PlayerAlreadyRegisteredException;
 import poker.game.model.Game;
 import poker.game.player.model.Player;
+import poker.game.player.model.PlayerStatus;
 import poker.token.exception.InvalidTokenAmountException;
 import sma.agent.helper.AgentHelper;
 import sma.agent.helper.DFServiceHelper;
@@ -34,10 +36,12 @@ import sma.message.environment.notification.PlayerReceivedCardNotification;
 import sma.message.environment.notification.PlayerReceivedTokenSetNotification;
 import sma.message.environment.notification.PlayerReceivedUnknownCardNotification;
 import sma.message.environment.notification.PlayerSitOnTableNotification;
+import sma.message.environment.notification.PlayerStatusChangedNotification;
 import sma.message.environment.notification.TokenValueDefinitionChangedNotification;
 import sma.message.environment.request.AddCommunityCardRequest;
 import sma.message.environment.request.AddPlayerTableRequest;
 import sma.message.environment.request.BlindValueDefinitionChangeRequest;
+import sma.message.environment.request.ChangePlayerStatusRequest;
 import sma.message.environment.request.CurrentPlayerChangeRequest;
 import sma.message.environment.request.DealCardToPlayerRequest;
 import sma.message.environment.request.EmptyCommunityCardsRequest;
@@ -272,6 +276,21 @@ public class EnvironmentAgent extends Agent {
 			return true;
 		}
 		
+		public boolean onChangePlayerStatusRequest(ChangePlayerStatusRequest request, ACLMessage aclMsg){ 
+		
+			try{
+				System.out.println("DEBUG [EnvironmentAgent] ChangePlayerStatusRequest received");
+				game.getPlayersContainer().getPlayerByAID(request.getPlayerAID());
+				AgentHelper.sendSimpleMessage(EnvironmentAgent.this, subscribers, ACLMessage.PROPAGATE, new PlayerStatusChangedNotification(request.getPlayerAID(), request.getNewStatus()));
+				AgentHelper.sendReply(EnvironmentAgent.this, aclMsg, ACLMessage.INFORM, new OKMessage());
+			}
+			catch(Exception e){
+				AgentHelper.sendReply(EnvironmentAgent.this, aclMsg, ACLMessage.INFORM, new FailureMessage(e.getMessage()));
+			}
+			
+			return true;
+		}
+		
 		@Override
 		public boolean onPlayerBetRequest(PlayerBetRequest request, ACLMessage aclMsg) {
 			try {
@@ -285,6 +304,5 @@ public class EnvironmentAgent extends Agent {
 			}			
 			return true;
 		}
-		
 	}
 }
