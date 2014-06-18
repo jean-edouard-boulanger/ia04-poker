@@ -33,6 +33,7 @@ import sma.message.bet.notification.BetsMergedNotification;
 import sma.message.bet.notification.PotAmountNotification;
 import sma.message.bet.request.AreBetsClosedRequest;
 import sma.message.bet.request.BetRequest;
+import sma.message.bet.request.DistributePotToWinnersRequest;
 import sma.message.bet.request.DoesPlayerHaveToBetRequest;
 import sma.message.bet.request.GetPotAmountRequest;
 import sma.message.bet.request.MergeBetsRequest;
@@ -202,6 +203,15 @@ public class BetManagerAgent extends Agent {
 	}
 
 	private class BetManagerMessageVisitor extends MessageVisitor {	
+		
+		@Override
+		public boolean onDistributePotToWinnersRequest(DistributePotToWinnersRequest request, ACLMessage aclMsg) {
+			
+			
+			
+			return true;
+		}
+		
 		@Override
 		public boolean onDoesPlayerHaveToBetRequest(DoesPlayerHaveToBetRequest request, ACLMessage aclMessage){
 			

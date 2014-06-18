@@ -548,7 +548,7 @@ public class HumanPlayerAgent extends GuiAgent {
 				System.out.println("[HPA] Player " + game.getPlayersContainer().getPlayerByAID(getAID()).getNickname() + " wants to bet: " + betAmount);
 				
 				replyToSimulationPlayRequest(betAmount);
-			}			
+			}
 		}
 		
 		else if(arg0.getType() == PlayerGuiEvent.PLAYER_CALLED.ordinal()) {
@@ -571,6 +571,8 @@ public class HumanPlayerAgent extends GuiAgent {
 				//Answering to simulation play request
 				AgentHelper.sendReply(this, playRequestMessage, ACLMessage.REQUEST, new FoldRequest());
 				
+				changes_game.firePropertyChange(PlayerGuiEvent.PLAYER_CANT_PLAY.toString(), null, null);
+
 				//Setting play request to null, waiting for a new request from simulation
 				playRequestMessage = null;
 			}

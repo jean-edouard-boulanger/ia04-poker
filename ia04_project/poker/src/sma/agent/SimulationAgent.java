@@ -298,6 +298,10 @@ public class SimulationAgent extends GuiAgent {
 		}
 	}
 
+	public void setHandWinnersList(ArrayList<Player> winners){
+		this.handWinners = winners;
+	}
+	
 	public ArrayList<Player> getHandWinners(){
 		return this.handWinners;
 	}
