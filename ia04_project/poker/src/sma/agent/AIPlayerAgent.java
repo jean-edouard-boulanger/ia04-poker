@@ -1,38 +1,12 @@
 package sma.agent;
 
-import gui.player.PlayerWindow;
-import gui.player.PlayerWindow.PlayerGuiEvent;
-import gui.player.WaitGameWindow;
-import gui.player.WaitGameWindow.WaitGameGuiEvent;
-import gui.player.event.model.PlayRequestEventData;
-import gui.player.event.model.PlayerBetEventData;
-import gui.player.event.model.PlayerTokenSetChangedEventData;
 import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.CyclicBehaviour;
-import jade.gui.GuiEvent;
+import jade.core.behaviours.OneShotBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
-
-import java.beans.PropertyChangeSupport;
-
-import javafx.embed.swing.JFXPanel;
-
-import javax.swing.SwingUtilities;
-
-import poker.card.exception.CommunityCardsFullException;
-import poker.card.exception.UserDeckFullException;
-import poker.game.exception.NoPlaceAvailableException;
-import poker.game.exception.NotRegisteredPlayerException;
-import poker.game.exception.PlayerAlreadyRegisteredException;
-import poker.game.model.BetType;
 import poker.game.model.Game;
-import poker.game.player.model.Player;
-import poker.game.player.model.PlayerStatus;
-import poker.token.exception.InvalidTokenAmountException;
-import poker.token.helpers.TokenSetValueEvaluator;
-import poker.token.model.TokenSet;
-import poker.token.model.TokenType;
 import sma.agent.aiplayeragent.messagevisitor.AIPlayerAgentMessageVisitor;
 import sma.agent.helper.AgentHelper;
 import sma.agent.helper.DFServiceHelper;
@@ -40,25 +14,8 @@ import sma.agent.helper.TransactionBehaviour;
 import sma.message.FailureMessage;
 import sma.message.MessageVisitor;
 import sma.message.PlayerSubscriptionRequest;
-import sma.message.SubscriptionOKMessage;
-import sma.message.bet.notification.BetsMergedNotification;
 import sma.message.bet.request.BetRequest;
 import sma.message.bet.request.FoldRequest;
-import sma.message.environment.notification.BetNotification;
-import sma.message.environment.notification.BlindValueDefinitionChangedNotification;
-import sma.message.environment.notification.CardAddedToCommunityCardsNotification;
-import sma.message.environment.notification.CommunityCardsEmptiedNotification;
-import sma.message.environment.notification.CurrentPlayerChangedNotification;
-import sma.message.environment.notification.DealerChangedNotification;
-import sma.message.environment.notification.PlayerCheckNotification;
-import sma.message.environment.notification.PlayerReceivedCardNotification;
-import sma.message.environment.notification.PlayerReceivedTokenSetNotification;
-import sma.message.environment.notification.PlayerReceivedUnknownCardNotification;
-import sma.message.environment.notification.PlayerSitOnTableNotification;
-import sma.message.environment.notification.PlayerStatusChangedNotification;
-import sma.message.environment.notification.TokenValueDefinitionChangedNotification;
-import sma.message.environment.request.PlayerFoldedRequest;
-import sma.message.simulation.request.PlayRequest;
 
 public class AIPlayerAgent extends Agent {
 
@@ -81,6 +38,10 @@ public class AIPlayerAgent extends Agent {
 		addBehaviour(new AIPlayerReceiveNotificationBehaviour(this));
 		addBehaviour(new AIPlayerReceiveRequestBehaviour(this));
 		addBehaviour(new AIPlayerReceiveFailureBehaviour(this));
+		
+		//Subscribing to environment
+		AID simulation = DFServiceHelper.searchService(this, "PokerSimulation","Simulation");
+		addBehaviour(new TransactionBehaviour(this, new PlayerSubscriptionRequest(getLocalName()), simulation, ACLMessage.SUBSCRIBE));
 	}
 
 	/**************************************
@@ -142,7 +103,7 @@ public class AIPlayerAgent extends Agent {
 			}
 		}
 	}
-
+	
 	/**************************************
 	 *  Failure message visitor
 	 */
