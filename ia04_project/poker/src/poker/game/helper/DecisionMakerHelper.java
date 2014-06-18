@@ -12,21 +12,17 @@ import poker.card.heuristics.combination.model.Combination;
 import poker.card.heuristics.probability.ProbabilityEvaluator;
 import poker.card.heuristics.probability.ProbabilityEvaluator.CombinationProbabilityReport;
 import poker.card.model.Card;
+import poker.game.model.AIPlayerType;
 import poker.game.model.BetType;
 import poker.game.model.Decision;
 
 public class DecisionMakerHelper {	
 
-	public static Decision makeDecision(AIPlayRequestEventData eventData) {
+	public static Decision makeDecision(AIPlayRequestEventData eventData, AIPlayerType playerType) {
 		
-		ArrayList<BetType> betActions = eventData.getAvailableActions();
 		
 		ArrayList<Card> cards = eventData.getCards();		
-		
-		int minimumBetAmount = eventData.getMinimumBetAmount();
-		int maximumBetAmount = eventData.getMinimumBetAmount();
-		int callAmount = eventData.getCallAmount();
-		
+				
 		ProbabilityEvaluator pe = new ProbabilityEvaluator.ProbabilityEvaluatorBuilder()
 				.setDealSequence(CustomPickSequence.getFixedNumberCardsPickedDealSequence(7 - cards.size()))
 				.addAllPossibleCombinationsToExpectedCombinations()
@@ -39,6 +35,25 @@ public class DecisionMakerHelper {
 		HashMap<Combination, Float> probabilities = (HashMap<Combination, Float>) r.getProbabilities();
 		
 		int combinationCount = Collections.frequency(probabilities.values(), 1);
+				
+		if(playerType == AIPlayerType.STATS) {
+			return statsMakeDecision(eventData, combinationCount);
+		}
+		else if(playerType == AIPlayerType.STATS) {
+			return null;
+		}
+		
+		return null;
+	}
+	
+	private static Decision statsMakeDecision(AIPlayRequestEventData eventData, int combinationCount) {
+		
+		ArrayList<BetType> betActions = eventData.getAvailableActions();
+
+		int minimumBetAmount = eventData.getMinimumBetAmount();
+		int maximumBetAmount = eventData.getMinimumBetAmount();
+		int callAmount = eventData.getCallAmount();
+
 		
 		if(combinationCount == 0) {
 			if(betActions.contains(BetType.CHECK)) {
@@ -74,7 +89,7 @@ public class DecisionMakerHelper {
 			System.out.println("[AIPlayer] Decided to raise at " + minimumBetAmount + " because I have " + combinationCount + " combinations.");
 			return new Decision(BetType.RAISE, maximumBetAmount);
 		}
-				
+		
 		return null;
 	}
 }

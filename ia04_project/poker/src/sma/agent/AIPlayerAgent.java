@@ -1,11 +1,15 @@
 package sma.agent;
 
+import java.util.Random;
+
 import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.CyclicBehaviour;
 import jade.core.behaviours.OneShotBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
+import poker.game.model.AIPlayerType;
+import poker.game.model.BetType;
 import poker.game.model.Game;
 import sma.agent.aiplayeragent.messagevisitor.AIPlayerAgentMessageVisitor;
 import sma.agent.helper.AgentHelper;
@@ -26,13 +30,19 @@ public class AIPlayerAgent extends Agent {
 
 	private ACLMessage playRequestMessage;
 	
+	private AIPlayerType playerType;
+	
 	public void setup()
 	{
 		super.setup();
 
 		game = new Game();
 
-		this.msgVisitor = new AIPlayerAgentMessageVisitor(game, this);
+		Random r = new Random();
+		
+		playerType = AIPlayerType.values()[r.nextInt(AIPlayerType.values().length)];
+		
+		this.msgVisitor = new AIPlayerAgentMessageVisitor(game, this, playerType);
 		this.msgVisitor_failure = new AIPlayerFailureMessageVisitor();
 
 		addBehaviour(new AIPlayerReceiveNotificationBehaviour(this));
@@ -152,5 +162,13 @@ public class AIPlayerAgent extends Agent {
 
 	public void setPlayRequestMessage(ACLMessage playRequestMessage) {
 		this.playRequestMessage = playRequestMessage;
+	}
+	
+	public AIPlayerType getPlayerType() {
+		return playerType;
+	}
+
+	public void setPlayerType(AIPlayerType playerType) {
+		this.playerType = playerType;
 	}
 }
