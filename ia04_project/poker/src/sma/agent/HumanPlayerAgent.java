@@ -468,7 +468,7 @@ public class HumanPlayerAgent extends GuiAgent {
 
 			int playerBankroll = me.getBankroll(game.getBetContainer().getTokenValueDefinition());
 			
-			if(playerBankroll < minimumBetAmount) {
+			if(playerBankroll < globalCurrentBetAmount) {
 				minimumBetAmount = playerBankroll;
 				eventData.clearAvailableActions();
 				eventData.addAvailableAction(BetType.FOLD);
