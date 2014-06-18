@@ -26,13 +26,14 @@ public class AIPlayerAgent extends Agent {
 
 	private ACLMessage playRequestMessage;
 	
+	@Override
 	public void setup()
 	{
 		super.setup();
 
 		game = new Game();
 
-		this.msgVisitor = new AIPlayerAgentMessageVisitor(game, this);
+		this.msgVisitor = new AIPlayerAgentMessageVisitor(this);
 		this.msgVisitor_failure = new AIPlayerFailureMessageVisitor();
 
 		addBehaviour(new AIPlayerReceiveNotificationBehaviour(this));
@@ -152,5 +153,13 @@ public class AIPlayerAgent extends Agent {
 
 	public void setPlayRequestMessage(ACLMessage playRequestMessage) {
 		this.playRequestMessage = playRequestMessage;
+	}
+
+	public Game getGame() {
+		return this.game;
+	}
+	
+	public void setGame(Game game) {
+		this.game = game;
 	}
 }

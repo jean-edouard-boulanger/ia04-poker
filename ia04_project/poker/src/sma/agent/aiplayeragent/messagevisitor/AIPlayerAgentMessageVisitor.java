@@ -41,12 +41,10 @@ import sma.message.simulation.request.PlayRequest;
 
 public class AIPlayerAgentMessageVisitor extends MessageVisitor {
 	
-	private Game game;
 	AIPlayerAgent myAgent;
 	
-	public AIPlayerAgentMessageVisitor(Game game, AIPlayerAgent agent) {
+	public AIPlayerAgentMessageVisitor(AIPlayerAgent agent) {
 		this.myAgent = agent;
-		this.game = game;
 	}
 	
 	@Override
@@ -60,7 +58,7 @@ public class AIPlayerAgentMessageVisitor extends MessageVisitor {
 	@Override
 	public boolean onPlayerReceivedCardNotification(PlayerReceivedCardNotification notification, ACLMessage aclMsg){
 
-		Player player = game.getPlayersContainer().getPlayerByAID(notification.getPlayerAID());
+		Player player = myAgent.getGame().getPlayersContainer().getPlayerByAID(notification.getPlayerAID());
 		
 		try {
 			player.getDeck().addCard(notification.getReceivedCard());
@@ -76,7 +74,7 @@ public class AIPlayerAgentMessageVisitor extends MessageVisitor {
 	public boolean onCardAddedToCommunityCardsNotification(CardAddedToCommunityCardsNotification notification, ACLMessage aclMsg) {
 
 		try {
-			game.getCommunityCards().pushCard(notification.getNewCommunityCard());
+			myAgent.getGame().getCommunityCards().pushCard(notification.getNewCommunityCard());
 		} catch (CommunityCardsFullException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -88,7 +86,7 @@ public class AIPlayerAgentMessageVisitor extends MessageVisitor {
 	@Override
 	public boolean onCommunityCardsEmptiedNotification(CommunityCardsEmptiedNotification notification, ACLMessage aclMsg) {
 
-		game.getCommunityCards().popCards();
+		myAgent.getGame().getCommunityCards().popCards();
 
 		return true;
 	}
@@ -96,7 +94,7 @@ public class AIPlayerAgentMessageVisitor extends MessageVisitor {
 	@Override
 	public boolean onPlayerStatusChangedNotification(PlayerStatusChangedNotification notification, ACLMessage aclMsg) {
 		
-		Player player = game.getPlayersContainer().getPlayerByAID(notification.getPlayerAID());
+		Player player = myAgent.getGame().getPlayersContainer().getPlayerByAID(notification.getPlayerAID());
 		switch(notification.getNewStatus()){
 			case FOLDED:
 				player.setStatus(PlayerStatus.FOLDED);
@@ -104,7 +102,7 @@ public class AIPlayerAgentMessageVisitor extends MessageVisitor {
 				break;
 		}
 		
-		System.out.println("[HPA] Player " + game.getPlayersContainer().getPlayerByAID(myAgent.getAID()).getNickname() + " with " + notification.getNewStatus() + " status changed.");
+		System.out.println("[HPA] Player " + myAgent.getGame().getPlayersContainer().getPlayerByAID(myAgent.getAID()).getNickname() + " with " + notification.getNewStatus() + " status changed.");
 		
 		return true;
 	}
@@ -114,7 +112,7 @@ public class AIPlayerAgentMessageVisitor extends MessageVisitor {
 	public boolean onPlayerSitOnTableNotification(PlayerSitOnTableNotification notification, ACLMessage aclMsg){
 
 		try {
-			game.getPlayersContainer().addPlayer(notification.getNewPlayer());
+			myAgent.getGame().getPlayersContainer().addPlayer(notification.getNewPlayer());
 		} catch (PlayerAlreadyRegisteredException e) {
 			e.printStackTrace();
 		} catch (NoPlaceAvailableException e) {
@@ -127,7 +125,7 @@ public class AIPlayerAgentMessageVisitor extends MessageVisitor {
 	@Override
 	public boolean onPlayerReceivedTokenSetNotification(PlayerReceivedTokenSetNotification notification, ACLMessage aclMsg){
 
-		Player player = game.getPlayersContainer().getPlayerByAID(notification.getPlayerAID());
+		Player player = myAgent.getGame().getPlayersContainer().getPlayerByAID(notification.getPlayerAID());
 		player.setTokens(player.getTokens().addTokenSet(notification.getReceivedTokenSet()));
 
 		return true;
@@ -136,12 +134,12 @@ public class AIPlayerAgentMessageVisitor extends MessageVisitor {
 	@Override
 	public boolean onBetNotification(BetNotification notification, ACLMessage aclMsg){
 
-		// Update la mise minimum pour relancer apr�s
+		// Update la mise minimum pour relancer après
 		TokenSet betTokenSet = notification.getBetTokenSet();
 					
-		Player player = game.getPlayersContainer().getPlayerByAID(notification.getPlayerAID());
+		Player player = myAgent.getGame().getPlayersContainer().getPlayerByAID(notification.getPlayerAID());
 					
-		game.getBetContainer().setPlayerCurrentBet(player.getAID(), TokenSetValueEvaluator.tokenSetFromAmount(notification.getBetAmount(), game.getBetContainer().getTokenValueDefinition()));
+		myAgent.getGame().getBetContainer().setPlayerCurrentBet(player.getAID(), TokenSetValueEvaluator.tokenSetFromAmount(notification.getBetAmount(), myAgent.getGame().getBetContainer().getTokenValueDefinition()));
 		
 		try {
 			player.setTokens(player.getTokens().substractTokenSet(betTokenSet));
@@ -156,7 +154,7 @@ public class AIPlayerAgentMessageVisitor extends MessageVisitor {
 	@Override
 	public boolean onBlindValueDefinitionChangedNotification(BlindValueDefinitionChangedNotification notification, ACLMessage aclMsg){
 
-		game.setBlindValueDefinition(notification.getNewBlindValueDefinition());
+		myAgent.getGame().setBlindValueDefinition(notification.getNewBlindValueDefinition());
 
 		return true;
 	}
@@ -164,7 +162,7 @@ public class AIPlayerAgentMessageVisitor extends MessageVisitor {
 	@Override
 	public boolean onTokenValueDefinitionChangedNotification(TokenValueDefinitionChangedNotification notif, ACLMessage aclMsg) {
 
-		game.getBetContainer().setTokenValueDefinition(notif.getTokenValueDefinition());
+		myAgent.getGame().getBetContainer().setTokenValueDefinition(notif.getTokenValueDefinition());
 
 		return true;
 	}
@@ -172,7 +170,7 @@ public class AIPlayerAgentMessageVisitor extends MessageVisitor {
 	@Override
 	public boolean onSubscriptionOK(SubscriptionOKMessage notif, ACLMessage aclMsg){
 
-		game = notif.getGame();
+		myAgent.setGame(notif.getGame());
 		System.out.println("Subscription OK.");
 
 		return true;
@@ -182,7 +180,7 @@ public class AIPlayerAgentMessageVisitor extends MessageVisitor {
 	public boolean onDealerChangedNotification(DealerChangedNotification dealerChangedNotification, ACLMessage aclMsg) {
 
 		try {
-			game.getPlayersContainer().setDealer(dealerChangedNotification.getDealer());
+			myAgent.getGame().getPlayersContainer().setDealer(dealerChangedNotification.getDealer());
 		} catch (NotRegisteredPlayerException e) {
 			e.printStackTrace();
 		}
@@ -195,15 +193,15 @@ public class AIPlayerAgentMessageVisitor extends MessageVisitor {
 
 		myAgent.setPlayRequestMessage(aclMessage);
 		
-		System.out.println("[" + myAgent.getLocalName() + "] Player " + game.getPlayersContainer().getPlayerByAID(myAgent.getAID()).getNickname() + " was asked to play.");
+		System.out.println("[" + myAgent.getLocalName() + "] Player " + myAgent.getGame().getPlayersContainer().getPlayerByAID(myAgent.getAID()).getNickname() + " was asked to play.");
 		
-		Player me = game.getPlayersContainer().getPlayerByAID(myAgent.getAID());
+		Player me = myAgent.getGame().getPlayersContainer().getPlayerByAID(myAgent.getAID());
 
 		AIPlayRequestEventData eventData = new AIPlayRequestEventData();
 		eventData.addAllAvailableActions();
 
 		//Bet amount for the current round
-		int globalCurrentBetAmount = game.getBetContainer().getCurrentBetAmount();
+		int globalCurrentBetAmount = myAgent.getGame().getBetContainer().getCurrentBetAmount();
 		
 		if(globalCurrentBetAmount > 0){
 			//Can't check if someone has already bet
@@ -214,9 +212,9 @@ public class AIPlayerAgentMessageVisitor extends MessageVisitor {
 		}
 		
 		//Calculating player's current amount for the current round
-		int playerCurrentBetAmount = TokenSetValueEvaluator.evaluateTokenSetValue(game.getBetContainer().getTokenValueDefinition(), game.getBetContainer().getPlayerCurrentBet(me));
+		int playerCurrentBetAmount = TokenSetValueEvaluator.evaluateTokenSetValue(myAgent.getGame().getBetContainer().getTokenValueDefinition(), myAgent.getGame().getBetContainer().getPlayerCurrentBet(me));
 
-		int minimumTokenValue = game.getBetContainer().getTokenValueDefinition().getValueForTokenType(TokenType.WHITE);
+		int minimumTokenValue = myAgent.getGame().getBetContainer().getTokenValueDefinition().getValueForTokenType(TokenType.WHITE);
 		
 		int minimumBetAmount = 0;
 		
@@ -238,7 +236,7 @@ public class AIPlayerAgentMessageVisitor extends MessageVisitor {
 			eventData.removeAvailableAction(BetType.FOLD);
 		}
 
-		int playerBankroll = me.getBankroll(game.getBetContainer().getTokenValueDefinition());
+		int playerBankroll = me.getBankroll(myAgent.getGame().getBetContainer().getTokenValueDefinition());
 		
 		if(playerBankroll < globalCurrentBetAmount) {
 			minimumBetAmount = playerBankroll;
@@ -255,9 +253,9 @@ public class AIPlayerAgentMessageVisitor extends MessageVisitor {
 		eventData.setErrorMessage(request.getErrorMessage());
 		eventData.setRequestResentFollowedToError(request.isRequestResentFollowedToError());
 		
-		ArrayList<Card> cards = new ArrayList<Card>(game.getCommunityCards().getCommunityCards());
+		ArrayList<Card> cards = new ArrayList<Card>(myAgent.getGame().getCommunityCards().getCommunityCards());
 		
-		cards.addAll(game.getPlayersContainer().getPlayerByAID(myAgent.getAID()).getDeck().getCards());
+		cards.addAll(myAgent.getGame().getPlayersContainer().getPlayerByAID(myAgent.getAID()).getDeck().getCards());
 		
 		eventData.setCards(cards);
 		
@@ -276,7 +274,7 @@ public class AIPlayerAgentMessageVisitor extends MessageVisitor {
 	@Override
 	public boolean onPlayerFoldedRequest(PlayerFoldedRequest playerFoldedRequest, ACLMessage aclMsg) {
 		
-		Player player = game.getPlayersContainer().getPlayerByAID(playerFoldedRequest.getPlayerAID());
+		Player player = myAgent.getGame().getPlayersContainer().getPlayerByAID(playerFoldedRequest.getPlayerAID());
 		
 		player.setStatus(PlayerStatus.FOLDED);
 		
@@ -290,7 +288,7 @@ public class AIPlayerAgentMessageVisitor extends MessageVisitor {
 		
 		System.out.println("[" + myAgent.getLocalName() + "] Transferred current bets to pot.");
 		
-		game.getBetContainer().transferCurrentBetsToPot();
+		myAgent.getGame().getBetContainer().transferCurrentBetsToPot();
 
 		return true;
 	}
