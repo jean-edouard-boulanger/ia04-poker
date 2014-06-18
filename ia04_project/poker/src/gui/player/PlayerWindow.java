@@ -605,6 +605,8 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 			slider_bet.setDisable(false);
 			button_add_bet.setDisable(false);
 			button_sub_bet.setDisable(false);
+			
+			slider_bet.setValue(sliderMin);
 		}
 	}
 	
