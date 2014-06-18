@@ -17,6 +17,8 @@ import jade.lang.acl.MessageTemplate;
 
 import java.beans.PropertyChangeSupport;
 import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import javafx.embed.swing.JFXPanel;
 
@@ -495,7 +497,16 @@ public class HumanPlayerAgent extends GuiAgent {
 		@Override
 		public boolean onWinnerDeterminedNotification(WinnerDeterminedNotification notification, ACLMessage aclMsg) {
 			
-			HashMap<Player, Hand> handWinners = (HashMap<Player, Hand>) notification.getWinners();
+			Map<Player, Hand> handWinners = (HashMap<Player, Hand>) notification.getWinners();
+			
+			for (Entry<Player, Hand> entry : handWinners.entrySet())
+			{
+				entry.getValue();
+				entry.getKey();
+				
+			}
+			
+			
 			
 			return true;
 		}

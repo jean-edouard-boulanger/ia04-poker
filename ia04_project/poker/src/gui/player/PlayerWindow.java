@@ -86,6 +86,7 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 		BIG_BLIND_PLAYER,
 		CURRENT_PLAYER_CHANGED,
 		YOUR_TURN,
+		PLAYER_WINNER,
 
 		IHM_READY,
 		SHOW_IHM,
@@ -1142,6 +1143,15 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 					
 					SoundFx.launchSound(PlayerWindow.this, "/sons/check.mp3");
 					System.out.println("[PlayerWindow] Player check");
+				}
+				
+				/**
+				 * ------ WINNER ----
+				 */
+				else if(evt.getPropertyName().equals(PlayerGuiEvent.PLAYER_WINNER.toString())){
+					
+					
+					System.out.println("[PlayerWindow] Player winner");
 				}
 			}
 		});
