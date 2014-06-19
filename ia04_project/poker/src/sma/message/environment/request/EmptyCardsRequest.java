@@ -4,12 +4,12 @@ import jade.lang.acl.ACLMessage;
 import sma.message.Message;
 import sma.message.MessageVisitor;
 
-public class EmptyCommunityCardsRequest extends Message {
+public class EmptyCardsRequest extends Message {
 
-	public EmptyCommunityCardsRequest() {}
+	public EmptyCardsRequest() {}
 	
 	@Override
 	public boolean accept(MessageVisitor visitor, ACLMessage aclMsg) {
-		return visitor.onEmptyCommunityCardsRequest(this, aclMsg);
+		return visitor.onEmptyCardsRequest(this, aclMsg);
 	}
 }

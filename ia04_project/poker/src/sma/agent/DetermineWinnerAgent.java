@@ -27,7 +27,7 @@ import sma.message.MessageVisitor;
 import sma.message.SubscriptionOKMessage;
 import sma.message.determine_winner.DetermineWinnerRequest;
 import sma.message.environment.notification.CardAddedToCommunityCardsNotification;
-import sma.message.environment.notification.CommunityCardsEmptiedNotification;
+import sma.message.environment.notification.CardsEmptiedNotification;
 import sma.message.environment.notification.DealerChangedNotification;
 import sma.message.environment.notification.PlayerCardsRevealedNotification;
 import sma.message.environment.notification.PlayerSitOnTableNotification;
@@ -59,7 +59,7 @@ public class DetermineWinnerAgent extends Agent {
 	
 	private class DetermineWinnerMessageVisitor extends MessageVisitor {
 		@Override
-		public boolean onCommunityCardsEmptiedNotification(CommunityCardsEmptiedNotification notif, ACLMessage aclMsg) {
+		public boolean onCardsEmptiedNotification(CardsEmptiedNotification notif, ACLMessage aclMsg) {
 			communityCards.popCards();
 			
 			return true;
