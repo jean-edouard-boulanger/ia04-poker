@@ -11,6 +11,7 @@ import java.util.Map;
 
 import poker.card.heuristics.combination.model.Hand;
 import poker.game.player.model.Player;
+import poker.game.player.model.PlayerStatus;
 import poker.game.player.model.WinnerPlayer;
 import sma.agent.SimulationAgent;
 import sma.agent.SimulationAgent.GameEvent;
@@ -19,8 +20,12 @@ import sma.agent.helper.DFServiceHelper;
 import sma.agent.helper.TransactionBehaviour;
 import sma.agent.helper.experimental.Task;
 import sma.agent.helper.experimental.TaskRunnerBehaviour;
+import sma.message.BooleanMessage;
+import sma.message.MessageVisitor;
+import sma.message.OKMessage;
 import sma.message.bet.request.DistributePotToWinnersRequest;
 import sma.message.environment.notification.WinnerDeterminedNotification;
+import sma.message.environment.request.ChangePlayerStatusRequest;
 import sma.message.environment.request.EmptyCardsRequest;
 import sma.message.environment.request.EmptyPotRequest;
 
@@ -59,6 +64,18 @@ public class EndHandBehaviour extends TaskRunnerBehaviour {
 				simulationAgent.resetWinners();
 			}
 		});
+	
+		for(Player foldedPlayer : simulationAgent.getGame().getPlayersContainer().getFoldedPlayers()){
+			TransactionBehaviour transactionBehaviour = new TransactionBehaviour(simulationAgent, 
+					new ChangePlayerStatusRequest(foldedPlayer.getAID(), PlayerStatus.IN_GAME), environmentAID);
+			
+			transactionBehaviour.setResponseVisitor(new MessageVisitor(){
+
+			});
+			
+			mainTask = mainTask.then(new TransactionBehaviour(simulationAgent, 
+					new ChangePlayerStatusRequest(foldedPlayer.getAID(), PlayerStatus.IN_GAME), environmentAID));
+		}
 		
 		this.setBehaviour(mainTask);
 		super.onStart();
@@ -90,5 +107,25 @@ public class EndHandBehaviour extends TaskRunnerBehaviour {
 		TransactionBehaviour transactionBehaviour = new TransactionBehaviour(simulationAgent, 
 				emptyPotRequest, environmentAID);
 		return transactionBehaviour;
+	}
+	
+	private class HandleChangeStatusResponseMessageVisitor extends MessageVisitor{
+		
+		Player player;
+		
+		public HandleChangeStatusResponseMessageVisitor(Player player){
+			this.player = player;
+		}
+		
+		@Override
+		public boolean onOKMessage(OKMessage okMessage, ACLMessage aclMsg) {
+			System.out.println("DEBUG [Simulation:EnHandBehaviour] Player " + player.getNickname() + " status changed");
+			this.player.setStatus(PlayerStatus.IN_GAME);
+			return true;
+		}
+		public boolean onBooleanMessage(BooleanMessage message, ACLMessage aclMsg) {
+			System.err.println("[Simulation:EnHandBehaviour] Could not change player " + player.getNickname() + " status");
+			return true;
+		}
 	}
 }

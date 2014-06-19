@@ -164,18 +164,30 @@ public class DetermineWinnerAgent extends Agent {
 
 		//Getting the best/winning hands (more than one in case of equality)
 		winningHands = HandComparator.bestHand(winningHands);
-		
 		Map<AID, Hand> winners = new HashMap<AID, Hand>();
-		
-		//Only keeping players with a winning hand
-		for(Hand h : winningHands) {
-			for(Entry<AID, Hand> entry : playerHandMap.entrySet()) {
-				if(h == entry.getValue()) {
-					winners.put(entry.getKey(), entry.getValue());
+
+		try{
+			
+			//Only keeping players with a winning hand
+			for(Hand h : winningHands) {
+				for(Entry<AID, Hand> entry : playerHandMap.entrySet()) {
+					if(h == entry.getValue()) {
+						winners.put(entry.getKey(), entry.getValue());
+					}
 				}
 			}
 		}
-				
+		catch(Exception ex){
+			// Dirty fix: If null pointer exception, everybody wins ...
+			for(Hand h : winningHands) {
+				for(Entry<AID, Hand> entry : playerHandMap.entrySet()) {
+					if(h == entry.getValue()) {
+						winners.put(entry.getKey(), entry.getValue());
+					}
+				}
+			}
+		}
+		
 		return winners;
 	}
 	
