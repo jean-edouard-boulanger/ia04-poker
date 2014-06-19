@@ -20,6 +20,8 @@ import poker.game.exception.PlayerAlreadyRegisteredException;
 import poker.game.model.Game;
 import poker.game.player.model.Player;
 import poker.token.exception.InvalidTokenAmountException;
+import poker.token.helpers.TokenSetValueEvaluator;
+import poker.token.model.TokenSet;
 import sma.agent.helper.AgentHelper;
 import sma.agent.helper.DFServiceHelper;
 import sma.message.FailureMessage;
@@ -176,9 +178,8 @@ public class EnvironmentAgent extends Agent {
 
 		@Override
 		public boolean onBetsMergedNotification(BetsMergedNotification notification, ACLMessage aclMsg) {
-
+			game.getBetContainer().transferCurrentBetsToPot();
 			AgentHelper.sendSimpleMessage(EnvironmentAgent.this, subscribers, ACLMessage.PROPAGATE, new BetsMergedNotification());
-			
 			return true;
 		}
 		
@@ -307,9 +308,17 @@ public class EnvironmentAgent extends Agent {
 		@Override
 		public boolean onPlayerBetRequest(PlayerBetRequest request, ACLMessage aclMsg) {
 			try {
+				TokenSet tokenSetToAddInPot = request.getBet();
+				
+				if(request.getBetAmount() != TokenSetValueEvaluator.evaluateTokenSetValue(game.getBetContainer().getTokenValueDefinition(), request.getBet())){
+					tokenSetToAddInPot = TokenSetValueEvaluator.tokenSetFromAmount(request.getBetAmount(), game.getBetContainer().getTokenValueDefinition());
+				}
+				
 				Player player = game.getPlayersContainer().getPlayerByAID(request.getPlayerAID());
-				player.setTokens(player.getTokens().substractTokenSet(request.getBet()));				
-				game.getBetContainer().addTokenToPlayerBet(request.getPlayerAID(), request.getBet());
+				player.setTokens(player.getTokens().substractTokenSet(request.getBet()));	
+				
+				game.getBetContainer().addTokenToPlayerBet(request.getPlayerAID(), tokenSetToAddInPot);
+				
 				AgentHelper.sendSimpleMessage(EnvironmentAgent.this, subscribers, ACLMessage.PROPAGATE, new BetNotification(request.getPlayerAID(), request.getBet(), request.getBetAmount()));
 				AgentHelper.sendReply(EnvironmentAgent.this, aclMsg, ACLMessage.INFORM, new OKMessage());
 			} catch (InvalidTokenAmountException e) {

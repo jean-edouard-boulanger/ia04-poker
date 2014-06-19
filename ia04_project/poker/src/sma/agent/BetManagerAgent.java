@@ -34,6 +34,7 @@ import sma.message.bet.request.BetRequest;
 import sma.message.bet.request.DistributePotToWinnersRequest;
 import sma.message.bet.request.DoesPlayerHaveToBetRequest;
 import sma.message.bet.request.MergeBetsRequest;
+import sma.message.environment.notification.BetNotification;
 import sma.message.environment.notification.BetsMergedNotification;
 import sma.message.environment.notification.PlayerReceivedTokenSetNotification;
 import sma.message.environment.notification.PlayerSitOnTableNotification;
@@ -243,26 +244,6 @@ public class BetManagerAgent extends Agent {
 		}
 		
 		@Override
-		public boolean onDoesPlayerHaveToBetRequest(DoesPlayerHaveToBetRequest request, ACLMessage aclMessage){
-			
-			BooleanMessage response = new BooleanMessage(doesPlayerHaveToBet(request.getPlayerAID()));
-			AgentHelper.sendReply(BetManagerAgent.this, aclMessage, ACLMessage.INFORM, response);
-			
-			return true;
-		}
-		
-		@Override
-		public boolean onPlayerReceivedTokenSetNotification(PlayerReceivedTokenSetNotification notification, ACLMessage aclMsg){
-
-			System.out.println("[" + getLocalName() + "]" + "PlayerReceivedTokenSetNotification of amount(" + TokenSetValueEvaluator.evaluateTokenSetValue(game.getBetContainer().getTokenValueDefinition(), notification.getReceivedTokenSet()) + "), for player (" + notification.getPlayerAID() + ").");
-
-			Player player = game.getPlayersContainer().getPlayerByAID(notification.getPlayerAID());
-			player.setTokens(player.getTokens().addTokenSet(notification.getReceivedTokenSet()));
-
-			return true;
-		}
-
-		@Override
 		public boolean onBetRequest(BetRequest request, ACLMessage aclMsg) {
 
 			System.out.println("[" + getLocalName() + "]" + "BetRequest of amount(" + request.getBet() + "), for player (" + request.getPlayerAID() + ").");
@@ -294,18 +275,19 @@ public class BetManagerAgent extends Agent {
 				try {
 					//Removing tokens of the used if allowed to
 					TokenSet tokenSetToSubstract = TokenSetValueEvaluator.tokenSetForBet(request.getBet() - playerCurrentBet, game.getBetContainer().getTokenValueDefinition(), player.getTokens());
-					player.getTokens().substractTokenSet(tokenSetToSubstract);
+					//player.getTokens().substractTokenSet(tokenSetToSubstract);
 
 					//Creating extra token set user paid (Ex: User paid 50 instead of 40)
-					int amountToGenerate = TokenSetValueEvaluator.evaluateTokenSetValue(game.getBetContainer().getTokenValueDefinition(), tokenSetToSubstract) - (request.getBet() - playerCurrentBet);
+					int amountToPay = request.getBet() - playerCurrentBet;
+					int amountToGenerate = TokenSetValueEvaluator.evaluateTokenSetValue(game.getBetContainer().getTokenValueDefinition(), tokenSetToSubstract) - amountToPay;
 
 					TokenSet tokenSetToAddToPlayer = TokenSetValueEvaluator.tokenSetFromAmount(amountToGenerate, game.getBetContainer().getTokenValueDefinition());
 
-					//Updating the player's bet amount
-					game.getBetContainer().setPlayerCurrentBet(request.getPlayerAID(), TokenSetValueEvaluator.tokenSetFromAmount(request.getBet(), game.getBetContainer().getTokenValueDefinition()));
+					//  DONE IN THE NOTIFICATION : Updating the player's bet amount
+					// game.getBetContainer().setPlayerCurrentBet(request.getPlayerAID(), TokenSetValueEvaluator.tokenSetFromAmount(request.getBet(), game.getBetContainer().getTokenValueDefinition()));
 					
 					//Notifying the environment: sequential behaviour					
-					notifyBetToEnvironment(new PlayerBetRequest(tokenSetToSubstract, request.getPlayerAID(), request.getBet()), new GiveTokenSetToPlayerRequest(tokenSetToAddToPlayer, request.getPlayerAID()), aclMsg);
+					notifyBetToEnvironment(new PlayerBetRequest(tokenSetToSubstract, request.getPlayerAID(), amountToPay), new GiveTokenSetToPlayerRequest(tokenSetToAddToPlayer, request.getPlayerAID()), aclMsg);
 				} 
 				catch (InvalidTokenAmountException | ExcessiveBetException e) 
 				{
@@ -317,36 +299,54 @@ public class BetManagerAgent extends Agent {
 			return true;
 		}
 		
+		@Override
+		public boolean onDoesPlayerHaveToBetRequest(DoesPlayerHaveToBetRequest request, ACLMessage aclMessage){
+			
+			BooleanMessage response = new BooleanMessage(doesPlayerHaveToBet(request.getPlayerAID()));
+			AgentHelper.sendReply(BetManagerAgent.this, aclMessage, ACLMessage.INFORM, response);
+			
+			return true;
+		}
+		
+		
+		
+		@Override
+		public boolean onAreBetsClosedRequest(AreBetsClosedRequest request, ACLMessage aclMsg) {
+
+			if(areBetsClosed()){
+				AgentHelper.sendReply(BetManagerAgent.this, aclMsg, ACLMessage.INFORM, new BooleanMessage(true));
+			}
+			else {
+				AgentHelper.sendReply(BetManagerAgent.this, aclMsg, ACLMessage.INFORM, new BooleanMessage(false));
+			}
+
+			return true;
+		}
+		
 		// -----------------------------------------
 		// Environment event handling
 		// -----------------------------------------
 
 		@Override
 		public boolean onTokenValueDefinitionChangedNotification(TokenValueDefinitionChangedNotification notif, ACLMessage aclMsg) {
-
 			game.getBetContainer().setTokenValueDefinition(notif.getTokenValueDefinition());
-
 			return true;
 		}
 
+		
 		@Override
-		public boolean onWinnerDeterminedNotification(WinnerDeterminedNotification notification, ACLMessage aclMsg) {
-
-			//End of the round, have to reset the bets of the players
-			game.getBetContainer().clearPlayerBets();
-
+		public boolean onPlayerReceivedTokenSetNotification(PlayerReceivedTokenSetNotification notification, ACLMessage aclMsg){
+			System.out.println("[" + getLocalName() + "]" + "PlayerReceivedTokenSetNotification of amount(" + TokenSetValueEvaluator.evaluateTokenSetValue(game.getBetContainer().getTokenValueDefinition(), notification.getReceivedTokenSet()) + "), for player (" + notification.getPlayerAID() + ").");
+			Player player = game.getPlayersContainer().getPlayerByAID(notification.getPlayerAID());
+			player.setTokens(player.getTokens().addTokenSet(notification.getReceivedTokenSet()));
 			return true;
 		}
 
 		@Override
 		public boolean onMergeBetsRequest(MergeBetsRequest request, ACLMessage aclMsg) {
-
 			game.getBetContainer().transferCurrentBetsToPot();
-
 			AgentHelper.sendReply(BetManagerAgent.this, aclMsg, ACLMessage.INFORM, new OKMessage());
-
 			AgentHelper.sendSimpleMessage(BetManagerAgent.this, environment, ACLMessage.INFORM, new BetsMergedNotification());
-			
 			return true;
 		}
 
@@ -366,23 +366,9 @@ public class BetManagerAgent extends Agent {
 
 		@Override
 		public boolean onPlayerStatusChangedNotification(PlayerStatusChangedNotification notification, ACLMessage aclMsg) {
-
 			Player player = game.getPlayersContainer().getPlayerByAID(notification.getPlayerAID());
 			if(player != null){
 				player.setStatus(notification.getNewStatus());
-			}
-
-			return true;
-		}
-
-		@Override
-		public boolean onAreBetsClosedRequest(AreBetsClosedRequest request, ACLMessage aclMsg) {
-
-			if(areBetsClosed()){
-				AgentHelper.sendReply(BetManagerAgent.this, aclMsg, ACLMessage.INFORM, new BooleanMessage(true));
-			}
-			else {
-				AgentHelper.sendReply(BetManagerAgent.this, aclMsg, ACLMessage.INFORM, new BooleanMessage(false));
 			}
 
 			return true;
@@ -394,6 +380,26 @@ public class BetManagerAgent extends Agent {
 			return true;
 		}
 
+		@Override
+		public boolean onBetNotification(BetNotification notification, ACLMessage aclMsg) {
+			try {
+				TokenSet tokenSetToAddInPot = notification.getBetTokenSet();
+				
+				if(notification.getBetAmount() != TokenSetValueEvaluator.evaluateTokenSetValue(game.getBetContainer().getTokenValueDefinition(), notification.getBetTokenSet())){
+					tokenSetToAddInPot = TokenSetValueEvaluator.tokenSetFromAmount(notification.getBetAmount(), game.getBetContainer().getTokenValueDefinition());
+				}
+				
+				Player player = game.getPlayersContainer().getPlayerByAID(notification.getPlayerAID());
+				player.setTokens(player.getTokens().substractTokenSet(notification.getBetTokenSet()));	
+				
+				game.getBetContainer().addTokenToPlayerBet(notification.getPlayerAID(), tokenSetToAddInPot);
+				
+			} catch (InvalidTokenAmountException e) {
+				e.printStackTrace();
+			}
+			return true;
+		}
+		
 		// All other environment changes are discarded.
 		@Override
 		public boolean onEnvironmentChanged(Message notif, ACLMessage aclMsg) {	return true; }
