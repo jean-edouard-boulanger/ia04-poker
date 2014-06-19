@@ -232,7 +232,7 @@ public class HumanPlayerAgent extends GuiAgent {
 			game.getCommunityCards().popCards();
 			
 			for(Player p : game.getPlayersContainer().getPlayers()) {
-				p.getDeck().getCards().clear();
+				p.getDeck().removeCards();
 			}
 			
 			changes_game.firePropertyChange(PlayerGuiEvent.EMPTY_COMMUNITY_CARD.toString(), null, null);

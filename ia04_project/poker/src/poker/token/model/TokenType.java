@@ -13,6 +13,10 @@ public enum TokenType {
 		this.tokenType = type;
 	}
 	
+	private TokenType(){
+		this.tokenType = 0;
+	}
+	
 	public int getChipType(){
 		return this.tokenType;
 	}	

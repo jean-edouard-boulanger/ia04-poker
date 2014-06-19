@@ -71,6 +71,10 @@ public class TokenSet {
 		int newValue = 0;
 		
 		for(Map.Entry<TokenType, Integer> entry : addedTokenSet.getTokensAmount().entrySet()) {
+			
+			if(entry.getValue() == 0) // dirty fix for empty token set.
+				continue;
+			
 			if(!this.tokensAmount.containsKey(entry.getKey())) {
 				this.tokensAmount.put(entry.getKey(), entry.getValue());
 			}
