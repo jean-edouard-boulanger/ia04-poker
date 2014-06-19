@@ -208,8 +208,49 @@ public class AIPlayerAgentMessageVisitor extends MessageVisitor {
 		AIPlayRequestEventData eventData = new AIPlayRequestEventData();
 		eventData.addAllAvailableActions();
 
-		//Bet amount for the current round
+		//TEST
 		int globalCurrentBetAmount = myAgent.getGame().getBetContainer().getCurrentBetAmount();
+		int playerCurrentBetAmount = TokenSetValueEvaluator.evaluateTokenSetValue(myAgent.getGame().getBetContainer().getTokenValueDefinition(), myAgent.getGame().getBetContainer().getPlayerCurrentBet(me));
+
+		int minimumTokenValue = myAgent.getGame().getBetContainer().getTokenValueDefinition().getValueForTokenType(TokenType.WHITE);
+		
+		int minimumBetAmount = 0;
+		int maximumBetAmount = 0;
+		int callAmount = 0;
+		int playerBankroll = me.getBankroll(myAgent.getGame().getBetContainer().getTokenValueDefinition()) + playerCurrentBetAmount;
+		
+		//If no one bet, can't fold or call
+		if(globalCurrentBetAmount == 0) {
+			eventData.removeAvailableAction(BetType.CALL);
+			eventData.removeAvailableAction(BetType.FOLD);
+		}
+		else {
+			eventData.removeAvailableAction(BetType.CHECK);
+		}
+		
+		if(playerBankroll < globalCurrentBetAmount) {
+			eventData.removeAvailableAction(BetType.CALL);
+			eventData.removeAvailableAction(BetType.CHECK);
+		}
+		
+		//Bet values
+		if(globalCurrentBetAmount == 0) {
+			minimumBetAmount = 2 * minimumTokenValue;
+		}
+		else {
+			minimumBetAmount = 2 * globalCurrentBetAmount;
+			callAmount = globalCurrentBetAmount;
+		}
+		
+		if(playerBankroll < globalCurrentBetAmount || playerBankroll < minimumBetAmount) {
+			minimumBetAmount = playerBankroll;
+		}
+		
+		maximumBetAmount = playerBankroll;
+		
+/**
+		//Bet amount for the current round
+		int globalCurrentBetAmount = game.getBetContainer().getCurrentBetAmount();
 		
 		if(globalCurrentBetAmount > 0){
 			//Can't check if someone has already bet
@@ -217,12 +258,13 @@ public class AIPlayerAgentMessageVisitor extends MessageVisitor {
 		}
 		else {
 			eventData.setCallAmount(0);
+			eventData.removeAvailableAction(BetType.CHECK);
 		}
 		
 		//Calculating player's current amount for the current round
-		int playerCurrentBetAmount = TokenSetValueEvaluator.evaluateTokenSetValue(myAgent.getGame().getBetContainer().getTokenValueDefinition(), myAgent.getGame().getBetContainer().getPlayerCurrentBet(me));
+		int playerCurrentBetAmount = TokenSetValueEvaluator.evaluateTokenSetValue(game.getBetContainer().getTokenValueDefinition(), game.getBetContainer().getPlayerCurrentBet(me));
 
-		int minimumTokenValue = myAgent.getGame().getBetContainer().getTokenValueDefinition().getValueForTokenType(TokenType.WHITE);
+		int minimumTokenValue = game.getBetContainer().getTokenValueDefinition().getValueForTokenType(TokenType.WHITE);
 		
 		int minimumBetAmount = 0;
 		
@@ -244,7 +286,7 @@ public class AIPlayerAgentMessageVisitor extends MessageVisitor {
 			eventData.removeAvailableAction(BetType.FOLD);
 		}
 
-		int playerBankroll = me.getBankroll(myAgent.getGame().getBetContainer().getTokenValueDefinition());
+		int playerBankroll = me.getBankroll(game.getBetContainer().getTokenValueDefinition());
 		
 		if(playerBankroll < eventData.getCallAmount()) {
 			minimumBetAmount = playerBankroll;
@@ -252,7 +294,7 @@ public class AIPlayerAgentMessageVisitor extends MessageVisitor {
 			eventData.addAvailableAction(BetType.FOLD);
 			eventData.addAvailableAction(BetType.RAISE);
 		}
-		
+	**/	
 		eventData.setMinimumBetAmount(minimumBetAmount);
 
 		// The maximum bet amount is equal to the bankroll of the player
