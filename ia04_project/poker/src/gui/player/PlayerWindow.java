@@ -96,7 +96,8 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 		SHOW_IHM,
 		PLAY_REQUEST,
 		PLAYER_CANT_PLAY,
-		RESET_PLAYER_BETS;
+		RESET_PLAYER_BETS, 
+		CLEAR_POT;
 	}
 
 	private final Pane root = new Pane();
@@ -962,7 +963,11 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 				else if(evt.getPropertyName().equals(PlayerGuiEvent.EMPTY_COMMUNITY_CARD.toString()))
 				{
 					emptyCommunityCard();
-					System.out.println("[PlayerWindow] Empty community card");
+					for(CardPlayerIHM cardIhm : list_card_player){
+						cardIhm.emptyCard();
+					}
+					
+					System.out.println("[PlayerWindow] Empty card");
 				}
 
 				/**
@@ -1175,6 +1180,13 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 						System.out.println("[PlayerWindow] Player winner");
 					}
 
+				}
+				
+				/**
+				 * ------ CLEAR POT ----
+				 */
+				else if (evt.getPropertyName().equals(PlayerGuiEvent.CLEAR_POT.toString())){
+					 pot.clear();
 				}
 			}
 		});
