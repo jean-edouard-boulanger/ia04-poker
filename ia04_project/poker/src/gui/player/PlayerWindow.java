@@ -49,6 +49,7 @@ import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import javafx.util.Duration;
 import poker.card.helper.CardImageHelper;
+import poker.card.heuristics.combination.model.Combination;
 import poker.card.heuristics.combination.model.Hand;
 import poker.card.model.Card;
 import poker.card.model.CardRank;
@@ -1193,12 +1194,16 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 					if(evt.getNewValue() instanceof Map)
 					{
 						try {
+							@SuppressWarnings("unchecked")
 							Map<Player, Hand> handPlayerWinners = (HashMap<Player, Hand>)evt.getNewValue();
 							SequentialTransition sequence = new SequentialTransition();
 							
 							for(Entry<Player, Hand> entry : handPlayerWinners.entrySet())
 							{
-								sequence.getChildren().add(PlayerWindow.this.animate_winner.launchAnimation("Player " + entry.getKey().getNickname() + " has won", entry.getValue()));
+								if(entry.getValue() != null)
+									sequence.getChildren().add(PlayerWindow.this.animate_winner.launchAnimation("Player " + entry.getKey().getNickname() + " has won with " + Combination.values()[entry.getValue().getCombination().getCombination()], entry.getValue()));
+								else
+									sequence.getChildren().add(PlayerWindow.this.animate_winner.launchAnimation("Player " + entry.getKey().getNickname() + " has won"));
 								appendToGameLog("Player '" + entry.getKey().getNickname() + "' won the hand with the combination " + entry.getValue().getStandardNotation());
 							}
 							

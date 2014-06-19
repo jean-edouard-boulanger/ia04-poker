@@ -6,6 +6,7 @@ import java.util.List;
 import poker.card.heuristics.combination.model.Hand;
 import poker.card.model.Card;
 import javafx.animation.Interpolator;
+import javafx.animation.PauseTransition;
 import javafx.animation.SequentialTransition;
 import javafx.animation.TranslateTransition;
 import javafx.animation.TranslateTransitionBuilder;
@@ -39,8 +40,7 @@ public class AnimateWinner extends Group {
 		this.getChildren().add(label_notification);
 	}
 	
-	
-	private void prepareAnimation(ArrayList<Card> list_card) throws Exception
+	private void prepareAnimation() throws Exception
 	{
 		TranslateTransition background_translate_beginning = TranslateTransitionBuilder
                 .create()
@@ -93,6 +93,68 @@ public class AnimateWinner extends Group {
 		sequence.getChildren().addAll(
 				background_translate_beginning,
 				label_translate_beginning,
+				label_translate_middle,
+				label_translate_ending,
+				background_translate_ending
+				);
+				
+		sequence.setCycleCount(1);
+		
+	}
+	
+	private void prepareAnimation(ArrayList<Card> list_card) throws Exception
+	{
+		TranslateTransition background_translate_beginning = TranslateTransitionBuilder
+                .create()
+                .duration(new Duration(200))
+                .node(background_notification)
+                .fromX(-950)
+                .toX(900)
+                .cycleCount(1)
+                .interpolator(Interpolator.EASE_BOTH)
+                .build();
+		
+		TranslateTransition background_translate_ending = TranslateTransitionBuilder
+                .create()
+                .duration(new Duration(200))
+                .node(background_notification)
+                .toX(2500)
+                .cycleCount(1)
+                .interpolator(Interpolator.EASE_BOTH)
+                .build();
+		
+		TranslateTransition label_translate_beginning = TranslateTransitionBuilder
+                .create()
+                .duration(new Duration(500))
+                .node(label_notification)
+                .fromX(-950)
+                .toX(1000)
+                .cycleCount(1)
+                .interpolator(Interpolator.EASE_BOTH)
+                .build();
+		
+		TranslateTransition label_translate_middle = TranslateTransitionBuilder
+                .create()
+                .duration(new Duration(2000))
+                .node(label_notification)
+                .toX(1150)
+                .cycleCount(1)
+                .interpolator(Interpolator.EASE_BOTH)
+                .build();
+		
+		TranslateTransition label_translate_ending = TranslateTransitionBuilder
+                .create()
+                .duration(new Duration(500))
+                .node(label_notification)
+                .toX(2500)
+                .cycleCount(1)
+                .interpolator(Interpolator.EASE_BOTH)
+                .build();
+		
+		
+		sequence.getChildren().addAll(
+				background_translate_beginning,
+				label_translate_beginning,
 				label_translate_middle);
 		
 		int x_card = 0;
@@ -105,7 +167,16 @@ public class AnimateWinner extends Group {
 			image_card.setFitHeight(72);
 			x_card += 55;
 			
-			TranslateTransition t_card = TranslateTransitionBuilder
+			TranslateTransition t_card1 = TranslateTransitionBuilder
+	                .create()
+	                .duration(new Duration(500))
+	                .node(image_card)
+	                .toX(1150)
+	                .cycleCount(1)
+	                .interpolator(Interpolator.EASE_BOTH)
+	                .build();
+			
+			TranslateTransition t_card2 = TranslateTransitionBuilder
 	                .create()
 	                .duration(new Duration(500))
 	                .node(image_card)
@@ -114,7 +185,11 @@ public class AnimateWinner extends Group {
 	                .interpolator(Interpolator.EASE_BOTH)
 	                .build();
 			
-			sequence.getChildren().add(t_card);
+			sequence.getChildren().addAll(
+					t_card1,
+					new PauseTransition(new Duration(5000)),
+					t_card2
+			);
 		}
 		
 		sequence.getChildren().addAll(
@@ -132,6 +207,22 @@ public class AnimateWinner extends Group {
 		{
 			label_notification.setText(text_to_display);
 			prepareAnimation(hand.getCombinationCards());
+			background_notification.toFront();
+			label_notification.toFront();	
+		}
+		catch(Exception e) {
+			System.out.println("[PlayerWindow] animation winner failed " + e.getMessage());
+		}
+		
+		return sequence;
+	}
+	
+	public SequentialTransition launchAnimation(String text_to_display)
+	{
+		try
+		{
+			label_notification.setText(text_to_display);
+			prepareAnimation();
 			background_notification.toFront();
 			label_notification.toFront();	
 		}
