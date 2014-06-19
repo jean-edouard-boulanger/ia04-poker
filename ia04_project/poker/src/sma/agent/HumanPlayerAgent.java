@@ -230,7 +230,11 @@ public class HumanPlayerAgent extends GuiAgent {
 		public boolean onCardsEmptiedNotification(CardsEmptiedNotification notification, ACLMessage aclMsg) {
 
 			game.getCommunityCards().popCards();
-
+			
+			for(Player p : game.getPlayersContainer().getPlayers()) {
+				p.getDeck().getCards().clear();
+			}
+			
 			changes_game.firePropertyChange(PlayerGuiEvent.EMPTY_COMMUNITY_CARD.toString(), null, null);
 
 			return true;
