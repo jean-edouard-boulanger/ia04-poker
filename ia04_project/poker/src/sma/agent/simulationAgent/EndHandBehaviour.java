@@ -8,6 +8,7 @@ import poker.card.heuristics.combination.model.Hand;
 import poker.game.player.model.Player;
 import jade.core.AID;
 import jade.core.Agent;
+import jade.core.behaviours.OneShotBehaviour;
 import jade.util.leap.HashMap;
 import sma.agent.SimulationAgent;
 import sma.agent.SimulationAgent.GameEvent;
@@ -35,7 +36,16 @@ public class EndHandBehaviour extends TaskRunnerBehaviour {
 	public void onStart(){
 		
 		Task mainTask = Task.New(this.getEmptyCommunityCardsBehaviour())
-				.then(this.getEmptyPotBehaviour());
+				.then(this.getEmptyPotBehaviour())
+				.then(this.getDistributePotToWinnersBehaviour());
+		
+		
+		mainTask = mainTask.then(new OneShotBehaviour() {
+			@Override
+			public void action() {
+				simulationAgent.resetWinners();
+			}
+		});
 		
 		this.setBehaviour(mainTask);
 		super.onStart();
@@ -46,7 +56,6 @@ public class EndHandBehaviour extends TaskRunnerBehaviour {
 	}
 	
 	public TransactionBehaviour getDistributePotToWinnersBehaviour(){
-		
 		ArrayList<AID> winnersAIDs = new ArrayList<AID>();
 		for(Player p : simulationAgent.getWinners().keySet()){
 			winnersAIDs.add(p.getAID());
