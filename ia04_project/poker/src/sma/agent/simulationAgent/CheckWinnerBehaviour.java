@@ -5,7 +5,9 @@ import jade.core.behaviours.Behaviour;
 import jade.lang.acl.ACLMessage;
 
 import java.util.HashMap;
+import java.util.Map;
 
+import poker.card.heuristics.combination.model.Hand;
 import sma.agent.SimulationAgent;
 import sma.agent.SimulationAgent.GameEvent;
 import sma.agent.helper.DFServiceHelper;
@@ -31,6 +33,9 @@ public class CheckWinnerBehaviour extends TaskRunnerBehaviour {
 	
 	@Override
 	public void onStart(){
+		
+		System.out.println("@@@ CheckWinnerBehaviour @@@");
+		
 		Task mainTask = Task.New(this.getDetermineWinnerBehaviour());
 		this.setBehaviour(mainTask);
 		super.onStart();
@@ -47,7 +52,9 @@ public class CheckWinnerBehaviour extends TaskRunnerBehaviour {
 		TransactionBehaviour transaction = new TransactionBehaviour(myAgent, determineWinnerRequest, determineWinnerAgent);
 		transaction.setResponseVisitor(new MessageVisitor(){
 			public boolean onWinnerDeterminedNotification(WinnerDeterminedNotification notification, ACLMessage aclMsg) {	
+				
 				simulationAgent.setWinners((HashMap)notification.getWinners());
+				
 				return true;
 			}
 		});

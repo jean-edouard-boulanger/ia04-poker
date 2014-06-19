@@ -544,15 +544,14 @@ public class HumanPlayerAgent extends GuiAgent {
 			Map<AID, Hand> handWinners = (HashMap<AID, Hand>) notification.getWinners();
 			Map<Player, Hand> handPlayerWinners = new HashMap<Player, Hand>();
 			
+			System.out.println("[HPA] Player winner");
+			
 			for(Entry<AID, Hand> entry : handWinners.entrySet())
 			{
 				handPlayerWinners.put(game.getPlayersContainer().getPlayerByAID(entry.getKey()), entry.getValue());
 			}
 			
 			changes_game.firePropertyChange(PlayerGuiEvent.PLAYER_WINNER.toString(), null, handPlayerWinners);
-			
-			System.out.println("[HPA] Player winner");
-
 			return true;
 		}
 		

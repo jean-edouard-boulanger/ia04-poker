@@ -75,7 +75,7 @@ public class SimulationAgent extends GuiAgent {
 	private int blindIncreaseDelayS;
 	private TokenValueDefinition defaultTokenValueDefinition;
 
-	private HashMap<Player, Hand> winners;
+	private HashMap<AID, Hand> winners;
 
 	private boolean cancelNextPlayRequests = false;
 	private Round currentRound;
@@ -86,7 +86,7 @@ public class SimulationAgent extends GuiAgent {
 
 	public SimulationAgent(){
 		super();
-		this.winners = new HashMap<Player, Hand>();
+		this.winners = new HashMap<AID, Hand>();
 	}
 
 	@Override
@@ -312,16 +312,16 @@ public class SimulationAgent extends GuiAgent {
 		this.winners.clear();
 	}
 	
-	public HashMap<Player, Hand> getWinners() {
+	public HashMap<AID, Hand> getWinners() {
 		return winners;
 	}
 
-	public void setWinners(HashMap<Player, Hand> winners) {
+	public void setWinners(HashMap<AID, Hand> winners) {
 		this.winners = winners;
 	}
 	
-	public void addWinner(Player p, Hand h) {
-		this.winners.put(p, h);
+	public void addWinner(AID playerAID, Hand h) {
+		this.winners.put(playerAID, h);
 	}
 
 	public boolean getAddAIBeforeStarting() {

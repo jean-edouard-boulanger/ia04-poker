@@ -28,7 +28,6 @@ import sma.message.SubscriptionOKMessage;
 import sma.message.determine_winner.DetermineWinnerRequest;
 import sma.message.environment.notification.CardAddedToCommunityCardsNotification;
 import sma.message.environment.notification.CardsEmptiedNotification;
-import sma.message.environment.notification.DealerChangedNotification;
 import sma.message.environment.notification.PlayerCardsRevealedNotification;
 import sma.message.environment.notification.PlayerSitOnTableNotification;
 import sma.message.environment.notification.WinnerDeterminedNotification;
@@ -92,7 +91,7 @@ public class DetermineWinnerAgent extends Agent {
 			
 			Map<AID, Hand> winners = determineRoundWinners();
 			
-			AgentHelper.sendSimpleMessage(DetermineWinnerAgent.this, environment, ACLMessage.INFORM, new WinnerDeterminedNotification(winners));
+			//AgentHelper.sendSimpleMessage(DetermineWinnerAgent.this, environment, ACLMessage.INFORM, new WinnerDeterminedNotification(winners));
 			
 			//Sending the list of winners (could be more than one winner)
 			AgentHelper.sendReply(DetermineWinnerAgent.this, aclMsg, ACLMessage.INFORM, new WinnerDeterminedNotification(winners));
