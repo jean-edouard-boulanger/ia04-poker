@@ -13,9 +13,7 @@ public class WinnerDeterminedNotification extends Message {
 
 	Map<AID, Hand> winners;
 	
-	public WinnerDeterminedNotification() {
-		
-	}
+	public WinnerDeterminedNotification() {}
 	
 	public WinnerDeterminedNotification(Map<AID, Hand> winners) {
 		this.winners = winners;
