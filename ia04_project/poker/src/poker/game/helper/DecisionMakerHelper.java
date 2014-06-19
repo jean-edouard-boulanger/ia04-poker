@@ -62,7 +62,7 @@ public class DecisionMakerHelper {
 
 		Random random = new Random();
 		
-		int raiseDecision = random.nextInt(110);
+		int raiseDecision = random.nextInt(90);
 		
 		if(raiseDecision < 10) {
 			return new Decision(BetType.FOLD, 0);
