@@ -49,6 +49,7 @@ import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import javafx.util.Duration;
 import poker.card.helper.CardImageHelper;
+import poker.card.heuristics.combination.model.Combination;
 import poker.card.heuristics.combination.model.Hand;
 import poker.card.model.Card;
 import poker.card.model.CardRank;
@@ -83,6 +84,8 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 		PLAYER_BET_ME,
 		PLAYER_BET_OTHER,
 		PLAYER_CALLED,
+		PLAYER_IN_GAME,
+		PLAYER_OUT,
 		PLAYER_CHECK,
 		BLIND_VALUE,
 		DEALER_PLAYER_CHANGED,
@@ -345,10 +348,10 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 		 *  Player's tokens
 		 */
 		token_white = new TokenPlayerIHM(485, 500, 0, ColorToken.WHITE);
-		token_black = new TokenPlayerIHM(515, 500, 0, ColorToken.RED);
-		token_blue = new TokenPlayerIHM(545, 500, 0, ColorToken.GREEN);
-		token_green = new TokenPlayerIHM(575, 500, 0, ColorToken.BLUE);
-		token_red = new TokenPlayerIHM(605, 500, 0, ColorToken.BLACK);
+		token_red = new TokenPlayerIHM(515, 500, 0, ColorToken.RED);
+		token_green = new TokenPlayerIHM(545, 500, 0, ColorToken.GREEN);
+		token_blue = new TokenPlayerIHM(575, 500, 0, ColorToken.BLUE);
+		token_black = new TokenPlayerIHM(605, 500, 0, ColorToken.BLACK);
 
 		playerTokens = new HashMap<TokenType, TokenPlayerIHM>();		
 		playerTokens.put(TokenType.WHITE, token_white);
@@ -1148,6 +1151,33 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 				}
 				
 				/**
+				 * ------ PLAYER OUT ----
+				 */
+				else if(evt.getPropertyName().equals(PlayerGuiEvent.PLAYER_OUT.toString())){
+					if(evt.getNewValue() instanceof Integer){
+						
+						int player_index = ((Integer)evt.getNewValue()).intValue();
+						PlayerWindow.this.list_card_player.get(player_index).emptyCard();
+						PlayerWindow.this.list_perso.get(player_index).setFolded();
+						
+						System.out.println("[PlayerWindow] Player folded");
+					}
+				}
+				
+				/**
+				 * ------ PLAYER IN GAME ----
+				 */
+				else if(evt.getPropertyName().equals(PlayerGuiEvent.PLAYER_IN_GAME.toString())){
+					if(evt.getNewValue() instanceof Integer){
+						
+						int player_index = ((Integer)evt.getNewValue()).intValue();
+						PlayerWindow.this.list_card_player.get(player_index).emptyCard();
+						PlayerWindow.this.list_perso.get(player_index).setVisible();
+						
+						System.out.println("[PlayerWindow] Player folded");
+					}
+				}				
+				/**
 				 * ------ PLAYER CHECK ----
 				 */
 				else if(evt.getPropertyName().equals(PlayerGuiEvent.PLAYER_CHECK.toString())){
@@ -1164,12 +1194,16 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 					if(evt.getNewValue() instanceof Map)
 					{
 						try {
+							@SuppressWarnings("unchecked")
 							Map<Player, Hand> handPlayerWinners = (HashMap<Player, Hand>)evt.getNewValue();
 							SequentialTransition sequence = new SequentialTransition();
 							
 							for(Entry<Player, Hand> entry : handPlayerWinners.entrySet())
 							{
-								sequence.getChildren().add(PlayerWindow.this.animate_winner.launchAnimation("Player " + entry.getKey().getNickname() + " has won", entry.getValue()));
+								if(entry.getValue() != null)
+									sequence.getChildren().add(PlayerWindow.this.animate_winner.launchAnimation("Player " + entry.getKey().getNickname() + " has won with " + Combination.values()[entry.getValue().getCombination().getCombination()], entry.getValue()));
+								else
+									sequence.getChildren().add(PlayerWindow.this.animate_winner.launchAnimation("Player " + entry.getKey().getNickname() + " has won"));
 								appendToGameLog("Player '" + entry.getKey().getNickname() + "' won the hand with the combination " + entry.getValue().getStandardNotation());
 							}
 							

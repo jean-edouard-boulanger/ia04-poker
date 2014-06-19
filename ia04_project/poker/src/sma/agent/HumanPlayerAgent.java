@@ -250,6 +250,10 @@ public class HumanPlayerAgent extends GuiAgent {
 			switch(notification.getNewStatus()){
 				case FOLDED:
 					changes_game.firePropertyChange(PlayerGuiEvent.PLAYER_FOLDED.toString(), null, player.getTablePositionIndex());
+				case IN_GAME:
+					changes_game.firePropertyChange(PlayerGuiEvent.PLAYER_IN_GAME.toString(), null, player.getTablePositionIndex());
+				case OUT:
+					changes_game.firePropertyChange(PlayerGuiEvent.PLAYER_OUT.toString(), null, player.getTablePositionIndex());
 				default:
 					break;
 			}

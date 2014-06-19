@@ -15,10 +15,11 @@ import poker.card.model.Card;
 import poker.game.model.AIPlayerType;
 import poker.game.model.BetType;
 import poker.game.model.Decision;
+import sma.agent.AIPlayerAgent;
 
 public class DecisionMakerHelper {	
 
-	public static Decision makeDecision(AIPlayRequestEventData eventData, AIPlayerType playerType) {
+	public static Decision makeDecision(AIPlayRequestEventData eventData, AIPlayerType playerType, AIPlayerAgent agent) {
 		
 		
 		ArrayList<Card> cards = eventData.getCards();		
@@ -37,13 +38,13 @@ public class DecisionMakerHelper {
 		int combinationCount = 0;//Collections.frequency(probabilities.values(), 1);
 			
 		for(Float p : probabilities.values()) {
-			if(p > 0.7) {
+			if(p * 100 > agent.getProbabilityToBet()) {
 				combinationCount++;
 			}
 		}
 		
 		if(playerType == AIPlayerType.STATS) {
-			return statsMakeDecision(eventData, combinationCount);
+			return statsMakeDecision(eventData, combinationCount, agent.getProbabilityToBet());
 		}
 		//else if(playerType == AIPlayerType.CALLER) {
 			//return callerMakeDecision(eventData, combinationCount);
@@ -52,7 +53,7 @@ public class DecisionMakerHelper {
 		return null;
 	}
 	
-	private static Decision statsMakeDecision(AIPlayRequestEventData eventData, int combinationCount) {
+	private static Decision statsMakeDecision(AIPlayRequestEventData eventData, int combinationCount, int probabilityToBet) {
 		
 		ArrayList<BetType> betActions = eventData.getAvailableActions();
 
@@ -61,20 +62,18 @@ public class DecisionMakerHelper {
 		int callAmount = eventData.getCallAmount();
 
 		Random random = new Random();
+				
+		int randomAmount = determineRandomAmout(eventData);
 		
 		int raiseDecision = random.nextInt(90);
-		
-		if(raiseDecision < 10) {
-			return new Decision(BetType.FOLD, 0);
-		}
-		
+
 		if(combinationCount == 0) {
 			if(betActions.contains(BetType.CHECK)) {
 				System.out.println("[AIPlayer] Decided to check.");
 				return new Decision(BetType.CHECK, 0);
 			}
 			else if(betActions.contains(BetType.CALL)) {
-				if(callAmount < ((7 * maximumBetAmount) / 10) && raiseDecision > 35) {
+				if(callAmount < ((probabilityToBet * maximumBetAmount) / 100)) {
 					System.out.println("[AIPlayer] Decided to call.");
 					return new Decision(BetType.CALL, callAmount);
 				}
@@ -89,10 +88,26 @@ public class DecisionMakerHelper {
 			}
 		}
 		
+		
+		if(raiseDecision < 10) {
+			if(betActions.contains(BetType.CHECK)) {
+				System.out.println("[AIPlayer] Decided to check.");
+				return new Decision(BetType.CHECK, 0);
+			}
+			else
+				return new Decision(BetType.FOLD, 0);
+		}
+
 		if(combinationCount == 1) {
 			if(betActions.contains(BetType.CHECK)) {
-				System.out.println("[AIPlayer] Decided to raise at " + minimumBetAmount + " because I have a combination.");
-				return new Decision(BetType.RAISE, minimumBetAmount);
+				if(raiseDecision < 30) {
+					System.out.println("[AIPlayer] Decided to raise at " + minimumBetAmount + " because I have a combination.");
+					return new Decision(BetType.RAISE, randomAmount);
+				}
+				else {
+					System.out.println("[AIPlayer] Decided to raise at " + minimumBetAmount + " because I have a combination.");
+					return new Decision(BetType.RAISE, minimumBetAmount);
+				}
 			}
 			else if(betActions.contains(BetType.CALL)) {
 				System.out.println("[AIPlayer] Decided to call.");
@@ -105,8 +120,22 @@ public class DecisionMakerHelper {
 		}
 		
 		if(combinationCount > 1) {
-			System.out.println("[AIPlayer] Decided to raise at " + maximumBetAmount + " because I have " + combinationCount + " combinations.");
-			return new Decision(BetType.RAISE, minimumBetAmount);
+			if(betActions.contains(BetType.CALL)) {
+				Random r = new Random();
+				int playDecision = r.nextInt(101);
+				if(playDecision > 50) {
+					System.out.println("[AIPlayer] Decided to call at " + callAmount + ".");
+					return new Decision(BetType.CALL, callAmount);
+				}
+				else {
+					System.out.println("[AIPlayer] Decided to raise at " + maximumBetAmount + " because I have " + combinationCount + " combinations.");
+					return new Decision(BetType.RAISE, randomAmount);
+				}
+			}
+			else {
+				System.out.println("[AIPlayer] Decided to raise at " + maximumBetAmount + " because I have " + combinationCount + " combinations.");
+				return new Decision(BetType.RAISE, randomAmount);
+			}
 		}
 		
 		return null;
@@ -121,5 +150,16 @@ public class DecisionMakerHelper {
 		int callAmount = eventData.getCallAmount();
 
 		return new Decision(BetType.RAISE, minimumBetAmount);
+	}
+	
+	private static int determineRandomAmout(AIPlayRequestEventData eventData) {
+		if(eventData.getMinimumBetAmount() == eventData.getMaximumBetAmount())
+			return eventData.getMinimumBetAmount();
+		
+		Random r = new Random();
+		
+		int randomAmount = r.nextInt(eventData.getMaximumBetAmount() + 1 - eventData.getMinimumBetAmount());
+		
+		return (eventData.getMinimumBetAmount() + randomAmount/10);
 	}
 }
