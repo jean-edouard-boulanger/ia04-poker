@@ -31,6 +31,7 @@ import sma.message.environment.notification.BetsMergedNotification;
 import sma.message.environment.notification.BlindValueDefinitionChangedNotification;
 import sma.message.environment.notification.CardAddedToCommunityCardsNotification;
 import sma.message.environment.notification.CardsEmptiedNotification;
+import sma.message.environment.notification.CurrentPlayerChangedNotification;
 import sma.message.environment.notification.DealerChangedNotification;
 import sma.message.environment.notification.PlayerReceivedCardNotification;
 import sma.message.environment.notification.PlayerReceivedTokenSetNotification;
@@ -39,6 +40,7 @@ import sma.message.environment.notification.PlayerSitOnTableNotification;
 import sma.message.environment.notification.PlayerStatusChangedNotification;
 import sma.message.environment.notification.PotEmptiedNotification;
 import sma.message.environment.notification.TokenValueDefinitionChangedNotification;
+import sma.message.environment.notification.WinnerDeterminedNotification;
 import sma.message.environment.request.EmptyPotRequest;
 import sma.message.environment.request.PlayerFoldedRequest;
 import sma.message.simulation.request.PlayRequest;
@@ -305,6 +307,23 @@ public class AIPlayerAgentMessageVisitor extends MessageVisitor {
 	@Override
 	public boolean onPotEmptiedNotification(PotEmptiedNotification emptyPotRequest, ACLMessage aclMsg) {
 		myAgent.getGame().getBetContainer().clearPot();
+		return true;
+	}
+	
+	@Override
+	public boolean onCurrentPlayerChangedNotification(CurrentPlayerChangedNotification notification, ACLMessage aclMsg) {
+		Player player = myAgent.getGame().getPlayersContainer().getPlayerByAID(notification.getPlayerAID());
+		try {
+			myAgent.getGame().getPlayersContainer().setCurrentPlayer(player);
+		} catch (NotRegisteredPlayerException e) {
+			e.printStackTrace();
+		}
+		return true;
+	}
+	
+	@Override
+	public boolean onWinnerDeterminedNotification(WinnerDeterminedNotification notification, ACLMessage aclMsg) {
+		// Nothing to do
 		return true;
 	}
 }

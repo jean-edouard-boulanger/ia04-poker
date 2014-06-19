@@ -43,6 +43,7 @@ import sma.message.environment.notification.TokenValueDefinitionChangedNotificat
 import sma.message.environment.notification.WinnerDeterminedNotification;
 import sma.message.environment.request.GiveTokenSetToPlayerRequest;
 import sma.message.environment.request.PlayerBetRequest;
+import sma.message.environment.request.SendTokenSetToPlayerFromPotRequest;
 
 public class BetManagerAgent extends Agent {
 
@@ -204,9 +205,39 @@ public class BetManagerAgent extends Agent {
 	private class BetManagerMessageVisitor extends MessageVisitor {	
 		
 		@Override
-		public boolean onDistributePotToWinnersRequest(DistributePotToWinnersRequest request, ACLMessage aclMsg) {
+		public boolean onDistributePotToWinnersRequest(DistributePotToWinnersRequest request, final ACLMessage aclMsg) {
 			
-			
+			System.out.println("DEBUG [BetManagerAgent:onDistributePotToWinnersRequest] Distribute pot to winner request received");
+
+			SequentialBehaviour sendTokenSetRequestsBehaviour = new SequentialBehaviour(BetManagerAgent.this);
+
+			int nbWinners = request.getWinnersAIDs().size();
+
+			int totalAmount = game.getBetContainer().getPotAmount();
+			int singleAmount = totalAmount / nbWinners;
+
+			TokenSet sentTokenSet = TokenSetValueEvaluator.tokenSetFromAmount(singleAmount, game.getBetContainer().getTokenValueDefinition());
+			SendTokenSetToPlayerFromPotRequest sentRequest = new SendTokenSetToPlayerFromPotRequest();
+			sentRequest.setSentTokenSet(sentTokenSet);
+
+			for(AID playerAID : request.getWinnersAIDs()){
+				sentRequest.setPlayerAID(playerAID);
+
+				TransactionBehaviour tokenSetSendTransactionBehaviour = new TransactionBehaviour(BetManagerAgent.this, sentRequest, environment);
+				tokenSetSendTransactionBehaviour.setResponseVisitor(new SendTokenSetToWinnerMessageVisitor(playerAID, sentTokenSet));
+				
+				sendTokenSetRequestsBehaviour.addSubBehaviour(tokenSetSendTransactionBehaviour);							
+			}
+
+			sendTokenSetRequestsBehaviour.addSubBehaviour(new OneShotBehaviour() {
+				@Override
+				public void action() {
+					System.out.println("DEBUG [BetManagerAgent:onDistributePotToWinnersRequest] Replied OK to " + aclMsg.getSender().getLocalName());
+					AgentHelper.sendReply(BetManagerAgent.this, aclMsg, ACLMessage.INFORM, new OKMessage());
+				}
+			});
+
+			addBehaviour(sendTokenSetRequestsBehaviour);
 			
 			return true;
 		}
@@ -374,5 +405,27 @@ public class BetManagerAgent extends Agent {
 
 	public void setMsgVisitor(BetManagerMessageVisitor msgVisitor) {
 		this.msgVisitor = msgVisitor;
+	}
+	
+	private class SendTokenSetToWinnerMessageVisitor extends MessageVisitor{
+		
+		AID playerAID;
+		TokenSet tokenSet;
+		
+		public SendTokenSetToWinnerMessageVisitor(AID playerAID, TokenSet tokenSet){
+			this.playerAID = playerAID;
+			this.tokenSet = tokenSet;
+		}
+		
+		public boolean onFailureMessage(FailureMessage msg, ACLMessage aclMsg) {
+			System.err.println("ERROR [BetManagerAgent] Could not send TokenSet to winner " + playerAID.getLocalName());
+			return true;
+		}
+			
+		public boolean onOKMessage(OKMessage okMessage, ACLMessage aclMsg) {
+			System.out.print("DEBUG [BetManagerAgent] TokenSet sent to winner " + playerAID.getLocalName());
+			game.getPlayersContainer().getPlayerByAID(playerAID).getTokens().addTokenSet(tokenSet);
+			return true;
+		}
 	}
 }
