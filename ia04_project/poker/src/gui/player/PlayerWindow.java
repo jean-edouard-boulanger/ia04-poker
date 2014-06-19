@@ -1107,7 +1107,7 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 							SoundFx.launchSound(PlayerWindow.this, "/sons/chips.wav");
 						else
 							SoundFx.launchSound(PlayerWindow.this, "/sons/check.mp3");
-
+						
 						System.out.println("[PlayerWindow] Player bet");
 					}
 				}
@@ -1222,6 +1222,7 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 				 */
 				else if (evt.getPropertyName().equals(PlayerGuiEvent.CLEAR_POT.toString())){
 					 pot.clear();
+					 label_pot.setText("Pot : " + 0);
 				}
 			}
 		});

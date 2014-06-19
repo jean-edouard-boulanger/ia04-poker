@@ -93,6 +93,7 @@ public class BetManagerAgent extends Agent {
 			return true;
 		}
 		
+		System.out.println("DEBUG [BetManagerAgent.doesPlayerHaveToBet] Player " + player.getNickname() + "Didn't have to play because it's current bet ( " + betContainer.getPlayerCurrentBetAmount(player) + " ) is equal to the current bet amount ( " + betContainer.getCurrentBetAmount() + " )");
 		return false;
 	}
 

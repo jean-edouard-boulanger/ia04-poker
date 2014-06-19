@@ -50,6 +50,8 @@ public class InitTableRoundBehaviour extends TaskRunnerBehaviour {
 			// Otherwise, the first player to bet is the one next to the dealer (i.e, the small blind)
 			Player smallBlind = game.getPlayersContainer().getSmallBlind();
 			playersInGame = game.getPlayersContainer().getPlayersInGame(smallBlind);
+			
+			System.out.println("DEBUG [SimulationAgent:InitTableRound] " + playersInGame.size() + " will play in the next round");
 		}
 		
 		for(Player player : playersInGame){

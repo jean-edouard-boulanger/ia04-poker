@@ -178,6 +178,9 @@ public class DetermineWinnerAgent extends Agent {
 			}
 		}
 		catch(Exception ex){
+			
+			System.err.println("WARNING [DertermineWinnerAgent] Handcomparator FAILURE ("+ ex.getMessage() +") : Best hand players are all winners");
+			
 			// Dirty fix: If null pointer exception, everybody wins ...
 			for(Hand h : winningHands) {
 				for(Entry<AID, Hand> entry : playerHandMap.entrySet()) {

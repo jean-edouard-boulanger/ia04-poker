@@ -3,6 +3,7 @@ package sma.agent.simulationAgent;
 
 import jade.core.AID;
 import jade.core.behaviours.OneShotBehaviour;
+import jade.core.behaviours.WakerBehaviour;
 import jade.lang.acl.ACLMessage;
 
 import java.util.ArrayList;
@@ -69,9 +70,7 @@ public class EndHandBehaviour extends TaskRunnerBehaviour {
 			TransactionBehaviour transactionBehaviour = new TransactionBehaviour(simulationAgent, 
 					new ChangePlayerStatusRequest(foldedPlayer.getAID(), PlayerStatus.IN_GAME), environmentAID);
 			
-			transactionBehaviour.setResponseVisitor(new MessageVisitor(){
-
-			});
+			transactionBehaviour.setResponseVisitor(new HandleChangeStatusResponseMessageVisitor(foldedPlayer.getAID()));
 			
 			mainTask = mainTask.then(new TransactionBehaviour(simulationAgent, 
 					new ChangePlayerStatusRequest(foldedPlayer.getAID(), PlayerStatus.IN_GAME), environmentAID));
@@ -111,20 +110,21 @@ public class EndHandBehaviour extends TaskRunnerBehaviour {
 	
 	private class HandleChangeStatusResponseMessageVisitor extends MessageVisitor{
 		
-		Player player;
+		AID playerAID;
 		
-		public HandleChangeStatusResponseMessageVisitor(Player player){
-			this.player = player;
+		public HandleChangeStatusResponseMessageVisitor(AID playerAID){
+			this.playerAID = playerAID;
 		}
 		
 		@Override
 		public boolean onOKMessage(OKMessage okMessage, ACLMessage aclMsg) {
-			System.out.println("DEBUG [Simulation:EnHandBehaviour] Player " + player.getNickname() + " status changed");
-			this.player.setStatus(PlayerStatus.IN_GAME);
+			simulationAgent.getGame().getPlayersContainer().getPlayerByAID(playerAID).setStatus(PlayerStatus.IN_GAME);
+			
+			System.out.println("DEBUG [Simulation:EnHandBehaviour] Player " + playerAID.getLocalName() + " status changed");
 			return true;
 		}
 		public boolean onBooleanMessage(BooleanMessage message, ACLMessage aclMsg) {
-			System.err.println("[Simulation:EnHandBehaviour] Could not change player " + player.getNickname() + " status");
+			System.err.println("[Simulation:EnHandBehaviour] Could not change player " + playerAID.getLocalName() + " status");
 			return true;
 		}
 	}

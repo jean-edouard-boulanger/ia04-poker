@@ -16,10 +16,8 @@ import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 
 import java.beans.PropertyChangeSupport;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import javafx.embed.swing.JFXPanel;
 
@@ -61,9 +59,9 @@ import sma.message.environment.notification.PlayerReceivedTokenSetNotification;
 import sma.message.environment.notification.PlayerReceivedUnknownCardNotification;
 import sma.message.environment.notification.PlayerSitOnTableNotification;
 import sma.message.environment.notification.PlayerStatusChangedNotification;
+import sma.message.environment.notification.PotEmptiedNotification;
 import sma.message.environment.notification.TokenValueDefinitionChangedNotification;
 import sma.message.environment.notification.WinnerDeterminedNotification;
-import sma.message.environment.request.EmptyPotRequest;
 import sma.message.environment.request.PlayerFoldedRequest;
 import sma.message.simulation.request.PlayRequest;
 
@@ -249,10 +247,13 @@ public class HumanPlayerAgent extends GuiAgent {
 			switch(notification.getNewStatus()){
 				case FOLDED:
 					changes_game.firePropertyChange(PlayerGuiEvent.PLAYER_FOLDED.toString(), null, player.getTablePositionIndex());
+					break;
 				case IN_GAME:
 					changes_game.firePropertyChange(PlayerGuiEvent.PLAYER_IN_GAME.toString(), null, player.getTablePositionIndex());
+					break;
 				case OUT:
 					changes_game.firePropertyChange(PlayerGuiEvent.PLAYER_OUT.toString(), null, player.getTablePositionIndex());
+					break;
 				default:
 					break;
 			}
@@ -567,7 +568,8 @@ public class HumanPlayerAgent extends GuiAgent {
 		}
 		
 		@Override
-		public boolean onEmptyPotRequest(EmptyPotRequest emptyPotRequest, ACLMessage aclMsg) {
+		public boolean onPotEmptiedNotification(PotEmptiedNotification emptyPotRequest, ACLMessage aclMsg) {
+			System.out.println("DEBUG [HBA] Pot cleared");
 			game.getBetContainer().clearPot();
 			changes_game.firePropertyChange(PlayerGuiEvent.CLEAR_POT.toString(), null, null);
 			return true;

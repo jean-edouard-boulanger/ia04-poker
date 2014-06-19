@@ -114,8 +114,6 @@ public class PotIHM extends Group {
 	public void clear(){
 		this.score = 0;
 		this.tokenSet.clear();
-		for(TokenStackIHM ts : this.tokenStacks.values()){
-			this.getChildren().remove(ts);
-		}
+		this.refresh();
 	}
 }

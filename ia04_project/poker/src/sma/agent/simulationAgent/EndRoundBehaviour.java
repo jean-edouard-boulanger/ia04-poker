@@ -37,9 +37,7 @@ public class EndRoundBehaviour extends TaskRunnerBehaviour {
 	public void onStart(){
 		Round round = this.simulationAgent.getCurrentRound();
 		Task mainTask = Task.New(new BlankBehaviour());
-		
-		mainTask = mainTask.then(getMergeBetsBehaviour(getBetMenager()));
-		
+				
 		if(round == Round.PLAYER_CARDS_DEAL){
 			/*
 			 * If the cards are dealt at the current round, we set the current round to PRE_FLOP, and we go back to init round
@@ -49,7 +47,12 @@ public class EndRoundBehaviour extends TaskRunnerBehaviour {
 		else
 		{
 			/*
-			 * Otherwise, we check if there is more than one player remaining in the table
+			 * Otherwise, we required the BetManager to merge the bets
+			 */
+			mainTask = mainTask.then(getMergeBetsBehaviour(getBetMenager()));
+
+			/*
+			 * And we check if there is more than one player remaining in the table
 			 */
 			//int nbRemainingPlayers = this.simulationAgent.getGame().getPlayersContainer().getPlayersInGame(first)
 			ArrayList<Player> remainingPlayers = this.simulationAgent.getGame().getPlayersContainer().getPlayersInGame();
