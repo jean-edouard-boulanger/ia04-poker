@@ -1,9 +1,12 @@
 package sma.message.bet.request;
 
 import java.util.ArrayList;
+import java.util.Map;
 
+import poker.card.heuristics.combination.model.Hand;
 import jade.core.AID;
 import jade.lang.acl.ACLMessage;
+import jade.util.leap.HashMap;
 import sma.message.Message;
 import sma.message.MessageVisitor;
 

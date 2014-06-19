@@ -6,7 +6,6 @@ import jade.core.behaviours.CyclicBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 
-import java.net.Authenticator.RequestorType;
 import java.util.ArrayList;
 
 import poker.card.exception.CommunityCardsFullException;
@@ -17,7 +16,6 @@ import poker.game.exception.NotRegisteredPlayerException;
 import poker.game.exception.PlayerAlreadyRegisteredException;
 import poker.game.model.Game;
 import poker.game.player.model.Player;
-import poker.game.player.model.PlayerStatus;
 import poker.token.exception.InvalidTokenAmountException;
 import sma.agent.helper.AgentHelper;
 import sma.agent.helper.DFServiceHelper;
