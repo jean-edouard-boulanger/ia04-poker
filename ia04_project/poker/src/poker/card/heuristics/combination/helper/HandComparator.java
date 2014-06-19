@@ -136,8 +136,9 @@ public class HandComparator {
 			}
 			
 		case TWO_PAIR:
-			//Enlever tous les jeux de rang non maximum. Si l'en reste plus d'un, enlever les cartes de haut rang de chaque jeu et retirer tous les jeux ayant  leur 2eme paire de rang inferieur. S'il en reste, comparer la carte additionnelle.
-			return null;
+		//Enlever tous les jeux de rang non maximum. Si l'en reste plus d'un, enlever les cartes de haut rang de chaque jeu et retirer tous les jeux ayant  leur 2eme paire de rang inferieur. S'il en reste, comparer la carte additionnelle.
+			
+			return hands;
 			
 		case STRAIGHT:
 		case STRAIGHT_FLUSH:
@@ -149,13 +150,13 @@ public class HandComparator {
 			}
 			
 		case FULL_HOUSE: //Garder celles de plus haut rang. Retirer la plus haut rang de tous les jeux s'il en reste.
-			return null;
+			return hands ;
 			
 		case FLUSH:
-			return null;
+			return hands;
 			
 		default:
-			return null;
+			return hands;
 		}
 	}
 	
