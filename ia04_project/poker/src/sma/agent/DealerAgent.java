@@ -1,6 +1,5 @@
 package sma.agent;
 
-import gui.player.PlayerWindow.PlayerGuiEvent;
 import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.CyclicBehaviour;
@@ -8,12 +7,6 @@ import jade.core.behaviours.OneShotBehaviour;
 import jade.core.behaviours.SequentialBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-
-import org.omg.CosNaming.NamingContextPackage.CannotProceed;
-
 import poker.card.model.CardDeck;
 import poker.game.exception.NoPlaceAvailableException;
 import poker.game.exception.NotRegisteredPlayerException;

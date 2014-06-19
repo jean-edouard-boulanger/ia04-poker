@@ -47,6 +47,7 @@ import sma.message.bet.request.MergeBetsRequest;
 import sma.message.environment.notification.PlayerReceivedTokenSetNotification;
 import sma.message.environment.notification.PlayerSitOnTableNotification;
 import sma.message.environment.notification.PlayerStatusChangedNotification;
+import sma.message.environment.notification.PotEmptiedNotification;
 import sma.message.environment.notification.TokenValueDefinitionChangedNotification;
 import sma.message.environment.notification.WinnerDeterminedNotification;
 import sma.message.environment.request.GiveTokenSetToPlayerRequest;
@@ -321,6 +322,10 @@ public class BetManagerAgent extends Agent {
 
 			return true;
 		}
+		
+		// -----------------------------------------
+		// Environment event handling
+		// -----------------------------------------
 
 		@Override
 		public boolean onTokenValueDefinitionChangedNotification(TokenValueDefinitionChangedNotification notif, ACLMessage aclMsg) {
@@ -396,6 +401,12 @@ public class BetManagerAgent extends Agent {
 				AgentHelper.sendReply(BetManagerAgent.this, aclMsg, ACLMessage.INFORM, new BooleanMessage(false));
 			}
 
+			return true;
+		}
+		
+		@Override
+		public boolean onPotEmptiedNotification(PotEmptiedNotification potEmptiedNotification, ACLMessage aclMsg) {
+			game.getBetContainer().clearPot();
 			return true;
 		}
 
