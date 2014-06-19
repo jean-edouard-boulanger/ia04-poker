@@ -348,10 +348,10 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 		 *  Player's tokens
 		 */
 		token_white = new TokenPlayerIHM(485, 500, 0, ColorToken.WHITE);
-		token_black = new TokenPlayerIHM(515, 500, 0, ColorToken.RED);
-		token_blue = new TokenPlayerIHM(545, 500, 0, ColorToken.GREEN);
-		token_green = new TokenPlayerIHM(575, 500, 0, ColorToken.BLUE);
-		token_red = new TokenPlayerIHM(605, 500, 0, ColorToken.BLACK);
+		token_red = new TokenPlayerIHM(515, 500, 0, ColorToken.RED);
+		token_green = new TokenPlayerIHM(545, 500, 0, ColorToken.GREEN);
+		token_blue = new TokenPlayerIHM(575, 500, 0, ColorToken.BLUE);
+		token_black = new TokenPlayerIHM(605, 500, 0, ColorToken.BLACK);
 
 		playerTokens = new HashMap<TokenType, TokenPlayerIHM>();		
 		playerTokens.put(TokenType.WHITE, token_white);
