@@ -39,9 +39,9 @@ public class DecisionMakerHelper {
 		if(playerType == AIPlayerType.STATS) {
 			return statsMakeDecision(eventData, combinationCount);
 		}
-		else if(playerType == AIPlayerType.CALLER) {
-			return callerMakeDecision(eventData, combinationCount);
-		}
+		//else if(playerType == AIPlayerType.CALLER) {
+			//return callerMakeDecision(eventData, combinationCount);
+		//}
 		
 		return null;
 	}
