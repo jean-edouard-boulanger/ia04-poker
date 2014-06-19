@@ -2,6 +2,9 @@ package sma.agent.aiplayeragent.messagevisitor;
 
 import gui.player.PlayerWindow.PlayerGuiEvent;
 import gui.player.event.model.AIPlayRequestEventData;
+import jade.core.Agent;
+import jade.core.behaviours.TickerBehaviour;
+import jade.core.behaviours.WakerBehaviour;
 import jade.lang.acl.ACLMessage;
 
 import java.util.ArrayList;
@@ -300,7 +303,8 @@ public class AIPlayerAgentMessageVisitor extends MessageVisitor {
 
 		// The maximum bet amount is equal to the bankroll of the player
 		eventData.setMaximumBetAmount(playerBankroll);
-		
+		eventData.setCallAmount(callAmount);
+
 		eventData.setErrorMessage(request.getErrorMessage());
 		eventData.setRequestResentFollowedToError(request.isRequestResentFollowedToError());
 		
@@ -312,12 +316,7 @@ public class AIPlayerAgentMessageVisitor extends MessageVisitor {
 		
 		Decision decision = DecisionMakerHelper.makeDecision(eventData, playerType);
 		
-		if(decision.getBetType() == BetType.FOLD) {
-			myAgent.replyFoldToSimulationPlayRequest();
-		}
-		else {
-			myAgent.replyBetToSimulationPlayRequest(decision.getBetAmount());
-		}
+		myAgent.addBehaviour(new AIReplyLaterBehaviour(myAgent, 2000, decision));
 		
 		return true;
 	}
@@ -348,5 +347,24 @@ public class AIPlayerAgentMessageVisitor extends MessageVisitor {
 	public boolean onPotEmptiedNotification(PotEmptiedNotification emptyPotRequest, ACLMessage aclMsg) {
 		myAgent.getGame().getBetContainer().clearPot();
 		return true;
+	}
+	
+	private class AIReplyLaterBehaviour extends WakerBehaviour {
+		private Decision decision;
+		AIPlayerAgent myAgent;
+		public AIReplyLaterBehaviour(Agent agent, int time, Decision decision) {
+			super(agent, time);
+			this.myAgent = (AIPlayerAgent) agent;
+			this.decision = decision;
+		}
+		@Override
+		protected void onWake() {
+			if(decision.getBetType() == BetType.FOLD) {
+				myAgent.replyFoldToSimulationPlayRequest();
+			}
+			else {
+				myAgent.replyBetToSimulationPlayRequest(decision.getBetAmount());
+			}
+		}
 	}
 }

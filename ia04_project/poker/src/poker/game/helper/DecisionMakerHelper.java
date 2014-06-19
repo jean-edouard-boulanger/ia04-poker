@@ -34,8 +34,14 @@ public class DecisionMakerHelper {
 			
 		HashMap<Combination, Float> probabilities = (HashMap<Combination, Float>) r.getProbabilities();
 		
-		int combinationCount = Collections.frequency(probabilities.values(), 1);
-				
+		int combinationCount = 0;//Collections.frequency(probabilities.values(), 1);
+			
+		for(Float p : probabilities.values()) {
+			if(p > 0.7) {
+				combinationCount++;
+			}
+		}
+		
 		if(playerType == AIPlayerType.STATS) {
 			return statsMakeDecision(eventData, combinationCount);
 		}
@@ -56,7 +62,7 @@ public class DecisionMakerHelper {
 
 		Random random = new Random();
 		
-		int raiseDecision = random.nextInt(90);
+		int raiseDecision = random.nextInt(110);
 		
 		if(raiseDecision < 10) {
 			return new Decision(BetType.FOLD, 0);
@@ -88,7 +94,7 @@ public class DecisionMakerHelper {
 				System.out.println("[AIPlayer] Decided to raise at " + minimumBetAmount + " because I have a combination.");
 				return new Decision(BetType.RAISE, minimumBetAmount);
 			}
-			else if(betActions.contains(BetType.CALL) && raiseDecision > 25) {
+			else if(betActions.contains(BetType.CALL)) {
 				System.out.println("[AIPlayer] Decided to call.");
 				return new Decision(BetType.CALL, callAmount);
 			}
@@ -99,8 +105,8 @@ public class DecisionMakerHelper {
 		}
 		
 		if(combinationCount > 1) {
-			System.out.println("[AIPlayer] Decided to raise at " + minimumBetAmount + " because I have " + combinationCount + " combinations.");
-			return new Decision(BetType.RAISE, maximumBetAmount);
+			System.out.println("[AIPlayer] Decided to raise at " + maximumBetAmount + " because I have " + combinationCount + " combinations.");
+			return new Decision(BetType.RAISE, minimumBetAmount);
 		}
 		
 		return null;
