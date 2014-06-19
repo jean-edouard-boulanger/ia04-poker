@@ -12,6 +12,8 @@ import jade.lang.acl.MessageTemplate;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import org.omg.CosNaming.NamingContextPackage.CannotProceed;
+
 import poker.card.model.CardDeck;
 import poker.game.exception.NoPlaceAvailableException;
 import poker.game.exception.NotRegisteredPlayerException;
@@ -40,44 +42,19 @@ public class DealerAgent extends Agent {
 	PlayersContainer playersContainer;
 	CardDeck cardDeck;
 
-	private HashMap<String, ArrayList<String>> dealTransactionsErrors;
-
 	DealerMessageVisitor messageVisitor;
 
 	public DealerAgent(){
 		super();
-		this.dealTransactionsErrors = new HashMap<String, ArrayList<String>>();
 		this.messageVisitor = new DealerMessageVisitor();
 	}
-
+	
 	public void setup(){
-		DFServiceHelper.registerService(this, "DealerAgent","Dealer");
+		DFServiceHelper.registerService(this, "DealerAgent", "Dealer");
 		this.addBehaviour(new ReceiveEnvironmentNotificationBehaviour(this));
 		this.addBehaviour(new DealCardsBehaviour());
 	}
-
-	private void registerDealTransaction(String cid){
-		if(!dealTransactionsErrors.containsKey(cid)){
-			dealTransactionsErrors.put(cid, null);
-		}
-	}
-
-	private void addErrorForDealTransaction(String cid, String error){
-		if(!dealTransactionsErrors.containsKey(cid)){
-			dealTransactionsErrors.put(cid, null);
-		}
-		dealTransactionsErrors.get(cid).add(error);
-	}
-
-	private ArrayList<String> getErrorsForDealTransaction(String cid){
-		return this.dealTransactionsErrors.get(cid);
-	}
-
-	private void releaseDealTransaction(String cid){
-		this.dealTransactionsErrors.remove(cid);
-	}
-
-
+	
 	private class ReceiveEnvironmentNotificationBehaviour extends CyclicBehaviour
 	{
 
@@ -190,25 +167,9 @@ public class DealerAgent extends Agent {
 			Message conclusionMessage = null;
 			int performative = ACLMessage.INFORM;
 
-			ArrayList<String> errors = getErrorsForDealTransaction(request.getConversationId());
-
-			if(getErrorsForDealTransaction(request.getConversationId()) != null){
-				conclusionMessage = new FailureMessage();
-				performative = ACLMessage.FAILURE;
-
-				StringBuffer sb = new StringBuffer();
-				for(String error : errors){
-					sb.append(error).append(System.lineSeparator());
-				}
-
-				((FailureMessage)conclusionMessage).setMessage(sb.toString());
-			}
-			else {
-				conclusionMessage = new OKMessage();
-			}
+			conclusionMessage = new OKMessage();
 
 			AgentHelper.sendReply(DealerAgent.this, this.request, performative, conclusionMessage);
-			releaseDealTransaction(this.request.getConversationId());
 		}
 	}
 
@@ -227,7 +188,6 @@ public class DealerAgent extends Agent {
 
 			AID EnvAID = DFServiceHelper.searchService(DealerAgent.this, "PokerEnvironment", "Environment");
 
-			registerDealTransaction(aclMsg.getConversationId());
 			SequentialBehaviour globalTransactionBehaviour = new SequentialBehaviour();
 
 			Round handStep = request.getHandStep();
@@ -252,7 +212,7 @@ public class DealerAgent extends Agent {
 						}
 						@Override
 						public boolean onFailureMessage(FailureMessage msg, ACLMessage aclMsg) {
-							addErrorForDealTransaction(aclMsg.getConversationId(), msg.getMessage());
+							System.err.println("ERROR [" + DealerAgent.this.getLocalName() + "] Cannot deal card to player " + player.getNickname() + ": " + msg.getMessage());
 							return true;
 						}
 					});
@@ -278,7 +238,7 @@ public class DealerAgent extends Agent {
 						}
 						@Override
 						public boolean onFailureMessage(FailureMessage msg, ACLMessage aclMsg) {
-							addErrorForDealTransaction(aclMsg.getConversationId(), msg.getMessage());
+							System.err.println("ERROR [" + DealerAgent.this.getLocalName() + "] Cannot deal card to community cards: " + msg.getMessage());
 							return true;
 						}
 					});

@@ -128,6 +128,7 @@ public class ServerWindow extends JFrame implements PropertyChangeListener {
 		
 		sim_agent.postGuiEvent(ev);
 		
+		radio_complete_by_ia.setEnabled(false);
 		nb_tour_increase.setEnabled(false);
 		list_nb_player.setEnabled(false);
 		button_launch.setEnabled(false);

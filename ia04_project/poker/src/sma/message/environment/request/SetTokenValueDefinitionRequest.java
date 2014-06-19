@@ -1,7 +1,6 @@
 package sma.message.environment.request;
 
 import jade.lang.acl.ACLMessage;
-import poker.game.model.BlindValueDefinition;
 import poker.token.model.TokenValueDefinition;
 import sma.message.Message;
 import sma.message.MessageVisitor;

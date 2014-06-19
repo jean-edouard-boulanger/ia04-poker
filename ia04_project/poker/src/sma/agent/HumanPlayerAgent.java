@@ -51,7 +51,7 @@ import sma.message.bet.request.FoldRequest;
 import sma.message.environment.notification.BetNotification;
 import sma.message.environment.notification.BlindValueDefinitionChangedNotification;
 import sma.message.environment.notification.CardAddedToCommunityCardsNotification;
-import sma.message.environment.notification.CommunityCardsEmptiedNotification;
+import sma.message.environment.notification.CardsEmptiedNotification;
 import sma.message.environment.notification.CurrentPlayerChangedNotification;
 import sma.message.environment.notification.DealerChangedNotification;
 import sma.message.environment.notification.PlayerReceivedCardNotification;
@@ -61,6 +61,7 @@ import sma.message.environment.notification.PlayerSitOnTableNotification;
 import sma.message.environment.notification.PlayerStatusChangedNotification;
 import sma.message.environment.notification.TokenValueDefinitionChangedNotification;
 import sma.message.environment.notification.WinnerDeterminedNotification;
+import sma.message.environment.request.EmptyPotRequest;
 import sma.message.environment.request.PlayerFoldedRequest;
 import sma.message.simulation.request.PlayRequest;
 
@@ -226,7 +227,7 @@ public class HumanPlayerAgent extends GuiAgent {
 		}
 
 		@Override
-		public boolean onCommunityCardsEmptiedNotification(CommunityCardsEmptiedNotification notification, ACLMessage aclMsg) {
+		public boolean onCardsEmptiedNotification(CardsEmptiedNotification notification, ACLMessage aclMsg) {
 
 			game.getCommunityCards().popCards();
 
@@ -552,6 +553,13 @@ public class HumanPlayerAgent extends GuiAgent {
 			
 			System.out.println("[HPA] Player winner");
 
+			return true;
+		}
+		
+		@Override
+		public boolean onEmptyPotRequest(EmptyPotRequest emptyPotRequest, ACLMessage aclMsg) {
+			game.getBetContainer().clearPot();
+			changes_game.firePropertyChange(PlayerGuiEvent.CLEAR_POT.toString(), null, null);
 			return true;
 		}
 	}

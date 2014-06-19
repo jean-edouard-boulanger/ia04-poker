@@ -29,7 +29,7 @@ import sma.message.bet.notification.BetsMergedNotification;
 import sma.message.environment.notification.BetNotification;
 import sma.message.environment.notification.BlindValueDefinitionChangedNotification;
 import sma.message.environment.notification.CardAddedToCommunityCardsNotification;
-import sma.message.environment.notification.CommunityCardsEmptiedNotification;
+import sma.message.environment.notification.CardsEmptiedNotification;
 import sma.message.environment.notification.DealerChangedNotification;
 import sma.message.environment.notification.PlayerReceivedCardNotification;
 import sma.message.environment.notification.PlayerReceivedTokenSetNotification;
@@ -87,7 +87,7 @@ public class AIPlayerAgentMessageVisitor extends MessageVisitor {
 	}
 
 	@Override
-	public boolean onCommunityCardsEmptiedNotification(CommunityCardsEmptiedNotification notification, ACLMessage aclMsg) {
+	public boolean onCardsEmptiedNotification(CardsEmptiedNotification notification, ACLMessage aclMsg) {
 
 		myAgent.getGame().getCommunityCards().popCards();
 

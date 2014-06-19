@@ -21,7 +21,7 @@ import sma.message.Message;
 import sma.message.bet.request.BetRequest;
 import sma.message.dealer.request.DealRequest;
 import sma.message.environment.request.CurrentPlayerChangeRequest;
-import sma.message.environment.request.EmptyCommunityCardsRequest;
+import sma.message.environment.request.EmptyCardsRequest;
 import sma.message.environment.request.SetDealerRequest;
 
 /**

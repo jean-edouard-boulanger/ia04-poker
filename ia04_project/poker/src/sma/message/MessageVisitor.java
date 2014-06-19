@@ -17,7 +17,7 @@ import sma.message.determine_winner.DetermineWinnerRequest;
 import sma.message.environment.notification.BetNotification;
 import sma.message.environment.notification.BlindValueDefinitionChangedNotification;
 import sma.message.environment.notification.CardAddedToCommunityCardsNotification;
-import sma.message.environment.notification.CommunityCardsEmptiedNotification;
+import sma.message.environment.notification.CardsEmptiedNotification;
 import sma.message.environment.notification.CurrentPlayerChangedNotification;
 import sma.message.environment.notification.DealerChangedNotification;
 import sma.message.environment.notification.PlayerCardsRevealedNotification;
@@ -27,6 +27,7 @@ import sma.message.environment.notification.PlayerReceivedTokenSetNotification;
 import sma.message.environment.notification.PlayerReceivedUnknownCardNotification;
 import sma.message.environment.notification.PlayerSitOnTableNotification;
 import sma.message.environment.notification.PlayerStatusChangedNotification;
+import sma.message.environment.notification.PotEmptiedNotification;
 import sma.message.environment.notification.TokenSetSentFromPotToPlayerNotification;
 import sma.message.environment.notification.TokenValueDefinitionChangedNotification;
 import sma.message.environment.notification.WinnerDeterminedNotification;
@@ -36,7 +37,8 @@ import sma.message.environment.request.BlindValueDefinitionChangeRequest;
 import sma.message.environment.request.ChangePlayerStatusRequest;
 import sma.message.environment.request.CurrentPlayerChangeRequest;
 import sma.message.environment.request.DealCardToPlayerRequest;
-import sma.message.environment.request.EmptyCommunityCardsRequest;
+import sma.message.environment.request.EmptyCardsRequest;
+import sma.message.environment.request.EmptyPotRequest;
 import sma.message.environment.request.GiveTokenSetToPlayerRequest;
 import sma.message.environment.request.PlayerBetRequest;
 import sma.message.environment.request.PlayerFoldedRequest;
@@ -97,7 +99,7 @@ public class MessageVisitor {
 	public boolean onAddCommunityCardRequest(AddCommunityCardRequest notif, ACLMessage aclMsg) {return false;}
 	public boolean onDealCardToPlayerRequest(DealCardToPlayerRequest notif, ACLMessage aclMsg){return false;}
 	public boolean onCurrentPlayerChangeRequest(CurrentPlayerChangeRequest notif, ACLMessage aclMsg){return false;}
-	public boolean onEmptyCommunityCardsRequest(EmptyCommunityCardsRequest notif, ACLMessage aclMsg) {return false;}
+	public boolean onEmptyCardsRequest(EmptyCardsRequest notif, ACLMessage aclMsg) {return false;}
 	public boolean onGiveTokenSetToPlayerRequest(GiveTokenSetToPlayerRequest notif, ACLMessage aclMsg) {return false;}
 	public boolean onBlindValueDefinitionChangeRequest(BlindValueDefinitionChangeRequest notif, ACLMessage aclMsg) {return false;}
 	public boolean onSetTokenValueDefinitionRequest(SetTokenValueDefinitionRequest notif,	ACLMessage aclMsg) {return false;}
@@ -108,6 +110,7 @@ public class MessageVisitor {
 	public boolean onChangePlayerStatusRequest(ChangePlayerStatusRequest request, ACLMessage aclMsg){ return false; }
 	public boolean onRevealPlayerCardsRequest(RevealPlayerCardsRequest request, ACLMessage aclMsg){ return false; }
 	public boolean onSendTokenSetToPlayerFromPotRequest(SendTokenSetToPlayerFromPotRequest request, ACLMessage aclMsg){ return false; }
+	public boolean onEmptyPotRequest(EmptyPotRequest emptyPotRequest, ACLMessage aclMsg) { return false; }
 	
 	// Environment notification 
 	public boolean onEnvironmentChanged(Message notif, ACLMessage aclMsg){return false;}
@@ -115,7 +118,7 @@ public class MessageVisitor {
 	public boolean onPlayerReceivedUnknownCardNotification(PlayerReceivedUnknownCardNotification notification, ACLMessage aclMsg) {return false;}
 	public boolean onPlayerReceivedCardNotification(PlayerReceivedCardNotification notification, ACLMessage aclMsg){return false;}
 	public boolean onCardAddedToCommunityCardsNotification(CardAddedToCommunityCardsNotification notification, ACLMessage aclMsg){return false;}
-	public boolean onCommunityCardsEmptiedNotification(CommunityCardsEmptiedNotification notification, ACLMessage aclMsg){return false;}
+	public boolean onCardsEmptiedNotification(CardsEmptiedNotification notification, ACLMessage aclMsg){return false;}
 	public boolean onPlayerSitOnTableNotification(PlayerSitOnTableNotification notification, ACLMessage aclMsg){return false;}
 	public boolean onPlayerReceivedTokenSetNotification(PlayerReceivedTokenSetNotification notification, ACLMessage aclMsg){return false;}
 	public boolean onBetNotification(BetNotification notification, ACLMessage aclMsg){return false;}
@@ -130,5 +133,6 @@ public class MessageVisitor {
 
 	//Simulation
 	public boolean onPlayRequest(PlayRequest request, ACLMessage aclMessage){return false;}
+	public boolean onPotEmptiedNotification(PotEmptiedNotification potEmptiedNotification, ACLMessage aclMsg) {return false;}
 	
 }

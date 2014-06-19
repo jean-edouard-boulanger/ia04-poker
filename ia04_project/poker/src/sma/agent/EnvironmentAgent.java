@@ -6,7 +6,6 @@ import jade.core.behaviours.CyclicBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 
-import java.net.Authenticator.RequestorType;
 import java.util.ArrayList;
 
 import poker.card.exception.CommunityCardsFullException;
@@ -17,7 +16,6 @@ import poker.game.exception.NotRegisteredPlayerException;
 import poker.game.exception.PlayerAlreadyRegisteredException;
 import poker.game.model.Game;
 import poker.game.player.model.Player;
-import poker.game.player.model.PlayerStatus;
 import poker.token.exception.InvalidTokenAmountException;
 import sma.agent.helper.AgentHelper;
 import sma.agent.helper.DFServiceHelper;
@@ -29,7 +27,7 @@ import sma.message.bet.notification.BetsMergedNotification;
 import sma.message.environment.notification.BetNotification;
 import sma.message.environment.notification.BlindValueDefinitionChangedNotification;
 import sma.message.environment.notification.CardAddedToCommunityCardsNotification;
-import sma.message.environment.notification.CommunityCardsEmptiedNotification;
+import sma.message.environment.notification.CardsEmptiedNotification;
 import sma.message.environment.notification.CurrentPlayerChangedNotification;
 import sma.message.environment.notification.DealerChangedNotification;
 import sma.message.environment.notification.PlayerCardsRevealedNotification;
@@ -38,6 +36,8 @@ import sma.message.environment.notification.PlayerReceivedTokenSetNotification;
 import sma.message.environment.notification.PlayerReceivedUnknownCardNotification;
 import sma.message.environment.notification.PlayerSitOnTableNotification;
 import sma.message.environment.notification.PlayerStatusChangedNotification;
+import sma.message.environment.notification.PotEmptiedNotification;
+import sma.message.environment.notification.TokenSetSentFromPotToPlayerNotification;
 import sma.message.environment.notification.TokenValueDefinitionChangedNotification;
 import sma.message.environment.notification.WinnerDeterminedNotification;
 import sma.message.environment.request.AddCommunityCardRequest;
@@ -46,10 +46,12 @@ import sma.message.environment.request.BlindValueDefinitionChangeRequest;
 import sma.message.environment.request.ChangePlayerStatusRequest;
 import sma.message.environment.request.CurrentPlayerChangeRequest;
 import sma.message.environment.request.DealCardToPlayerRequest;
-import sma.message.environment.request.EmptyCommunityCardsRequest;
+import sma.message.environment.request.EmptyCardsRequest;
+import sma.message.environment.request.EmptyPotRequest;
 import sma.message.environment.request.GiveTokenSetToPlayerRequest;
 import sma.message.environment.request.PlayerBetRequest;
 import sma.message.environment.request.RevealPlayerCardsRequest;
+import sma.message.environment.request.SendTokenSetToPlayerFromPotRequest;
 import sma.message.environment.request.SetDealerRequest;
 import sma.message.environment.request.SetTokenValueDefinitionRequest;
 
@@ -236,9 +238,14 @@ public class EnvironmentAgent extends Agent {
 		}
 
 		@Override
-		public boolean onEmptyCommunityCardsRequest(EmptyCommunityCardsRequest request, ACLMessage aclMsg) {
+		public boolean onEmptyCardsRequest(EmptyCardsRequest request, ACLMessage aclMsg) {
 			game.getCommunityCards().popCards();
-			AgentHelper.sendSimpleMessage(EnvironmentAgent.this, subscribers, ACLMessage.PROPAGATE, new CommunityCardsEmptiedNotification());
+			
+			for(Player player : game.getPlayersContainer().getPlayersInGame()){
+				player.getDeck().removeCards();
+			}
+			
+			AgentHelper.sendSimpleMessage(EnvironmentAgent.this, subscribers, ACLMessage.PROPAGATE, new CardsEmptiedNotification());
 			AgentHelper.sendReply(EnvironmentAgent.this, aclMsg, ACLMessage.INFORM, new OKMessage());
 			return true;
 		}
@@ -322,6 +329,23 @@ public class EnvironmentAgent extends Agent {
 			
 			AgentHelper.sendSimpleMessage(EnvironmentAgent.this, subscribers, ACLMessage.PROPAGATE, notification);
 			
+			return true;
+		}
+		
+		@Override
+		public boolean onSendTokenSetToPlayerFromPotRequest(SendTokenSetToPlayerFromPotRequest request, ACLMessage aclMsg) {
+			Player player = game.getPlayersContainer().getPlayerByAID(request.getPlayerAID());
+			player.getTokens().addTokenSet(request.getSentTokenSet());
+			AgentHelper.sendSimpleMessage(EnvironmentAgent.this, subscribers, ACLMessage.PROPAGATE, new TokenSetSentFromPotToPlayerNotification(request.getPlayerAID(), request.getSentTokenSet()));
+			AgentHelper.sendReply(EnvironmentAgent.this, aclMsg, ACLMessage.INFORM, new OKMessage());
+			return true;
+		}
+		
+		@Override
+		public boolean onEmptyPotRequest(EmptyPotRequest emptyPotRequest, ACLMessage aclMsg) {
+			game.getBetContainer().clearPot();
+			AgentHelper.sendSimpleMessage(EnvironmentAgent.this, subscribers, ACLMessage.PROPAGATE, new PotEmptiedNotification());
+			AgentHelper.sendReply(EnvironmentAgent.this, aclMsg, ACLMessage.INFORM, new OKMessage());
 			return true;
 		}
 	}
