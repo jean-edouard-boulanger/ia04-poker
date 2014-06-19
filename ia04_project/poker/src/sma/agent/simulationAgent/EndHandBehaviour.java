@@ -11,6 +11,7 @@ import java.util.Map;
 
 import poker.card.heuristics.combination.model.Hand;
 import poker.game.player.model.Player;
+import poker.game.player.model.WinnerPlayer;
 import sma.agent.SimulationAgent;
 import sma.agent.SimulationAgent.GameEvent;
 import sma.agent.helper.AgentHelper;
@@ -45,11 +46,7 @@ public class EndHandBehaviour extends TaskRunnerBehaviour {
 				.then(new OneShotBehaviour() {
 					@Override
 					public void action() {
-						Map<AID, Hand> winnersAIDS = new HashMap<AID, Hand>();
-						for(Map.Entry<AID, Hand> winnerAID : simulationAgent.getWinners().entrySet()){
-							winnersAIDS.put(winnerAID.getKey(), winnerAID.getValue());
-						}
-						WinnerDeterminedNotification winners = new WinnerDeterminedNotification(winnersAIDS);
+						WinnerDeterminedNotification winners = new WinnerDeterminedNotification(simulationAgent.getWinners());
 						AgentHelper.sendSimpleMessage(simulationAgent, environmentAID, ACLMessage.INFORM, winners);
 					}
 				})
@@ -73,8 +70,8 @@ public class EndHandBehaviour extends TaskRunnerBehaviour {
 	
 	public TransactionBehaviour getDistributePotToWinnersBehaviour(){
 		ArrayList<AID> winnersAIDs = new ArrayList<AID>();
-		for(AID playerAID : simulationAgent.getWinners().keySet()){
-			winnersAIDs.add(playerAID);
+		for(WinnerPlayer winner : simulationAgent.getWinners()){
+			winnersAIDs.add(winner.getPlayerAID());
 		}
 		
 		DistributePotToWinnersRequest distributePotToWinnersRequest = new DistributePotToWinnersRequest(winnersAIDs);

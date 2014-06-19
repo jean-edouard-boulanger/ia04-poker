@@ -8,12 +8,14 @@ import jade.gui.GuiAgent;
 import jade.gui.GuiEvent;
 
 import java.beans.PropertyChangeSupport;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import poker.card.heuristics.combination.model.Hand;
 import poker.game.model.Game;
 import poker.game.model.Round;
 import poker.game.player.model.Player;
+import poker.game.player.model.WinnerPlayer;
 import poker.token.exception.InvalidRepartitionException;
 import poker.token.exception.InvalidTokenAmountException;
 import poker.token.exception.InvalidTokenValueException;
@@ -75,7 +77,7 @@ public class SimulationAgent extends GuiAgent {
 	private int blindIncreaseDelayS;
 	private TokenValueDefinition defaultTokenValueDefinition;
 
-	private HashMap<AID, Hand> winners;
+	private ArrayList<WinnerPlayer> winners;
 
 	private boolean cancelNextPlayRequests = false;
 	private Round currentRound;
@@ -86,7 +88,7 @@ public class SimulationAgent extends GuiAgent {
 
 	public SimulationAgent(){
 		super();
-		this.winners = new HashMap<AID, Hand>();
+		this.winners = new ArrayList<WinnerPlayer>();
 	}
 
 	@Override
@@ -312,16 +314,16 @@ public class SimulationAgent extends GuiAgent {
 		this.winners.clear();
 	}
 	
-	public HashMap<AID, Hand> getWinners() {
+	public ArrayList<WinnerPlayer> getWinners() {
 		return winners;
 	}
 
-	public void setWinners(HashMap<AID, Hand> winners) {
+	public void setWinners(ArrayList<WinnerPlayer> winners) {
 		this.winners = winners;
 	}
 	
-	public void addWinner(AID playerAID, Hand h) {
-		this.winners.put(playerAID, h);
+	public void addWinner(WinnerPlayer player) {
+		this.winners.add(player);
 	}
 
 	public boolean getAddAIBeforeStarting() {

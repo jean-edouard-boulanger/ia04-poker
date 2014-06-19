@@ -4,10 +4,13 @@ import jade.core.AID;
 import jade.core.behaviours.Behaviour;
 import jade.lang.acl.ACLMessage;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import poker.card.heuristics.combination.model.Hand;
+import poker.game.player.model.WinnerPlayer;
 import sma.agent.SimulationAgent;
 import sma.agent.SimulationAgent.GameEvent;
 import sma.agent.helper.DFServiceHelper;
@@ -53,8 +56,11 @@ public class CheckWinnerBehaviour extends TaskRunnerBehaviour {
 		transaction.setResponseVisitor(new MessageVisitor(){
 			public boolean onWinnerDeterminedNotification(WinnerDeterminedNotification notification, ACLMessage aclMsg) {	
 				
-				simulationAgent.setWinners((HashMap)notification.getWinners());
-				
+				System.out.println("[CheckWinnerBehaviour] Winners determined: ");
+				simulationAgent.setWinners(notification.getWinners());
+				for(WinnerPlayer winner : simulationAgent.getWinners()){
+					System.out.println(winner.getPlayerAID().getLocalName() + " " + winner.getWinningHand().getStandardNotation());
+				}
 				return true;
 			}
 		});

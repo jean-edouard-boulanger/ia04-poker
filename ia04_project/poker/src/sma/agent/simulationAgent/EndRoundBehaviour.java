@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import poker.card.heuristics.combination.model.Hand;
 import poker.game.model.Round;
 import poker.game.player.model.Player;
+import poker.game.player.model.WinnerPlayer;
 import sma.agent.SimulationAgent;
 import sma.agent.SimulationAgent.GameEvent;
 import sma.agent.helper.BlankBehaviour;
@@ -72,7 +73,7 @@ public class EndRoundBehaviour extends TaskRunnerBehaviour {
 				 * Otherwise, the remaining player is the hand winner
 				 */
 				this.simulationAgent.setCurrentRound(Round.SHOWDOWN);
-				this.simulationAgent.addWinner(remainingPlayers.get(0).getAID(), null);
+				this.simulationAgent.addWinner(new WinnerPlayer(remainingPlayers.get(0).getAID(), null));
 				this.transition = GameEvent.END_HAND;
 			}
 		}

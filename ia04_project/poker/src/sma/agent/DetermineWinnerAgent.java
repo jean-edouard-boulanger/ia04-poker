@@ -19,6 +19,7 @@ import poker.card.model.Card;
 import poker.card.model.CommunityCards;
 import poker.game.player.model.Player;
 import poker.game.player.model.PlayerStatus;
+import poker.game.player.model.WinnerPlayer;
 import sma.agent.helper.AgentHelper;
 import sma.agent.helper.DFServiceHelper;
 import sma.agent.helper.TransactionBehaviour;
@@ -93,8 +94,15 @@ public class DetermineWinnerAgent extends Agent {
 			
 			//AgentHelper.sendSimpleMessage(DetermineWinnerAgent.this, environment, ACLMessage.INFORM, new WinnerDeterminedNotification(winners));
 			
+			
+			ArrayList<WinnerPlayer> winnerPlayers = new ArrayList<WinnerPlayer>();
+			
+			for(Entry<AID, Hand> winner : winners.entrySet()){
+				winnerPlayers.add(new WinnerPlayer(winner.getKey(), winner.getValue()));
+			}
+			
 			//Sending the list of winners (could be more than one winner)
-			AgentHelper.sendReply(DetermineWinnerAgent.this, aclMsg, ACLMessage.INFORM, new WinnerDeterminedNotification(winners));
+			AgentHelper.sendReply(DetermineWinnerAgent.this, aclMsg, ACLMessage.INFORM, new WinnerDeterminedNotification(winnerPlayers));
 			
 			//Winner was determined for the current round
 			players.clear();

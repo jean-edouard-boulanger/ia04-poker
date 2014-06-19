@@ -1164,15 +1164,16 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 					if(evt.getNewValue() instanceof Map)
 					{
 						try {
-							Map<Player, Hand> handPlayerWinners = (Map<Player, Hand>)evt.getNewValue();
+							Map<Player, Hand> handPlayerWinners = (HashMap<Player, Hand>)evt.getNewValue();
 							SequentialTransition sequence = new SequentialTransition();
 							
 							for(Entry<Player, Hand> entry : handPlayerWinners.entrySet())
 							{
 								sequence.getChildren().add(PlayerWindow.this.animate_winner.launchAnimation("Player " + entry.getKey().getNickname() + " has won", entry.getValue()));
+								appendToGameLog("Player '" + entry.getKey().getNickname() + "' won the hand with the combination " + entry.getValue().getStandardNotation());
 							}
 							
-							sequence.play();
+							//sequence.play();
 						}
 						catch(Exception e) {
 							System.out.println("[PlayerWindow] Player winner error " + e.getMessage());

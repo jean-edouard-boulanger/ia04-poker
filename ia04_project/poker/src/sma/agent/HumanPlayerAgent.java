@@ -16,6 +16,7 @@ import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 
 import java.beans.PropertyChangeSupport;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -34,6 +35,7 @@ import poker.game.model.BetType;
 import poker.game.model.Game;
 import poker.game.player.model.Player;
 import poker.game.player.model.PlayerStatus;
+import poker.game.player.model.WinnerPlayer;
 import poker.token.exception.InvalidTokenAmountException;
 import poker.token.helpers.TokenSetValueEvaluator;
 import poker.token.model.TokenSet;
@@ -545,15 +547,16 @@ public class HumanPlayerAgent extends GuiAgent {
 		@Override
 		public boolean onWinnerDeterminedNotification(WinnerDeterminedNotification notification, ACLMessage aclMsg) {
 			
-			Map<AID, Hand> handWinners = (HashMap<AID, Hand>) notification.getWinners();
 			Map<Player, Hand> handPlayerWinners = new HashMap<Player, Hand>();
 			
 			System.out.println("[HPA] Player winner");
 			
-			for(Entry<AID, Hand> entry : handWinners.entrySet())
+			for(WinnerPlayer winner : notification.getWinners())
 			{
-				handPlayerWinners.put(game.getPlayersContainer().getPlayerByAID(entry.getKey()), entry.getValue());
+				handPlayerWinners.put(game.getPlayersContainer().getPlayerByAID(winner.getPlayerAID()), winner.getWinningHand());
 			}
+			
+			System.out.println("[HPA] " + handPlayerWinners.size());
 			
 			changes_game.firePropertyChange(PlayerGuiEvent.PLAYER_WINNER.toString(), null, handPlayerWinners);
 			return true;
