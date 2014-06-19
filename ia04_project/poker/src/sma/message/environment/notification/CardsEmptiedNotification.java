@@ -4,12 +4,12 @@ import sma.message.Message;
 import sma.message.MessageVisitor;
 import jade.lang.acl.ACLMessage;
 
-public class CommunityCardsEmptiedNotification extends Message {
+public class CardsEmptiedNotification extends Message {
 
-	public CommunityCardsEmptiedNotification(){}
+	public CardsEmptiedNotification(){}
 	
 	@Override
 	public boolean accept(MessageVisitor visitor, ACLMessage aclMsg) {
-		return visitor.onEnvironmentChanged(this, aclMsg) | visitor.onCommunityCardsEmptiedNotification(this, aclMsg);
+		return visitor.onEnvironmentChanged(this, aclMsg) | visitor.onCardsEmptiedNotification(this, aclMsg);
 	}
 }

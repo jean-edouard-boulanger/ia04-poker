@@ -51,7 +51,7 @@ import sma.message.bet.request.FoldRequest;
 import sma.message.environment.notification.BetNotification;
 import sma.message.environment.notification.BlindValueDefinitionChangedNotification;
 import sma.message.environment.notification.CardAddedToCommunityCardsNotification;
-import sma.message.environment.notification.CommunityCardsEmptiedNotification;
+import sma.message.environment.notification.CardsEmptiedNotification;
 import sma.message.environment.notification.CurrentPlayerChangedNotification;
 import sma.message.environment.notification.DealerChangedNotification;
 import sma.message.environment.notification.PlayerReceivedCardNotification;
@@ -226,7 +226,7 @@ public class HumanPlayerAgent extends GuiAgent {
 		}
 
 		@Override
-		public boolean onCommunityCardsEmptiedNotification(CommunityCardsEmptiedNotification notification, ACLMessage aclMsg) {
+		public boolean onCardsEmptiedNotification(CardsEmptiedNotification notification, ACLMessage aclMsg) {
 
 			game.getCommunityCards().popCards();
 

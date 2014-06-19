@@ -8,7 +8,8 @@ import sma.agent.helper.DFServiceHelper;
 import sma.agent.helper.TransactionBehaviour;
 import sma.agent.helper.experimental.Task;
 import sma.agent.helper.experimental.TaskRunnerBehaviour;
-import sma.message.environment.request.EmptyCommunityCardsRequest;
+import sma.message.environment.request.EmptyCardsRequest;
+import sma.message.environment.request.EmptyPotRequest;
 
 public class EndHandBehaviour extends TaskRunnerBehaviour {
 
@@ -35,16 +36,16 @@ public class EndHandBehaviour extends TaskRunnerBehaviour {
 	}
 	
 	public TransactionBehaviour getEmptyCommunityCardsBehaviour(){
-		EmptyCommunityCardsRequest emptyCommunityCardsRequest = new EmptyCommunityCardsRequest();
+		EmptyCardsRequest emptyCommunityCardsRequest = new EmptyCardsRequest();
 		TransactionBehaviour transactionBehaviour = new TransactionBehaviour(simulationAgent, 
 				emptyCommunityCardsRequest, environment);
 		return transactionBehaviour;
 	}
 	
 	public TransactionBehaviour getEmptyPotBehaviour(){
+		EmptyPotRequest emptyPotRequest = new EmptyPotRequest();
 		TransactionBehaviour transactionBehaviour = new TransactionBehaviour(simulationAgent, 
-				emptyCommunityCardsRequest, environment);
+				emptyPotRequest, environment);
 		return transactionBehaviour;
 	}
-	
 }

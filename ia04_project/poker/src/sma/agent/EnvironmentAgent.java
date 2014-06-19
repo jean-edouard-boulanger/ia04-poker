@@ -29,7 +29,7 @@ import sma.message.bet.notification.BetsMergedNotification;
 import sma.message.environment.notification.BetNotification;
 import sma.message.environment.notification.BlindValueDefinitionChangedNotification;
 import sma.message.environment.notification.CardAddedToCommunityCardsNotification;
-import sma.message.environment.notification.CommunityCardsEmptiedNotification;
+import sma.message.environment.notification.CardsEmptiedNotification;
 import sma.message.environment.notification.CurrentPlayerChangedNotification;
 import sma.message.environment.notification.DealerChangedNotification;
 import sma.message.environment.notification.PlayerCardsRevealedNotification;
@@ -47,7 +47,7 @@ import sma.message.environment.request.BlindValueDefinitionChangeRequest;
 import sma.message.environment.request.ChangePlayerStatusRequest;
 import sma.message.environment.request.CurrentPlayerChangeRequest;
 import sma.message.environment.request.DealCardToPlayerRequest;
-import sma.message.environment.request.EmptyCommunityCardsRequest;
+import sma.message.environment.request.EmptyCardsRequest;
 import sma.message.environment.request.EmptyPotRequest;
 import sma.message.environment.request.GiveTokenSetToPlayerRequest;
 import sma.message.environment.request.PlayerBetRequest;
@@ -239,9 +239,14 @@ public class EnvironmentAgent extends Agent {
 		}
 
 		@Override
-		public boolean onEmptyCommunityCardsRequest(EmptyCommunityCardsRequest request, ACLMessage aclMsg) {
+		public boolean onEmptyCardsRequest(EmptyCardsRequest request, ACLMessage aclMsg) {
 			game.getCommunityCards().popCards();
-			AgentHelper.sendSimpleMessage(EnvironmentAgent.this, subscribers, ACLMessage.PROPAGATE, new CommunityCardsEmptiedNotification());
+			
+			for(Player player : game.getPlayersContainer().getPlayersInGame()){
+				player.getDeck().removeCards();
+			}
+			
+			AgentHelper.sendSimpleMessage(EnvironmentAgent.this, subscribers, ACLMessage.PROPAGATE, new CardsEmptiedNotification());
 			AgentHelper.sendReply(EnvironmentAgent.this, aclMsg, ACLMessage.INFORM, new OKMessage());
 			return true;
 		}
