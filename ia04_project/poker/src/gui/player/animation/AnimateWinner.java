@@ -26,7 +26,6 @@ public class AnimateWinner extends Group {
 	
 	public AnimateWinner()
 	{
-		sequence = new SequentialTransition();
 		
 		background_notification.getStyleClass().add("background-notification");
 		background_notification.setLayoutX(-950);
@@ -42,6 +41,8 @@ public class AnimateWinner extends Group {
 	
 	private void prepareAnimation() throws Exception
 	{
+		sequence = new SequentialTransition();
+		
 		TranslateTransition background_translate_beginning = TranslateTransitionBuilder
                 .create()
                 .duration(new Duration(200))
@@ -225,6 +226,7 @@ public class AnimateWinner extends Group {
 			prepareAnimation();
 			background_notification.toFront();
 			label_notification.toFront();	
+			sequence.play();
 		}
 		catch(Exception e) {
 			System.out.println("[PlayerWindow] animation winner failed " + e.getMessage());

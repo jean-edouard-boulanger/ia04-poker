@@ -1021,6 +1021,7 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 				 */
 				else if(evt.getPropertyName().equals(PlayerGuiEvent.YOUR_TURN.toString()))
 				{
+						PlayerWindow.this.animate_notification.prepareAnimation(new Duration(1000));
 						animate_notification.launchAnimation("Your turn");
 				}
 				
@@ -1198,16 +1199,17 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 							Map<Player, Hand> handPlayerWinners = (HashMap<Player, Hand>)evt.getNewValue();
 							SequentialTransition sequence = new SequentialTransition();
 							
+							PlayerWindow.this.animate_notification.prepareAnimation(new Duration(5000));
 							for(Entry<Player, Hand> entry : handPlayerWinners.entrySet())
 							{
 								if(entry.getValue() != null)
-									sequence.getChildren().add(PlayerWindow.this.animate_winner.launchAnimation("Player " + entry.getKey().getNickname() + " has won with " + Combination.values()[entry.getValue().getCombination().getCombination()], entry.getValue()));
+									PlayerWindow.this.animate_notification.launchAnimation("Player " + entry.getKey().getNickname() + " has won with " + Combination.values()[entry.getValue().getCombination().getCombination()]);
 								else
-									sequence.getChildren().add(PlayerWindow.this.animate_winner.launchAnimation("Player " + entry.getKey().getNickname() + " has won"));
+									PlayerWindow.this.animate_notification.launchAnimation("Player " + entry.getKey().getNickname() + " has won");
 								appendToGameLog("Player '" + entry.getKey().getNickname() + "' won the hand with the combination " + entry.getValue().getStandardNotation());
 							}
 							
-							sequence.play();
+							//sequence.play();
 						}
 						catch(Exception e) {
 							System.out.println("[PlayerWindow] Player winner error " + e.getMessage());

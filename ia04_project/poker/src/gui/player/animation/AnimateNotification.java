@@ -18,7 +18,6 @@ public class AnimateNotification extends Group {
 	
 	public AnimateNotification()
 	{
-		sequence = new SequentialTransition();
 		
 		background_notification.getStyleClass().add("background-notification");
 		background_notification.setLayoutX(-950);
@@ -30,13 +29,13 @@ public class AnimateNotification extends Group {
 		
 		this.getChildren().add(background_notification);
 		this.getChildren().add(label_notification);
-		
-		prepareAnimation();
 	}
 	
 	
-	public void prepareAnimation()
+	public void prepareAnimation(Duration time)
 	{
+		sequence = new SequentialTransition();
+		
 		TranslateTransition background_translate_beginning = TranslateTransitionBuilder
                 .create()
                 .duration(new Duration(200))
@@ -68,7 +67,7 @@ public class AnimateNotification extends Group {
 		
 		TranslateTransition label_translate_middle = TranslateTransitionBuilder
                 .create()
-                .duration(new Duration(1000))
+                .duration(time)
                 .node(label_notification)
                 .toX(1150)
                 .cycleCount(1)
