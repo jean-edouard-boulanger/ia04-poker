@@ -59,8 +59,11 @@ import sma.message.environment.notification.PlayerReceivedTokenSetNotification;
 import sma.message.environment.notification.PlayerReceivedUnknownCardNotification;
 import sma.message.environment.notification.PlayerSitOnTableNotification;
 import sma.message.environment.notification.PlayerStatusChangedNotification;
+<<<<<<< HEAD
 import sma.message.environment.notification.PotEmptiedNotification;
+=======
 import sma.message.environment.notification.TokenSetSentFromPotToPlayerNotification;
+>>>>>>> 700c17b488735dbeada172c567fbb865174d7536
 import sma.message.environment.notification.TokenValueDefinitionChangedNotification;
 import sma.message.environment.notification.WinnerDeterminedNotification;
 import sma.message.environment.request.PlayerFoldedRequest;
