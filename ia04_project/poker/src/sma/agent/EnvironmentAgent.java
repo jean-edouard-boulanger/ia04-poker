@@ -48,6 +48,7 @@ import sma.message.environment.request.ChangePlayerStatusRequest;
 import sma.message.environment.request.CurrentPlayerChangeRequest;
 import sma.message.environment.request.DealCardToPlayerRequest;
 import sma.message.environment.request.EmptyCommunityCardsRequest;
+import sma.message.environment.request.EmptyPotRequest;
 import sma.message.environment.request.GiveTokenSetToPlayerRequest;
 import sma.message.environment.request.PlayerBetRequest;
 import sma.message.environment.request.RevealPlayerCardsRequest;
@@ -332,6 +333,14 @@ public class EnvironmentAgent extends Agent {
 			Player player = game.getPlayersContainer().getPlayerByAID(request.getPlayerAID());
 			player.getTokens().addTokenSet(request.getSentTokenSet());
 			AgentHelper.sendSimpleMessage(EnvironmentAgent.this, subscribers, ACLMessage.PROPAGATE, new TokenSetSentFromPotToPlayerNotification(request.getPlayerAID(), request.getSentTokenSet()));
+			AgentHelper.sendReply(EnvironmentAgent.this, aclMsg, ACLMessage.INFORM, new OKMessage());
+			return true;
+		}
+		
+		@Override
+		public boolean onEmptyPotRequest(EmptyPotRequest emptyPotRequest, ACLMessage aclMsg) {
+			game.getBetContainer().clearPot();
+			AgentHelper.sendSimpleMessage(EnvironmentAgent.this, subscribers, ACLMessage.PROPAGATE, new TokenSetSentFromPotToPlayerNotification());
 			AgentHelper.sendReply(EnvironmentAgent.this, aclMsg, ACLMessage.INFORM, new OKMessage());
 			return true;
 		}
