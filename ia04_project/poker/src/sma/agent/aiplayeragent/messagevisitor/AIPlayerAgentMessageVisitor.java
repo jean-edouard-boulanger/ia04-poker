@@ -316,7 +316,7 @@ public class AIPlayerAgentMessageVisitor extends MessageVisitor {
 		
 		eventData.setCards(cards);
 		
-		Decision decision = DecisionMakerHelper.makeDecision(eventData, playerType);
+		Decision decision = DecisionMakerHelper.makeDecision(eventData, playerType, myAgent);
 		
 		myAgent.addBehaviour(new AIReplyLaterBehaviour(myAgent, 2000, decision));
 		

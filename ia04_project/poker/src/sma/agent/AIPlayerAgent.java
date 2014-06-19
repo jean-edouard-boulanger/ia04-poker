@@ -31,6 +31,8 @@ public class AIPlayerAgent extends Agent {
 	
 	private AIPlayerType playerType;
 	
+	private int probabilityToBet;
+	
 	@Override
 	public void setup()
 	{
@@ -39,6 +41,9 @@ public class AIPlayerAgent extends Agent {
 		game = new Game();
 
 		Random r = new Random();
+		
+		probabilityToBet = r.nextInt(45 + 1);
+		probabilityToBet += 25;
 		
 		playerType = AIPlayerType.values()[r.nextInt(AIPlayerType.values().length)];
 		
@@ -179,5 +184,13 @@ public class AIPlayerAgent extends Agent {
 
 	public void setPlayerType(AIPlayerType playerType) {
 		this.playerType = playerType;
+	}
+
+	public int getProbabilityToBet() {
+		return probabilityToBet;
+	}
+
+	public void setProbabilityToBet(int probabilityToBet) {
+		this.probabilityToBet = probabilityToBet;
 	}
 }
