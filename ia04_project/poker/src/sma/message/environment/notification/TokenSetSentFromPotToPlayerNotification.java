@@ -36,6 +36,6 @@ public class TokenSetSentFromPotToPlayerNotification extends Message {
 
 	@Override
 	public boolean accept(MessageVisitor visitor, ACLMessage aclMsg) {
-		return visitor.onTokenSetSentFromPotToPlayerNotification(this, aclMsg);
+		return visitor.onEnvironmentChanged(this, aclMsg) | visitor.onTokenSetSentFromPotToPlayerNotification(this, aclMsg);
 	}
 }

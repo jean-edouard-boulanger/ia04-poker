@@ -26,8 +26,8 @@ import poker.token.model.TokenType;
 import sma.agent.AIPlayerAgent;
 import sma.message.MessageVisitor;
 import sma.message.SubscriptionOKMessage;
-import sma.message.bet.notification.BetsMergedNotification;
 import sma.message.environment.notification.BetNotification;
+import sma.message.environment.notification.BetsMergedNotification;
 import sma.message.environment.notification.BlindValueDefinitionChangedNotification;
 import sma.message.environment.notification.CardAddedToCommunityCardsNotification;
 import sma.message.environment.notification.CardsEmptiedNotification;
@@ -37,6 +37,7 @@ import sma.message.environment.notification.PlayerReceivedTokenSetNotification;
 import sma.message.environment.notification.PlayerReceivedUnknownCardNotification;
 import sma.message.environment.notification.PlayerSitOnTableNotification;
 import sma.message.environment.notification.PlayerStatusChangedNotification;
+import sma.message.environment.notification.PotEmptiedNotification;
 import sma.message.environment.notification.TokenValueDefinitionChangedNotification;
 import sma.message.environment.request.EmptyPotRequest;
 import sma.message.environment.request.PlayerFoldedRequest;
@@ -302,7 +303,7 @@ public class AIPlayerAgentMessageVisitor extends MessageVisitor {
 	}
 	
 	@Override
-	public boolean onEmptyPotRequest(EmptyPotRequest emptyPotRequest, ACLMessage aclMsg) {
+	public boolean onPotEmptiedNotification(PotEmptiedNotification emptyPotRequest, ACLMessage aclMsg) {
 		myAgent.getGame().getBetContainer().clearPot();
 		return true;
 	}

@@ -29,14 +29,12 @@ import sma.message.Message;
 import sma.message.MessageVisitor;
 import sma.message.OKMessage;
 import sma.message.SubscriptionOKMessage;
-import sma.message.bet.notification.BetsMergedNotification;
-import sma.message.bet.notification.PotAmountNotification;
 import sma.message.bet.request.AreBetsClosedRequest;
 import sma.message.bet.request.BetRequest;
 import sma.message.bet.request.DistributePotToWinnersRequest;
 import sma.message.bet.request.DoesPlayerHaveToBetRequest;
-import sma.message.bet.request.GetPotAmountRequest;
 import sma.message.bet.request.MergeBetsRequest;
+import sma.message.environment.notification.BetsMergedNotification;
 import sma.message.environment.notification.PlayerReceivedTokenSetNotification;
 import sma.message.environment.notification.PlayerSitOnTableNotification;
 import sma.message.environment.notification.PlayerStatusChangedNotification;
@@ -332,16 +330,6 @@ public class BetManagerAgent extends Agent {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			return true;
-		}		
-
-		@Override
-		public boolean onGetPotAmountRequest(GetPotAmountRequest request, ACLMessage aclMsg) {
-
-			PotAmountNotification potAmountNotification = new PotAmountNotification(game.getBetContainer().getPot());
-
-			AgentHelper.sendReply(BetManagerAgent.this, aclMsg, ACLMessage.INFORM, potAmountNotification);
-
 			return true;
 		}
 

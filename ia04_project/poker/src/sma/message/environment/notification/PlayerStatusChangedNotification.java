@@ -36,6 +36,6 @@ public class PlayerStatusChangedNotification extends Message {
 	
 	@Override
 	public boolean accept(MessageVisitor visitor, ACLMessage aclMsg) {
-		return visitor.onPlayerStatusChangedNotification(this, aclMsg);
+		return visitor.onEnvironmentChanged(this, aclMsg) | visitor.onPlayerStatusChangedNotification(this, aclMsg);
 	}
 }

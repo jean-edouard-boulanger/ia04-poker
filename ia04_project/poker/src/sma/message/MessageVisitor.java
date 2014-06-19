@@ -1,20 +1,18 @@
 package sma.message;
 
 import jade.lang.acl.ACLMessage;
-import sma.message.bet.notification.BetsMergedNotification;
-import sma.message.bet.notification.PotAmountNotification;
 import sma.message.bet.request.AreBetsClosedRequest;
 import sma.message.bet.request.BetRequest;
 import sma.message.bet.request.DistributePotToWinnersRequest;
 import sma.message.bet.request.DoesPlayerHaveToBetRequest;
 import sma.message.bet.request.FoldRequest;
-import sma.message.bet.request.GetPotAmountRequest;
 import sma.message.bet.request.MergeBetsRequest;
 import sma.message.blind.request.RefreshBlindValueDefinitionRequest;
 import sma.message.blind.request.ResetBlindRequest;
 import sma.message.dealer.request.DealRequest;
 import sma.message.determine_winner.DetermineWinnerRequest;
 import sma.message.environment.notification.BetNotification;
+import sma.message.environment.notification.BetsMergedNotification;
 import sma.message.environment.notification.BlindValueDefinitionChangedNotification;
 import sma.message.environment.notification.CardAddedToCommunityCardsNotification;
 import sma.message.environment.notification.CardsEmptiedNotification;
@@ -87,8 +85,6 @@ public class MessageVisitor {
 	public boolean onBetRequest(BetRequest request, ACLMessage aclMsg) {return false;}
 	public boolean onAreBetsClosedRequest(AreBetsClosedRequest request, ACLMessage aclMsg) {return false;}
 	public boolean onFoldRequest(FoldRequest request, ACLMessage aclMsg){return false;}
-	public boolean onGetPotAmountRequest(GetPotAmountRequest request, ACLMessage aclMsg) {return false;}
-	public boolean onPotAmountNotification(PotAmountNotification notification, ACLMessage aclMsg) {return false;}
 	public boolean onMergeBetsRequest(MergeBetsRequest request, ACLMessage aclMsg) {return false;}
 	public boolean onBetsMergedNotification(BetsMergedNotification notification, ACLMessage aclMsg) {return false;}
 	public boolean onDoesPlayerHaveToBetRequest(DoesPlayerHaveToBetRequest request, ACLMessage aclMessage){return false;}
@@ -114,6 +110,7 @@ public class MessageVisitor {
 	
 	// Environment notification 
 	public boolean onEnvironmentChanged(Message notif, ACLMessage aclMsg){return false;}
+	
 	public boolean onSubscriptionOK(SubscriptionOKMessage notif, ACLMessage aclMsg){return false;}
 	public boolean onPlayerReceivedUnknownCardNotification(PlayerReceivedUnknownCardNotification notification, ACLMessage aclMsg) {return false;}
 	public boolean onPlayerReceivedCardNotification(PlayerReceivedCardNotification notification, ACLMessage aclMsg){return false;}
@@ -130,9 +127,9 @@ public class MessageVisitor {
 	public boolean onPlayerCardsRevealedNotification(PlayerCardsRevealedNotification playerCardsRevealed, ACLMessage aclMsg) {return false;}
 	public boolean onPlayerStatusChangedNotification(PlayerStatusChangedNotification notification, ACLMessage aclMsg) {return false;}
 	public boolean onTokenSetSentFromPotToPlayerNotification(TokenSetSentFromPotToPlayerNotification request, ACLMessage aclMsg){ return false; }
-
+	public boolean onPotEmptiedNotification(PotEmptiedNotification potEmptiedNotification, ACLMessage aclMsg) {return false;}
+	
 	//Simulation
 	public boolean onPlayRequest(PlayRequest request, ACLMessage aclMessage){return false;}
-	public boolean onPotEmptiedNotification(PotEmptiedNotification potEmptiedNotification, ACLMessage aclMsg) {return false;}
 	
 }
