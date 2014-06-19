@@ -23,14 +23,16 @@ import sma.agent.helper.AgentHelper;
 import sma.agent.helper.DFServiceHelper;
 import sma.agent.helper.TransactionBehaviour;
 import sma.message.FailureMessage;
+import sma.message.Message;
 import sma.message.MessageVisitor;
 import sma.message.SubscriptionOKMessage;
 import sma.message.determine_winner.DetermineWinnerRequest;
+import sma.message.determine_winner.WinnerDeterminedResponse;
 import sma.message.environment.notification.CardAddedToCommunityCardsNotification;
 import sma.message.environment.notification.CardsEmptiedNotification;
 import sma.message.environment.notification.PlayerCardsRevealedNotification;
 import sma.message.environment.notification.PlayerSitOnTableNotification;
-import sma.message.environment.notification.WinnerDeterminedNotification;
+import sma.message.environment.notification.PlayerStatusChangedNotification;
 
 public class DetermineWinnerAgent extends Agent {
 		
@@ -57,6 +59,31 @@ public class DetermineWinnerAgent extends Agent {
 	}
 	
 	private class DetermineWinnerMessageVisitor extends MessageVisitor {
+		
+		//--------------------------
+		// Request handlers
+		//--------------------------
+		
+		@Override
+		public boolean onDetermineWinnerRequest(DetermineWinnerRequest request, ACLMessage aclMsg) {
+			
+			Map<AID, Hand> winners = determineRoundWinners();
+			
+			//AgentHelper.sendSimpleMessage(DetermineWinnerAgent.this, environment, ACLMessage.INFORM, new WinnerDeterminedNotification(winners));
+			
+			//Sending the list of winners (could be more than one winner)
+			AgentHelper.sendReply(DetermineWinnerAgent.this, aclMsg, ACLMessage.INFORM, new WinnerDeterminedResponse(winners));
+			
+			//Winner was determined for the current round
+			players.clear();
+			
+			return true;
+		}
+		
+		//--------------------------
+		// Environment notification handlers
+		//--------------------------
+		
 		@Override
 		public boolean onCardsEmptiedNotification(CardsEmptiedNotification notif, ACLMessage aclMsg) {
 			communityCards.popCards();
@@ -77,38 +104,38 @@ public class DetermineWinnerAgent extends Agent {
 		}
 		
 		@Override
-		public boolean onPlayerCardsRevealedNotification(PlayerCardsRevealedNotification playerCardsRevealed, ACLMessage aclMsg) {
+		public boolean onPlayerCardsRevealedNotification(PlayerCardsRevealedNotification notification, ACLMessage aclMsg) {
 			
 			//Adding player to potential winners if still in game (did not fold, not out)
-			if(playerCardsRevealed.getPlayer().getStatus() == PlayerStatus.IN_GAME)
-				players.add(playerCardsRevealed.getPlayer());
-			
-			return true;
-		}
-		
-		@Override
-		public boolean onDetermineWinnerRequest(DetermineWinnerRequest request, ACLMessage aclMsg) {
-			
-			Map<AID, Hand> winners = determineRoundWinners();
-			
-			//AgentHelper.sendSimpleMessage(DetermineWinnerAgent.this, environment, ACLMessage.INFORM, new WinnerDeterminedNotification(winners));
-			
-			//Sending the list of winners (could be more than one winner)
-			AgentHelper.sendReply(DetermineWinnerAgent.this, aclMsg, ACLMessage.INFORM, new WinnerDeterminedNotification(winners));
-			
-			//Winner was determined for the current round
-			players.clear();
+			if(notification.getPlayer().getStatus() == PlayerStatus.IN_GAME){
+				for(Player p : players){
+					if(p.getAID().equals(notification.getPlayer().getAID()))
+						p.setDeck(notification.getPlayer().getDeck());
+				}
+				players.add(notification.getPlayer());
+			}
 			
 			return true;
 		}
 		
 		@Override
 		public boolean onPlayerSitOnTableNotification(PlayerSitOnTableNotification notification, ACLMessage aclMsg) {
-			
 			players.add(notification.getNewPlayer());
-			
 			return true;
 		}
+		
+		@Override
+		public boolean onPlayerStatusChangedNotification(PlayerStatusChangedNotification notification, ACLMessage aclMsg) {
+			for(Player p : players){
+				if(p.getAID().equals(notification.getPlayerAID()))
+					p.setStatus(notification.getNewStatus());
+			}
+			return true;
+		}
+		
+		// All other environment changes are discarded.
+		@Override
+		public boolean onEnvironmentChanged(Message notif, ACLMessage aclMsg) {	return true; }
 	}
 	
 	private Map<AID, Hand> determineRoundWinners() {
@@ -174,6 +201,11 @@ public class DetermineWinnerAgent extends Agent {
 				
 				@Override
 				public boolean onSubscriptionOK(SubscriptionOKMessage msg, ACLMessage aclMsg) {
+					
+					for(Player p : msg.getGame().getPlayersContainer().getPlayers()){
+						players.add(p);
+					}
+					
 					System.out.println("[" + myAgent.getLocalName() + "] subscription to environment succeded.");
 					return true;
 				}

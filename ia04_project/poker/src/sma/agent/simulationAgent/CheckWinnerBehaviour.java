@@ -1,11 +1,9 @@
 package sma.agent.simulationAgent;
 
 import jade.core.AID;
-import jade.core.behaviours.Behaviour;
 import jade.lang.acl.ACLMessage;
 
 import java.util.HashMap;
-import java.util.Map;
 
 import poker.card.heuristics.combination.model.Hand;
 import sma.agent.SimulationAgent;
@@ -16,7 +14,7 @@ import sma.agent.helper.experimental.Task;
 import sma.agent.helper.experimental.TaskRunnerBehaviour;
 import sma.message.MessageVisitor;
 import sma.message.determine_winner.DetermineWinnerRequest;
-import sma.message.environment.notification.WinnerDeterminedNotification;
+import sma.message.determine_winner.WinnerDeterminedResponse;
 
 public class CheckWinnerBehaviour extends TaskRunnerBehaviour {
 	
@@ -51,9 +49,9 @@ public class CheckWinnerBehaviour extends TaskRunnerBehaviour {
 		
 		TransactionBehaviour transaction = new TransactionBehaviour(myAgent, determineWinnerRequest, determineWinnerAgent);
 		transaction.setResponseVisitor(new MessageVisitor(){
-			public boolean onWinnerDeterminedNotification(WinnerDeterminedNotification notification, ACLMessage aclMsg) {	
+			public boolean onWinnerDeterminedResponse(WinnerDeterminedResponse notification, ACLMessage aclMsg) {	
 				
-				simulationAgent.setWinners((HashMap)notification.getWinners());
+				simulationAgent.setWinners((HashMap<AID, Hand>)notification.getWinners());
 				
 				return true;
 			}

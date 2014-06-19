@@ -293,7 +293,7 @@ public class EnvironmentAgent extends Agent {
 		
 			try{
 				System.out.println("DEBUG [EnvironmentAgent] ChangePlayerStatusRequest received");
-				game.getPlayersContainer().getPlayerByAID(request.getPlayerAID());
+				game.getPlayersContainer().getPlayerByAID(request.getPlayerAID()).setStatus(request.getNewStatus());;
 				AgentHelper.sendSimpleMessage(EnvironmentAgent.this, subscribers, ACLMessage.PROPAGATE, new PlayerStatusChangedNotification(request.getPlayerAID(), request.getNewStatus()));
 				AgentHelper.sendReply(EnvironmentAgent.this, aclMsg, ACLMessage.INFORM, new OKMessage());
 			}

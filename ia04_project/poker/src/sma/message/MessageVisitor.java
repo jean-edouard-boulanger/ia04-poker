@@ -11,6 +11,7 @@ import sma.message.blind.request.RefreshBlindValueDefinitionRequest;
 import sma.message.blind.request.ResetBlindRequest;
 import sma.message.dealer.request.DealRequest;
 import sma.message.determine_winner.DetermineWinnerRequest;
+import sma.message.determine_winner.WinnerDeterminedResponse;
 import sma.message.environment.notification.BetNotification;
 import sma.message.environment.notification.BetsMergedNotification;
 import sma.message.environment.notification.BlindValueDefinitionChangedNotification;
@@ -79,7 +80,7 @@ public class MessageVisitor {
 	
 	// Determine winner
 	public boolean onDetermineWinnerRequest(DetermineWinnerRequest request, ACLMessage aclMsg) {return false;}
-	public boolean onWinnerDeterminedNotification(WinnerDeterminedNotification notification, ACLMessage aclMsg) {return false;}
+	public boolean onWinnerDeterminedResponse(WinnerDeterminedResponse winnerDeterminedResponse, ACLMessage aclMsg) {return false;}
 	
 	// Bet
 	public boolean onBetRequest(BetRequest request, ACLMessage aclMsg) {return false;}
@@ -128,6 +129,7 @@ public class MessageVisitor {
 	public boolean onPlayerStatusChangedNotification(PlayerStatusChangedNotification notification, ACLMessage aclMsg) {return false;}
 	public boolean onTokenSetSentFromPotToPlayerNotification(TokenSetSentFromPotToPlayerNotification request, ACLMessage aclMsg){ return false; }
 	public boolean onPotEmptiedNotification(PotEmptiedNotification potEmptiedNotification, ACLMessage aclMsg) {return false;}
+	public boolean onWinnerDeterminedNotification(WinnerDeterminedNotification notification, ACLMessage aclMsg) {return false;}
 	
 	//Simulation
 	public boolean onPlayRequest(PlayRequest request, ACLMessage aclMessage){return false;}

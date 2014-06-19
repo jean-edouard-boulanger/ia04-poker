@@ -296,7 +296,7 @@ public class AIPlayerAgentMessageVisitor extends MessageVisitor {
 	public boolean onBetsMergedNotification(BetsMergedNotification notification, ACLMessage aclMsg) {
 		
 		System.out.println("[" + myAgent.getLocalName() + "] Transferred current bets to pot.");
-		
+
 		myAgent.getGame().getBetContainer().transferCurrentBetsToPot();
 
 		return true;
