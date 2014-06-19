@@ -83,6 +83,8 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 		PLAYER_BET_ME,
 		PLAYER_BET_OTHER,
 		PLAYER_CALLED,
+		PLAYER_IN_GAME,
+		PLAYER_OUT,
 		PLAYER_CHECK,
 		BLIND_VALUE,
 		DEALER_PLAYER_CHANGED,
@@ -1147,6 +1149,33 @@ public class PlayerWindow extends Application implements PropertyChangeListener 
 					}
 				}
 				
+				/**
+				 * ------ PLAYER OUT ----
+				 */
+				else if(evt.getPropertyName().equals(PlayerGuiEvent.PLAYER_OUT.toString())){
+					if(evt.getNewValue() instanceof Integer){
+						
+						int player_index = ((Integer)evt.getNewValue()).intValue();
+						PlayerWindow.this.list_card_player.get(player_index).emptyCard();
+						PlayerWindow.this.list_perso.get(player_index).setFolded();
+						
+						System.out.println("[PlayerWindow] Player folded");
+					}
+				}
+				
+				/**
+				 * ------ PLAYER IN GAME ----
+				 */
+				else if(evt.getPropertyName().equals(PlayerGuiEvent.PLAYER_IN_GAME.toString())){
+					if(evt.getNewValue() instanceof Integer){
+						
+						int player_index = ((Integer)evt.getNewValue()).intValue();
+						PlayerWindow.this.list_card_player.get(player_index).emptyCard();
+						PlayerWindow.this.list_perso.get(player_index).setVisible();
+						
+						System.out.println("[PlayerWindow] Player folded");
+					}
+				}				
 				/**
 				 * ------ PLAYER CHECK ----
 				 */

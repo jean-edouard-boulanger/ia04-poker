@@ -178,6 +178,16 @@ public class PlayersContainer {
 		return players.get(playerIndex + 1);
 	}	
 
+	public ArrayList<Player> getFoldedPlayers(){
+		ArrayList<Player> foldedPlayers = new ArrayList<Player>();
+		for(Player player : this.players){
+			if(player.getStatus() == PlayerStatus.FOLDED){
+				foldedPlayers.add(player);
+			}
+		}
+		return foldedPlayers;
+	}
+	
 	public Player getInGamePlayerNextTo(Player po){
 		int playerIndex = players.indexOf(po);
 		if(playerIndex == -1){
