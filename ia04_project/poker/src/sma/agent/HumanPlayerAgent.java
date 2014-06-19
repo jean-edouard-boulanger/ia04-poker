@@ -59,7 +59,7 @@ import sma.message.environment.notification.PlayerReceivedTokenSetNotification;
 import sma.message.environment.notification.PlayerReceivedUnknownCardNotification;
 import sma.message.environment.notification.PlayerSitOnTableNotification;
 import sma.message.environment.notification.PlayerStatusChangedNotification;
-import sma.message.environment.notification.PotEmptiedNotification;
+import sma.message.environment.notification.TokenSetSentFromPotToPlayerNotification;
 import sma.message.environment.notification.TokenValueDefinitionChangedNotification;
 import sma.message.environment.notification.WinnerDeterminedNotification;
 import sma.message.environment.request.PlayerFoldedRequest;
@@ -303,29 +303,29 @@ public class HumanPlayerAgent extends GuiAgent {
 
 		@Override
 		public boolean onBetNotification(BetNotification notification, ACLMessage aclMsg){
-
-			// Update la mise minimum pour relancer apr�s
-			TokenSet betTokenSet = notification.getBetTokenSet();
-						
-			Player player = game.getPlayersContainer().getPlayerByAID(notification.getPlayerAID());
-			
-			int playerPreviousBet = game.getBetContainer().getPlayerCurrentBetAmount(player);
-			
-			game.getBetContainer().setPlayerCurrentBet(player.getAID(), TokenSetValueEvaluator.tokenSetFromAmount(notification.getBetAmount(), game.getBetContainer().getTokenValueDefinition()));
 			
 			try {
-				player.setTokens(player.getTokens().substractTokenSet(betTokenSet));
+				TokenSet tokenSetToAddInPot = notification.getBetTokenSet();
+				
+				if(notification.getBetAmount() != TokenSetValueEvaluator.evaluateTokenSetValue(game.getBetContainer().getTokenValueDefinition(), notification.getBetTokenSet())){
+					tokenSetToAddInPot = TokenSetValueEvaluator.tokenSetFromAmount(notification.getBetAmount(), game.getBetContainer().getTokenValueDefinition());
+				}
+				
+				Player player = game.getPlayersContainer().getPlayerByAID(notification.getPlayerAID());
+				player.setTokens(player.getTokens().substractTokenSet(notification.getBetTokenSet()));	
+				
+				game.getBetContainer().addTokenToPlayerBet(notification.getPlayerAID(), tokenSetToAddInPot);
+				
 			} catch (InvalidTokenAmountException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			
 			PlayerBetEventData eventData = new PlayerBetEventData();
-			
-			eventData.setTokenSetUsedForBet(betTokenSet);
+			eventData.setTokenSetUsedForBet(notification.getBetTokenSet());
 			eventData.setPlayerIndex(game.getPlayersContainer().getPlayerByAID(notification.getPlayerAID()).getTablePositionIndex());
-			eventData.setBetAmount(notification.getBetAmount());
-			eventData.setAmountAddedForBet(notification.getBetAmount() - playerPreviousBet);
+			eventData.setBetAmount(game.getBetContainer().getCurrentBetAmount());
+			eventData.setAmountAddedForBet(notification.getBetAmount());
+			
 			/*if(notification.getPlayerAID().equals(HumanPlayerAgent.this.getAID())){
 				eventData.setTokenSet(player.getTokens());
 				changes_game.firePropertyChange(PlayerGuiEvent.PLAYER_RECEIVED_TOKENSET_ME.toString(), null, eventData);
@@ -428,7 +428,7 @@ public class HumanPlayerAgent extends GuiAgent {
 			//TEST
 			int globalCurrentBetAmount = game.getBetContainer().getCurrentBetAmount();
 			int playerCurrentBetAmount = TokenSetValueEvaluator.evaluateTokenSetValue(game.getBetContainer().getTokenValueDefinition(), game.getBetContainer().getPlayerCurrentBet(me));
-
+			
 			int minimumTokenValue = game.getBetContainer().getTokenValueDefinition().getValueForTokenType(TokenType.WHITE);
 			
 			int minimumBetAmount = 0;
@@ -572,6 +572,26 @@ public class HumanPlayerAgent extends GuiAgent {
 			System.out.println("DEBUG [HBA] Pot cleared");
 			game.getBetContainer().clearPot();
 			changes_game.firePropertyChange(PlayerGuiEvent.CLEAR_POT.toString(), null, null);
+			return true;
+		}
+		
+		@Override
+		public boolean onTokenSetSentFromPotToPlayerNotification(TokenSetSentFromPotToPlayerNotification notification, ACLMessage aclMsg) {
+			Player player = game.getPlayersContainer().getPlayerByAID(notification.getPlayerAID());
+			player.setTokens(player.getTokens().addTokenSet(notification.getSentTokenSet()));
+
+			PlayerTokenSetChangedEventData eventData = new PlayerTokenSetChangedEventData();
+			eventData.setPlayerIndex(game.getPlayersContainer().getPlayerByAID(notification.getPlayerAID()).getTablePositionIndex());
+			eventData.setTokenSetValuation(TokenSetValueEvaluator.evaluateTokenSetValue(game.getBetContainer().getTokenValueDefinition(), player.getTokens()));
+
+			if(notification.getPlayerAID().equals(HumanPlayerAgent.this.getAID())){
+				eventData.setTokenSet(player.getTokens());
+				changes_game.firePropertyChange(PlayerGuiEvent.PLAYER_RECEIVED_TOKENSET_ME.toString(), null, eventData);
+			}
+			else{
+				changes_game.firePropertyChange(PlayerGuiEvent.PLAYER_RECEIVED_TOKENSET_OTHER.toString(), null, eventData);
+			}
+
 			return true;
 		}
 	}

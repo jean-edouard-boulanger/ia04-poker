@@ -27,7 +27,11 @@ import poker.token.helpers.TokenSetValueEvaluator;
 import poker.token.model.TokenSet;
 import poker.token.model.TokenType;
 import sma.agent.AIPlayerAgent;
+import sma.agent.EnvironmentAgent;
+import sma.agent.helper.AgentHelper;
+import sma.message.FailureMessage;
 import sma.message.MessageVisitor;
+import sma.message.OKMessage;
 import sma.message.SubscriptionOKMessage;
 import sma.message.environment.notification.BetNotification;
 import sma.message.environment.notification.BetsMergedNotification;
@@ -147,9 +151,28 @@ public class AIPlayerAgentMessageVisitor extends MessageVisitor {
 
 	@Override
 	public boolean onBetNotification(BetNotification notification, ACLMessage aclMsg){
+		
+		try {
+			TokenSet tokenSetToAddInPot = notification.getBetTokenSet();
+			
+			if(notification.getBetAmount() != TokenSetValueEvaluator.evaluateTokenSetValue(myAgent.getGame().getBetContainer().getTokenValueDefinition(), notification.getBetTokenSet())){
+				tokenSetToAddInPot = TokenSetValueEvaluator.tokenSetFromAmount(notification.getBetAmount(), myAgent.getGame().getBetContainer().getTokenValueDefinition());
+			}
+			
+			Player player = myAgent.getGame().getPlayersContainer().getPlayerByAID(notification.getPlayerAID());
+			player.setTokens(player.getTokens().substractTokenSet(notification.getBetTokenSet()));	
+			
+			myAgent.getGame().getBetContainer().addTokenToPlayerBet(notification.getPlayerAID(), tokenSetToAddInPot);
+			
+
+		} catch (InvalidTokenAmountException e) {
+			e.printStackTrace();
+		}			
+		return true;
+		
 
 		// Update la mise minimum pour relancer après
-		TokenSet betTokenSet = notification.getBetTokenSet();
+		/*TokenSet betTokenSet = notification.getBetTokenSet();
 					
 		Player player = myAgent.getGame().getPlayersContainer().getPlayerByAID(notification.getPlayerAID());
 					
@@ -162,7 +185,7 @@ public class AIPlayerAgentMessageVisitor extends MessageVisitor {
 			e.printStackTrace();
 		}
 		
-		return true;
+		return true;*/
 	}
 
 	@Override
