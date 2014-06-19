@@ -21,7 +21,7 @@ public class WinnerDeterminedNotification extends Message {
 	
 	@Override
 	public boolean accept(MessageVisitor visitor, ACLMessage aclMsg) {
-		return false;
+		return visitor.onEnvironmentChanged(this, aclMsg) | visitor.onWinnerDeterminedNotification(this, aclMsg);
 	}
 
 	public Map<AID, Hand> getWinners() {

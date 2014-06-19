@@ -1,21 +1,25 @@
 package sma.agent.simulationAgent;
 
 
+import jade.core.AID;
+import jade.core.behaviours.OneShotBehaviour;
+import jade.lang.acl.ACLMessage;
+
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 
 import poker.card.heuristics.combination.model.Hand;
 import poker.game.player.model.Player;
-import jade.core.AID;
-import jade.core.Agent;
-import jade.util.leap.HashMap;
 import sma.agent.SimulationAgent;
 import sma.agent.SimulationAgent.GameEvent;
+import sma.agent.helper.AgentHelper;
 import sma.agent.helper.DFServiceHelper;
 import sma.agent.helper.TransactionBehaviour;
 import sma.agent.helper.experimental.Task;
 import sma.agent.helper.experimental.TaskRunnerBehaviour;
 import sma.message.bet.request.DistributePotToWinnersRequest;
+import sma.message.environment.notification.WinnerDeterminedNotification;
 import sma.message.environment.request.EmptyCardsRequest;
 import sma.message.environment.request.EmptyPotRequest;
 
@@ -34,8 +38,30 @@ public class EndHandBehaviour extends TaskRunnerBehaviour {
 	
 	public void onStart(){
 		
+		System.out.println("@@@ EndHandBehaviour @@@");
+		
 		Task mainTask = Task.New(this.getEmptyCommunityCardsBehaviour())
-				.then(this.getEmptyPotBehaviour());
+				.then(this.getEmptyPotBehaviour())
+				.then(new OneShotBehaviour() {
+					@Override
+					public void action() {
+						Map<AID, Hand> winnersAIDS = new HashMap<AID, Hand>();
+						for(Map.Entry<AID, Hand> winnerAID : simulationAgent.getWinners().entrySet()){
+							winnersAIDS.put(winnerAID.getKey(), winnerAID.getValue());
+						}
+						WinnerDeterminedNotification winners = new WinnerDeterminedNotification(winnersAIDS);
+						AgentHelper.sendSimpleMessage(simulationAgent, environmentAID, ACLMessage.INFORM, winners);
+					}
+				})
+				.then(this.getDistributePotToWinnersBehaviour());
+		
+		
+		mainTask = mainTask.then(new OneShotBehaviour() {
+			@Override
+			public void action() {
+				simulationAgent.resetWinners();
+			}
+		});
 		
 		this.setBehaviour(mainTask);
 		super.onStart();
@@ -46,10 +72,9 @@ public class EndHandBehaviour extends TaskRunnerBehaviour {
 	}
 	
 	public TransactionBehaviour getDistributePotToWinnersBehaviour(){
-		
 		ArrayList<AID> winnersAIDs = new ArrayList<AID>();
-		for(Player p : simulationAgent.getWinners().keySet()){
-			winnersAIDs.add(p.getAID());
+		for(AID playerAID : simulationAgent.getWinners().keySet()){
+			winnersAIDs.add(playerAID);
 		}
 		
 		DistributePotToWinnersRequest distributePotToWinnersRequest = new DistributePotToWinnersRequest(winnersAIDs);

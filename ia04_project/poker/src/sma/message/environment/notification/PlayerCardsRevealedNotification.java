@@ -17,7 +17,7 @@ public class PlayerCardsRevealedNotification extends Message {
 	
 	@Override
 	public boolean accept(MessageVisitor visitor, ACLMessage aclMsg) {
-		return visitor.onPlayerCardsRevealedNotification(this, aclMsg);
+		return visitor.onEnvironmentChanged(this, aclMsg) | visitor.onPlayerCardsRevealedNotification(this, aclMsg);
 	}
 
 	public Player getPlayer() {

@@ -7,9 +7,12 @@ import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 
 import java.util.ArrayList;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import poker.card.exception.CommunityCardsFullException;
 import poker.card.exception.UserDeckFullException;
+import poker.card.heuristics.combination.model.Hand;
 import poker.card.model.Card;
 import poker.game.exception.NoPlaceAvailableException;
 import poker.game.exception.NotRegisteredPlayerException;
@@ -23,8 +26,8 @@ import sma.message.FailureMessage;
 import sma.message.MessageVisitor;
 import sma.message.OKMessage;
 import sma.message.SubscriptionOKMessage;
-import sma.message.bet.notification.BetsMergedNotification;
 import sma.message.environment.notification.BetNotification;
+import sma.message.environment.notification.BetsMergedNotification;
 import sma.message.environment.notification.BlindValueDefinitionChangedNotification;
 import sma.message.environment.notification.CardAddedToCommunityCardsNotification;
 import sma.message.environment.notification.CardsEmptiedNotification;
@@ -328,6 +331,10 @@ public class EnvironmentAgent extends Agent {
 		public boolean onWinnerDeterminedNotification(WinnerDeterminedNotification notification, ACLMessage aclMsg) {
 			
 			AgentHelper.sendSimpleMessage(EnvironmentAgent.this, subscribers, ACLMessage.PROPAGATE, notification);
+			System.out.println("DEBUG [EnvironmentAgent] Received winner notification. Will display content:");
+			for(Map.Entry<AID, Hand> winnerAID : notification.getWinners().entrySet()){
+				System.out.println(winnerAID.getKey().getLocalName() + " : " + winnerAID.getValue());
+			}
 			
 			return true;
 		}

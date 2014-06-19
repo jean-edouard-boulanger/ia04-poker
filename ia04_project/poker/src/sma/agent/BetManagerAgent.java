@@ -29,17 +29,16 @@ import sma.message.Message;
 import sma.message.MessageVisitor;
 import sma.message.OKMessage;
 import sma.message.SubscriptionOKMessage;
-import sma.message.bet.notification.BetsMergedNotification;
-import sma.message.bet.notification.PotAmountNotification;
 import sma.message.bet.request.AreBetsClosedRequest;
 import sma.message.bet.request.BetRequest;
 import sma.message.bet.request.DistributePotToWinnersRequest;
 import sma.message.bet.request.DoesPlayerHaveToBetRequest;
-import sma.message.bet.request.GetPotAmountRequest;
 import sma.message.bet.request.MergeBetsRequest;
+import sma.message.environment.notification.BetsMergedNotification;
 import sma.message.environment.notification.PlayerReceivedTokenSetNotification;
 import sma.message.environment.notification.PlayerSitOnTableNotification;
 import sma.message.environment.notification.PlayerStatusChangedNotification;
+import sma.message.environment.notification.PotEmptiedNotification;
 import sma.message.environment.notification.TokenValueDefinitionChangedNotification;
 import sma.message.environment.notification.WinnerDeterminedNotification;
 import sma.message.environment.request.GiveTokenSetToPlayerRequest;
@@ -286,6 +285,10 @@ public class BetManagerAgent extends Agent {
 
 			return true;
 		}
+		
+		// -----------------------------------------
+		// Environment event handling
+		// -----------------------------------------
 
 		@Override
 		public boolean onTokenValueDefinitionChangedNotification(TokenValueDefinitionChangedNotification notif, ACLMessage aclMsg) {
@@ -328,16 +331,6 @@ public class BetManagerAgent extends Agent {
 				e.printStackTrace();
 			}
 			return true;
-		}		
-
-		@Override
-		public boolean onGetPotAmountRequest(GetPotAmountRequest request, ACLMessage aclMsg) {
-
-			PotAmountNotification potAmountNotification = new PotAmountNotification(game.getBetContainer().getPot());
-
-			AgentHelper.sendReply(BetManagerAgent.this, aclMsg, ACLMessage.INFORM, potAmountNotification);
-
-			return true;
 		}
 
 		@Override
@@ -361,6 +354,12 @@ public class BetManagerAgent extends Agent {
 				AgentHelper.sendReply(BetManagerAgent.this, aclMsg, ACLMessage.INFORM, new BooleanMessage(false));
 			}
 
+			return true;
+		}
+		
+		@Override
+		public boolean onPotEmptiedNotification(PotEmptiedNotification potEmptiedNotification, ACLMessage aclMsg) {
+			game.getBetContainer().clearPot();
 			return true;
 		}
 

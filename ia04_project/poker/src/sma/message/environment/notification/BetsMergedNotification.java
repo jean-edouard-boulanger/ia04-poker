@@ -1,4 +1,4 @@
-package sma.message.bet.notification;
+package sma.message.environment.notification;
 
 import jade.lang.acl.ACLMessage;
 import sma.message.Message;
@@ -10,7 +10,7 @@ public class BetsMergedNotification extends Message {
 	
 	@Override
 	public boolean accept(MessageVisitor visitor, ACLMessage aclMsg) {
-		return visitor.onBetsMergedNotification(this, aclMsg);
+		return visitor.onEnvironmentChanged(this, aclMsg) | visitor.onBetsMergedNotification(this, aclMsg);
 	}
 
 }

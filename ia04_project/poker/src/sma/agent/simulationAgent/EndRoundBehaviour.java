@@ -72,7 +72,7 @@ public class EndRoundBehaviour extends TaskRunnerBehaviour {
 				 * Otherwise, the remaining player is the hand winner
 				 */
 				this.simulationAgent.setCurrentRound(Round.SHOWDOWN);
-				this.simulationAgent.addWinner(remainingPlayers.get(0), null);
+				this.simulationAgent.addWinner(remainingPlayers.get(0).getAID(), null);
 				this.transition = GameEvent.END_HAND;
 			}
 		}
