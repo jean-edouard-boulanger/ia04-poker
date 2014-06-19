@@ -36,6 +36,7 @@ import sma.message.environment.notification.PlayerReceivedTokenSetNotification;
 import sma.message.environment.notification.PlayerReceivedUnknownCardNotification;
 import sma.message.environment.notification.PlayerSitOnTableNotification;
 import sma.message.environment.notification.PlayerStatusChangedNotification;
+import sma.message.environment.notification.PotEmptiedNotification;
 import sma.message.environment.notification.TokenSetSentFromPotToPlayerNotification;
 import sma.message.environment.notification.TokenValueDefinitionChangedNotification;
 import sma.message.environment.notification.WinnerDeterminedNotification;
@@ -343,7 +344,7 @@ public class EnvironmentAgent extends Agent {
 		@Override
 		public boolean onEmptyPotRequest(EmptyPotRequest emptyPotRequest, ACLMessage aclMsg) {
 			game.getBetContainer().clearPot();
-			AgentHelper.sendSimpleMessage(EnvironmentAgent.this, subscribers, ACLMessage.PROPAGATE, new TokenSetSentFromPotToPlayerNotification());
+			AgentHelper.sendSimpleMessage(EnvironmentAgent.this, subscribers, ACLMessage.PROPAGATE, new PotEmptiedNotification());
 			AgentHelper.sendReply(EnvironmentAgent.this, aclMsg, ACLMessage.INFORM, new OKMessage());
 			return true;
 		}

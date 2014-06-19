@@ -17,17 +17,19 @@ public class WaitAIBehaviour extends Behaviour{
 	
 	@Override
 	public void onStart() {
-		ContainerController container = this.simAgent.getContainerController();
+		if(simAgent.getAddAIBeforeStarting()){
 		
-		try {
-			for(int i = 0; i < simAgent.getMaxPlayers() - simAgent.getGame().getPlayersContainer().getPlayers().size(); ++i){
-				AgentController ac = container.createNewAgent("IA" + i, "sma.agent.AIPlayerAgent", null);
-				ac.start();
+			ContainerController container = this.simAgent.getContainerController();
+			
+			try {
+				for(int i = 0; i < simAgent.getMaxPlayers() - simAgent.getGame().getPlayersContainer().getPlayers().size(); ++i){
+					AgentController ac = container.createNewAgent("IA" + i, "sma.agent.AIPlayerAgent", null);
+					ac.start();
+				}
+			} catch (StaleProxyException e) {
+				e.printStackTrace();
 			}
-		} catch (StaleProxyException e) {
-			e.printStackTrace();
 		}
-		super.onStart();
 	}
 	
 	@Override

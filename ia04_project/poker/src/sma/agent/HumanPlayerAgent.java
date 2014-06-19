@@ -61,6 +61,7 @@ import sma.message.environment.notification.PlayerSitOnTableNotification;
 import sma.message.environment.notification.PlayerStatusChangedNotification;
 import sma.message.environment.notification.TokenValueDefinitionChangedNotification;
 import sma.message.environment.notification.WinnerDeterminedNotification;
+import sma.message.environment.request.EmptyPotRequest;
 import sma.message.environment.request.PlayerFoldedRequest;
 import sma.message.simulation.request.PlayRequest;
 
@@ -509,6 +510,13 @@ public class HumanPlayerAgent extends GuiAgent {
 			
 			System.out.println("[HPA] Player winner");
 
+			return true;
+		}
+		
+		@Override
+		public boolean onEmptyPotRequest(EmptyPotRequest emptyPotRequest, ACLMessage aclMsg) {
+			game.getBetContainer().clearPot();
+			changes_game.firePropertyChange(PlayerGuiEvent.CLEAR_POT.toString(), null, null);
 			return true;
 		}
 	}
