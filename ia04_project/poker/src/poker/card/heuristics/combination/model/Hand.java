@@ -77,6 +77,14 @@ public class Hand {
 		return hand;
 	}
 
+	public String getStandardNotation(){
+		String standardNotation = "";
+		for(Card card : this.getCombinationCards()){
+			standardNotation += card.getStandardNotation() + " ";
+		}
+		return standardNotation;
+	}
+	
 	public ArrayList<Card> getAdditionalCards() {
 		return additionalCards;
 	}

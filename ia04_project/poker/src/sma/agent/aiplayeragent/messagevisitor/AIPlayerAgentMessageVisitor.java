@@ -99,7 +99,7 @@ public class AIPlayerAgentMessageVisitor extends MessageVisitor {
 
 		myAgent.getGame().getCommunityCards().popCards();
 		for(Player p : myAgent.getGame().getPlayersContainer().getPlayers()) {
-			p.getDeck().getCards().clear();
+			p.getDeck().removeCards();
 		}
 
 		return true;

@@ -19,6 +19,7 @@ import poker.card.model.Card;
 import poker.card.model.CommunityCards;
 import poker.game.player.model.Player;
 import poker.game.player.model.PlayerStatus;
+import poker.game.player.model.WinnerPlayer;
 import sma.agent.helper.AgentHelper;
 import sma.agent.helper.DFServiceHelper;
 import sma.agent.helper.TransactionBehaviour;
@@ -33,6 +34,7 @@ import sma.message.environment.notification.CardsEmptiedNotification;
 import sma.message.environment.notification.PlayerCardsRevealedNotification;
 import sma.message.environment.notification.PlayerSitOnTableNotification;
 import sma.message.environment.notification.PlayerStatusChangedNotification;
+import sma.message.environment.notification.WinnerDeterminedNotification;
 
 public class DetermineWinnerAgent extends Agent {
 		
@@ -64,15 +66,17 @@ public class DetermineWinnerAgent extends Agent {
 		// Request handlers
 		//--------------------------
 		
-		@Override
 		public boolean onDetermineWinnerRequest(DetermineWinnerRequest request, ACLMessage aclMsg) {
-			
 			Map<AID, Hand> winners = determineRoundWinners();
-			
 			//AgentHelper.sendSimpleMessage(DetermineWinnerAgent.this, environment, ACLMessage.INFORM, new WinnerDeterminedNotification(winners));
+
+			ArrayList<WinnerPlayer> winnerPlayers = new ArrayList<WinnerPlayer>();
 			
+			for(Entry<AID, Hand> winner : winners.entrySet()){
+				winnerPlayers.add(new WinnerPlayer(winner.getKey(), winner.getValue()));
+			}
 			//Sending the list of winners (could be more than one winner)
-			AgentHelper.sendReply(DetermineWinnerAgent.this, aclMsg, ACLMessage.INFORM, new WinnerDeterminedResponse(winners));
+			AgentHelper.sendReply(DetermineWinnerAgent.this, aclMsg, ACLMessage.INFORM, new WinnerDeterminedResponse(winnerPlayers));
 			
 			//Winner was determined for the current round
 			players.clear();

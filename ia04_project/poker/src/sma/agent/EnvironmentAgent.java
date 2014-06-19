@@ -332,9 +332,6 @@ public class EnvironmentAgent extends Agent {
 			
 			AgentHelper.sendSimpleMessage(EnvironmentAgent.this, subscribers, ACLMessage.PROPAGATE, notification);
 			System.out.println("DEBUG [EnvironmentAgent] Received winner notification. Will display content:");
-			for(Map.Entry<AID, Hand> winnerAID : notification.getWinners().entrySet()){
-				System.out.println(winnerAID.getKey().getLocalName() + " : " + winnerAID.getValue());
-			}
 			
 			return true;
 		}
