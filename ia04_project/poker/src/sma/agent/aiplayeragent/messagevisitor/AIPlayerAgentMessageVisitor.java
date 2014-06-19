@@ -1,5 +1,6 @@
 package sma.agent.aiplayeragent.messagevisitor;
 
+import gui.player.PlayerWindow.PlayerGuiEvent;
 import gui.player.event.model.AIPlayRequestEventData;
 import jade.lang.acl.ACLMessage;
 
@@ -37,6 +38,7 @@ import sma.message.environment.notification.PlayerReceivedUnknownCardNotificatio
 import sma.message.environment.notification.PlayerSitOnTableNotification;
 import sma.message.environment.notification.PlayerStatusChangedNotification;
 import sma.message.environment.notification.TokenValueDefinitionChangedNotification;
+import sma.message.environment.request.EmptyPotRequest;
 import sma.message.environment.request.PlayerFoldedRequest;
 import sma.message.simulation.request.PlayRequest;
 
@@ -90,6 +92,9 @@ public class AIPlayerAgentMessageVisitor extends MessageVisitor {
 	public boolean onCardsEmptiedNotification(CardsEmptiedNotification notification, ACLMessage aclMsg) {
 
 		myAgent.getGame().getCommunityCards().popCards();
+		for(Player p : myAgent.getGame().getPlayersContainer().getPlayers()) {
+			p.getDeck().getCards().clear();
+		}
 
 		return true;
 	}
@@ -293,6 +298,12 @@ public class AIPlayerAgentMessageVisitor extends MessageVisitor {
 		
 		myAgent.getGame().getBetContainer().transferCurrentBetsToPot();
 
+		return true;
+	}
+	
+	@Override
+	public boolean onEmptyPotRequest(EmptyPotRequest emptyPotRequest, ACLMessage aclMsg) {
+		myAgent.getGame().getBetContainer().clearPot();
 		return true;
 	}
 }
