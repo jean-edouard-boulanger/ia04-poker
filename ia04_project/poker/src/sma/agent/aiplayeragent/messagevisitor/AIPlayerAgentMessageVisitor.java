@@ -2,6 +2,9 @@ package sma.agent.aiplayeragent.messagevisitor;
 
 import gui.player.PlayerWindow.PlayerGuiEvent;
 import gui.player.event.model.AIPlayRequestEventData;
+import jade.core.Agent;
+import jade.core.behaviours.TickerBehaviour;
+import jade.core.behaviours.WakerBehaviour;
 import jade.lang.acl.ACLMessage;
 
 import java.util.ArrayList;
@@ -209,8 +212,49 @@ public class AIPlayerAgentMessageVisitor extends MessageVisitor {
 		AIPlayRequestEventData eventData = new AIPlayRequestEventData();
 		eventData.addAllAvailableActions();
 
-		//Bet amount for the current round
+		//TEST
 		int globalCurrentBetAmount = myAgent.getGame().getBetContainer().getCurrentBetAmount();
+		int playerCurrentBetAmount = TokenSetValueEvaluator.evaluateTokenSetValue(myAgent.getGame().getBetContainer().getTokenValueDefinition(), myAgent.getGame().getBetContainer().getPlayerCurrentBet(me));
+
+		int minimumTokenValue = myAgent.getGame().getBetContainer().getTokenValueDefinition().getValueForTokenType(TokenType.WHITE);
+		
+		int minimumBetAmount = 0;
+		int maximumBetAmount = 0;
+		int callAmount = 0;
+		int playerBankroll = me.getBankroll(myAgent.getGame().getBetContainer().getTokenValueDefinition()) + playerCurrentBetAmount;
+		
+		//If no one bet, can't fold or call
+		if(globalCurrentBetAmount == 0) {
+			eventData.removeAvailableAction(BetType.CALL);
+			eventData.removeAvailableAction(BetType.FOLD);
+		}
+		else {
+			eventData.removeAvailableAction(BetType.CHECK);
+		}
+		
+		if(playerBankroll < globalCurrentBetAmount) {
+			eventData.removeAvailableAction(BetType.CALL);
+			eventData.removeAvailableAction(BetType.CHECK);
+		}
+		
+		//Bet values
+		if(globalCurrentBetAmount == 0) {
+			minimumBetAmount = 2 * minimumTokenValue;
+		}
+		else {
+			minimumBetAmount = 2 * globalCurrentBetAmount;
+			callAmount = globalCurrentBetAmount;
+		}
+		
+		if(playerBankroll < globalCurrentBetAmount || playerBankroll < minimumBetAmount) {
+			minimumBetAmount = playerBankroll;
+		}
+		
+		maximumBetAmount = playerBankroll;
+		
+/**
+		//Bet amount for the current round
+		int globalCurrentBetAmount = game.getBetContainer().getCurrentBetAmount();
 		
 		if(globalCurrentBetAmount > 0){
 			//Can't check if someone has already bet
@@ -218,12 +262,13 @@ public class AIPlayerAgentMessageVisitor extends MessageVisitor {
 		}
 		else {
 			eventData.setCallAmount(0);
+			eventData.removeAvailableAction(BetType.CHECK);
 		}
 		
 		//Calculating player's current amount for the current round
-		int playerCurrentBetAmount = TokenSetValueEvaluator.evaluateTokenSetValue(myAgent.getGame().getBetContainer().getTokenValueDefinition(), myAgent.getGame().getBetContainer().getPlayerCurrentBet(me));
+		int playerCurrentBetAmount = TokenSetValueEvaluator.evaluateTokenSetValue(game.getBetContainer().getTokenValueDefinition(), game.getBetContainer().getPlayerCurrentBet(me));
 
-		int minimumTokenValue = myAgent.getGame().getBetContainer().getTokenValueDefinition().getValueForTokenType(TokenType.WHITE);
+		int minimumTokenValue = game.getBetContainer().getTokenValueDefinition().getValueForTokenType(TokenType.WHITE);
 		
 		int minimumBetAmount = 0;
 		
@@ -245,7 +290,7 @@ public class AIPlayerAgentMessageVisitor extends MessageVisitor {
 			eventData.removeAvailableAction(BetType.FOLD);
 		}
 
-		int playerBankroll = me.getBankroll(myAgent.getGame().getBetContainer().getTokenValueDefinition());
+		int playerBankroll = me.getBankroll(game.getBetContainer().getTokenValueDefinition());
 		
 		if(playerBankroll < eventData.getCallAmount()) {
 			minimumBetAmount = playerBankroll;
@@ -253,12 +298,13 @@ public class AIPlayerAgentMessageVisitor extends MessageVisitor {
 			eventData.addAvailableAction(BetType.FOLD);
 			eventData.addAvailableAction(BetType.RAISE);
 		}
-		
+	**/	
 		eventData.setMinimumBetAmount(minimumBetAmount);
 
 		// The maximum bet amount is equal to the bankroll of the player
 		eventData.setMaximumBetAmount(playerBankroll);
-		
+		eventData.setCallAmount(callAmount);
+
 		eventData.setErrorMessage(request.getErrorMessage());
 		eventData.setRequestResentFollowedToError(request.isRequestResentFollowedToError());
 		
@@ -270,12 +316,7 @@ public class AIPlayerAgentMessageVisitor extends MessageVisitor {
 		
 		Decision decision = DecisionMakerHelper.makeDecision(eventData, playerType);
 		
-		if(decision.getBetType() == BetType.FOLD) {
-			myAgent.replyFoldToSimulationPlayRequest();
-		}
-		else {
-			myAgent.replyBetToSimulationPlayRequest(decision.getBetAmount());
-		}
+		myAgent.addBehaviour(new AIReplyLaterBehaviour(myAgent, 2000, decision));
 		
 		return true;
 	}
@@ -306,5 +347,24 @@ public class AIPlayerAgentMessageVisitor extends MessageVisitor {
 	public boolean onPotEmptiedNotification(PotEmptiedNotification emptyPotRequest, ACLMessage aclMsg) {
 		myAgent.getGame().getBetContainer().clearPot();
 		return true;
+	}
+	
+	private class AIReplyLaterBehaviour extends WakerBehaviour {
+		private Decision decision;
+		AIPlayerAgent myAgent;
+		public AIReplyLaterBehaviour(Agent agent, int time, Decision decision) {
+			super(agent, time);
+			this.myAgent = (AIPlayerAgent) agent;
+			this.decision = decision;
+		}
+		@Override
+		protected void onWake() {
+			if(decision.getBetType() == BetType.FOLD) {
+				myAgent.replyFoldToSimulationPlayRequest();
+			}
+			else {
+				myAgent.replyBetToSimulationPlayRequest(decision.getBetAmount());
+			}
+		}
 	}
 }
