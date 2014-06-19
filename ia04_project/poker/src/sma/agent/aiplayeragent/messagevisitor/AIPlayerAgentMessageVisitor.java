@@ -241,7 +241,7 @@ public class AIPlayerAgentMessageVisitor extends MessageVisitor {
 
 		int playerBankroll = me.getBankroll(myAgent.getGame().getBetContainer().getTokenValueDefinition());
 		
-		if(playerBankroll < minimumBetAmount) {
+		if(playerBankroll < eventData.getCallAmount()) {
 			minimumBetAmount = playerBankroll;
 			eventData.clearAvailableActions();
 			eventData.addAvailableAction(BetType.FOLD);

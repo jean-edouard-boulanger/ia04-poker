@@ -412,7 +412,48 @@ public class HumanPlayerAgent extends GuiAgent {
 
 			PlayRequestEventData eventData = new PlayRequestEventData();
 			eventData.addAllAvailableActions();
+			
+			//TEST
+			int globalCurrentBetAmount = game.getBetContainer().getCurrentBetAmount();
+			int playerCurrentBetAmount = TokenSetValueEvaluator.evaluateTokenSetValue(game.getBetContainer().getTokenValueDefinition(), game.getBetContainer().getPlayerCurrentBet(me));
 
+			int minimumTokenValue = game.getBetContainer().getTokenValueDefinition().getValueForTokenType(TokenType.WHITE);
+			
+			int minimumBetAmount = 0;
+			int maximumBetAmount = 0;
+			int callAmount = 0;
+			int playerBankroll = me.getBankroll(game.getBetContainer().getTokenValueDefinition()) + playerCurrentBetAmount;
+			
+			//If no one bet, can't fold or call
+			if(globalCurrentBetAmount == 0) {
+				eventData.removeAvailableAction(BetType.CALL);
+				eventData.removeAvailableAction(BetType.FOLD);
+			}
+			else {
+				eventData.removeAvailableAction(BetType.CHECK);
+			}
+			
+			if(playerBankroll < globalCurrentBetAmount) {
+				eventData.removeAvailableAction(BetType.CALL);
+				eventData.removeAvailableAction(BetType.CHECK);
+			}
+			
+			//Bet values
+			if(globalCurrentBetAmount == 0) {
+				minimumBetAmount = 2 * minimumTokenValue;
+			}
+			else {
+				minimumBetAmount = 2 * globalCurrentBetAmount;
+				callAmount = globalCurrentBetAmount;
+			}
+			
+			if(playerBankroll < globalCurrentBetAmount || playerBankroll < minimumBetAmount) {
+				minimumBetAmount = playerBankroll;
+			}
+			
+			maximumBetAmount = playerBankroll;
+			
+/**
 			//Bet amount for the current round
 			int globalCurrentBetAmount = game.getBetContainer().getCurrentBetAmount();
 			
@@ -422,6 +463,7 @@ public class HumanPlayerAgent extends GuiAgent {
 			}
 			else {
 				eventData.setCallAmount(0);
+				eventData.removeAvailableAction(BetType.CHECK);
 			}
 			
 			//Calculating player's current amount for the current round
@@ -451,17 +493,18 @@ public class HumanPlayerAgent extends GuiAgent {
 
 			int playerBankroll = me.getBankroll(game.getBetContainer().getTokenValueDefinition());
 			
-			if(playerBankroll < minimumBetAmount) {
+			if(playerBankroll < eventData.getCallAmount()) {
 				minimumBetAmount = playerBankroll;
 				eventData.clearAvailableActions();
 				eventData.addAvailableAction(BetType.FOLD);
 				eventData.addAvailableAction(BetType.RAISE);
 			}
-			
+		**/	
 			eventData.setMinimumBetAmount(minimumBetAmount);
 
 			// The maximum bet amount is equal to the bankroll of the player
-			eventData.setMaximumBetAmount(playerBankroll);
+			eventData.setMaximumBetAmount(maximumBetAmount);
+			eventData.setCallAmount(callAmount);
 			
 			eventData.setErrorMessage(request.getErrorMessage());
 			eventData.setRequestResentFollowedToError(request.isRequestResentFollowedToError());
@@ -563,6 +606,8 @@ public class HumanPlayerAgent extends GuiAgent {
 		
 		if(arg0.getType() == PlayerGuiEvent.PLAYER_BET.ordinal()) {
 			
+	//		int playerCurrentBetAmount = TokenSetValueEvaluator.evaluateTokenSetValue(game.getBetContainer().getTokenValueDefinition(), game.getBetContainer().getPlayerCurrentBet(game.getPlayersContainer().getPlayerByAID(getAID())));
+
 			if(playRequestMessage != null) {
 				int betAmount = (int)((double)arg0.getParameter(0));
 				
